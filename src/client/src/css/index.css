@@ -1,9 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
 :root {
   --color-main: black;
+  --font-small: 400 14px Poppins;
 }
 
 body {
   margin: 0;
+  font-family: Poppins;
 }
 
 code {
