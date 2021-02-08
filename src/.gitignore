@@ -9,6 +9,9 @@ node_modules
 .pnp
 .pnp.js
 
+# linting
+.eslintcache
+
 # testing
 coverage
 
