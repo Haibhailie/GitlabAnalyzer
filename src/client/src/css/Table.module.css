@@ -3,10 +3,6 @@
   display: grid;
 }
 
-.th {
-  text-align: left;
-}
-
 .sortBtn {
   background: none;
   border: none;
