@@ -1,9 +1,14 @@
 div {
-  background-color: darkblue;
+  background-color: var(--color-header);
   right: 0;
-  padding: 5px 15px;
+  padding: 2px 12px;
+}
+
+img {
+  display: inline;
 }
 
 h1 {
   color: #ffffff;
+  font: var(--font-header);
 }
