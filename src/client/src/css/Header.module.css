@@ -17,7 +17,7 @@ img {
 }
 
 h1 {
-  color: #ffffff;
+  color: var(--color-text-header);
   font: var(--font-header);
 }
 

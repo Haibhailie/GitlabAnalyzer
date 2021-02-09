@@ -1,0 +1,60 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+}
+
+.splash {
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  transform: translate(-50%, -50%);
+}
+
+.splash img {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+}
+
+h1 {
+  font: var(--font-title);
+  color: var(--color-text-body);
+  position: absolute;
+  left: 50%;
+  top: 53%;
+  transform: translate(-50%, -50%);
+}
+
+.loginButtonDiv {
+  position: absolute;
+  left: 50%;
+  top: 110%;
+  transform: translate(-50%, -50%);
+}
+
+.loginButton {
+  font: var(--font-button);
+  color: var(--color-text-header);
+  padding: 5px 50px;
+  border-radius: 10px;
+  border: none;
+  background-color: var(--color-header);
+  outline: none;
+  max-width: 100%;
+}
+
+.loginButton:hover {
+  cursor: pointer;
+  background-color: var(--color-button-hover);
+}
+
+@media only screen and (max-width: 780px) {
+  .loginButton {
+    font: var(--font-button-sm);
+    padding: 3px 40px;
+    margin-top: 15px;
+  }
+}
