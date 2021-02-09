@@ -1,9 +1,9 @@
 import styles from '../css/Header.module.css'
 import planet from '../assets/planet-icon.svg'
-import menuIcon from '../assets/icons8-menu-50.png'
+import menuIcon from '../assets/icons8-menu.svg'
 
 const Header: React.FC = () => (
-  <div className={styles.div}>
+  <div className={styles.headerDiv}>
     <button className={styles.hamburgerMenu}>
       <img src={menuIcon} />
     </button>
