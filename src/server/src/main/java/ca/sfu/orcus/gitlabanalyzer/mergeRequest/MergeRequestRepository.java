@@ -18,7 +18,6 @@ public class MergeRequestRepository {
 
         System.out.println("\n\nThe present open Merge Requests in " + presentProjectName + " are:");
         for (MergeRequest mr : mergeRequests) {
-            int mrIndex = 0;
 
             MergeRequestDTO presentMergeRequest = new MergeRequestDTO();
 
@@ -36,12 +35,15 @@ public class MergeRequestRepository {
 
             presentMergeRequest.setHasConflicts(mr.getHasConflicts());
 
+            presentMergeRequest.setCommits(gitLabApi.getMergeRequestApi().getCommits(projectID, mr.getIid()));
+
+            presentMergeRequest.setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectID, mr.getIid()));
+
             ArrayList<String> notesName = new ArrayList<>();
             ArrayList<String> notes = new ArrayList<>();
             List<Note> mrNotes = gitLabApi.getNotesApi().getMergeRequestNotes(projectID, mr.getIid());
             if (!mrNotes.isEmpty()) {
                 for (Note note : mrNotes) {
-                    //System.out.println(note.getAuthor().getName() + ": \n" + note.getBody() + "\n");
                     notesName.add(note.getAuthor().getName());
                     notes.add(note.getBody());
                 }
@@ -52,6 +54,7 @@ public class MergeRequestRepository {
         }
         return listMR;
     }
+
 }
 
 

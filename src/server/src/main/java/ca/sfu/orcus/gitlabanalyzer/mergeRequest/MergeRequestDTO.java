@@ -1,5 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
+import org.gitlab4j.api.models.Commit;
+import org.gitlab4j.api.models.Participant;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +17,8 @@ public class MergeRequestDTO {
     private String targetBranch;
     private ArrayList<String> notesName;
     private ArrayList<String> notes;
+    private List<Commit> commits;
+    private List<Participant> participants;
 
     public void setHasConflicts(boolean hasConflicts) {
         this.hasConflicts = hasConflicts;
@@ -51,5 +56,12 @@ public class MergeRequestDTO {
         this.notes = notes;
     }
 
+    public void setCommits(List<Commit> commits) {
+        this.commits = commits;
+    }
+
+    public void setParticipants(List<Participant> participants) {
+        this.participants = participants;
+    }
 
 }
