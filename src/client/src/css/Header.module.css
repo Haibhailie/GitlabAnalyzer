@@ -1,19 +1,20 @@
 .headerDiv {
   background-color: var(--color-header);
   right: 0;
-  padding: 2px 24px;
+  padding: 2px 36px;
+  align-items: center;
 }
 
 img {
   display: inline;
   float: left;
-  padding-top: 10px;
-  padding-right: 5px;
 }
 
-.headerDiv img {
-  width: 30px;
-  height: 30px;
+.logo {
+  width: 36px;
+  height: 36px;
+  padding-top: 15px;
+  padding-right: 5px;
 }
 
 h1 {
@@ -34,11 +35,6 @@ h1 {
 .hamburgerMenu img {
   width: 24px;
   height: 24px;
-  padding-top: 16px;
-  margin-right: 10px;
-}
-
-.hamburgerIcon {
-  height: 24px;
-  width: 24px;
+  margin-right: 24px;
+  padding-top: 20px;
 }
