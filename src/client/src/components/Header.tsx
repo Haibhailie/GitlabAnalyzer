@@ -8,11 +8,11 @@ import menuIcon from '../assets/menu-icon.svg'
 const Header = () => (
   <div className={styles.headerDiv}>
     <button className={styles.hamburgerMenu}>
-      <img src={menuIcon} />
+      <img src={menuIcon} className={styles.hamburgerMenuIcon} />
     </button>
     <Link to="/home">
       <img src={planet} className={styles.logo} />
-      <h1>GitLab Analyzer</h1>
+      <h1 className={styles.appName}>GitLab Analyzer</h1>
     </Link>
   </div>
 )

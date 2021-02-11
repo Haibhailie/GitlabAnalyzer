@@ -5,19 +5,16 @@
   align-items: center;
 }
 
-img {
-  display: inline;
-  float: left;
-}
-
 .logo {
   width: 36px;
   height: 36px;
   padding-top: 15px;
   padding-right: 5px;
+  display: inline;
+  float: left;
 }
 
-h1 {
+.appName {
   color: #ffffff;
   font: var(--font-header);
 }
@@ -32,9 +29,11 @@ h1 {
   outline: none;
 }
 
-.hamburgerMenu img {
+.hamburgerMenuIcon {
   width: 24px;
   height: 24px;
   margin-right: 24px;
   padding-top: 20px;
+  display: inline;
+  float: left;
 }
