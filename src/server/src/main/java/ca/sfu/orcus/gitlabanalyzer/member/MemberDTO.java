@@ -1,15 +1,34 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-import org.gitlab4j.api.models.Member;
 
-import java.util.List;
 
 public class MemberDTO {
-    private List<Member> members;
 
+    private String name;
+    private String email;
+    private Integer id;
+    private String username;
+    private String state;
 
-    public void setMembers(List<Member> members) {
-        this.members = members;
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
 
 }
