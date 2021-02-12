@@ -1,5 +1,6 @@
 :root {
   --color-main: black;
+  --font-item-label: 400 16px Poppins;
 }
 
 body {

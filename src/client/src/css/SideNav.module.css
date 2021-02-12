@@ -1,11 +1,13 @@
 .container {
   height: 100%;
-  width: 160px;
+  width: 250px;
   top: 0;
   left: 0;
-  border-right: 1px solid grey;
+  border-right: 1px solid lightgray;
 }
 
 .itemList {
   list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
 }

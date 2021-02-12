@@ -1,0 +1,27 @@
+.item {
+  padding: 1px 20px;
+  width: auto;
+  /* border-bottom: 0.5px solid grey; */
+}
+
+.item:hover {
+  background-color: #e0eaff;
+  text-decoration: none;
+  border-left: 4px solid blue;
+}
+
+.icon {
+  margin-top: 15px;
+  padding-right: 20px;
+  float: left;
+}
+
+.label {
+  font: var(--font-item-label);
+  color: var(--color-main);
+  text-decoration: none;
+}
+
+.label:visited {
+  color: var(--color-main);
+}
