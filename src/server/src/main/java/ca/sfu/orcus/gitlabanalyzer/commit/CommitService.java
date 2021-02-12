@@ -18,18 +18,26 @@ public class CommitService {
     private double addLOCFactor = 1;
     private double deleteLOCFactor = 0.2;
     private double syntaxChangeFactor = 0.2;
+    private double blankLOCFactor = 0;
+    private double SpacingChangeFactor = 0;
 
-    double getCommitScore(GitLabApi gitAccount, int projectId, String sha) throws GitLabApiException {
+    double getCommitScore(GitLabApi gitLabApi, int projectId, String sha) throws GitLabApiException {
         double score = 0;
-        Commit commit = gitAccount.getCommitsApi().getCommit(projectId, sha);
-        List<Diff> diffs = gitAccount.getCommitsApi().getDiff(projectId, sha);
-
+        Commit commit = gitLabApi.getCommitsApi().getCommit(projectId, sha);
+        List<Diff> diffs = gitLabApi.getCommitsApi().getDiff(projectId, sha);
+        for(Diff d : diffs) {
+            score += getAddLOCScore(commit, d);
+            score += getDeleteLOCScore(commit);
+            score += getSyntaxChangeScore(commit);
+        }
         return score;
     }
 
-    double getAddLOCScore(Commit commit, Diff diffs) {
-        long LOCCount = diffs.getDiff().chars().filter(ch -> ch == '\n').count();
-        return commit.getStats().getAdditions() * addLOCFactor;
+    double getAddLOCScore(Commit commit, Diff diff) {
+        // Removing blank lines
+        String s = diff.getDiff().replace("+\n", "");
+        long LOCCount = s.chars().filter(ch -> ch == '\n').count() - 1; // -1 due to a header line in each diff
+        return LOCCount * addLOCFactor;
     }
 
     double getDeleteLOCScore(Commit commit) {
