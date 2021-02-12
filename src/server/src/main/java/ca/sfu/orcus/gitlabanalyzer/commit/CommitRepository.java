@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
-public class CommitRepository {
+import java.util.ArrayList;
 
+public class CommitRepository {
 }
