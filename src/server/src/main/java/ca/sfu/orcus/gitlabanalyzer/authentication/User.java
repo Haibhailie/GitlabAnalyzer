@@ -1,10 +1,10 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
 public class User {
-    public String username;
-    public String password;
-    public String authToken;
-    public String jwt;
+    private String username;
+    private String password;
+    private String authToken;
+    private String jwt;
 
     private User(String username, String password) {
         this.username = username;
@@ -19,7 +19,27 @@ public class User {
         return new User(username, password);
     }
 
-    public static User fromAuthToken(String authToken) {
+    public static User createFromAuthToken(String authToken) {
         return new User(authToken);
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
     }
 }

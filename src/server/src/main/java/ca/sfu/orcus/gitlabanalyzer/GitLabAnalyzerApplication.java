@@ -1,11 +1,11 @@
 package ca.sfu.orcus.gitlabanalyzer;
 
-import ca.sfu.orcus.gitlabanalyzer.authentication.JwtTokenCreator;
-import ca.sfu.orcus.gitlabanalyzer.authentication.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 public class GitLabAnalyzerApplication {
 
     public static void main(String[] args) {
