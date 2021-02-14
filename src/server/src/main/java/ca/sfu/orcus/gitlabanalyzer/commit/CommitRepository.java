@@ -10,25 +10,24 @@ import java.util.Date;
 import java.util.List;
 
 public class CommitRepository {
-    private final String defaultBranch = "master";
+    private final static String defaultBranch = "master";
 
     // Overloaded method - no date required
     public static ArrayList<CommitDTO> getAllCommits(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
-        ArrayList<CommitDTO> allCommits = new ArrayList<>();
         List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectID);
 
-        return getAllCommitDTOS(gitLabApi, projectID, allCommits, allGitCommits);
+        return getAllCommitDTOS(gitLabApi, projectID, allGitCommits);
     }
 
     // Overloaded method - date required
-    public ArrayList<CommitDTO> getAllCommits(GitLabApi gitLabApi, int projectID, Date since, Date until) throws GitLabApiException {
-        ArrayList<CommitDTO> allCommits = new ArrayList<>();
+    public static ArrayList<CommitDTO> getAllCommits(GitLabApi gitLabApi, int projectID, Date since, Date until) throws GitLabApiException {
         List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectID, defaultBranch, since, until);
 
-        return getAllCommitDTOS(gitLabApi, projectID, allCommits, allGitCommits);
+        return getAllCommitDTOS(gitLabApi, projectID, allGitCommits);
     }
 
-    private static ArrayList<CommitDTO> getAllCommitDTOS(GitLabApi gitLabApi, int projectID, ArrayList<CommitDTO> allCommits, List<Commit> allGitCommits) throws GitLabApiException {
+    private static ArrayList<CommitDTO> getAllCommitDTOS(GitLabApi gitLabApi, int projectID, List<Commit> allGitCommits) throws GitLabApiException {
+        ArrayList<CommitDTO> allCommits = new ArrayList<>();
         for(Commit c : allGitCommits) {
             CommitDTO presentCommit = new CommitDTO(gitLabApi, projectID, c);
             allCommits.add(presentCommit);
