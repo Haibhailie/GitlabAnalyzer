@@ -1,4 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
+
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.*;
@@ -30,7 +31,15 @@ public class MemberRepository {
 
             presentMember.setUsername(m.getUsername());
 
+            presentMember.setAccess_level(m.getAccessLevel().value);
+
+            presentMember.setAvatar_url(m.getAvatarUrl());
+
+            presentMember.setExpires_at(m.getExpiresAt());
+
+
             listMember.add(presentMember);
+
         }
         return listMember;
     }

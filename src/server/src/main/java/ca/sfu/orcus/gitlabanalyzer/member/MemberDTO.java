@@ -1,35 +1,15 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-//[
-//  {
-//    "id": 1,
-//    "username": "raymond_smith",
-//    "name": "Raymond Smith",
-//    "state": "active",
-//    "avatar_url": "https://www.gravatar.com/avatar/c2525a7f58ae3776070e44c106c48e15?s=80&d=identicon",
-//    "web_url": "http://192.168.1.8:3000/root",
-//    "last_activity_on": "2021-01-27"
-//  },
-//  {
-//    "id": 2,
-//    "username": "john_doe",
-//    "name": "John Doe",
-//    "state": "active",
-//    "avatar_url": "https://www.gravatar.com/avatar/c2525a7f58ae3776070e44c106c48e15?s=80&d=identicon",
-//    "web_url": "http://192.168.1.8:3000/root",
-//    "email": "john@example.com",
-//    "last_activity_on": "2021-01-25"
-//  },
-//  {
-//    "id": 3,
-//    "username": "foo_bar",
-//    "name": "Foo bar",
-//    "state": "active",
-//    "avatar_url": "https://www.gravatar.com/avatar/c2525a7f58ae3776070e44c106c48e15?s=80&d=identicon",
-//    "web_url": "http://192.168.1.8:3000/root",
-//    "last_activity_on": "2021-01-20"
-//  }
-//]
+//Vaild access levels
+//No access (0)
+//Minimal access (5) (Introduced in GitLab 13.5.)
+//Guest (10)
+//Reporter (20)
+//Developer (30)
+//Maintainer (40)
+//Owner (50)
+
+import java.util.Date;
 
 public class MemberDTO {
 
@@ -38,6 +18,9 @@ public class MemberDTO {
     private Integer id;
     private String username;
     private String state;
+    private Integer access_level;
+    private String avatar_url;
+    private Date expires_at;
 
     public void setName(String name) {
         this.name = name;
@@ -57,6 +40,18 @@ public class MemberDTO {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public void setAccess_level(Integer access_level) {
+        this.access_level = access_level;
+    }
+
+    public void setAvatar_url(String avatar_url) {
+        this.avatar_url = avatar_url;
+    }
+
+    public void setExpires_at(Date expires_at) {
+        this.expires_at = expires_at;
     }
 
 
