@@ -15,6 +15,9 @@ const items = [
 const SideNav = () => {
   return (
     <aside className={styles.container}>
+      <button type="button" className={styles.closeSideNavButton}>
+        &#8249;
+      </button>
       <ul className={styles.itemList}>
         {items.map((item, index) => {
           return (

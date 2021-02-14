@@ -1,13 +1,38 @@
 .container {
   height: 100%;
-  width: 250px;
+  width: 230px;
   top: 0;
   left: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
   border-right: 1px solid lightgray;
+  position: absolute;
 }
 
 .itemList {
   list-style-type: none;
   margin-left: 0;
   padding-left: 0;
+}
+
+.closeSideNavButton {
+  position: absolute;
+  left: 210px;
+  top: 40%;
+
+  width: 40px;
+  height: 40px;
+
+  background-color: var(--color-lightgray);
+  font-size: 24px;
+
+  border-radius: 50%;
+  border: none;
+  outline: none;
+}
+
+.closeSideNavButton:hover {
+  cursor: pointer;
+  background-color: var(--color-darkgray);
 }
