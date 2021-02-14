@@ -26,7 +26,6 @@ public class ProjectDto {
         setCreatedAt(project.getCreatedAt());
     }
 
-
     public void setId(Integer id) {
         this.id = id;
     }
