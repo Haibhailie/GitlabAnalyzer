@@ -16,13 +16,15 @@ import java.util.List;
 
 
 public class CommitService {
-    private double addLOCFactor = 1;
-    private double deleteLOCFactor = 0.2;
-    private double syntaxChangeFactor = 0.2;
-    private double blankLOCFactor = 0;
-    private double SpacingChangeFactor = 0;
+    private final double addLOCFactor = 1;
+    private final double deleteLOCFactor = 0.2;
+    private final double syntaxChangeFactor = 0.2;
+    private final double blankLOCFactor = 0;
+    private final double SpacingChangeFactor = 0;
 
-    private final List<String> commentTypes = Arrays.asList("//", "/*");
+    private static final List<String> commentDoubleSlash = Arrays.asList(".java", ".cpp");
+    private static final List<String> commentSlashStar = Arrays.asList(".js", ".css");
+
 
     double getCommitScore(GitLabApi gitLabApi, int projectId, String sha) throws GitLabApiException {
         double score = 0;
@@ -31,17 +33,16 @@ public class CommitService {
         for(Diff d : diffs) {
             score += getAddLOCScore(d);
             score += getSyntaxChangeScore(d);
-//            score += getBlankLOCScore(commit, d);
+            score += getBlankLOCScore(commit, d);
+            score += getSpacingChangeScore(d);
         }
         score += getDeleteLOCScore(commit);
         return score;
     }
 
     double getAddLOCScore(Diff diff) {
-        // Removing blank lines
-        String s = diff.getDiff().replace("+\n", "");
-        long LOCCount = s.chars().filter(ch -> ch == '\n').count() - 1; // -1 due to a header line in each diff
-        return LOCCount * addLOCFactor;
+        long actualLOCCount = getLinesOfActualCode(diff);
+        return actualLOCCount * addLOCFactor;
     }
 
     double getDeleteLOCScore(Commit commit) {
@@ -53,25 +54,31 @@ public class CommitService {
     }
 
     double getBlankLOCScore(Commit commit, Diff diff) {
-        // Removing blank lines
-        String s = diff.getDiff().replace("+\n", "");
-        long LOCCount = s.chars().filter(ch -> ch == '\n').count() - 1; // -1 due to a header line in each diff
-        long blankLOCCount = commit.getStats().getAdditions() - LOCCount;
-
-        long commentsCount = freqOfComment(diff);
+        long actualLOCCount = getLinesOfActualCode(diff);
+        long blankLOCCount = commit.getStats().getAdditions() - actualLOCCount;
+        long commentsCount = getNumComments(diff);
 
         return (blankLOCCount + commentsCount) * blankLOCFactor;
     }
 
+    private double getSpacingChangeScore(Diff d) {
+        return 0 * SpacingChangeFactor;
+    }
+
+    long getLinesOfActualCode(Diff diff) {
+        // Remove blank lines
+        String s = diff.getDiff().replace("+\n", "");
+        return s.chars().filter(ch -> ch == '\n').count() - 1; // -1 due to a header line in each diff
+    }
+
     // https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string
-    private static long freqOfComment(Diff diff) {
+    private static long getNumComments(Diff diff) {
         int lastIndex = 0;
         int count = 0;
         String comment = getFileType(diff);
         if(comment.equals("")) {
             return 0;
         }
-
         while(lastIndex != -1){
             lastIndex = diff.getDiff().indexOf(comment,lastIndex);
             if(lastIndex != -1){
@@ -85,9 +92,9 @@ public class CommitService {
     private static String getFileType(Diff diff) {
         int indexOfPeriod = diff.getNewPath().indexOf('.');
         String fileType = diff.getNewPath().substring(indexOfPeriod);
-        if(fileType.equals(".java") || fileType.equals(".cpp")) {
+        if(commentDoubleSlash.contains(fileType)) {
             return "//";
-        } else if(fileType.equals(".js")) {
+        } else if(commentSlashStar.contains(fileType)) {
             return "/*";
         } else {
             return "";
