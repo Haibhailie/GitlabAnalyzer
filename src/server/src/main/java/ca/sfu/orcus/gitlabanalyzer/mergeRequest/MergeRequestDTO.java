@@ -1,12 +1,42 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
+import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
+import org.gitlab4j.api.models.MergeRequest;
+import org.gitlab4j.api.models.Note;
 import org.gitlab4j.api.models.Participant;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MergeRequestDTO {
+public class MergeRequestDTO{
+
+
+    public MergeRequestDTO(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
+
+        setOpen(presentMergeRequest.getState().compareTo("opened") == 0);
+        setAuthor(presentMergeRequest.getAuthor().getName());
+        setSourceBranch(presentMergeRequest.getSourceBranch());
+        setTargetBranch(presentMergeRequest.getTargetBranch());
+        setAssignedTo(presentMergeRequest.getAssignee().getName());
+        setDescription(presentMergeRequest.getDescription());
+        setHasConflicts(presentMergeRequest.getHasConflicts());
+        setCommits(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
+        setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectID, presentMergeRequest.getIid()));
+
+        ArrayList<String> notesName = new ArrayList<>();
+        ArrayList<String> notes = new ArrayList<>();
+        List<Note> mrNotes = gitLabApi.getNotesApi().getMergeRequestNotes(projectID, presentMergeRequest.getIid());
+        if (!mrNotes.isEmpty()) {
+            for (Note note : mrNotes) {
+                notesName.add(note.getAuthor().getName());
+                notes.add(note.getBody());
+            }
+            setNotes(notes);
+            setNotesName(notesName);
+        }
+    }
 
     private boolean hasConflicts;
     private boolean isOpen;
