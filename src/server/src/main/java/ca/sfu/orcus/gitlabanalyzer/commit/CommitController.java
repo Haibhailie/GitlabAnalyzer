@@ -19,22 +19,25 @@ public class CommitController {
                                       @RequestParam Optional<String> since,
                                       @RequestParam Optional<String> until) throws GitLabApiException {
 
+        Date dateSince;
+        Date dateUntil;
         if(since.isPresent()) {
-            Date dateSince = new Date(Long.parseLong(String.valueOf(since)) * 1000);
-            Date dateUntil;
+            dateSince = new Date(Long.parseLong(String.valueOf(since)) * 1000); // given value
             if(until.isPresent()) {
-                dateUntil = new Date(Long.parseLong(String.valueOf(until)) * 1000);
+                dateUntil = new Date(Long.parseLong(String.valueOf(until)) * 1000); // given value
             } else {
-                dateUntil = new Date(0);
+                dateUntil = new Date(); // until now
             }
             return CommitRepository.getAllCommits(gitLabApi, projectId, dateSince, dateUntil);
         }
         if(until.isPresent()) {
-            Date dateUntil = new Date(Long.parseLong(String.valueOf(until)) * 1000);
-            Date dateSince = new Date(0);
+            dateUntil = new Date(Long.parseLong(String.valueOf(until)) * 1000); // given value
+            dateSince = new Date(0); // since 1969
             return CommitRepository.getAllCommits(gitLabApi, projectId, dateSince, dateUntil);
         }
-        return CommitRepository.getAllCommits(gitLabApi, projectId);
+        dateSince = new Date(0); // since 1969
+        dateUntil = new Date(); // until now
+        return CommitRepository.getAllCommits(gitLabApi, projectId, dateSince, dateUntil);
     }
 
     @GetMapping("/api/core/{projectId}/commit/{sha}")
