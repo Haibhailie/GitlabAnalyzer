@@ -17,7 +17,6 @@ public class MergeRequestRepository {
         List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
         String presentProjectName = gitLabApi.getProjectApi().getProject(projectID).getName();
 
-        System.out.println("\n\nThe present open Merge Requests in " + presentProjectName + " are:");
         for (MergeRequest mr : mergeRequests) {
             MergeRequestDTO presentMergeRequest = new MergeRequestDTO(gitLabApi, projectID, mr);
             listMR.add(presentMergeRequest);
@@ -25,16 +24,20 @@ public class MergeRequestRepository {
         return listMR;
     }
 
-    public void getAllCommitsFromMergeRequest(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
+    public ArrayList<CommitDTO> getAllCommitsFromMergeRequest(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
 
         ArrayList<CommitDTO> listCommit = new ArrayList<>();
         List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
         String presentProjectName = gitLabApi.getProjectApi().getProject(projectID).getName();
-
-
-
+        for (MergeRequest mr : mergeRequests) {
+            List<Commit> presentCommit = gitLabApi.getMergeRequestApi().getCommits(projectID, mr.getId());
+            for(Commit c:presentCommit){
+                CommitDTO tempDTO = new CommitDTO(gitLabApi, projectID, c);
+                listCommit.add(tempDTO);
+            }
+        }
+        return listCommit;
     }
-
 
 
 }
