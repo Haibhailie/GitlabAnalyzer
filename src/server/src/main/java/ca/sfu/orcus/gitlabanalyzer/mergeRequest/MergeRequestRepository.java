@@ -10,7 +10,6 @@ import java.util.List;
 
 public class MergeRequestRepository {
 
-
     public ArrayList<MergeRequestDTO> getAllMergeRequests(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
 
         ArrayList<MergeRequestDTO> listMR = new ArrayList<>();
@@ -24,6 +23,8 @@ public class MergeRequestRepository {
         }
         return listMR;
     }
+
+
 
 }
 

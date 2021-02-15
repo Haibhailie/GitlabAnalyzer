@@ -13,6 +13,18 @@ import java.util.List;
 public class MergeRequestDTO{
 
 
+    private boolean hasConflicts;
+    private boolean isOpen;
+    private String assignedTo;
+    private String author;
+    private String description;
+    private String sourceBranch;
+    private String targetBranch;
+    private ArrayList<String> notesName;
+    private ArrayList<String> notes;
+    private List<Commit> commits;
+    private List<Participant> participants;
+
     public MergeRequestDTO(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
 
         setOpen(presentMergeRequest.getState().compareTo("opened") == 0);
@@ -37,18 +49,6 @@ public class MergeRequestDTO{
             setNotesName(notesName);
         }
     }
-
-    private boolean hasConflicts;
-    private boolean isOpen;
-    private String assignedTo;
-    private String author;
-    private String description;
-    private String sourceBranch;
-    private String targetBranch;
-    private ArrayList<String> notesName;
-    private ArrayList<String> notes;
-    private List<Commit> commits;
-    private List<Participant> participants;
 
     public void setHasConflicts(boolean hasConflicts) {
         this.hasConflicts = hasConflicts;
