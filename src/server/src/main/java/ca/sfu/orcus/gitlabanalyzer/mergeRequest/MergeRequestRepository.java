@@ -15,8 +15,6 @@ public class MergeRequestRepository {
 
         ArrayList<MergeRequestDTO> listMR = new ArrayList<>();
         List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
-        String presentProjectName = gitLabApi.getProjectApi().getProject(projectID).getName();
-
         for (MergeRequest mr : mergeRequests) {
             MergeRequestDTO presentMergeRequest = new MergeRequestDTO(gitLabApi, projectID, mr);
             listMR.add(presentMergeRequest);
@@ -28,7 +26,6 @@ public class MergeRequestRepository {
 
         ArrayList<CommitDTO> listCommit = new ArrayList<>();
         List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
-        String presentProjectName = gitLabApi.getProjectApi().getProject(projectID).getName();
         for (MergeRequest mr : mergeRequests) {
             List<Commit> presentCommit = gitLabApi.getMergeRequestApi().getCommits(projectID, mr.getId());
             for(Commit c:presentCommit){
@@ -37,6 +34,21 @@ public class MergeRequestRepository {
             }
         }
         return listCommit;
+    }
+
+    public ArrayList<MergeRequestDiffDTO> getDiffFromMergeRequest(GitLabApi gitLabApi, int projectID, int mergeRequestID) throws GitLabApiException {
+        ArrayList<MergeRequestDiffDTO> listDiff = new ArrayList<>();
+        List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
+        for (MergeRequest mr : mergeRequests) {
+            List<Commit> presentCommit = gitLabApi.getMergeRequestApi().getCommits(projectID, mr.getId());
+            for(Commit c:presentCommit) {
+                List<Diff> commitDiffs = gitLabApi.getCommitsApi().getDiff(projectID, c.getShortId());
+                for(Diff d : commitDiffs) {
+                    listDiff.add(new MergeRequestDiffDTO(c, d));
+                }
+            }
+        }
+        return listDiff;
     }
 
 
