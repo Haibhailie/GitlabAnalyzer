@@ -21,7 +21,8 @@ public class AuthenticationRepository {
 
     private Document generateUserPatDoc(User newUser) {
         return new Document("_id", new ObjectId())
-                .append("pat", newUser.getAuthToken())
+                .append("type", "test_pat")
+                .append("pat", newUser.getPat())
                 .append("jwt", newUser.getJwt());
     }
 }

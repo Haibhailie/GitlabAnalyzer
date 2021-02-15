@@ -3,7 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.authentication;
 public class User {
     private String username;
     private String password;
-    private String authToken;
+    private String pat;
     private String jwt;
 
     private User(String username, String password) {
@@ -11,8 +11,8 @@ public class User {
         this.password = password;
     }
 
-    private User(String authToken) {
-        this.authToken = authToken;
+    private User(String pat) {
+        this.pat = pat;
     }
 
     public static User fromUsernameAndPassword(String username, String password) {
@@ -31,8 +31,8 @@ public class User {
         return password;
     }
 
-    public String getAuthToken() {
-        return authToken;
+    public String getPat() {
+        return pat;
     }
 
     public String getJwt() {
