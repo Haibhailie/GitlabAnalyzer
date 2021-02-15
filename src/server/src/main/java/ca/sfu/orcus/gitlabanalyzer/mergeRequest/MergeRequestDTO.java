@@ -20,9 +20,11 @@ public class MergeRequestDTO{
     private String description;
     private String sourceBranch;
     private String targetBranch;
+    private int numAdditions;
+    private int numDeletions;
     private ArrayList<String> notesName;
     private ArrayList<String> notes;
-    private List<Commit> commits;
+    private List<String> commiters;
     private List<Participant> participants;
 
     public MergeRequestDTO(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
@@ -34,9 +36,10 @@ public class MergeRequestDTO{
         setAssignedTo(presentMergeRequest.getAssignee().getName());
         setDescription(presentMergeRequest.getDescription());
         setHasConflicts(presentMergeRequest.getHasConflicts());
-        setCommits(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
+        setCommiters(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
+        setNumAdditions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
+        setNumDeletions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectID, presentMergeRequest.getIid()));
-
         ArrayList<String> notesName = new ArrayList<>();
         ArrayList<String> notes = new ArrayList<>();
         List<Note> mrNotes = gitLabApi.getNotesApi().getMergeRequestNotes(projectID, presentMergeRequest.getIid());
@@ -86,12 +89,38 @@ public class MergeRequestDTO{
         this.notes = notes;
     }
 
-    public void setCommits(List<Commit> commits) {
-        this.commits = commits;
-    }
-
     public void setParticipants(List<Participant> participants) {
         this.participants = participants;
+    }
+
+    public void setNumAdditions(List<Commit> commits) {
+        numAdditions = 0;
+        for(Commit c : commits){
+            numAdditions+=c.getStats().getAdditions();
+        }
+    }
+
+    public void setNumDeletions(List<Commit> commits) {
+        numDeletions = 0;
+        for(Commit c : commits){
+            numDeletions+=c.getStats().getDeletions();
+        }
+    }
+
+    public void setCommiters(List<Commit> commits) {
+        commiters.add(commits.get(0).getAuthorName());
+        for(Commit c : commits){
+            //Checks if commiter is already present in list, prevent duplicate authors
+            String commitAuthor = c.getAuthorName();
+            boolean isPresent = false;
+            for(int i=0;i<commiters.size();i++){
+                if(commiters.get(i).compareTo(commitAuthor)==0)
+                    isPresent = true;
+            }
+            if(!isPresent)
+                commiters.add(commitAuthor);
+        }
+
     }
 
 }

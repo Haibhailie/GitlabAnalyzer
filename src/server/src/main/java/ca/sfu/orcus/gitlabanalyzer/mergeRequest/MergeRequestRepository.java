@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitDTO;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.*;
@@ -22,6 +23,16 @@ public class MergeRequestRepository {
             listMR.add(presentMergeRequest);
         }
         return listMR;
+    }
+
+    public void getAllCommitsFromMergeRequest(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
+
+        ArrayList<CommitDTO> listCommit = new ArrayList<>();
+        List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
+        String presentProjectName = gitLabApi.getProjectApi().getProject(projectID).getName();
+
+
+
     }
 
 
