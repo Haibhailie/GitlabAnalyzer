@@ -9,7 +9,7 @@ import java.util.List;
 
 
 public class MemberRepository {
-    public ArrayList<MemberDTO> getAllMembers(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
+    public ArrayList<MemberDTO> getAllMemberDTOS(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
 
         ArrayList<MemberDTO> listMember = new ArrayList<>();
         List<Member> members = gitLabApi.getProjectApi().getAllMembers(projectID);
@@ -43,5 +43,6 @@ public class MemberRepository {
         }
         return listMember;
     }
+
 
 }

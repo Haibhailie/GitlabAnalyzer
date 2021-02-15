@@ -8,9 +8,11 @@ package ca.sfu.orcus.gitlabanalyzer.member;
 //Developer (30)
 //Maintainer (40)
 //Owner (50)
+import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Member;
 
 import java.util.Date;
-
 public class MemberDTO {
 
     private String name;
@@ -21,6 +23,19 @@ public class MemberDTO {
     private Integer access_level;
     private String avatar_url;
     private Date expires_at;
+
+    public MemberDTO(GitLabApi gitLabApi, int projectID, Member presentMember) throws GitLabApiException {
+        setName(presentMember.getName());
+        setEmail(presentMember.getEmail());
+        setId(presentMember.getId());
+        setUsername(presentMember.getUsername());
+        setState(presentMember.getState());
+        setAccess_level(presentMember.getAccessLevel().value);
+        setAvatar_url(presentMember.getAvatarUrl());
+        setExpires_at(presentMember.getExpiresAt());
+    }
+
+
 
     public void setName(String name) {
         this.name = name;
