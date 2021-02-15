@@ -28,10 +28,11 @@ public class AuthenticationService {
         }
     }
 
+    // try getting some small amount of data using the GitLabApi object to check if the pat token was valid
     private boolean patIsValid(String pat) {
         try {
             GitLabApi gitLabApi = new GitLabApi("http://cmpt373-1211-09.cmpt.sfu.ca/", pat);
-            gitLabApi.getProjectApi().getProjects();
+            gitLabApi.getUserApi().getUser(1);
             return true;
         } catch (GitLabApiException e) {
             return false;
