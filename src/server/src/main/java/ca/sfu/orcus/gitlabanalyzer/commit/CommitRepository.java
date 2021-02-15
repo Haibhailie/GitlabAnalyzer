@@ -10,31 +10,5 @@ import java.util.Date;
 import java.util.List;
 
 public class CommitRepository {
-    private final static String defaultBranch = "master";
-
-    public static ArrayList<CommitDTO> getAllCommits(GitLabApi gitLabApi, int projectID, Date since, Date until) throws GitLabApiException {
-        List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectID, defaultBranch, since, until);
-
-        return getAllCommitDTOS(gitLabApi, projectID, allGitCommits);
-    }
-
-    private static ArrayList<CommitDTO> getAllCommitDTOS(GitLabApi gitLabApi, int projectID, List<Commit> allGitCommits) throws GitLabApiException {
-        ArrayList<CommitDTO> allCommits = new ArrayList<>();
-        for(Commit commit : allGitCommits) {
-            CommitDTO presentCommit = new CommitDTO(gitLabApi, projectID, commit);
-            allCommits.add(presentCommit);
-        }
-        return allCommits;
-    }
-
-    public static CommitDTO getSingleCommit(GitLabApi gitLabApi, int projectID, String sha) throws GitLabApiException {
-        Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectID, sha);
-        return new CommitDTO(gitLabApi, projectID, gitCommit);
-    }
-
-    public static List<Diff> getDiffOfCommit(GitLabApi gitLabApi, int projectID, String sha) throws GitLabApiException {
-        return gitLabApi.getCommitsApi().getDiff(projectID, sha);
-    }
-
 
 }
