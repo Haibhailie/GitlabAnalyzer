@@ -1,14 +1,18 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
-import org.gitlab4j.api.GitLabApi;
-import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.Commit;
-import org.gitlab4j.api.models.Diff;
+import com.mongodb.client.*;
+import org.bson.Document;
+import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
+@Repository
 public class CommitRepository {
+    MongoCollection<Document> collection;
+
+    public CommitRepository() {
+        MongoClient mongoClient = MongoClients.create(System.getenv("MONGO_URI"));
+        MongoDatabase database = mongoClient.getDatabase(System.getenv("DATABASE"));
+        this.collection = database.getCollection(System.getenv("USERS-COLLECTION"));
+    }
 
 }
