@@ -1,0 +1,63 @@
+stages:
+  - build
+  # - test
+  - format
+  # - deploy
+
+variables:
+  STAGING_BRANCH: "master"
+  NODE_IMAGE: "node:14"
+  # JAVA_IMAGE: ""
+
+frontend build:
+  stage: build
+  needs: []
+  image: $NODE_IMAGE
+  tags:
+    - docker
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID != null'
+      changes:
+        - src/client/**/*
+      when: always
+    - if: '$CI_COMMIT_BRANCH == $STAGING_BRANCH'
+      when: always
+  before_script:
+    - cd src/client
+    - npm ci
+  script:
+    - CI=true npm run build
+
+frontend lint:
+  stage: format
+  needs: []
+  image: $NODE_IMAGE
+  tags:
+    - docker
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID != null || $CI_COMMIT_BRANCH == $STAGING_BRANCH'
+      changes:
+        - src/client/**/*
+      when: always
+  before_script:
+    - cd src/client
+    - node -v
+    - npm ci
+  script:
+    - ./node_modules/.bin/eslint "src/**/*.{ts,tsx}"
+
+frontend format:
+  stage: format
+  needs: []
+  image: $NODE_IMAGE
+  tags:
+    - docker
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID != null || $CI_COMMIT_BRANCH == $STAGING_BRANCH'
+      changes:
+        - src/client/**/*
+      when: always
+  before_script:
+    - npm install prettier@^2.2.0 --global
+  script:
+    - prettier --check "src/client/src/**/*.{ts,tsx}"
