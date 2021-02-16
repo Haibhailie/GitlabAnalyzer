@@ -8,11 +8,16 @@ package ca.sfu.orcus.gitlabanalyzer.member;
 //Developer (30)
 //Maintainer (40)
 //Owner (50)
+
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Member;
+import org.gitlab4j.api.models.MergeRequest;
 
 import java.util.Date;
+import java.util.List;
+
 public class MemberDTO {
 
     private String name;
@@ -34,7 +39,6 @@ public class MemberDTO {
         setAvatar_url(presentMember.getAvatarUrl());
         setExpires_at(presentMember.getExpiresAt());
     }
-
 
 
     public void setName(String name) {

@@ -32,12 +32,16 @@ public class CommitDTO {
 
         List<Diff> allDiffs = new ArrayList<>();
         List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectID, commit.getId());
-        if(!gitDiffs.isEmpty()) {
-            for(Diff d : gitDiffs) {
+        if (!gitDiffs.isEmpty()) {
+            for (Diff d : gitDiffs) {
                 allDiffs.add(d);
             }
             this.setDiffs(allDiffs);
         }
+    }
+
+    public String getAuthor() {
+        return this.author;
     }
 
     public void setTitle(String title) {
