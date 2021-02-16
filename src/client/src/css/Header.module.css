@@ -1,39 +1,48 @@
 .headerDiv {
+  display: flex;
+  align-items: center;
+
   background-color: var(--color-header);
   right: 0;
+
   padding: 2px 36px;
-  align-items: center;
 }
 
 .logo {
+  float: left;
+
   width: 36px;
   height: 36px;
-  padding-top: 15px;
-  padding-right: 5px;
-  display: inline;
-  float: left;
 }
 
 .appName {
+  float: right;
+  margin-left: 5px;
+
   color: #ffffff;
   font: var(--font-header);
 }
 
+.homeLink {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+
+  text-decoration: none;
+}
+
 .hamburgerMenu {
   cursor: pointer;
-  float: left;
+  outline: none;
+
   background-color: transparent;
   border: none;
+
   margin: 0;
   padding: 0;
-  outline: none;
 }
 
 .hamburgerMenuIcon {
   width: 24px;
   height: 24px;
-  margin-right: 24px;
-  padding-top: 20px;
-  display: inline;
-  float: left;
 }

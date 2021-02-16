@@ -10,7 +10,7 @@ const Header = () => (
     <button className={styles.hamburgerMenu}>
       <img src={menuIcon} className={styles.hamburgerMenuIcon} />
     </button>
-    <Link to="/home">
+    <Link to="/home" className={styles.homeLink}>
       <img src={planet} className={styles.logo} />
       <h1 className={styles.appName}>GitLab Analyzer</h1>
     </Link>
