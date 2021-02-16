@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import SideNavItem from './SideNavItem'
 
 import styles from '../css/SideNav.module.css'
@@ -13,9 +15,19 @@ const items = [
 ]
 
 const SideNav = () => {
+  const [isOpen, setIsOpen] = useState(true)
+
+  const toggleSideNav = () => {
+    setIsOpen(!isOpen)
+  }
+
   return (
-    <aside className={styles.container}>
-      <button type="button" className={styles.closeSideNavButton}>
+    <aside className={isOpen ? styles.sideBarOpen : styles.sideBarHidden}>
+      <button
+        type="button"
+        className={styles.closeSideNavButton}
+        onClick={toggleSideNav}
+      >
         &#8249;
       </button>
       <ul className={styles.itemList}>
