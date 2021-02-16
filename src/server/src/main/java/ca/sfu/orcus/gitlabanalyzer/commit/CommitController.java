@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 public class CommitController {
-    private final GitLabApi gitLabApi = null; // null because currently unable to verify if gitLabApi is valid
+    private final GitLabApi gitLabApi = new GitLabApi("http://cmpt373-1211-09.cmpt.sfu.ca", "zf-pHhtnT8hRdwhY4Ycx"); // null because currently unable to verify if gitLabApi is valid
 
     @GetMapping("/api/core/{projectId}/commits")
     public List<CommitDTO> getCommits(@PathVariable int projectId,
