@@ -55,4 +55,34 @@ public class MergeRequestDiffDTO {
         this.diff = diff;
     }
 
+
+    public boolean isNewFile() {
+        return isNewFile;
+    }
+
+    public boolean isDeletedFile() {
+        return isDeletedFile;
+    }
+
+    public boolean isRenamedFile() {
+        return isRenamedFile;
+    }
+
+    public String getCommitName() {
+        return commitName;
+    }
+
+    public String getNewPath() {
+        return newPath;
+    }
+
+    public String getOldPath() {
+        return oldPath;
+    }
+
+    public String getDiff() {
+        return diff;
+    }
+
+
 }

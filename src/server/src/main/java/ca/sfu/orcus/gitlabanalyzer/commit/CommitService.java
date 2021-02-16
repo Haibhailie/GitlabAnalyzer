@@ -14,8 +14,7 @@ public class CommitService {
 
     public static ArrayList<CommitDTO> getAllCommits(GitLabApi gitLabApi, int projectID, Date since, Date until) throws GitLabApiException {
         List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectID, defaultBranch, since, until);
-
-        return getAllCommitDTOS(gitLabApi, projectID, allGitCommits);
+         return getAllCommitDTOS(gitLabApi, projectID, allGitCommits);
     }
 
     private static ArrayList<CommitDTO> getAllCommitDTOS(GitLabApi gitLabApi, int projectID, List<Commit> allGitCommits) throws GitLabApiException {
