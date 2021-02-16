@@ -15,6 +15,8 @@ public class ProjectDto {
     private Owner owner;
     private Date lastActivityAt;
     private Date createdAt;
+    private String defaultBranch;
+    private long storageSize;
 
     public ProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
         setId(project.getId());
@@ -24,6 +26,8 @@ public class ProjectDto {
         setOwner(project.getOwner());
         setLastActivityAt(project.getLastActivityAt());
         setCreatedAt(project.getCreatedAt());
+        setDefaultBranch(project.getDefaultBranch());
+        setStorageSize(project.getStatistics().getStorageSize());
     }
 
     public void setId(Integer id) {
@@ -52,5 +56,13 @@ public class ProjectDto {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setDefaultBranch(String defaultBranch) {
+        this.defaultBranch = defaultBranch;
+    }
+
+    public void setStorageSize(long storageSize) {
+        this.storageSize = storageSize;
     }
 }
