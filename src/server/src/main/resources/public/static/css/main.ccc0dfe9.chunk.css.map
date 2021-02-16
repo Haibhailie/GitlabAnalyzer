@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/css/index.css"],"names":[],"mappings":"AAAA,MACE,iBACF,CAEA,KACE,QACF,CAEA,KACE,yEAEF","file":"main.ccc0dfe9.chunk.css","sourcesContent":[":root {\r\n  --color-main: black;\r\n}\r\n\r\nbody {\r\n  margin: 0;\r\n}\r\n\r\ncode {\r\n  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',\r\n    monospace;\r\n}\r\n"]}
