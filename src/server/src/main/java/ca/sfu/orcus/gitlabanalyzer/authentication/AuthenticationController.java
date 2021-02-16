@@ -1,9 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +22,16 @@ public class AuthenticationController {
             String jwt = authService.addNewUser(user);
             Cookie cookie = createSessionIdCookie(jwt);
             response.addCookie(cookie);
+            response.setStatus(200);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(400);
+        }
+    }
+
+    @GetMapping("/api/ping")
+    public void checkJwtIsValid(@CookieValue(value = "sessionId") String jwt, HttpServletResponse response) {
+        try {
+            authService.validateJwt(jwt);
             response.setStatus(200);
         } catch (IllegalArgumentException e) {
             response.setStatus(400);

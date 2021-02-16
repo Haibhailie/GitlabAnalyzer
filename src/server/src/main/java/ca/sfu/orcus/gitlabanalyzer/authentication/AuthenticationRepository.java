@@ -5,6 +5,8 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import static com.mongodb.client.model.Filters.*;
+
 @Repository
 public class AuthenticationRepository {
     MongoCollection<Document> collection;
@@ -25,4 +27,15 @@ public class AuthenticationRepository {
                 .append("pat", newUser.getPat())
                 .append("jwt", newUser.getJwt());
     }
+
+    public boolean contains(String jwt) {
+        Document user = collection.find(eq("jwt", jwt)).first();
+        return (user != null);
+    }
+
+    public String getPatFor(String jwt) {
+        Document user = collection.find(eq("jwt", jwt)).first();
+        return user.getString("pat");
+    }
+
 }

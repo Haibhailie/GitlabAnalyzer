@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final AuthenticationRepository repository;
-    private final JwtTokenCreator tokenCreator;
+    private final JwtService jwtService;
 
     @Autowired
-    public AuthenticationService(AuthenticationRepository repository, JwtTokenCreator tokenCreator) {
+    public AuthenticationService(AuthenticationRepository repository, JwtService jwtService) {
         this.repository = repository;
-        this.tokenCreator = tokenCreator;
+        this.jwtService = jwtService;
     }
 
     public String addNewUser(User newUser) throws IllegalArgumentException {
         if (patIsValid(newUser.getPat())) {
-            String jwt = tokenCreator.createJwt(newUser);
+            String jwt = jwtService.createJwt(newUser);
             newUser.setJwt(jwt);
             repository.addNewUser(newUser);
             return jwt;
@@ -36,6 +36,17 @@ public class AuthenticationService {
             return true;
         } catch (GitLabApiException e) {
             return false;
+        }
+    }
+
+    public void validateJwt(String jwt) throws IllegalArgumentException {
+        if (repository.contains(jwt)) {
+            String pat = repository.getPatFor(jwt);
+            if (!patIsValid(pat)) {
+                throw new IllegalArgumentException("Invalid pat");
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid pat");
         }
     }
 }
