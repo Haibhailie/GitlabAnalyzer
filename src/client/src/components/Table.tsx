@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import styles from '../css/Table.module.css'
 import classNames from '../utils/classNames'
+
+import styles from '../css/Table.module.css'
 
 export interface ITableProps {
   classes?: { table?: string; header?: string; data?: string }

@@ -33,7 +33,6 @@
         "endOfLine": "auto"
       }
     ],
-    "react/react-in-jsx-scope": "off",
-    "prettier/arrowParens": 0
+    "react/react-in-jsx-scope": "off"
   }
 }
