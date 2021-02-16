@@ -1,16 +1,13 @@
 .headerDiv {
   display: flex;
   align-items: center;
-
   background-color: var(--color-header);
   right: 0;
-
   padding: 2px 36px;
 }
 
 .logo {
   float: left;
-
   width: 36px;
   height: 36px;
 }
@@ -18,7 +15,6 @@
 .appName {
   float: right;
   margin-left: 5px;
-
   color: #ffffff;
   font: var(--font-header);
 }
@@ -27,17 +23,14 @@
   display: flex;
   align-items: center;
   margin-left: 20px;
-
   text-decoration: none;
 }
 
 .hamburgerMenu {
   cursor: pointer;
   outline: none;
-
   background-color: transparent;
   border: none;
-
   margin: 0;
   padding: 0;
 }
