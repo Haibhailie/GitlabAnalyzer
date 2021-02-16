@@ -46,7 +46,7 @@ public class MergeRequestController {
         return MergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil);
     }
 
-
+    //Test using http://localhost:8080/api/core/mergerequests/5/10/commits on Postman
     @GetMapping("/api/core/mergerequests/{projectId}/{mergerequestId}/commits")
     public List<CommitDTO> getCommitsFromMergeRequests(@PathVariable int mergerequestId,
                                                        @PathVariable String projectId) throws GitLabApiException {

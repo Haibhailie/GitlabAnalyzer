@@ -26,9 +26,10 @@ public class CommitDTO {
         this.setId(commit.getId());
         this.setDateCommitted(commit.getCommittedDate());
         this.setMessage(commit.getMessage());
-        this.setNumAdditions(commit.getStats().getAdditions());
-        this.setNumDeletions(commit.getStats().getDeletions());
-        this.setTotal(commit.getStats().getTotal());
+        Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectID, commit.getShortId());
+        this.setNumAdditions(presentCommit.getStats().getAdditions());
+        this.setNumDeletions(presentCommit.getStats().getDeletions());
+        this.setTotal(presentCommit.getStats().getTotal());
 
         List<Diff> allDiffs = new ArrayList<>();
         List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectID, commit.getId());
@@ -75,4 +76,41 @@ public class CommitDTO {
     public void setDiffs(List<Diff> diffs) {
         this.diffs = diffs;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Date getDateCommitted() {
+        return dateCommitted;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public int getNumAdditions() {
+        return numAdditions;
+    }
+
+    public int getNumDeletions() {
+        return numDeletions;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public List<Diff> getDiffs() {
+        return diffs;
+    }
+
 }

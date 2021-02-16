@@ -10,6 +10,7 @@ import java.util.List;
 public class MergeRequestDTO{
 
 
+    private int mergeRequestID;
     private boolean hasConflicts;
     private boolean isOpen;
     private String assignedTo;
@@ -26,6 +27,7 @@ public class MergeRequestDTO{
 
     public MergeRequestDTO(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
 
+        setMergeRequestID(presentMergeRequest.getIid());
         setOpen(presentMergeRequest.getState().compareTo("opened") == 0);
         setAuthor(presentMergeRequest.getAuthor().getName());
         setSourceBranch(presentMergeRequest.getSourceBranch());
@@ -53,6 +55,10 @@ public class MergeRequestDTO{
             setNotes(notes);
             setNotesName(notesName);
         }
+    }
+
+    public void setMergeRequestID(int mergeRequestID) {
+        this.mergeRequestID = mergeRequestID;
     }
 
     public void setHasConflicts(boolean hasConflicts) {
@@ -129,6 +135,12 @@ public class MergeRequestDTO{
         }
 
     }
+
+
+    public int getMergeRequestID() {
+        return mergeRequestID;
+    }
+
 
     public String getAuthor() {
         return author;
