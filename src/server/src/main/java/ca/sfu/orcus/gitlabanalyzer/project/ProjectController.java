@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "api")
 public class ProjectController {
     private final ProjectService projectService;
+
     // TODO: Need to provide GitLabApi after authentication is set up
     private final GitLabApi gitLabApi = GitLabApi.oauth2Login("http://cmpt373-1211-09.cmpt.sfu.ca",
             "user",
@@ -23,12 +25,12 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping(path = "/api/projects")
+    @GetMapping(path = "projects")
     public List<ProjectDto> getAllProjects() throws GitLabApiException {
         return projectService.getAllProjects(gitLabApi);
     }
 
-    @GetMapping(path = "/api/core/{projectId}/project")
+    @GetMapping(path = "core/{projectId}/project")
     public ProjectDto getProject(@PathVariable("projectId") int projectId) throws GitLabApiException {
         return projectService.getProject(gitLabApi, projectId);
     }
