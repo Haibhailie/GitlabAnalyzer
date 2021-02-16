@@ -41,7 +41,7 @@ public class MergeRequestService {
         List<MergeRequestDiffDTO> listDiff = new ArrayList<>();
         List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
         for (MergeRequest mr : mergeRequests) {
-            List<Commit> presentCommit = gitLabApi.getMergeRequestApi().getCommits(projectID, mr.getId());
+            List<Commit> presentCommit = gitLabApi.getMergeRequestApi().getCommits(projectID, mr.getIid());
             for(Commit c:presentCommit) {
                 List<Diff> commitDiffs = gitLabApi.getCommitsApi().getDiff(projectID, c.getShortId());
                 for(Diff d : commitDiffs) {

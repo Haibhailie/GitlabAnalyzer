@@ -18,6 +18,7 @@ import java.util.Optional;
 @RestController
 public class MergeRequestController {
 
+    //Using our VM server for testing purposes
     private final GitLabApi gitLabApi = new GitLabApi("http://cmpt373-1211-09.cmpt.sfu.ca", "FiEWixWRQZJdt2TC_btj");
 
     //Test using http://localhost:8080/api/core/mergerequests/5/mergeRequests?since=1612508394 on Postman
@@ -55,6 +56,7 @@ public class MergeRequestController {
         return MergeRequestService.getAllCommitsFromMergeRequest(gitLabApi, integerProjectID, mergerequestId);
     }
 
+    //Test using http://localhost:8080/api/core/mergerequests/5/10/diff on Postman
     @GetMapping("/api/core/mergerequests/{projectId}/{mergerequestId}/diff")
     public List<MergeRequestDiffDTO> getDiffsFromMergeRequests(@PathVariable int mergerequestId,
                                                        @PathVariable String projectId) throws GitLabApiException {
