@@ -20,22 +20,23 @@ public class MergeRequestController {
 
     private final GitLabApi gitLabApi = new GitLabApi("http://cmpt373-1211-09.cmpt.sfu.ca", "FiEWixWRQZJdt2TC_btj");
 
-    @GetMapping("/api/core/{projectId}/mergeRequests")
+    //Test using http://localhost:8080/api/core/mergerequests/5/mergeRequests?since=1612508394 on Postman
+    @GetMapping("/api/core/mergerequests/{projectId}/mergeRequests")
     public List<MergeRequestDTO> getMergeRequests(@PathVariable int projectId,
-                                      @RequestParam Optional<String> since,
-                                      @RequestParam Optional<String> until) throws GitLabApiException{
+                                      @RequestParam (required = false) String since,
+                                      @RequestParam (required = false) String until) throws GitLabApiException{
 
         Date dateSince, dateUntil;
-        if(since.isPresent()) {
+        if(since!=null) {
             dateSince = new Date(Long.parseLong(String.valueOf(since)) * 1000); // since given value
-            if(until.isPresent()) {
+            if(until!=null) {
                 dateUntil = new Date(Long.parseLong(String.valueOf(until)) * 1000); // until given value
             } else {
                 dateUntil = new Date(); // until now
             }
             return MergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil);
         }
-        if(until.isPresent()) {
+        if(until!=null) {
             dateSince = new Date(0); // since 1969
             dateUntil = new Date(Long.parseLong(String.valueOf(until)) * 1000); // until given value
             return MergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil);
@@ -45,23 +46,20 @@ public class MergeRequestController {
         return MergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil);
     }
 
-    @GetMapping("/api/core/{projectId}/{mergerequestId}/commits")
-    public List<CommitDTO> getCommitsFromMergeRequests(@PathVariable String mergeRequestId,
+
+    @GetMapping("/api/core/mergerequests/{projectId}/{mergerequestId}/commits")
+    public List<CommitDTO> getCommitsFromMergeRequests(@PathVariable int mergerequestId,
                                                        @PathVariable String projectId) throws GitLabApiException {
 
-        int integerMergeRequestID = Integer.parseInt(mergeRequestId);
         int integerProjectID = Integer.parseInt(projectId);
-        return MergeRequestService.getAllCommitsFromMergeRequest(gitLabApi, integerProjectID, integerMergeRequestID);
-
+        return MergeRequestService.getAllCommitsFromMergeRequest(gitLabApi, integerProjectID, mergerequestId);
     }
 
-    @GetMapping("/api/core/{projectId}/{mergerequestId}/diff")
-    public List<MergeRequestDiffDTO> getDiffsFromMergeRequests(@PathVariable String mergeRequestId,
+    @GetMapping("/api/core/mergerequests/{projectId}/{mergerequestId}/diff")
+    public List<MergeRequestDiffDTO> getDiffsFromMergeRequests(@PathVariable int mergerequestId,
                                                        @PathVariable String projectId) throws GitLabApiException {
 
-        int integerMergeRequestID = Integer.parseInt(mergeRequestId);
         int integerProjectID = Integer.parseInt(projectId);
-        return MergeRequestService.getDiffFromMergeRequest(gitLabApi, integerProjectID, integerMergeRequestID);
+        return MergeRequestService.getDiffFromMergeRequest(gitLabApi, integerProjectID, mergerequestId);
     }
-
 }

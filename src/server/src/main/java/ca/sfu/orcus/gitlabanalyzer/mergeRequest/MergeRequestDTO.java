@@ -2,10 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.Commit;
-import org.gitlab4j.api.models.MergeRequest;
-import org.gitlab4j.api.models.Note;
-import org.gitlab4j.api.models.Participant;
+import org.gitlab4j.api.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +21,7 @@ public class MergeRequestDTO{
     private int numDeletions;
     private ArrayList<String> notesName;
     private ArrayList<String> notes;
-    private List<String> commiters;
+    private ArrayList<String> commiters;
     private List<Participant> participants;
 
     public MergeRequestDTO(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
@@ -33,12 +30,17 @@ public class MergeRequestDTO{
         setAuthor(presentMergeRequest.getAuthor().getName());
         setSourceBranch(presentMergeRequest.getSourceBranch());
         setTargetBranch(presentMergeRequest.getTargetBranch());
-        setAssignedTo(presentMergeRequest.getAssignee().getName());
+        if(presentMergeRequest.getAssignee().getName()==null)
+            setAssignedTo("Unassigned");
+        else
+            setAssignedTo(presentMergeRequest.getAssignee().getName());
         setDescription(presentMergeRequest.getDescription());
         setHasConflicts(presentMergeRequest.getHasConflicts());
         setCommiters(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
-        setNumAdditions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
-        setNumDeletions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
+
+        setNumAdditions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()), gitLabApi, projectID);
+        setNumDeletions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()), gitLabApi, projectID);
+
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectID, presentMergeRequest.getIid()));
         ArrayList<String> notesName = new ArrayList<>();
         ArrayList<String> notes = new ArrayList<>();
@@ -93,22 +95,27 @@ public class MergeRequestDTO{
         this.participants = participants;
     }
 
-    public void setNumAdditions(List<Commit> commits) {
+    public void setNumAdditions(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
+
         numAdditions = 0;
         for(Commit c : commits){
-            numAdditions+=c.getStats().getAdditions();
+            Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
+            if(presentCommit.getStats()!=null)
+                numAdditions+=presentCommit.getStats().getAdditions();
         }
     }
 
-    public void setNumDeletions(List<Commit> commits) {
+    public void setNumDeletions(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
         numDeletions = 0;
         for(Commit c : commits){
-            numDeletions+=c.getStats().getDeletions();
+            Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
+            if(presentCommit.getStats()!=null)
+                numDeletions+=presentCommit.getStats().getDeletions();
         }
     }
 
     public void setCommiters(List<Commit> commits) {
-        commiters.add(commits.get(0).getAuthorName());
+        commiters = new ArrayList<>();
         for(Commit c : commits){
             //Checks if commiter is already present in list, prevent duplicate authors
             String commitAuthor = c.getAuthorName();
@@ -125,6 +132,54 @@ public class MergeRequestDTO{
 
     public String getAuthor() {
         return author;
+    }
+
+    public boolean isHasConflicts() {
+        return hasConflicts;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public String getAssignedTo() {
+        return assignedTo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getSourceBranch() {
+        return sourceBranch;
+    }
+
+    public String getTargetBranch() {
+        return targetBranch;
+    }
+
+    public int getNumAdditions() {
+        return numAdditions;
+    }
+
+    public int getNumDeletions() {
+        return numDeletions;
+    }
+
+    public ArrayList<String> getNotesName() {
+        return notesName;
+    }
+
+    public ArrayList<String> getNotes() {
+        return notes;
+    }
+
+    public ArrayList<String> getCommiters() {
+        return commiters;
+    }
+
+    public List<Participant> getParticipants() {
+        return participants;
     }
 
 
