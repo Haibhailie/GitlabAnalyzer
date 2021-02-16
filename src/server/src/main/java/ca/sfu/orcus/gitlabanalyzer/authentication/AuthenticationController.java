@@ -1,9 +1,9 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +16,13 @@ public class AuthenticationController {
     @Autowired
     public AuthenticationController(AuthenticationService authService) {
         this.authService = authService;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/")
+    public ModelAndView loadIndex() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("index.html");
+        return modelAndView;
     }
 
     @PostMapping("/api/auth")
