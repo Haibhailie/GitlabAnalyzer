@@ -40,10 +40,6 @@ public class CommitDTO {
         }
     }
 
-    public String getAuthor() {
-        return this.author;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
