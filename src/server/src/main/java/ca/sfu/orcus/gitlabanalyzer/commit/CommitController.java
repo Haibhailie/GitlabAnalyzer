@@ -12,27 +12,27 @@ import java.util.Optional;
 
 @RestController
 public class CommitController {
-    private final GitLabApi gitLabApi = null;
+    private final GitLabApi gitLabApi = null; // null because currently unable to verify if gitLabApi is valid
 
     @GetMapping("/api/core/{projectId}/commits")
     public List<CommitDTO> getCommits(@PathVariable int projectId,
-                                      @RequestParam Optional<String> since,
-                                      @RequestParam Optional<String> until) throws GitLabApiException {
+                                      @RequestParam (required = false) String since,
+                                      @RequestParam (required = false) String until) throws GitLabApiException {
 
         Date dateSince;
         Date dateUntil;
-        if(since.isPresent()) {
-            dateSince = new Date(Long.parseLong(String.valueOf(since)) * 1000); // since given value
-            if(until.isPresent()) {
-                dateUntil = new Date(Long.parseLong(String.valueOf(until)) * 1000); // until given value
+        if(since != null) {
+            dateSince = new Date(Long.parseLong(since) * 1000); // since given value
+            if(until != null) {
+                dateUntil = new Date(Long.parseLong(until) * 1000); // until given value
             } else {
                 dateUntil = new Date(); // until now
             }
             return CommitService.getAllCommits(gitLabApi, projectId, dateSince, dateUntil);
         }
-        if(until.isPresent()) {
+        if(until != null) {
             dateSince = new Date(0); // since 1969
-            dateUntil = new Date(Long.parseLong(String.valueOf(until)) * 1000); // until given value
+            dateUntil = new Date(Long.parseLong(until) * 1000); // until given value
             return CommitService.getAllCommits(gitLabApi, projectId, dateSince, dateUntil);
         }
         dateSince = new Date(0); // since 1969
@@ -51,7 +51,4 @@ public class CommitController {
                                            @PathVariable String sha) throws GitLabApiException {
         return CommitService.getDiffOfCommit(gitLabApi, projectId, sha);
     }
-
-
-
 }

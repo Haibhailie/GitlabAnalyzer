@@ -10,9 +10,6 @@ public class CommitRepository {
     MongoCollection<Document> collection;
 
     public CommitRepository() {
-        MongoClient mongoClient = MongoClients.create(System.getenv("MONGO_URI"));
-        MongoDatabase database = mongoClient.getDatabase(System.getenv("DATABASE"));
-        this.collection = database.getCollection(System.getenv("USERS-COLLECTION"));
     }
 
 }
