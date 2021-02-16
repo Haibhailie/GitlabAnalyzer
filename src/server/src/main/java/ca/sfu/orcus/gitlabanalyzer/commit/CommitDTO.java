@@ -76,8 +76,39 @@ public class CommitDTO {
         this.diffs = diffs;
     }
 
-    public String getAuthorName() {
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
         return author;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public Date getDateCommitted() {
+        return dateCommitted;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public int getNumAdditions() {
+        return numAdditions;
+    }
+
+    public int getNumDeletions() {
+        return numDeletions;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public List<Diff> getDiffs() {
+        return diffs;
+    }
 }
