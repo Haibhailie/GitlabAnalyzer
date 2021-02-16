@@ -123,4 +123,9 @@ public class MergeRequestDTO{
 
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
+
 }
