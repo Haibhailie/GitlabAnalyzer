@@ -3,7 +3,6 @@
   height: 100vh;
   overflow: hidden;
   text-align: center;
-  position: relative;
 }
 
 .splash {
@@ -15,8 +14,6 @@
 
 .splash img {
   max-width: 100%;
-  width: auto;
-  height: auto;
 }
 
 h1 {
@@ -38,10 +35,10 @@ h1 {
 .loginButton {
   font: var(--font-button);
   color: var(--color-text-header);
+  background-color: var(--color-header);
   padding: 5px 50px;
   border-radius: 10px;
   border: none;
-  background-color: var(--color-header);
   outline: none;
   max-width: 100%;
 }
