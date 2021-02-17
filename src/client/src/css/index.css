@@ -1,8 +1,8 @@
 :root {
-  --color-main: black;
+  --color-main: #000000;
   --color-header: #364fc7;
   --color-text-header: #e9ecef;
-  --color-text-body: black;
+  --color-text-body: #000000;
   --color-button-hover: #4263eb;
   --font-header: 400 20px Poppins;
   --font-title: 500 72px Poppins;

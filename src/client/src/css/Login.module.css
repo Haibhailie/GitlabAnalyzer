@@ -1,46 +1,24 @@
-.container {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  text-align: center;
-}
-
 .splash {
-  position: absolute;
-  left: 50%;
-  top: 35%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
-.splash img {
-  max-width: 100%;
-}
-
-h1 {
-  font: var(--font-title);
-  color: var(--color-text-body);
-  position: absolute;
-  left: 50%;
-  top: 53%;
-  transform: translate(-50%, -50%);
-}
-
-.loginButtonDiv {
-  position: absolute;
-  left: 50%;
-  top: 110%;
-  transform: translate(-50%, -50%);
+.splashImg {
+  padding-top: 10%;
 }
 
 .loginButton {
   font: var(--font-button);
   color: var(--color-text-header);
   background-color: var(--color-header);
+  margin-top: 15px;
   padding: 5px 50px;
   border-radius: 10px;
   border: none;
   outline: none;
-  max-width: 100%;
 }
 
 .loginButton:hover {
@@ -50,7 +28,6 @@ h1 {
 
 @media only screen and (max-width: 780px) {
   .loginButton {
-    font: var(--font-button-sm);
     padding: 3px 40px;
     margin-top: 15px;
   }
