@@ -28,6 +28,26 @@ public class AuthenticationService {
         }
     }
 
+    public String addNewUserByUserPass(User newUser) throws IllegalArgumentException {
+        String user = newUser.getUsername();
+        String pass = newUser.getPassword();
+        if (userPassIsValid(user, pass)) {
+            try {
+                GitLabApi gitLabApi = GitLabApi.oauth2Login("http://cmpt373-1211-09.cmpt.sfu.ca/", user, pass);
+                String authToken = gitLabApi.getAuthToken();
+                newUser.setAuthToken(authToken);
+                String jwt = tokenCreator.createJwt(newUser);
+                newUser.setJwt(jwt);
+                repository.addNewUserByUserPass(newUser);
+                return jwt;
+            } catch (GitLabApiException e) {
+                return e.getMessage();
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid username and password");
+        }
+    }
+
     // try getting some small amount of data using the GitLabApi object to check if the pat token was valid
     private boolean patIsValid(String pat) {
         try {
