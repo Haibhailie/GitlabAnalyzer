@@ -26,4 +26,31 @@ public class MemberController {
         return MemberService.getAllMembers(gitLabApi, projectId);
     }
 
+    @GetMapping("/api/core/{projectId}/members/{authorname}/commits")
+    public List<CommitDTO> getCommitsByAuthorName(@PathVariable int projectId,
+                                                  @RequestParam(required = false) String since,
+                                                  @RequestParam(required = false) String until, @PathVariable String authorname) throws GitLabApiException {
+
+        Date dateSince;
+        Date dateUntil;
+        if (since != null) {
+            dateSince = new Date(Long.parseLong(since) * 1000); // since given value
+            if (until != null) {
+                dateUntil = new Date(Long.parseLong(until) * 1000); // until given value
+            } else {
+                dateUntil = new Date(); // until now
+            }
+            return MemberService.getAllCommitsByMemberName(gitLabApi, projectId, dateSince, dateUntil, authorname);
+        }
+        if (until != null) {
+            dateSince = new Date(0); // since 1969
+            dateUntil = new Date(Long.parseLong(until) * 1000); // until given value
+            return MemberService.getAllCommitsByMemberName(gitLabApi, projectId, dateSince, dateUntil, authorname);
+        }
+        dateSince = new Date(0); // since 1969
+        dateUntil = new Date(); // until now
+        return MemberService.getAllCommitsByMemberName(gitLabApi, projectId, dateSince, dateUntil, authorname);
     }
+
+
+}
