@@ -38,4 +38,14 @@ public class AuthenticationService {
             return false;
         }
     }
+
+    private boolean userPassIsValid(String user, String pass) {
+        try {
+            GitLabApi gitLabApi = GitLabApi.oauth2Login("http://cmpt373-1211-09.cmpt.sfu.ca/", user, pass);
+            gitLabApi.getUserApi().getUser(1);
+            return true;
+        } catch (GitLabApiException e) {
+            return false;
+        }
+    }
 }
