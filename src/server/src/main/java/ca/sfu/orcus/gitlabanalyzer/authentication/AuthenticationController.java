@@ -37,6 +37,18 @@ public class AuthenticationController {
         }
     }
 
+    @PostMapping("/api/signin")
+    public void loginWithUserPass(@RequestBody User user, HttpServletResponse response) {
+        try {
+            String jwt = authService.addNewUserByUserPass(user);
+            Cookie cookie = createSessionIdCookie(jwt);
+            response.addCookie(cookie);
+            response.setStatus(200);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(400);
+        }
+    }
+
     private Cookie createSessionIdCookie(String jwt) {
         Cookie cookie = new Cookie("sessionId", jwt);
         cookie.setMaxAge(60 * 60 * 24 * 30); // sets cookie expiry to 1 month
