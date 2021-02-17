@@ -17,9 +17,9 @@ import java.util.List;
 
 public class MemberService {
 
-    public static ArrayList<MemberDTO> getAllMembers(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
+    public static List<MemberDTO> getAllMembers(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
 
-        ArrayList<MemberDTO> allMembers = new ArrayList<>();
+        List<MemberDTO> allMembers = new ArrayList<>();
         List<Member> members = gitLabApi.getProjectApi().getAllMembers(projectID);
 
         for (Member m : members) {
@@ -29,22 +29,22 @@ public class MemberService {
         return allMembers;
     }
 
-    public static ArrayList<CommitDTO> getAllCommitsByMemberName(GitLabApi gitLabApi, int projectID, Date since, Date until, String MemberName) throws GitLabApiException {
+    public static List<CommitDTO> getAllCommitsByMemberName(GitLabApi gitLabApi, int projectID, Date since, Date until, String MemberName) throws GitLabApiException {
 
-        ArrayList<CommitDTO> commitsByMemberName = new ArrayList<>();
+        List<CommitDTO> commitsByMemberName = new ArrayList<>();
         ArrayList<CommitDTO> allCommits = getAllCommits(gitLabApi, projectID, since, until);
 
         for (CommitDTO c : allCommits) {
-            if (c.getAuthorName().equals(MemberName))
+            if (c.getAuthor().equals(MemberName))
                 commitsByMemberName.add(c);
         }
         return commitsByMemberName;
     }
 
-    public static ArrayList<MergeRequestDTO> getAllMRsByMemberName(GitLabApi gitLabApi, int projectID, String MemberName) throws GitLabApiException {
+    public static List<MergeRequestDTO> getAllMRsByMemberName(GitLabApi gitLabApi, int projectID, Date since, Date until, String MemberName) throws GitLabApiException {
 
-        ArrayList<MergeRequestDTO> mergeRequestsByMemberName = new ArrayList<>();
-        ArrayList<MergeRequestDTO> allMRs = getAllMergeRequests(gitLabApi, projectID);
+        List<MergeRequestDTO> mergeRequestsByMemberName = new ArrayList<>();
+        List<MergeRequestDTO> allMRs = getAllMergeRequests(gitLabApi,projectID, since, until);
         for (MergeRequestDTO mr : allMRs) {
             if (mr.getAuthor().equals(MemberName))
                 mergeRequestsByMemberName.add(mr);
