@@ -17,9 +17,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/api/auth")
-    public void loginWithPat(@RequestBody User user, HttpServletResponse response) {
+    public void loginWithPat(@RequestBody AuthenticationUser user, HttpServletResponse response) {
         try {
-            String jwt = authService.addNewUser(user);
+            String jwt = authService.addNewUserFromPat(user);
             Cookie cookie = createSessionIdCookie(jwt);
             response.addCookie(cookie);
             response.setStatus(200);
@@ -30,11 +30,10 @@ public class AuthenticationController {
 
     @GetMapping("/api/ping")
     public void checkJwtIsValid(@CookieValue(value = "sessionId") String jwt, HttpServletResponse response) {
-        try {
-            authService.validateJwt(jwt);
+        if (authService.jwtIsValid(jwt)) {
             response.setStatus(200);
-        } catch (IllegalArgumentException e) {
-            response.setStatus(400);
+        } else {
+            response.setStatus(401);
         }
     }
 

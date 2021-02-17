@@ -1,11 +1,14 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
-import com.mongodb.client.*;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
-import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Filters.eq;
 
 @Repository
 public class AuthenticationRepository {
@@ -17,13 +20,13 @@ public class AuthenticationRepository {
         this.collection = database.getCollection(System.getenv("USERS-COLLECTION"));
     }
 
-    public void addNewUser(User newUser) {
+    public void addNewUser(AuthenticationUser newUser) {
         collection.insertOne(generateUserPatDoc(newUser));
     }
 
-    private Document generateUserPatDoc(User newUser) {
+    private Document generateUserPatDoc(AuthenticationUser newUser) {
         return new Document("_id", new ObjectId())
-                .append("type", "test_pat")
+                .append("type", "pat")
                 .append("pat", newUser.getPat())
                 .append("jwt", newUser.getJwt());
     }

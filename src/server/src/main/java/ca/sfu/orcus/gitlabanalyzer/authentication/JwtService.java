@@ -1,8 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -23,7 +20,7 @@ public class JwtService {
         secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(encodedKey));
     }
 
-    public String createJwt(User user) {
+    public String createJwt(AuthenticationUser user) {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
@@ -31,16 +28,15 @@ public class JwtService {
                 .compact();
     }
 
-    public String getUsernameFromJwt(String jwt) {
+    public boolean jwtSignatureOk(String jwt) {
         try {
-            Jws<Claims> claimsJws;
-            claimsJws = Jwts.parserBuilder()
+            Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(jwt);
-            return claimsJws.getBody().getSubject();
+            return true;
         } catch (SignatureException e) {
-            return null;
+            return false;
         }
     }
 }

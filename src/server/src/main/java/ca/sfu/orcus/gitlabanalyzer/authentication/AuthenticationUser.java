@@ -1,26 +1,27 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
-public class User {
+public class AuthenticationUser {
     private String username;
     private String password;
     private String pat;
     private String jwt;
 
-    private User(String username, String password) {
+    private AuthenticationUser(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    private User(String pat) {
+    private AuthenticationUser(String pat) {
         this.pat = pat;
     }
 
-    public static User fromUsernameAndPassword(String username, String password) {
-        return new User(username, password);
+    public static AuthenticationUser fromUsernameAndPassword(String username, String password) {
+        return new AuthenticationUser(username, password);
     }
 
-    public static User createFromAuthToken(String authToken) {
-        return new User(authToken);
+    // Used by Spring Boot automatically to parse request body
+    public static AuthenticationUser createFromAuthToken(String authToken) {
+        return new AuthenticationUser(authToken);
     }
 
     public String getUsername() {
@@ -41,5 +42,9 @@ public class User {
 
     public void setJwt(String jwt) {
         this.jwt = jwt;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

@@ -17,36 +17,36 @@ public class AuthenticationService {
         this.jwtService = jwtService;
     }
 
-    public String addNewUser(User newUser) throws IllegalArgumentException {
-        if (patIsValid(newUser.getPat())) {
+    public String addNewUserFromPat(AuthenticationUser newUser) throws IllegalArgumentException {
+        try {
+            String pat = newUser.getPat();
+            newUser.setUsername(getUsernameFromPat(pat));
             String jwt = jwtService.createJwt(newUser);
             newUser.setJwt(jwt);
             repository.addNewUser(newUser);
             return jwt;
-        } else {
-            throw new IllegalArgumentException("Invalid pat");
+        } catch (GitLabApiException e) {
+            throw new IllegalArgumentException("Pat Authentication failed");
         }
     }
 
-    // try getting some small amount of data using the GitLabApi object to check if the pat token was valid
-    private boolean patIsValid(String pat) {
+    private String getUsernameFromPat(String pat) throws GitLabApiException {
+        GitLabApi gitLabApi = new GitLabApi("http://cmpt373-1211-09.cmpt.sfu.ca/", pat);
+        org.gitlab4j.api.models.User currentUser = gitLabApi.getUserApi().getCurrentUser();
+        return currentUser.getUsername();
+    }
+
+    public boolean jwtIsValid(String jwt) {
+        return (jwtService.jwtSignatureOk(jwt) && repository.contains(jwt) && signInSuccess(jwt));
+    }
+
+    private boolean signInSuccess(String jwt) {
         try {
-            GitLabApi gitLabApi = new GitLabApi("http://cmpt373-1211-09.cmpt.sfu.ca/", pat);
-            gitLabApi.getUserApi().getUser(1);
+            String pat = repository.getPatFor(jwt);
+            getUsernameFromPat(pat); // If we can successfully get the current user, then the pat is valid
             return true;
         } catch (GitLabApiException e) {
             return false;
-        }
-    }
-
-    public void validateJwt(String jwt) throws IllegalArgumentException {
-        if (repository.contains(jwt)) {
-            String pat = repository.getPatFor(jwt);
-            if (!patIsValid(pat)) {
-                throw new IllegalArgumentException("Invalid pat");
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid pat");
         }
     }
 }
