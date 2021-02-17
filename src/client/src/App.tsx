@@ -5,9 +5,8 @@ const App = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/">
-          <SideNav />
-        </Route>
+        <Route path="/"></Route>
+        <Route path="/home"></Route>
       </Switch>
     </Router>
   )
