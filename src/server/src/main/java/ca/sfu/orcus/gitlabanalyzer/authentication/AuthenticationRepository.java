@@ -19,10 +19,21 @@ public class AuthenticationRepository {
         collection.insertOne(generateUserPatDoc(newUser));
     }
 
+    public void addNewUserByUserPass(User newUser) {
+        collection.insertOne(generateUserAuthTokenDoc(newUser));
+    }
+
     private Document generateUserPatDoc(User newUser) {
         return new Document("_id", new ObjectId())
                 .append("type", "test_pat")
                 .append("pat", newUser.getPat())
+                .append("jwt", newUser.getJwt());
+    }
+
+    private Document generateUserAuthTokenDoc(User newUser) {
+        return new Document("_id", new ObjectId())
+                .append("type", "authToken")
+                .append("authToken", newUser.getAuthToken())
                 .append("jwt", newUser.getJwt());
     }
 }
