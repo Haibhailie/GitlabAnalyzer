@@ -3,6 +3,8 @@ get:
   responses:
     '200':
       description: Session JWT is valid.
+    '400':
+      description: Incorrectly formatted session JWT.
     '401':
       description: Session JWT is not valid.
     '500':
