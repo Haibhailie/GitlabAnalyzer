@@ -2,7 +2,12 @@
 
 :root {
   --color-main: black;
+<<<<<<< HEAD
   --font-small: 400 14px Poppins;
+=======
+  --color-header: #364fc7;
+  --font-header: 400 24px Poppins;
+>>>>>>> origin/master
 }
 
 body {
