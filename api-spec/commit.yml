@@ -1,0 +1,42 @@
+get:
+  description: 'Get the details of the commit.'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            type: object
+            required:
+              - hash
+              - message
+              - author
+              - time
+              - insertions
+              - deletions
+              - url
+            properties:
+              hash:
+                type: string
+              message:
+                type: string
+              author:
+                $ref: './components/author.yml'
+              time:
+                $ref: './components/epoch.yml'
+              insertions:
+                type: integer
+                minimum: 0
+              deletions:
+                type: integer
+                minimum: 0
+              url:
+                type: string
+    '401':
+      description: Invalid JWT Token.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
+    - $ref: './components/projectId.yml'
+    - $ref: './components/hash.yml'
