@@ -29,7 +29,7 @@ const SideNav = ({ isOpen, sideNavToggler }: ISideNavProps) => {
         className={styles.closeSideNavButton}
         onClick={toggleSideNav}
       >
-        &#8249;
+        {isOpen ? <>&#8249;</> : <>&#8250;</>}
       </button>
       <ul className={styles.itemList}>
         {items.map(item => {
