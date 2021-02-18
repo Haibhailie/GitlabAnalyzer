@@ -5,6 +5,8 @@ import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.ws.rs.BadRequestException;
+
 @Service
 public class AuthenticationService {
 
@@ -28,9 +30,12 @@ public class AuthenticationService {
         }
     }
 
-    public String addNewUserByUserPass(User newUser) throws IllegalArgumentException {
+    public String addNewUserByUserPass(User newUser) throws IllegalArgumentException, BadRequestException {
         String user = newUser.getUsername();
         String pass = newUser.getPassword();
+        if (user == null || user.equals("") || pass == null || pass.equals("")) {
+            throw new BadRequestException("Username or Password are empty");
+        }
         if (userPassIsValid(user, pass)) {
             try {
                 GitLabApi gitLabApi = GitLabApi.oauth2Login("http://cmpt373-1211-09.cmpt.sfu.ca/", user, pass);
@@ -41,10 +46,10 @@ public class AuthenticationService {
                 repository.addNewUserByUserPass(newUser);
                 return jwt;
             } catch (GitLabApiException e) {
-                return e.getMessage();
+                throw new IllegalArgumentException(("Username and password do not match"));
             }
         } else {
-            throw new IllegalArgumentException("Invalid username and password");
+            throw new IllegalArgumentException("Username and password do not match");
         }
     }
 
