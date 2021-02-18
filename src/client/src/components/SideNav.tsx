@@ -8,7 +8,7 @@ import settingsIcon from '../assets/settings.svg'
 
 export interface ISideNavProps {
   isOpen: boolean
-  openSideNav: (isOpen: boolean) => void
+  sideNavToggler: (isOpen: boolean) => void
 }
 
 const items = [
@@ -17,13 +17,13 @@ const items = [
   { icon: settingsIcon, label: 'Settings', dest: '/settings' },
 ]
 
-const SideNav = ({ isOpen, openSideNav }: ISideNavProps) => {
+const SideNav = ({ isOpen, sideNavToggler }: ISideNavProps) => {
   const toggleSideNav = () => {
-    openSideNav(isOpen)
+    sideNavToggler(isOpen)
   }
 
   return (
-    <aside className={isOpen ? styles.sideBarOpen : styles.sideBarHidden}>
+    <aside className={`${styles.sideNav} ${isOpen ? '' : styles.hideSideNav}`}>
       <button
         type="button"
         className={styles.closeSideNavButton}
@@ -32,10 +32,10 @@ const SideNav = ({ isOpen, openSideNav }: ISideNavProps) => {
         &#8249;
       </button>
       <ul className={styles.itemList}>
-        {items.map((item, index) => {
+        {items.map(item => {
           return (
             <SideNavItem
-              key={index}
+              key={item.label}
               icon={item.icon}
               label={item.label}
               destPath={item.dest}

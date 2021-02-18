@@ -2,12 +2,13 @@
   display: flex;
   align-items: center;
   padding: 1px 20px;
+  transition: border 120ms ease-out, background-color 230ms ease-out;
+  text-decoration: none;
 }
 
 .item:hover {
   background-color: var(--color-lightblue);
-  text-decoration: none;
-  border-left: 4px solid blue;
+  border-left: 4px solid var(--color-header);
 }
 
 .item:hover .label {

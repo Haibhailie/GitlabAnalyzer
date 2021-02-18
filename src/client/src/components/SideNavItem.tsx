@@ -10,14 +10,14 @@ export interface ISideNavItemProps {
 
 const SideNavItem = ({ icon, label, destPath }: ISideNavItemProps) => {
   return (
-    <div>
+    <>
       <Link to={destPath} className={styles.link}>
-        <li className={styles.item}>
+        <div className={styles.item}>
           <img src={icon} className={styles.icon} />
           <p className={styles.label}>{label}</p>
-        </li>
+        </div>
       </Link>
-    </div>
+    </>
   )
 }
 
