@@ -24,18 +24,18 @@ public class AuthenticationRepository {
         collection.insertOne(generateUserPatDoc(newUser));
     }
 
-    public void addNewUserByUserPass(User newUser) {
+    public void addNewUserByUserPass(AuthenticationUser newUser) {
         collection.insertOne(generateUserAuthTokenDoc(newUser));
     }
 
-    private Document generateUserPatDoc(User newUser) {
+    private Document generateUserPatDoc(AuthenticationUser newUser) {
         return new Document("_id", new ObjectId())
                 .append("type", "pat")
                 .append("pat", newUser.getPat())
                 .append("jwt", newUser.getJwt());
     }
 
-    private Document generateUserAuthTokenDoc(User newUser) {
+    private Document generateUserAuthTokenDoc(AuthenticationUser newUser) {
         return new Document("_id", new ObjectId())
                 .append("type", "authToken")
                 .append("authToken", newUser.getAuthToken())

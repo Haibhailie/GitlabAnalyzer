@@ -1,7 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -39,7 +38,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/api/signin")
-    public void loginWithUserPass(@RequestBody User user, HttpServletResponse response) {
+    public void loginWithUserPass(@RequestBody AuthenticationUser user, HttpServletResponse response) {
         try {
             String jwt = authService.addNewUserByUserPass(user);
             Cookie cookie = createSessionIdCookie(jwt);

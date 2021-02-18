@@ -4,6 +4,7 @@ public class AuthenticationUser {
     private String username;
     private String password;
     private String pat;
+    private String authToken;
     private String jwt;
 
     private AuthenticationUser(String username, String password) {
@@ -42,6 +43,12 @@ public class AuthenticationUser {
 
     public void setJwt(String jwt) {
         this.jwt = jwt;
+    }
+    public String getAuthToken() {
+        return authToken;
+    }
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
     public void setUsername(String username) {

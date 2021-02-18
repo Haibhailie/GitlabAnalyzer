@@ -32,7 +32,7 @@ public class AuthenticationService {
         }
     }
 
-    public String addNewUserByUserPass(User newUser) throws IllegalArgumentException, BadRequestException {
+    public String addNewUserByUserPass(AuthenticationUser newUser) throws IllegalArgumentException, BadRequestException {
         String user = newUser.getUsername();
         String pass = newUser.getPassword();
         if (user == null || user.equals("") || pass == null || pass.equals("")) {
@@ -40,10 +40,10 @@ public class AuthenticationService {
         }
         if (userPassIsValid(user, pass)) {
             try {
-                GitLabApi gitLabApi = GitLabApi.oauth2Login(System.getenv("SERVER_URL"), user, pass);
+                GitLabApi gitLabApi = GitLabApi.oauth2Login(System.getenv("GITLAB_URL"), user, pass);
                 String authToken = gitLabApi.getAuthToken();
                 newUser.setAuthToken(authToken);
-                String jwt = tokenCreator.createJwt(newUser);
+                String jwt = jwtService.createJwt(newUser);
                 newUser.setJwt(jwt);
                 repository.addNewUserByUserPass(newUser);
                 return jwt;
@@ -76,7 +76,7 @@ public class AuthenticationService {
 
     private boolean userPassIsValid(String user, String pass) {
         try {
-            GitLabApi gitLabApi = GitLabApi.oauth2Login(System.getenv("SERVER_URL"), user, pass);
+            GitLabApi gitLabApi = GitLabApi.oauth2Login(System.getenv("GITLAB_URL"), user, pass);
             gitLabApi.getUserApi().getCurrentUser();
             return true;
         } catch (GitLabApiException e) {
