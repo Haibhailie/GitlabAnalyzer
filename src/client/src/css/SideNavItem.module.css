@@ -1,27 +1,29 @@
 .item {
+  display: flex;
+  align-items: center;
   padding: 1px 20px;
-  width: auto;
-  /* border-bottom: 0.5px solid grey; */
 }
 
 .item:hover {
-  background-color: #e0eaff;
+  background-color: var(--color-lightblue);
   text-decoration: none;
   border-left: 4px solid blue;
 }
 
-.icon {
-  margin-top: 15px;
-  padding-right: 20px;
-  float: left;
+.item:hover .label {
+  color: var(--color-header);
 }
 
-.label {
+.icon {
+  margin-right: 15px;
+}
+
+.link {
   font: var(--font-item-label);
   color: var(--color-main);
   text-decoration: none;
 }
 
-.label:visited {
+.link:visited {
   color: var(--color-main);
 }

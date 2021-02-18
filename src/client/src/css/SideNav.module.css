@@ -1,13 +1,13 @@
 .sideBarOpen {
   height: 100%;
   width: 230px;
+  position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   margin: 0;
   padding: 0;
   border-right: 1px solid lightgray;
-  position: absolute;
 }
 
 .sideBarHidden {
@@ -24,13 +24,10 @@
   position: absolute;
   left: 210px;
   top: 40%;
-
   width: 40px;
   height: 40px;
-
   background-color: var(--color-lightgray);
   font-size: 24px;
-
   border-radius: 50%;
   border: none;
   outline: none;

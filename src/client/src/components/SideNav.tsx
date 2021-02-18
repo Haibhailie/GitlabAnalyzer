@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import SideNavItem from './SideNavItem'
 
 import styles from '../css/SideNav.module.css'
@@ -8,17 +6,20 @@ import repoIcon from '../assets/database.svg'
 import reportIcon from '../assets/report.svg'
 import settingsIcon from '../assets/settings.svg'
 
+export interface ISideNavProps {
+  isOpen: boolean
+  openSideNav: (isOpen: boolean) => void
+}
+
 const items = [
-  { icon: repoIcon, label: 'Repositories', dest: '/repos' },
+  { icon: repoIcon, label: 'Projects', dest: '/projects' },
   { icon: reportIcon, label: 'Reports', dest: '/reports' },
   { icon: settingsIcon, label: 'Settings', dest: '/settings' },
 ]
 
-const SideNav = () => {
-  const [isOpen, setIsOpen] = useState(true)
-
+const SideNav = ({ isOpen, openSideNav }: ISideNavProps) => {
   const toggleSideNav = () => {
-    setIsOpen(!isOpen)
+    openSideNav(isOpen)
   }
 
   return (
