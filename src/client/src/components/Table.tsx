@@ -51,8 +51,6 @@ const Table = ({
     ? columnWidths.join(' ')
     : `repeat(${numColumns}, 1fr)`
 
-  console.log(gridTemplateColumns)
-
   return (
     <div
       style={{ gridTemplateColumns }}
