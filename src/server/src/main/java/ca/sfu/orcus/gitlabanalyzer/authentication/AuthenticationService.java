@@ -100,4 +100,43 @@ public class AuthenticationService {
         GitLabApi gitLabApi = new GitLabApi(System.getenv("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
         gitLabApi.getUserApi().getCurrentUser();
     }
+
+    public GitLabApi getGitLabApiFor(String jwt) {
+        if (jwtIsValid(jwt)) {
+            JwtService.JwtType type = jwtService.getType(jwt);
+            return getGitLabApiForType(jwt, type);
+        } else {
+            return null;
+        }
+    }
+
+    private GitLabApi getGitLabApiForType(String jwt, JwtService.JwtType type) {
+        if (type == JwtService.JwtType.PAT) {
+            return getGitLabApiForPat(jwt);
+        } else if (type == JwtService.JwtType.USER_PASS) {
+            return getGitLabApiForUserPass(jwt);
+        } else {
+            return null;
+        }
+    }
+
+    private GitLabApi getGitLabApiForPat(String jwt) {
+        try {
+            String pat = repository.getPatFor(jwt);
+            getUsernameFromPat(pat);
+            return new GitLabApi(System.getenv("GITLAB_URL"), pat);
+        } catch (GitLabApiException e) {
+            return null;
+        }
+    }
+
+    private GitLabApi getGitLabApiForUserPass(String jwt) {
+        try {
+            String authToken = repository.getAuthTokenFor(jwt);
+            testAuthToken(authToken);
+            return new GitLabApi("GITLAB_URL", Constants.TokenType.OAUTH2_ACCESS, authToken);
+        } catch (GitLabApiException e) {
+            return null;
+        }
+    }
 }
