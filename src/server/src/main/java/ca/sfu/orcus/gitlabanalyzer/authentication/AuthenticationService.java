@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.authentication;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +35,8 @@ public class AuthenticationService {
     }
 
     private String getUsernameFromPat(String pat) throws GitLabApiException {
-        GitLabApi gitLabApi = new GitLabApi("GITLAB_URL", pat);
-        org.gitlab4j.api.models.User currentUser = gitLabApi.getUserApi().getCurrentUser();
+        GitLabApi gitLabApi = new GitLabApi(System.getenv("GITLAB_URL"), pat);
+        User currentUser = gitLabApi.getUserApi().getCurrentUser();
         return currentUser.getUsername();
     }
 
