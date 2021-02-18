@@ -18,17 +18,43 @@ export type TProjects = {
 
 const [Suspense, useContent] = withSuspense<TProjects, Error>(
   (setData, setError) => {
-    jsonFetch<TProjects>('/api/projects')
-      .then(data => {
-        setData(data)
-      })
-      .catch(err => {
-        if (err.message === '400') {
-          setError(new Error('Not logged in'))
-        } else if (err.message === 'Failed to fetch') {
-          setError(new Error('Could not connect to server'))
-        }
-      })
+    setTimeout(() => {
+      setData([
+        {
+          id: '1',
+          name: '373-2021-1-Orcus / GitLabAnalyzer',
+          role: 'Maintainer',
+          latestUpdate: 1613622882116,
+          analyzed: false,
+        },
+        {
+          id: '2',
+          name: 'React',
+          role: 'Developer',
+          latestUpdate: 1613622892116,
+          analyzed: false,
+        },
+        {
+          id: '3',
+          name: 'Vue',
+          role: 'Owner',
+          latestUpdate: 1613622802116,
+          analyzed: false,
+        },
+      ])
+    }, 10)
+
+    // jsonFetch<TProjects>('/api/projects')
+    //   .then(data => {
+    //     setData(data)
+    //   })
+    //   .catch(err => {
+    //     if (err.message === '400') {
+    //       setError(new Error('Not logged in'))
+    //     } else if (err.message === 'Failed to fetch') {
+    //       setError(new Error('Could not connect to server'))
+    //     }
+    //   })
   }
 )
 
@@ -42,13 +68,16 @@ const Home = () => {
       <div className={styles.container}>
         <h1 className={styles.header}>Your Projects</h1>
         <Table
-          data={data?.map(row => {
+          data={data?.map(({ id, name, analyzed, latestUpdate, role }) => {
             return {
-              ...row,
-              '': <button onClick={console.log}>Analyze</button>,
+              name,
+              role,
+              latestUpdate,
+              analyzed: analyzed.toString(),
+              action: <button onClick={console.log}>Analyze</button>,
             }
           })}
-          headers={['Project Name', 'Role', 'Last Updated', 'Analyzed?']}
+          headers={['Project Name', 'Role', 'Last Updated', 'Analyzed?', '']}
           classes={{
             data: styles.data,
             header: styles.header,

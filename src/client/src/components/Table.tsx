@@ -42,11 +42,15 @@ const Table = ({
   const numColumns = dataHeaders.length
   const gridTemplateColumns = columnWidths
     ? columnWidths.join(' ')
-    : `repeat(1fr, ${numColumns})`
+    : `repeat(${numColumns}, 1fr)`
+
+  console.log(gridTemplateColumns)
+
+  if (data === undefined) return null
 
   return (
     <div
-      style={{ gridTemplateColumns }}
+      style={{ gridTemplateColumns: gridTemplateColumns }}
       className={classNames(styles.table, classes?.header)}
     >
       {dataHeaders.map(header => (
@@ -62,7 +66,7 @@ const Table = ({
               {header}
             </button>
           ) : (
-            { header }
+            header
           )}
         </div>
       ))}
