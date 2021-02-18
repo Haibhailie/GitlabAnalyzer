@@ -20,7 +20,6 @@ const Table = ({
   columnWidths,
   excludeHeaders,
 }: ITableProps) => {
-  const dataHeaders = excludeHeaders ? [] : headers ?? Object.keys(data[0])
   const [sortConfig, setSortConfig] = useState({ by: '', asc: true })
 
   const sortKeys = Object.keys(data[0])
@@ -44,6 +43,7 @@ const Table = ({
     })
   }
 
+  const dataHeaders = excludeHeaders ? [] : headers ?? sortKeys
   const numColumns = dataHeaders.length
   const gridTemplateColumns = columnWidths
     ? columnWidths.join(' ')
