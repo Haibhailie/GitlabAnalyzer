@@ -7,6 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.BadRequestException;
 
 @RestController
 public class AuthenticationController {
@@ -16,13 +17,6 @@ public class AuthenticationController {
     @Autowired
     public AuthenticationController(AuthenticationService authService) {
         this.authService = authService;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/")
-    public ModelAndView loadIndex() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("index.html");
-        return modelAndView;
     }
 
     @PostMapping("/api/auth")
@@ -45,6 +39,8 @@ public class AuthenticationController {
             response.addCookie(cookie);
             response.setStatus(200);
         } catch (IllegalArgumentException e) {
+            response.setStatus(401);
+        } catch (BadRequestException e) {
             response.setStatus(400);
         }
     }
