@@ -8,7 +8,7 @@ get:
           schema:
             type: object
             required:
-              - hash
+              - sha
               - message
               - author
               - time
@@ -16,7 +16,7 @@ get:
               - deletions
               - url
             properties:
-              hash:
+              sha:
                 type: string
               message:
                 type: string
@@ -39,4 +39,4 @@ get:
   parameters:
     - $ref: './components/jwtcookie.yml'
     - $ref: './components/projectId.yml'
-    - $ref: './components/hash.yml'
+    - $ref: './components/sha.yml'

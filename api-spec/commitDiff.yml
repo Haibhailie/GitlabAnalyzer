@@ -19,4 +19,4 @@ get:
   parameters:
     - $ref: './components/jwtcookie.yml'
     - $ref: './components/projectId.yml'
-    - $ref: './components/hash.yml'
+    - $ref: './components/sha.yml'
