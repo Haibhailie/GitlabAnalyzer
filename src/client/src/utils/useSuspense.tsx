@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState, useRef } from 'react'
 
 export interface ISuspenseProps {
   children: JSX.Element
@@ -6,47 +6,58 @@ export interface ISuspenseProps {
   error?: JSX.Element
 }
 
+export type TSuspenseFunction = (props: ISuspenseProps) => JSX.Element
+
 const useSuspense = <DataType, ErrorType>(
   hookFunctionHandler: (
     setData: (data: DataType) => void,
     setError: (error: ErrorType) => void
   ) => void
 ): {
-  Suspense: (props: ISuspenseProps) => JSX.Element
+  Suspense: TSuspenseFunction
   data: DataType | undefined
   error: ErrorType | undefined
 } => {
-  const [status, setStatus] = useState('PENDING')
   const [data, setPromiseData] = useState<DataType>()
   const [error, setPromiseError] = useState<ErrorType>()
+  const suspenseRef = useRef<TSuspenseFunction | null>(null)
+  const status = useRef('PENDING')
 
-  useEffect(() => {
-    const setData = (newData: DataType) => {
-      setPromiseData(newData)
-      setStatus('SUCCESS')
+  if (suspenseRef.current !== null) {
+    return {
+      Suspense: suspenseRef.current,
+      data,
+      error,
     }
+  }
 
-    const setError = (newError: ErrorType) => {
-      setPromiseError(newError)
-      setStatus('ERROR')
-    }
+  const setData = (newData: DataType) => {
+    status.current = 'SUCCESS'
+    setPromiseData(newData)
+  }
 
-    hookFunctionHandler(setData, setError)
-  }, [])
+  const setError = (newError: ErrorType) => {
+    status.current = 'ERROR'
+    setPromiseError(newError)
+  }
 
-  const Suspense = ({
+  hookFunctionHandler(setData, setError)
+
+  const Suspense: TSuspenseFunction = ({
     children: LoadedComp,
     fallback: Fallback,
     error: Error,
-  }: ISuspenseProps) => {
-    if (status === 'PENDING') {
+  }) => {
+    if (status.current === 'PENDING') {
       return Fallback
-    } else if (status === 'ERROR' && Error) {
+    } else if (status.current === 'ERROR' && Error) {
       return Error
     } else {
       return LoadedComp
     }
   }
+
+  suspenseRef.current = Suspense
 
   return { Suspense, data, error }
 }

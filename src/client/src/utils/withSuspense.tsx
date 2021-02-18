@@ -6,15 +6,14 @@ export interface ISuspenseProps {
   error?: JSX.Element
 }
 
+export type TSuspenseFunction = (props: ISuspenseProps) => JSX.Element
+
 const withSuspense = <DataType, ErrorType>(
   hookFunctionHandler: (
     setData: (data: DataType) => void,
     setError: (error: ErrorType) => void
   ) => void
-): [
-  (props: ISuspenseProps) => JSX.Element,
-  () => { data: DataType; error: ErrorType }
-] => {
+): [TSuspenseFunction, () => { data: DataType; error: ErrorType }] => {
   let data: DataType
   let error: ErrorType
   let status = 'PENDING'

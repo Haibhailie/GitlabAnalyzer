@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import withSuspense from '../utils/withSuspense'
-import useSuspense from '../utils/useSuspense'
 import jsonFetch from '../utils/jsonFetcher'
 
 import { ProjectContext } from '../context/ProjectContext'
@@ -21,69 +20,26 @@ export type TProjects = {
   analyzed: boolean
 }[]
 
-// const [Suspense, useContent] = withSuspense<TProjects, Error>(
-//   (setData, setError) => {
-//     jsonFetch<TProjects>('/api/projects')
-//       .then(data => {
-//         setData(data)
-//       })
-//       .catch(err => {
-//         if (err.message === '401') {
-//           window.location.href = '/'
-//         } else if (err.message === 'Failed to fetch') {
-//           setError(new Error('Could not connect to server'))
-//         } else {
-//           setError(new Error('Server error. Please try again.'))
-//         }
-//       })
-//   }
-// )
+const [Suspense, useContent] = withSuspense<TProjects, Error>(
+  (setData, setError) => {
+    jsonFetch<TProjects>('/api/projects')
+      .then(data => {
+        setData(data)
+      })
+      .catch(err => {
+        if (err.message === '401') {
+          window.location.href = '/'
+        } else if (err.message === 'Failed to fetch') {
+          setError(new Error('Could not connect to server'))
+        } else {
+          setError(new Error('Server error. Please try again.'))
+        }
+      })
+  }
+)
 
 const Home = () => {
-  const { Suspense, data, error } = useSuspense<TProjects, Error>(
-    (setData, setError) => {
-      // jsonFetch<TProjects>('/api/projects')
-      //   .then(data => {
-      //     setData(data)
-      //   })
-      //   .catch(err => {
-      //     if (err.message === '401') {
-      //       window.location.href = '/'
-      //     } else if (err.message === 'Failed to fetch') {
-      //       setError(new Error('Could not connect to server'))
-      //     } else {
-      //       setError(new Error('Server error. Please try again.'))
-      //     }
-      //   })
-      setTimeout(() => {
-        setData([
-          {
-            id: '1',
-            name: '373-2021-1-Orcus / GitLabAnalyzer',
-            role: 'Maintainer',
-            latestUpdate: 1613622882116,
-            analyzed: false,
-          },
-          {
-            id: '2',
-            name: 'React',
-            role: 'Developer',
-            latestUpdate: 1613622892116,
-            analyzed: false,
-          },
-          {
-            id: '3',
-            name: 'Vue',
-            role: 'Owner',
-            latestUpdate: 1613622802116,
-            analyzed: false,
-          },
-        ])
-      }, 2000)
-    }
-  )
-
-  // const { data, error } = useContent()
+  const { data, error } = useContent()
   const history = useHistory()
   const { dispatch } = useContext(ProjectContext)
 
