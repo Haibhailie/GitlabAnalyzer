@@ -18,7 +18,7 @@ public class AuthenticationController {
         this.authService = authService;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/")
+    @GetMapping("/")
     public ModelAndView loadIndex() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("index.html");
