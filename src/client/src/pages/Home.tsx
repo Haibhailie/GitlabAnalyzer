@@ -79,9 +79,9 @@ const Home = () => {
           })}
           headers={['Project Name', 'Role', 'Last Updated', 'Analyzed?', '']}
           classes={{
-            data: styles.data,
-            header: styles.header,
             table: styles.table,
+            header: styles.theader,
+            data: styles.data,
           }}
         />
       </div>

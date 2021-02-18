@@ -20,25 +20,30 @@ const Table = ({
   columnWidths,
   excludeHeaders,
 }: ITableProps) => {
-  const dataHeaders = excludeHeaders ? [] : headers ?? Object.keys(data[0])
   const [sortConfig, setSortConfig] = useState({ by: '', asc: true })
 
-  const sortDataBy = (column: string) => {
-    const asc = sortConfig.by !== column || !sortConfig.asc
+  const sortKeys = Object.keys(data[0])
+
+  const sortDataBy = (columnIndex: number) => {
+    const columnToSortBy = sortKeys[columnIndex]
+    const asc = sortConfig.by !== columnToSortBy || !sortConfig.asc
+
     data.sort((a, b) => {
-      if (a[column] < b[column]) {
+      if (a[columnToSortBy] < b[columnToSortBy]) {
         return asc ? -1 : 1
-      } else if (a[column] > b[column]) {
+      } else if (a[columnToSortBy] > b[columnToSortBy]) {
         return asc ? 1 : -1
       }
       return 0
     })
+
     setSortConfig({
-      by: column,
+      by: columnToSortBy,
       asc,
     })
   }
 
+  const dataHeaders = excludeHeaders ? [] : headers ?? sortKeys
   const numColumns = dataHeaders.length
   const gridTemplateColumns = columnWidths
     ? columnWidths.join(' ')
@@ -48,21 +53,20 @@ const Table = ({
 
   if (data === undefined) return null
 
+  if (typeof data !== 'object') return null
+
   return (
     <div
-      style={{ gridTemplateColumns: gridTemplateColumns }}
-      className={classNames(styles.table, classes?.header)}
+      style={{ gridTemplateColumns }}
+      className={classNames(styles.table, classes?.table)}
     >
-      {dataHeaders.map(header => (
+      {dataHeaders.map((header, i) => (
         <div
           key={header}
           className={classNames(styles.header, classes?.header)}
         >
           {sortable ? (
-            <button
-              className={styles.sortBtn}
-              onClick={() => sortDataBy(header)}
-            >
+            <button className={styles.sortBtn} onClick={() => sortDataBy(i)}>
               {header}
             </button>
           ) : (
