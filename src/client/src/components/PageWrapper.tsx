@@ -1,6 +1,7 @@
-import Header from './Header'
-
 import { useState } from 'react'
+
+import Header from './Header'
+import SideNav from './SideNav'
 
 const PageWrapper = () => {
   const [sideNavOpen, setSideNavOpen] = useState(true)
@@ -12,6 +13,7 @@ const PageWrapper = () => {
   return (
     <div>
       <Header isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
+      <SideNav isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
     </div>
   )
 }
