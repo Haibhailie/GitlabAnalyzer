@@ -34,7 +34,7 @@ public class AuthenticationService {
     }
 
     private String getUsernameFromPat(String pat) throws GitLabApiException {
-        GitLabApi gitLabApi = new GitLabApi("http://cmpt373-1211-09.cmpt.sfu.ca/", pat);
+        GitLabApi gitLabApi = new GitLabApi("GITLAB_URL", pat);
         org.gitlab4j.api.models.User currentUser = gitLabApi.getUserApi().getCurrentUser();
         return currentUser.getUsername();
     }
