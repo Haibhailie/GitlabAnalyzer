@@ -29,16 +29,16 @@ public class MemberService {
         return allMembers;
     }
 
-    public static List<CommitDTO> getAllCommitsByMemberName(GitLabApi gitLabApi, int projectID, Date since, Date until, String MemberName) throws GitLabApiException {
+    public static List<CommitDTO> getAllCommitsByMemberID(GitLabApi gitLabApi, int projectID, Date since, Date until, int MemberID) throws GitLabApiException {
 
-        List<CommitDTO> commitsByMemberName = new ArrayList<>();
+        List<CommitDTO> commitsByMemberID = new ArrayList<>();
         ArrayList<CommitDTO> allCommits = getAllCommits(gitLabApi, projectID, since, until);
 
         for (CommitDTO c : allCommits) {
-            if (c.getAuthor().equals(MemberName))
-                commitsByMemberName.add(c);
+            if (c.getAuthorId() == MemberID)
+                commitsByMemberID.add(c);
         }
-        return commitsByMemberName;
+        return commitsByMemberID;
     }
 
     public static List<MergeRequestDTO> getAllMRsByMemberName(GitLabApi gitLabApi, int projectID, Date since, Date until, String MemberName) throws GitLabApiException {
