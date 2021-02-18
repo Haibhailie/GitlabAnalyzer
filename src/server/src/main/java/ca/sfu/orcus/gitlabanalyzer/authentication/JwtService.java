@@ -1,5 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -12,6 +14,8 @@ import java.util.Date;
 
 @Service
 public class JwtService {
+    enum JwtType {PAT, USER_PASS}
+
     Key secretKey;
 
     @Autowired
@@ -20,9 +24,10 @@ public class JwtService {
         secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(encodedKey));
     }
 
-    public String createJwt(AuthenticationUser user) {
+    public String createJwt(AuthenticationUser user, JwtType type) {
         return Jwts.builder()
                 .setSubject(user.getUsername())
+                .claim("type", type)
                 .setIssuedAt(new Date())
                 .signWith(secretKey)
                 .compact();
@@ -37,6 +42,20 @@ public class JwtService {
             return true;
         } catch (SignatureException e) {
             return false;
+        }
+    }
+
+    public JwtType getType(String jwt) {
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(jwt);
+            String typeString = claims.getBody().get("type", String.class);
+            return JwtType.valueOf(typeString);
+
+        } catch (SignatureException e) {
+            return null;
         }
     }
 }

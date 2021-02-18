@@ -52,4 +52,8 @@ public class AuthenticationRepository {
         return user.getString("pat");
     }
 
+    public String getAuthTokenFor(String jwt) {
+        Document user = collection.find(eq("jwt", jwt)).first();
+        return user.getString("authToken");
+    }
 }
