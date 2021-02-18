@@ -1,7 +1,9 @@
+import { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import withSuspense from '../utils/withSuspense'
 import jsonFetch from '../utils/jsonFetcher'
 
+import { ProjectContext } from '../context/ProjectContext'
 import Table from '../components/Table'
 import Loading from '../components/Loading'
 import ErrorComp from '../components/Error'
@@ -20,32 +22,6 @@ export type TProjects = {
 
 const [Suspense, useContent] = withSuspense<TProjects, Error>(
   (setData, setError) => {
-    // setTimeout(() => {
-    //   setData([
-    //     {
-    //       id: '1',
-    //       name: '373-2021-1-Orcus / GitLabAnalyzer',
-    //       role: 'Maintainer',
-    //       latestUpdate: 1613622882116,
-    //       analyzed: false,
-    //     },
-    //     {
-    //       id: '2',
-    //       name: 'React',
-    //       role: 'Developer',
-    //       latestUpdate: 1613622892116,
-    //       analyzed: false,
-    //     },
-    //     {
-    //       id: '3',
-    //       name: 'Vue',
-    //       role: 'Owner',
-    //       latestUpdate: 1613622802116,
-    //       analyzed: false,
-    //     },
-    //   ])
-    // }, 2000)
-
     jsonFetch<TProjects>('/api/projects')
       .then(data => {
         setData(data)
@@ -65,8 +41,10 @@ const [Suspense, useContent] = withSuspense<TProjects, Error>(
 const Home = () => {
   const { data, error } = useContent()
   const history = useHistory()
+  const { dispatch } = useContext(ProjectContext)
 
   const onAnalyze = (id: string) => {
+    dispatch({ type: 'SET_ID', id })
     history.push(`/project/${id}`)
   }
 
