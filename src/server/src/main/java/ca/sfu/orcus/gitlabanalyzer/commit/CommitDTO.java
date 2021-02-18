@@ -12,6 +12,7 @@ import java.util.List;
 public class CommitDTO {
     private String title;
     private String author;
+    private int authorId;
     private String id;
     private Date dateCommitted;
     private String message;
@@ -23,6 +24,7 @@ public class CommitDTO {
     public CommitDTO(GitLabApi gitLabApi, int projectID, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
         this.setAuthor(commit.getAuthorName());
+        this.setAuthorId(commit.getAuthor().getId());
         this.setId(commit.getId());
         this.setDateCommitted(commit.getCommittedDate());
         this.setMessage(commit.getMessage());
@@ -47,6 +49,10 @@ public class CommitDTO {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
     }
 
     public void setId(String id) {
@@ -85,6 +91,10 @@ public class CommitDTO {
         return author;
     }
 
+    public int getAuthorId() {
+        return authorId;
+    }
+
     public String getId() {
         return id;
     }
@@ -112,5 +122,4 @@ public class CommitDTO {
     public List<Diff> getDiffs() {
         return diffs;
     }
-
 }
