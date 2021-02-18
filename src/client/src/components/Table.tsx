@@ -53,8 +53,6 @@ const Table = ({
 
   console.log(gridTemplateColumns)
 
-  if (data === undefined) return null
-
   return (
     <div
       style={{ gridTemplateColumns }}
