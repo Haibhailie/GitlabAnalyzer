@@ -19,6 +19,13 @@ public class AuthenticationController {
         this.authService = authService;
     }
 
+    @GetMapping("/")
+    public ModelAndView loadIndex() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("index.html");
+        return modelAndView;
+    }
+
     @PostMapping("/api/auth")
     public void loginWithPat(@RequestBody User user, HttpServletResponse response) {
         try {
