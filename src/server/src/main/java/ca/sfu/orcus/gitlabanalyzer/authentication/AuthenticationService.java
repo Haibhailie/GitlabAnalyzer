@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import javax.ws.rs.BadRequestException;
 
+import static ca.sfu.orcus.gitlabanalyzer.authentication.JwtService.JwtType;
+
 @Service
 public class AuthenticationService {
 
@@ -24,7 +26,7 @@ public class AuthenticationService {
         try {
             String pat = newUser.getPat();
             newUser.setUsername(getUsernameFromPat(pat));
-            String jwt = jwtService.createJwt(newUser, JwtService.JwtType.PAT);
+            String jwt = jwtService.createJwt(newUser, JwtType.PAT);
             newUser.setJwt(jwt);
             repository.addNewUser(newUser);
             return jwt;
@@ -50,7 +52,7 @@ public class AuthenticationService {
                 GitLabApi gitLabApi = GitLabApi.oauth2Login(System.getenv("GITLAB_URL"), user, pass);
                 String authToken = gitLabApi.getAuthToken();
                 newUser.setAuthToken(authToken);
-                String jwt = jwtService.createJwt(newUser, JwtService.JwtType.USER_PASS);
+                String jwt = jwtService.createJwt(newUser, JwtType.USER_PASS);
                 newUser.setJwt(jwt);
                 repository.addNewUserByUserPass(newUser);
                 return jwt;
@@ -78,12 +80,12 @@ public class AuthenticationService {
 
     private boolean signInSuccess(String jwt) {
         try {
-            JwtService.JwtType type = jwtService.getType(jwt);
-            if (type == JwtService.JwtType.PAT) {
+            JwtType type = jwtService.getType(jwt);
+            if (type == JwtType.PAT) {
                 String pat = repository.getPatFor(jwt);
                 getUsernameFromPat(pat);        // If we can successfully get the current user, then the pat is valid
                 return true;
-            } else if (type == JwtService.JwtType.USER_PASS) {
+            } else if (type == JwtType.USER_PASS) {
                 String authToken = repository.getAuthTokenFor(jwt);
                 testAuthToken(authToken);
                 return true;
@@ -103,17 +105,17 @@ public class AuthenticationService {
 
     public GitLabApi getGitLabApiFor(String jwt) {
         if (jwtIsValid(jwt)) {
-            JwtService.JwtType type = jwtService.getType(jwt);
+            JwtType type = jwtService.getType(jwt);
             return getGitLabApiForType(jwt, type);
         } else {
             return null;
         }
     }
 
-    private GitLabApi getGitLabApiForType(String jwt, JwtService.JwtType type) {
-        if (type == JwtService.JwtType.PAT) {
+    private GitLabApi getGitLabApiForType(String jwt, JwtType type) {
+        if (type == JwtType.PAT) {
             return getGitLabApiForPat(jwt);
-        } else if (type == JwtService.JwtType.USER_PASS) {
+        } else if (type == JwtType.USER_PASS) {
             return getGitLabApiForUserPass(jwt);
         } else {
             return null;
