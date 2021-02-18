@@ -49,7 +49,7 @@ const Table = ({
   const numColumns = dataHeaders.length
   const gridTemplateColumns = columnWidths
     ? columnWidths.join(' ')
-    : `repeat(1fr, ${numColumns})`
+    : `repeat(${numColumns}, 1fr)`
 
   return (
     <div
