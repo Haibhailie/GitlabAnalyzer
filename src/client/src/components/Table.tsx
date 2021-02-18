@@ -22,6 +22,8 @@ const Table = ({
 }: ITableProps) => {
   const [sortConfig, setSortConfig] = useState({ by: '', asc: true })
 
+  if (typeof data !== 'object') return null
+
   const sortKeys = Object.keys(data[0])
 
   const sortDataBy = (columnIndex: number) => {
@@ -52,8 +54,6 @@ const Table = ({
   console.log(gridTemplateColumns)
 
   if (data === undefined) return null
-
-  if (typeof data !== 'object') return null
 
   return (
     <div
