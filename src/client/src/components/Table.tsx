@@ -49,7 +49,7 @@ const Table = ({
   return (
     <div
       style={{ gridTemplateColumns }}
-      className={classNames(styles.table, classes?.header)}
+      className={classNames(styles.table, classes?.table)}
     >
       {dataHeaders.map(header => (
         <div
