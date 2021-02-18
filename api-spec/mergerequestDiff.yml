@@ -1,0 +1,24 @@
+get:
+  description: 'Get the diff of a merge request.'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            type: object
+            required:
+              - diff
+            properties:
+              diff:
+                type: string
+    '401':
+      description: Invalid JWT Token.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
+    - $ref: './components/projectId.yml'
+    - name: mergerequestId
+      in: path
+      required: true

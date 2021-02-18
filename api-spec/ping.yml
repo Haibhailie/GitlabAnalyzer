@@ -1,0 +1,11 @@
+get:
+  description: 'Confirms that a session JWT is valid.'
+  responses:
+    '200':
+      description: Session JWT is valid.
+    '401':
+      description: Session JWT is not valid.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
