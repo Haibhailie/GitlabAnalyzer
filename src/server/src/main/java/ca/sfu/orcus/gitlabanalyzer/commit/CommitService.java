@@ -4,13 +4,22 @@ import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class CommitService {
     private final static String defaultBranch = "master";
+    private final CommitRepository commitRepository;
+
+    @Autowired
+    public CommitService(CommitRepository commitRepository) {
+        this.commitRepository = commitRepository;
+    }
 
     public static ArrayList<CommitDTO> getAllCommits(GitLabApi gitLabApi, int projectID, Date since, Date until) throws GitLabApiException {
         List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectID, defaultBranch, since, until);

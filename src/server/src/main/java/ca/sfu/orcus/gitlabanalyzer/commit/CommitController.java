@@ -4,15 +4,21 @@ package ca.sfu.orcus.gitlabanalyzer.commit;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Diff;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class CommitController {
     private final GitLabApi gitLabApi = null; // null because currently unable to verify if gitLabApi is valid
+    private final CommitService commitService;
+
+    @Autowired
+    public CommitController(CommitService commitService) {
+        this.commitService = commitService;
+    }
 
     @GetMapping("/api/core/{projectId}/commits")
     public List<CommitDTO> getCommits(@PathVariable int projectId,
