@@ -15,7 +15,7 @@ const jsonFetcher = <DataType extends unknown>(
         if (res.status === 200) {
           res.json().then(resolve)
         } else {
-          reject(res.status)
+          reject(new Error(res.status.toString()))
         }
       })
       .catch(error => reject(error))

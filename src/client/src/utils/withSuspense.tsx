@@ -17,20 +17,36 @@ const withSuspense = <DataType, ErrorType>(
 ] => {
   let data: DataType
   let error: ErrorType
+  let status = 'PENDING'
 
-  const status = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     const setData = (newData: DataType) => {
       data = newData
+      status = 'SUCCESS'
       resolve(true)
     }
 
     const setError = (newError: ErrorType) => {
       error = newError
+      status = 'ERROR'
       reject(true)
     }
 
     hookFunctionHandler(setData, setError)
   })
+
+  const updateState = (
+    success: (data: DataType) => void,
+    failed: (error: ErrorType) => void
+  ) => {
+    if (status === 'SUCCESS') {
+      success(data)
+    } else if (status === 'ERROR') {
+      failed(error)
+    } else {
+      promise.then(() => success(data)).catch(() => failed(error))
+    }
+  }
 
   const Suspense = ({
     children: LoadedComp,
@@ -41,7 +57,13 @@ const withSuspense = <DataType, ErrorType>(
     const [failed, setFailed] = useState(false)
 
     useEffect(() => {
-      status.catch(() => setFailed(true)).finally(() => setLoading(false))
+      updateState(
+        () => setLoading(false),
+        () => {
+          setLoading(false)
+          setFailed(true)
+        }
+      )
     }, [])
 
     if (loading) {
@@ -53,11 +75,33 @@ const withSuspense = <DataType, ErrorType>(
     }
   }
 
-  const getContent = () => {
+  const useContent = () => {
+    const [state, setState] = useState({
+      data,
+      error,
+    })
+
+    useEffect(() => {
+      updateState(
+        data => {
+          setState({
+            ...state,
+            data,
+          })
+        },
+        error => {
+          setState({
+            ...state,
+            error,
+          })
+        }
+      )
+    }, [])
+
     return { data, error }
   }
 
-  return [Suspense, getContent]
+  return [Suspense, useContent]
 }
 
 export default withSuspense

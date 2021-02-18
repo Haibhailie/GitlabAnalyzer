@@ -1,61 +1,61 @@
-import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import withSuspense from '../utils/withSuspense'
 import jsonFetch from '../utils/jsonFetcher'
 
 import Table from '../components/Table'
 import Loading from '../components/Loading'
-import Error from '../components/Error'
+import ErrorComp from '../components/Error'
 
 import styles from '../css/Home.module.css'
 
-interface IProjectsAPI {
+export type TProjects = {
   id: string
   name: string
   role: string
   latestUpdate: number
   analyzed: boolean
-}
+}[]
 
-type TProjects = IProjectsAPI[]
-
-const [Suspense, useContent] = withSuspense<TProjects, number | Error>(
+const [Suspense, useContent] = withSuspense<TProjects, Error>(
   (setData, setError) => {
     jsonFetch<TProjects>('/api/projects')
       .then(data => {
         setData(data)
       })
-      .catch(errCode => {
-        setError(errCode)
+      .catch(err => {
+        if (err.message === '400') {
+          setError(new Error('Not logged in'))
+        } else if (err.message === 'Failed to fetch') {
+          setError(new Error('Could not connect to server'))
+        }
       })
   }
 )
 
-const LoadedHome = () => {
-  const history = useHistory()
-  const { error, data } = useContent()
-
-  if (error === 401) {
-    document.cookie = 'sessionId=;expires=Thu, 01 Jan 1970 00:00:01 GMT'
-    history.push('/')
-  }
-
-  return (
-    <div>
-      {data?.map?.(d => (
-        <p key={d.id}>{d.name}</p>
-      ))}
-    </div>
-  )
-}
-
 const Home = () => {
+  const { data, error } = useContent()
   return (
     <Suspense
       fallback={<Loading message="Loading Projects..." />}
-      error={<Error message="Unable to access network" />}
+      error={<ErrorComp message={error?.message} />}
     >
-      <LoadedHome />
+      <div className={styles.container}>
+        <h1 className={styles.header}>Your Projects</h1>
+        <Table
+          data={data?.map(row => {
+            return {
+              ...row,
+              '': <button onClick={console.log}>Analyze</button>,
+            }
+          })}
+          headers={['Project Name', 'Role', 'Last Updated', 'Analyzed?']}
+          classes={{
+            data: styles.data,
+            header: styles.header,
+            table: styles.table,
+          }}
+        />
+      </div>
     </Suspense>
   )
 }
