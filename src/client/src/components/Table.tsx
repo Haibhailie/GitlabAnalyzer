@@ -44,6 +44,8 @@ const Table = ({
     ? columnWidths.join(' ')
     : `repeat(1fr, ${numColumns})`
 
+  if (typeof data !== 'object') return null
+
   return (
     <div
       style={{ gridTemplateColumns }}
@@ -62,7 +64,7 @@ const Table = ({
               {header}
             </button>
           ) : (
-            { header }
+            header
           )}
         </div>
       ))}
