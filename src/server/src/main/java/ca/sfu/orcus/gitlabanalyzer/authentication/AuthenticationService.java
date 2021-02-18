@@ -38,7 +38,7 @@ public class AuthenticationService {
         }
         if (userPassIsValid(user, pass)) {
             try {
-                GitLabApi gitLabApi = GitLabApi.oauth2Login("http://cmpt373-1211-09.cmpt.sfu.ca/", user, pass);
+                GitLabApi gitLabApi = GitLabApi.oauth2Login(System.getenv("SERVER_URL"), user, pass);
                 String authToken = gitLabApi.getAuthToken();
                 newUser.setAuthToken(authToken);
                 String jwt = tokenCreator.createJwt(newUser);
@@ -56,7 +56,7 @@ public class AuthenticationService {
     // try getting some small amount of data using the GitLabApi object to check if the pat token was valid
     private boolean patIsValid(String pat) {
         try {
-            GitLabApi gitLabApi = new GitLabApi("http://cmpt373-1211-09.cmpt.sfu.ca/", pat);
+            GitLabApi gitLabApi = new GitLabApi(System.getenv("SERVER_URL"), pat);
             gitLabApi.getUserApi().getUser(1);
             return true;
         } catch (GitLabApiException e) {
@@ -66,7 +66,7 @@ public class AuthenticationService {
 
     private boolean userPassIsValid(String user, String pass) {
         try {
-            GitLabApi gitLabApi = GitLabApi.oauth2Login("http://cmpt373-1211-09.cmpt.sfu.ca/", user, pass);
+            GitLabApi gitLabApi = GitLabApi.oauth2Login(System.getenv("SERVER_URL"), user, pass);
             gitLabApi.getUserApi().getCurrentUser();
             return true;
         } catch (GitLabApiException e) {
