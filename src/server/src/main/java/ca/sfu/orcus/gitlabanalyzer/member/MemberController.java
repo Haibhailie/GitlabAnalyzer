@@ -1,7 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDTO;
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDTO;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDTO;
@@ -29,7 +28,7 @@ public class MemberController {
     @GetMapping("/api/core/{projectId}/members/{memberid}/commits")
     public List<CommitDTO> getCommitsByAuthorID(@PathVariable int projectId,
                                                   @RequestParam(required = false) String since,
-                                                  @RequestParam(required = false) String until, @PathVariable String memberid) throws GitLabApiException {
+                                                  @RequestParam(required = false) String until, @PathVariable int memberid) throws GitLabApiException {
 
         Date dateSince;
         Date dateUntil;
@@ -55,7 +54,7 @@ public class MemberController {
     @GetMapping("/api/core/{projectId}/members/{memberid}/mergerequests")
     public List<MergeRequestDTO> getMRsByAuthorID(@PathVariable int projectId,
                                                     @RequestParam(required = false) String since, @RequestParam(required = false) String until,
-                                                    @PathVariable String memberid) throws GitLabApiException {
+                                                    @PathVariable int memberid) throws GitLabApiException {
 
         Date dateSince;
         Date dateUntil;

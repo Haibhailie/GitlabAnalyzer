@@ -46,7 +46,7 @@ public class MemberService {
         List<MergeRequestDTO> mergeRequestsByMemberID = new ArrayList<>();
         List<MergeRequestDTO> allMRs = getAllMergeRequests(gitLabApi,projectID, since, until);
         for (MergeRequestDTO mr : allMRs) {
-            if (mr.getAuthorID == MemberID)
+            if (mr.getUserID() == MemberID)
                 mergeRequestsByMemberID.add(mr);
         }
         return mergeRequestsByMemberID;
