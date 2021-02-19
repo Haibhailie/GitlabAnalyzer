@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
 
+import DefaultLoader from '../components/Loading'
+import DefaultError from '../components/Error'
+
 export interface ISuspenseProps {
   children: JSX.Element
-  fallback: JSX.Element
-  error?: JSX.Element
+  fallback: JSX.Element | string
+  error?: JSX.Element | string
 }
 
 export type TSuspenseFunction = (props: ISuspenseProps) => JSX.Element
@@ -66,8 +69,14 @@ const withSuspense = <DataType, ErrorType>(
     }, [])
 
     if (loading) {
+      if (typeof Fallback === 'string') {
+        return <DefaultLoader message={Fallback} />
+      }
       return Fallback
     } else if (failed && Error) {
+      if (typeof Error === 'string') {
+        return <DefaultError message={Error} />
+      }
       return Error
     } else {
       return LoadedComp
