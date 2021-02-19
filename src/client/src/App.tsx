@@ -7,7 +7,12 @@ const App = () => {
       <Switch>
         <Route path="/home"></Route>
         <Route path="/">
-          <PageWrapper />
+          <PageWrapper>
+            <div>
+              <h1>GitLab Project Name</h1>
+              <button>Submit</button>
+            </div>
+          </PageWrapper>
         </Route>
       </Switch>
     </Router>

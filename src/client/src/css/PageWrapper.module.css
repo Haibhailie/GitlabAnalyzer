@@ -1,0 +1,9 @@
+.main {
+  margin-left: 0px;
+  transition: margin-left 0.6s;
+}
+
+.mainPushed {
+  margin-left: 235px;
+  transition: margin-left 0.5s;
+}

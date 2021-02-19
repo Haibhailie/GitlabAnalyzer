@@ -3,7 +3,13 @@ import { useState } from 'react'
 import Header from './Header'
 import SideNav from './SideNav'
 
-const PageWrapper = () => {
+import styles from '../css/PageWrapper.module.css'
+
+export interface IPageWrapperProps {
+  children: JSX.Element
+}
+
+const PageWrapper = ({ children }: IPageWrapperProps) => {
   const [sideNavOpen, setSideNavOpen] = useState(true)
 
   const toggleSideNav = () => {
@@ -14,6 +20,9 @@ const PageWrapper = () => {
     <div>
       <Header isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
       <SideNav isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
+      <main className={sideNavOpen ? styles.mainPushed : styles.main}>
+        {children}
+      </main>
     </div>
   )
 }
