@@ -21,9 +21,12 @@ public class AuthenticationService {
         this.jwtService = jwtService;
     }
 
-    public String addNewUserFromPat(AuthenticationUser newUser) throws IllegalArgumentException {
+    public String addNewUserFromPat(AuthenticationUser newUser) throws IllegalArgumentException, BadRequestException {
+        String pat = newUser.getPat();
+        if (pat == null || pat.equals("")) {
+            throw new BadRequestException("Pat is empty");
+        }
         try {
-            String pat = newUser.getPat();
             newUser.setUsername(getUsernameFromPat(pat));
             String jwt = jwtService.createJwt(newUser, JwtService.JwtType.PAT);
             newUser.setJwt(jwt);

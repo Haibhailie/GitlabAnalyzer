@@ -33,6 +33,8 @@ public class AuthenticationController {
             response.addCookie(cookie);
             response.setStatus(200);
         } catch (IllegalArgumentException e) {
+            response.setStatus(401);
+        } catch (BadRequestException e) {
             response.setStatus(400);
         }
     }
