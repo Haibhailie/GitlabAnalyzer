@@ -13,6 +13,7 @@ public class MergeRequestDTO{
     private int mergeRequestID;
     private boolean hasConflicts;
     private boolean isOpen;
+    private int userID;
     private String assignedTo;
     private String author;
     private String description;
@@ -27,6 +28,7 @@ public class MergeRequestDTO{
 
     public MergeRequestDTO(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
 
+        setUserID(presentMergeRequest.getAuthor().getId());
         setMergeRequestID(presentMergeRequest.getIid());
         setOpen(presentMergeRequest.getState().compareTo("opened") == 0);
         setAuthor(presentMergeRequest.getAuthor().getName());
@@ -120,6 +122,10 @@ public class MergeRequestDTO{
         }
     }
 
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
     public void setCommiters(List<Commit> commits) {
         commiters = new ArrayList<>();
         for(Commit c : commits){
@@ -172,6 +178,10 @@ public class MergeRequestDTO{
 
     public int getNumAdditions() {
         return numAdditions;
+    }
+
+    public int getUserID() {
+        return userID;
     }
 
     public int getNumDeletions() {
