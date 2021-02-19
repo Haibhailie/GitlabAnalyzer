@@ -1,5 +1,7 @@
 :root {
   --color-main: black;
+  --color-header: #364fc7;
+  --font-header: 400 24px Poppins;
 }
 
 body {
