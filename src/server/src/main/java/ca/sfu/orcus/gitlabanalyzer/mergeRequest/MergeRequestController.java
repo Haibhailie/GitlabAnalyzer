@@ -25,6 +25,7 @@ public class MergeRequestController {
     @Autowired
     public MergeRequestController(MergeRequestService mergeRequestService) {
         this.mergeRequestService = mergeRequestService;
+        //this.commitService = commitService;
     }
 
 
