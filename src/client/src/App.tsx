@@ -4,8 +4,8 @@ const App = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/"></Route>
         <Route path="/home"></Route>
+        <Route path="/"></Route>
       </Switch>
     </Router>
   )
