@@ -1,0 +1,8 @@
+description: OK
+headers:
+  'Set-Cookie':
+    description: 'Sets a session cookie in the format of a JWT.'
+    required: true
+    schema:
+      type: string
+      pattern: 'sessionId=[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.[A-Za-z0-9-_.+/=]+;'

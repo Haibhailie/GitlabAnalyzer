@@ -1,0 +1,3 @@
+name: projectId
+in: path
+required: true

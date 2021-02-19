@@ -1,0 +1,18 @@
+type: array
+items:
+  type: object
+  required:
+    - sha
+    - author
+    - time
+    - score
+  properties:
+    sha:
+      type: string
+    author:
+      type: string
+      description: username of the author
+    time:
+      $ref: './epoch.yml'
+    score:
+      type: number

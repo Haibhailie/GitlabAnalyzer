@@ -1,0 +1,43 @@
+get:
+  description: 'Get the notes (comments) the member contributed to the project.'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            type: array
+            items:
+              type: object
+              required:
+                - id
+                - wordcount
+                - content
+                - date
+                - context
+              properties:
+                id:
+                  type: string
+                wordcount:
+                  type: integer
+                  minimum: 0
+                content:
+                  type: string
+                date:
+                  type: integer
+                context:
+                  type: string
+                  enum:
+                    - MERGEREQUEST
+                    - ISSUE
+                    - EPIC
+    '401':
+      description: Invalid JWT Token.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
+    - $ref: './components/projectId.yml'
+    - name: memberId
+      in: path
+      required: true
