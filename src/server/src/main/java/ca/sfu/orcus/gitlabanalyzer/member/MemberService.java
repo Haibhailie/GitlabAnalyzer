@@ -41,15 +41,15 @@ public class MemberService {
         return commitsByMemberID;
     }
 
-    public static List<MergeRequestDTO> getAllMRsByMemberName(GitLabApi gitLabApi, int projectID, Date since, Date until, String MemberName) throws GitLabApiException {
+    public static List<MergeRequestDTO> getAllMRsByMemberID(GitLabApi gitLabApi, int projectID, Date since, Date until, int MemberID) throws GitLabApiException {
 
-        List<MergeRequestDTO> mergeRequestsByMemberName = new ArrayList<>();
+        List<MergeRequestDTO> mergeRequestsByMemberID = new ArrayList<>();
         List<MergeRequestDTO> allMRs = getAllMergeRequests(gitLabApi,projectID, since, until);
         for (MergeRequestDTO mr : allMRs) {
-            if (mr.getAuthor().equals(MemberName))
-                mergeRequestsByMemberName.add(mr);
+            if (mr.getAuthorID == MemberID)
+                mergeRequestsByMemberID.add(mr);
         }
-        return mergeRequestsByMemberName;
+        return mergeRequestsByMemberID;
     }
 
 
