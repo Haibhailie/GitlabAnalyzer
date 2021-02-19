@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import Provider from './context/ProjectContext'
 import Home from './pages/Home'
+import Login from './pages/Login'
 
 const App = () => {
   return (
@@ -11,7 +12,9 @@ const App = () => {
           <Route path="/home">
             <Home />
           </Route>
-          <Route path="/"></Route>
+          <Route path="/">
+            <Login />
+          </Route>
         </Switch>
       </Router>
     </Provider>
