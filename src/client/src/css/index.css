@@ -4,10 +4,12 @@
   --color-text-header: #e9ecef;
   --color-text-body: #000000;
   --color-button-hover: #4263eb;
+  --color-input-background: #DFDFDF;
   --font-title: 500 72px Poppins;
   --font-button: 400 26px Poppins;
   --font-button-sm: 400 16px Poppins;
   --font-header: 400 24px Poppins;
+  --font-sub-header: 400 18px Poppins;
 }
 
 body {
