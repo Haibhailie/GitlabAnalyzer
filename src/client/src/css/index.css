@@ -10,6 +10,8 @@
   --font-header: 400 24px Poppins;
   --font-item-label: 400 16px Poppins;
   --font-small: 400 14px Poppins;
+  --header-height: 72px;
+  --sidenav-width: 230px;
 }
 
 body {
