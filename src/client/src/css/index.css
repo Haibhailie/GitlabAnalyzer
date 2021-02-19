@@ -5,17 +5,33 @@
   --color-text-body: #000000;
   --color-button-hover: #4263eb;
   --color-input-background: #DFDFDF;
+  --color-primary: #074ee8;
+  --color-table-header-background: #eeeeee;
+  --color-table-border: #aaaaaa;
+  --color-darkgray: #c4c4c4;
+  --color-lightgray: #d6d5d5;
+  --color-lightblue: #dbe4ff;
   --font-title: 500 72px Poppins;
   --font-button: 400 26px Poppins;
   --font-button-sm: 400 16px Poppins;
   --font-header: 400 24px Poppins;
   --font-sub-header: 400 18px Poppins;
+  --font-item-label: 400 16px Poppins;
+  --font-small: 400 14px Poppins;
 }
 
 body {
   width: 100vw;
   height: 100vh;
   margin: 0;
+  width: 100vw;
+  height: 100vh;
+  font-family: Poppins;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
 }
 
 #root {
@@ -26,4 +42,8 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+button {
+  font: inherit;
 }
