@@ -33,41 +33,41 @@ public class MemberService {
 
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
-        List<MemberDTO> allMembers = new ArrayList<>();
-        List<Member> members = gitLabApi.getProjectApi().getAllMembers(projectID);
+            List<MemberDTO> allMembers = new ArrayList<>();
+            List<Member> members = gitLabApi.getProjectApi().getAllMembers(projectID);
 
-        for (Member m : members) {
-            MemberDTO presentMember = new MemberDTO(gitLabApi, projectID, m);
-            allMembers.add(presentMember);
-        }
-        return allMembers;
+            for (Member m : members) {
+                MemberDTO presentMember = new MemberDTO(gitLabApi, projectID, m);
+                allMembers.add(presentMember);
+            }
+            return allMembers;
         } else {
             return null;
         }
     }
 
-    public List<CommitDTO> getAllCommitsByMemberID(GitLabApi gitLabApi, int projectID, Date since, Date until, int MemberID) throws GitLabApiException {
+//    public List<CommitDTO> getAllCommitsByMemberID(GitLabApi gitLabApi, int projectID, Date since, Date until, int MemberID) throws GitLabApiException {
+//
+//        List<CommitDTO> commitsByMemberID = new ArrayList<>();
+//        ArrayList<CommitDTO> allCommits = getAllCommits(gitLabApi, projectID, since, until);
+//
+//        for (CommitDTO c : allCommits) {
+//            if (c.getAuthorId() == MemberID)
+//                commitsByMemberID.add(c);
+//        }
+//        return commitsByMemberID;
+//    }
 
-        List<CommitDTO> commitsByMemberID = new ArrayList<>();
-        ArrayList<CommitDTO> allCommits = getAllCommits(gitLabApi, projectID, since, until);
-
-        for (CommitDTO c : allCommits) {
-            if (c.getAuthorId() == MemberID)
-                commitsByMemberID.add(c);
-        }
-        return commitsByMemberID;
-    }
-
-    public List<MergeRequestDTO> getAllMRsByMemberID(GitLabApi gitLabApi, int projectID, Date since, Date until, int MemberID) throws GitLabApiException {
-
-        List<MergeRequestDTO> mergeRequestsByMemberID = new ArrayList<>();
-        List<MergeRequestDTO> allMRs = getAllMergeRequests(gitLabApi,projectID, since, until);
-        for (MergeRequestDTO mr : allMRs) {
-            if (mr.getUserID() == MemberID)
-                mergeRequestsByMemberID.add(mr);
-        }
-        return mergeRequestsByMemberID;
-    }
+//    public List<MergeRequestDTO> getAllMRsByMemberID(GitLabApi gitLabApi, int projectID, Date since, Date until, int MemberID) throws GitLabApiException {
+//
+//        List<MergeRequestDTO> mergeRequestsByMemberID = new ArrayList<>();
+//        List<MergeRequestDTO> allMRs = getAllMergeRequests(gitLabApi,projectID, since, until);
+//        for (MergeRequestDTO mr : allMRs) {
+//            if (mr.getUserID() == MemberID)
+//                mergeRequestsByMemberID.add(mr);
+//        }
+//        return mergeRequestsByMemberID;
+//    }
 
 
 }
