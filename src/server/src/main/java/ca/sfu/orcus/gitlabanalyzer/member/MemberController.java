@@ -26,10 +26,10 @@ public class MemberController {
         return MemberService.getAllMembers(gitLabApi, projectId);
     }
 
-    @GetMapping("/api/core/{projectId}/members/{authorname}/commits")
-    public List<CommitDTO> getCommitsByAuthorName(@PathVariable int projectId,
+    @GetMapping("/api/core/{projectId}/members/{memberid}/commits")
+    public List<CommitDTO> getCommitsByAuthorID(@PathVariable int projectId,
                                                   @RequestParam(required = false) String since,
-                                                  @RequestParam(required = false) String until, @PathVariable String authorname) throws GitLabApiException {
+                                                  @RequestParam(required = false) String until, @PathVariable String memberid) throws GitLabApiException {
 
         Date dateSince;
         Date dateUntil;
@@ -40,22 +40,22 @@ public class MemberController {
             } else {
                 dateUntil = new Date(); // until now
             }
-            return MemberService.getAllCommitsByMemberName(gitLabApi, projectId, dateSince, dateUntil, authorname);
+            return MemberService.getAllCommitsByMemberID(gitLabApi, projectId, dateSince, dateUntil, memberid);
         }
         if (until != null) {
             dateSince = new Date(0); // since 1969
             dateUntil = new Date(Long.parseLong(until) * 1000); // until given value
-            return MemberService.getAllCommitsByMemberName(gitLabApi, projectId, dateSince, dateUntil, authorname);
+            return MemberService.getAllCommitsByMemberID(gitLabApi, projectId, dateSince, dateUntil, memberid);
         }
         dateSince = new Date(0); // since 1969
         dateUntil = new Date(); // until now
-        return MemberService.getAllCommitsByMemberName(gitLabApi, projectId, dateSince, dateUntil, authorname);
+        return MemberService.getAllCommitsByMemberID(gitLabApi, projectId, dateSince, dateUntil, memberid);
     }
 
-    @GetMapping("/api/core/{projectId}/members/{authorname}/mergerequests")
-    public List<MergeRequestDTO> getMRsByAuthorName(@PathVariable int projectId,
+    @GetMapping("/api/core/{projectId}/members/{memberid}/mergerequests")
+    public List<MergeRequestDTO> getMRsByAuthorID(@PathVariable int projectId,
                                                     @RequestParam(required = false) String since, @RequestParam(required = false) String until,
-                                                    @PathVariable String authorname) throws GitLabApiException {
+                                                    @PathVariable String memberid) throws GitLabApiException {
 
         Date dateSince;
         Date dateUntil;
@@ -66,16 +66,16 @@ public class MemberController {
             } else {
                 dateUntil = new Date(); // until now
             }
-            return MemberService.getAllMRsByMemberName(gitLabApi, projectId, dateSince, dateUntil, authorname);
+            return MemberService.getAllMRsByMemberID(gitLabApi, projectId, dateSince, dateUntil, memberid);
         }
         if (until != null) {
             dateSince = new Date(0); // since 1969
             dateUntil = new Date(Long.parseLong(until) * 1000); // until given value
-            return MemberService.getAllMRsByMemberName(gitLabApi, projectId, dateSince, dateUntil, authorname);
+            return MemberService.getAllMRsByMemberID(gitLabApi, projectId, dateSince, dateUntil, memberid);
         }
         dateSince = new Date(0); // since 1969
         dateUntil = new Date(); // until now
-        return MemberService.getAllMRsByMemberName(gitLabApi, projectId, dateSince, dateUntil, authorname);
+        return MemberService.getAllMRsByMemberID(gitLabApi, projectId, dateSince, dateUntil, memberid);
     }
 
 
