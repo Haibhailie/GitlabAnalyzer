@@ -56,7 +56,6 @@ public class CommitService {
         } else {
             return null;
         }
-
     }
 
     public List<Diff> getDiffOfCommit(String jwt, int projectID, String sha) throws GitLabApiException {
