@@ -49,7 +49,6 @@ public class MergeRequestService {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if ((gitLabApi != null)){
             List<CommitDTO> listCommit = new ArrayList<>();
-            List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
             List<Commit> presentCommit = gitLabApi.getMergeRequestApi().getCommits(projectID, mergeRequestID);
             for (Commit c : presentCommit) {
                 CommitDTO tempDTO = new CommitDTO(gitLabApi, projectID, c);

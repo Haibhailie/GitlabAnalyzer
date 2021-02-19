@@ -18,18 +18,14 @@ import java.util.Optional;
 @RestController
 public class MergeRequestController {
 
-    //Using our VM server for testing purposes
-    //private final GitLabApi gitLabApi = new GitLabApi("http://cmpt373-1211-09.cmpt.sfu.ca", "FiEWixWRQZJdt2TC_btj");
     private final MergeRequestService mergeRequestService;
 
     @Autowired
     public MergeRequestController(MergeRequestService mergeRequestService) {
         this.mergeRequestService = mergeRequestService;
-        //this.commitService = commitService;
+
     }
 
-
-    //Test using http://localhost:8080/api/core/mergerequests/5/mergeRequests?since=1612508394 on Postman
     @GetMapping("/api/core/mergerequests/{projectId}/mergeRequests")
     public String getMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                                   HttpServletResponse response,
@@ -67,7 +63,6 @@ public class MergeRequestController {
         return gson.toJson(mergeRequestDTOS);
     }
 
-    //Test using http://localhost:8080/api/core/mergerequests/5/10/commits on Postman
     @GetMapping("/api/core/mergerequests/{projectId}/{mergerequestId}/commits")
     public String getCommitsFromMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                                        HttpServletResponse response,
@@ -80,7 +75,6 @@ public class MergeRequestController {
         return gson.toJson(commitDTOS);
     }
 
-    //Test using http://localhost:8080/api/core/mergerequests/5/10/diff on Postman
     @GetMapping("/api/core/mergerequests/{projectId}/{mergerequestId}/diff")
     public String getDiffsFromMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                                                HttpServletResponse response,
