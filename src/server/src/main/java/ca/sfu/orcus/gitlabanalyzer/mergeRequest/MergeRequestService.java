@@ -1,17 +1,30 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDTO;
+import ca.sfu.orcus.gitlabanalyzer.project.ProjectRepository;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
 import org.gitlab4j.api.models.MergeRequest;
+import org.jvnet.hk2.annotations.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class MergeRequestService {
+
+    private final MergeRequestRepository mergeRequestRepository;
+    private final AuthenticationService authService;
+
+    @Autowired
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, AuthenticationService authService){
+        this.mergeRequestRepository = mergeRequestRepository;
+        this.authService = authService;
+    }
 
     public static List<MergeRequestDTO> getAllMergeRequests(GitLabApi gitLabApi, int projectID, Date since, Date until) throws GitLabApiException {
 
