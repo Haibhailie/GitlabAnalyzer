@@ -7,6 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.BadRequestException;
 
 @RestController
 public class AuthenticationController {
@@ -33,6 +34,20 @@ public class AuthenticationController {
             response.addCookie(cookie);
             response.setStatus(200);
         } catch (IllegalArgumentException e) {
+            response.setStatus(400);
+        }
+    }
+
+    @PostMapping("/api/signin")
+    public void loginWithUserPass(@RequestBody User user, HttpServletResponse response) {
+        try {
+            String jwt = authService.addNewUserByUserPass(user);
+            Cookie cookie = createSessionIdCookie(jwt);
+            response.addCookie(cookie);
+            response.setStatus(200);
+        } catch (IllegalArgumentException e) {
+            response.setStatus(401);
+        } catch (BadRequestException e) {
             response.setStatus(400);
         }
     }
