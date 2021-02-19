@@ -17,7 +17,7 @@ const PageWrapper = ({ children }: IPageWrapperProps) => {
   }
 
   return (
-    <div>
+    <>
       <Header isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
       <SideNav isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
       <main
@@ -25,7 +25,7 @@ const PageWrapper = ({ children }: IPageWrapperProps) => {
       >
         {children}
       </main>
-    </div>
+    </>
   )
 }
 
