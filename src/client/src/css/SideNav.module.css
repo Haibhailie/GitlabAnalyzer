@@ -1,0 +1,37 @@
+.sideNav {
+  height: 100%;
+  width: var(--sidenav-width);
+  position: fixed;
+  left: 0;
+  transition: left 0.4s ease-in-out;
+  border-right: 1px solid var(--color-lightgray);
+  background-color: #ffffff;
+}
+
+.hideSideNav {
+  left: -230px;
+}
+
+.itemList {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.closeSideNavButton {
+  position: absolute;
+  left: 210px;
+  top: 40%;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-lightgray);
+  font-size: 24px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+}
+
+.closeSideNavButton:hover {
+  cursor: pointer;
+  background-color: var(--color-darkgray);
+}

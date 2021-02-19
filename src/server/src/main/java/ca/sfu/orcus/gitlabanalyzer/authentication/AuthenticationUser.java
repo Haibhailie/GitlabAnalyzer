@@ -7,22 +7,13 @@ public class AuthenticationUser {
     private String authToken;
     private String jwt;
 
-    private AuthenticationUser(String username, String password) {
+    public AuthenticationUser(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    private AuthenticationUser(String pat) {
+    public AuthenticationUser(String pat) {
         this.pat = pat;
-    }
-
-    public static AuthenticationUser fromUsernameAndPassword(String username, String password) {
-        return new AuthenticationUser(username, password);
-    }
-
-    // Used by Spring Boot automatically to parse request body
-    public static AuthenticationUser createFromAuthToken(String authToken) {
-        return new AuthenticationUser(authToken);
     }
 
     public String getUsername() {
@@ -44,9 +35,11 @@ public class AuthenticationUser {
     public void setJwt(String jwt) {
         this.jwt = jwt;
     }
+
     public String getAuthToken() {
         return authToken;
     }
+
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }

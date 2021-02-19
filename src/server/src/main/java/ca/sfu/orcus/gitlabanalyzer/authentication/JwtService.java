@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.authentication;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -40,7 +41,7 @@ public class JwtService {
                     .build()
                     .parseClaimsJws(jwt);
             return true;
-        } catch (SignatureException e) {
+        } catch (SignatureException | MalformedJwtException e) {
             return false;
         }
     }
