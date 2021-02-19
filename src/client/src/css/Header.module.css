@@ -2,7 +2,8 @@
   display: flex;
   align-items: center;
   background-color: var(--color-header);
-  padding: 2px 36px;
+  padding: 0px 36px;
+  height: var(--header-height);
 }
 
 .logo {

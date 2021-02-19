@@ -19,12 +19,14 @@ const PageWrapper = ({ children }: IPageWrapperProps) => {
   return (
     <>
       <Header isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
-      <SideNav isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
-      <main
-        className={`${styles.main} ${sideNavOpen ? styles.mainPushed : ''}`}
-      >
-        {children}
-      </main>
+      <div className={styles.container}>
+        <SideNav isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
+        <main
+          className={`${styles.main} ${sideNavOpen ? styles.mainPushed : ''}`}
+        >
+          {children}
+        </main>
+      </div>
     </>
   )
 }

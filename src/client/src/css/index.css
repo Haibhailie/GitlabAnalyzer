@@ -7,11 +7,20 @@
   --color-lightblue: #dbe4ff;
   --font-header: 400 24px Poppins;
   --font-item-label: 400 16px Poppins;
+  --header-height: 72px;
+  --sidenav-width: 230px;
 }
 
 body {
   margin: 0;
+  width: 100vw;
+  height: 100vh;
   font-family: Poppins;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
 }
 
 code {
