@@ -12,7 +12,7 @@ import java.util.List;
 public class CommitDTO {
     private String title;
     private String author;
-    private int authorId;
+    private String authorEmail;
     private String id;
     private Date dateCommitted;
     private String message;
@@ -24,23 +24,20 @@ public class CommitDTO {
     public CommitDTO(GitLabApi gitLabApi, int projectID, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
         this.setAuthor(commit.getAuthorName());
-        this.setAuthorId(commit.getAuthor().getId());
+        this.setAuthorEmail(commit.getAuthorEmail());
         this.setId(commit.getId());
         this.setDateCommitted(commit.getCommittedDate());
         this.setMessage(commit.getMessage());
-        Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectID, commit.getShortId());
+
+        Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectID, commit.getShortId()); // Needed otherwise getStats() returns null
         this.setNumAdditions(presentCommit.getStats().getAdditions());
         this.setNumDeletions(presentCommit.getStats().getDeletions());
         this.setTotal(presentCommit.getStats().getTotal());
 
         List<Diff> allDiffs = new ArrayList<>();
         List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectID, commit.getId());
-        if(!gitDiffs.isEmpty()) {
-            for(Diff d : gitDiffs) {
-                allDiffs.add(d);
-            }
-            this.setDiffs(allDiffs);
-        }
+        allDiffs.addAll(gitDiffs); // equivalent to a for-each loop to add all gitDiffs
+        this.setDiffs(allDiffs);
     }
 
     public void setTitle(String title) {
@@ -51,8 +48,8 @@ public class CommitDTO {
         this.author = author;
     }
 
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
+    public void setAuthorEmail(String authorEmail) {
+        this.authorEmail = authorEmail;
     }
 
     public void setId(String id) {
@@ -91,8 +88,8 @@ public class CommitDTO {
         return author;
     }
 
-    public int getAuthorId() {
-        return authorId;
+    public String getAuthorEmail() {
+        return authorEmail;
     }
 
     public String getId() {
