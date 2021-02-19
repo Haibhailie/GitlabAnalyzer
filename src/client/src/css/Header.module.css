@@ -1,0 +1,39 @@
+.headerDiv {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-header);
+  padding: 0px 36px;
+  height: var(--header-height);
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+}
+
+.appName {
+  margin-left: 5px;
+  color: #ffffff;
+  font: var(--font-header);
+}
+
+.homeLink {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  text-decoration: none;
+}
+
+.hamburgerMenu {
+  cursor: pointer;
+  outline: none;
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hamburgerMenuIcon {
+  width: 24px;
+  height: 24px;
+}

@@ -1,0 +1,14 @@
+.container {
+  height: calc(100% - var(--header-height));
+}
+
+.main {
+  margin-left: 0px;
+  transition: margin-left 0.4s ease-in-out;
+  height: 100%;
+  width: auto;
+}
+
+.mainPushed {
+  margin-left: var(--sidenav-width);
+}
