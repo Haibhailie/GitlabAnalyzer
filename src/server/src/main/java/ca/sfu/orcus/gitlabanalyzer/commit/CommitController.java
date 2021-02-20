@@ -16,7 +16,7 @@ import java.util.List;
 public class CommitController {
     private static final long EPOCH_TO_DATE_FACTOR = 1000;
     private static final String EARLIEST_DATE = "1973-03-30T00:00:00Z"; // earliest date commitsApi works with
-    private static final long DEFAULT_SINCE = 0;
+    private static final long EARLIEST_DATE_LONG = 102297600;
     private static final long DEFAULT_UNTIL = -1;
 
     private final CommitService commitService;
@@ -49,10 +49,11 @@ public class CommitController {
     }
 
     private Date getDateSince(long since) throws ParseException {
-        if(since > DEFAULT_SINCE) {
-            return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
-        } else {
+        if(since < EARLIEST_DATE_LONG) {
             return ISO8601.toDate(EARLIEST_DATE);  // since 1973
+        } else {
+            return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
+
         }
     }
 
