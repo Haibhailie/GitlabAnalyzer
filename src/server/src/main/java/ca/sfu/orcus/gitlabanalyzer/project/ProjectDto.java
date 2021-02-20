@@ -14,7 +14,7 @@ public class ProjectDto {
         setName(project.getName());
         setRole("TODO");
         setLastActivityAt(project.getLastActivityAt().getTime());
-        setAnalyzed(false); // TODO
+        setAnalyzed(false); // TODO: Iteration 2
     }
 
     public void setId(Integer id) {
