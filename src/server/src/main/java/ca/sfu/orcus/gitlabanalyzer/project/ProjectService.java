@@ -63,7 +63,7 @@ public class ProjectService {
     private ProjectExtendedDto getProject(GitLabApi gitLabApi, int projectId) {
         try {
             Project project = gitLabApi.getProjectApi().getProject(projectId, true);
-            Long numBranches = (long) gitLabApi.getRepositoryApi().getBranches(projectId).size();
+            long numBranches = (long) gitLabApi.getRepositoryApi().getBranches(projectId).size();
             List<MemberDTO> memberDtos = memberService.getAllMemberDTOs(gitLabApi, projectId);
             return new ProjectExtendedDto(project, memberDtos, numBranches);
         } catch (GitLabApiException e) {
@@ -72,9 +72,9 @@ public class ProjectService {
     }
 
     private String getAuthenticatedMembersRoleInProject(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
-        Integer currentUserId = gitLabApi.getUserApi().getCurrentUser().getId();
+        int currentUserId = gitLabApi.getUserApi().getCurrentUser().getId();
         Member currentMember = gitLabApi.getProjectApi().getMember(projectId, currentUserId);
-        Integer currentAccessLevel = currentMember.getAccessLevel().value;
+        int currentAccessLevel = currentMember.getAccessLevel().value;
         return MemberUtils.getMemberRoleFromAccessLevel(currentAccessLevel);
     }
 }

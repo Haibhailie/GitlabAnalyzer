@@ -6,15 +6,15 @@ import org.gitlab4j.api.models.Project;
 import java.util.List;
 
 public class ProjectExtendedDto {
-    private Integer id;
+    private int id;
     private String name;
     private List<MemberDTO> members;
-    private Long numBranches;
-    private Long numCommits;
-    private Long repoSize;
-    private Long createdAt;
+    private long numBranches;
+    private long numCommits;
+    private long repoSize;
+    private long createdAt;
 
-    public ProjectExtendedDto(Project project, List<MemberDTO> memberDtos, Long numBranches) {
+    public ProjectExtendedDto(Project project, List<MemberDTO> memberDtos, long numBranches) {
         setId(project.getId());
         setName(project.getName());
         setMembers(memberDtos);
@@ -24,7 +24,7 @@ public class ProjectExtendedDto {
         setCreatedAt(project.getCreatedAt().getTime());
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -36,19 +36,19 @@ public class ProjectExtendedDto {
         this.members = members;
     }
 
-    public void setNumBranches(Long numBranches) {
+    public void setNumBranches(long numBranches) {
         this.numBranches = numBranches;
     }
 
-    public void setNumCommits(Long numCommits) {
+    public void setNumCommits(long numCommits) {
         this.numCommits = numCommits;
     }
 
-    public void setRepoSize(Long repoSize) {
+    public void setRepoSize(long repoSize) {
         this.repoSize = repoSize;
     }
 
-    public void setCreatedAt(Long createdAt) {
+    public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }
 }

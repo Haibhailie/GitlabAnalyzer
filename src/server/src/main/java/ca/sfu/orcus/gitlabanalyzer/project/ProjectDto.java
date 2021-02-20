@@ -3,11 +3,11 @@ package ca.sfu.orcus.gitlabanalyzer.project;
 import org.gitlab4j.api.models.Project;
 
 public class ProjectDto {
-    private Integer id;
+    private int id;
     private String name;
     private String role;
-    private Long lastActivityAt;
-    private Boolean analyzed;
+    private long lastActivityAt;
+    private boolean analyzed;
 
     public ProjectDto(Project project, String role) {
         setId(project.getId());
@@ -17,7 +17,7 @@ public class ProjectDto {
         setAnalyzed(false); // TODO: Iteration 2
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -29,11 +29,11 @@ public class ProjectDto {
         this.role = role;
     }
 
-    public void setLastActivityAt(Long lastActivityAt) {
+    public void setLastActivityAt(long lastActivityAt) {
         this.lastActivityAt = lastActivityAt;
     }
 
-    public void setAnalyzed(Boolean analyzed) {
+    public void setAnalyzed(boolean analyzed) {
         this.analyzed = analyzed;
     }
 }
