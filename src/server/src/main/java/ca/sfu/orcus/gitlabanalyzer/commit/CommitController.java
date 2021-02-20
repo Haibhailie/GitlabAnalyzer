@@ -20,6 +20,7 @@ public class CommitController {
     private static final String BEFORE_GITLAB_EXISTED = "2013-01-01T00:00:00Z";
     private static final long DEFAULT_SINCE = 0;
     private static final long DEFAULT_UNTIL = -1;
+    private boolean parseExceptionThrown = false;
 
     private final CommitService commitService;
 
@@ -33,14 +34,19 @@ public class CommitController {
                              @PathVariable int projectId,
                              @RequestParam (required = false, defaultValue = "0") long since,
                              @RequestParam (required = false, defaultValue = "-1") long until,
-                             HttpServletResponse response) throws ParseException {
+                             HttpServletResponse response) {
         Date dateSince = getDateSince(since);
         Date dateUntil = getDateUntil(until);
+        Gson gson = new Gson();
+
+        if(parseExceptionThrown) {
+            response.setStatus(400);
+            return gson.toJson(null);
+        }
 
         List<CommitDTO> commits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
 
         response.setStatus(commits == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(commits);
     }
 
@@ -66,12 +72,17 @@ public class CommitController {
         return gson.toJson(diffs);
     }
 
-    private Date getDateSince(long since) throws ParseException {
+    private Date getDateSince(long since) {
         if(since != DEFAULT_SINCE) {
             return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
         } else {
-            return ISO8601.toDate(BEFORE_GITLAB_EXISTED);  // since 2013
+            try {
+                return ISO8601.toDate(BEFORE_GITLAB_EXISTED);  // since 2013
+            } catch(ParseException e) {
+                parseExceptionThrown = true;
+            }
         }
+        return new Date(0);
     }
 
     private Date getDateUntil(long until) {
