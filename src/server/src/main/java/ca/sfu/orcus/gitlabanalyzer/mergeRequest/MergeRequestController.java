@@ -20,7 +20,6 @@ public class MergeRequestController {
     @Autowired
     public MergeRequestController(MergeRequestService mergeRequestService) {
         this.mergeRequestService = mergeRequestService;
-
     }
 
     @GetMapping("/api/project/{projectId}/mergeRequests")
