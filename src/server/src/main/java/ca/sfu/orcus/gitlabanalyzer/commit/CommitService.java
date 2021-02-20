@@ -28,11 +28,11 @@ public class CommitService {
         if(gitLabApi == null) {
             return null;
         }
-        return getAllCommitDTOs(gitLabApi, projectID, since, until);
+        return getAllCommitDtos(gitLabApi, projectID, since, until);
 
     }
 
-    private ArrayList<CommitDto> getAllCommitDTOs(GitLabApi gitLabApi, int projectId, Date since, Date until) {
+    private ArrayList<CommitDto> getAllCommitDtos(GitLabApi gitLabApi, int projectId, Date since, Date until) {
         try {
             String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
             List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
