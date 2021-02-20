@@ -15,11 +15,13 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class MemberController {
     private final MemberService memberService;
     private final MergeRequestService mergeRequestService;
-    private static final long EPOCH_TO_DATE_FACTOR = 1000;
     private final CommitService commitService;
+    int EPOCH_TO_DATE_FACTOR = 1000; //to multiply the long from parseLong() by 1000 to convert to milliseconds, for Java's date constructor
+
 
     @Autowired
     public MemberController(MemberService memberService, MergeRequestService mergeRequestService, CommitService commitService) {
@@ -31,7 +33,7 @@ public class MemberController {
 
     @GetMapping("/api/core/{projectId}/members")
     public String getMembers(@CookieValue(value = "sessionId") String jwt,
-                             HttpServletResponse response, @PathVariable int projectId) throws GitLabApiException {
+                             HttpServletResponse response, @PathVariable int projectId) {
 
         List<MemberDTO> members = memberService.getAllMembers(jwt, projectId);
         response.setStatus(members == null ? 401 : 200);
@@ -39,68 +41,55 @@ public class MemberController {
         return gson.toJson(members);
     }
 
-    @GetMapping("/api/core/{projectId}/members/{memberId}/commits")
-    public String getCommitsByAuthorID(@CookieValue(value = "sessionId") String jwt,
-                                       HttpServletResponse response,
-                                       @PathVariable int projectId,
-                                       @RequestParam(required = false) String since,
-                                       @RequestParam(required = false) String until, @PathVariable int memberId) throws GitLabApiException {
-
-        Date dateSince;
-        Date dateUntil;
-        List<CommitDTO> allCommitsByAuthorId;
-        if (since != null) {
-            dateSince = new Date(Long.parseLong(since) * EPOCH_TO_DATE_FACTOR); // since given value
-            if (until != null) {
-                dateUntil = new Date(Long.parseLong(until) * EPOCH_TO_DATE_FACTOR); // until given value
-            } else {
-                dateUntil = new Date(); // until now
-            }
-            allCommitsByAuthorId = commitService.getAllCommits(jwt,projectId,dateSince,dateUntil);
-        }else if (until != null) {
-            dateSince = new Date(0); // since 1969
-            dateUntil = new Date(Long.parseLong(until) * 1000); // until given value
-            allCommitsByAuthorId = commitService.getAllCommits(jwt,projectId,dateSince,dateUntil);
-        }else {
-            dateSince = new Date(0); // since 1969
-            dateUntil = new Date(); // until now
-            allCommitsByAuthorId = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
+    private Date calculateUntil(long until) {
+        if (until == -1) {
+            return new Date(); // until now
+        } else {
+            return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
         }
-        response.setStatus(allCommitsByAuthorId == null ? 401 : 200);
+    }
+
+    @GetMapping("/api/core/{projectId}/members/{memberEmail}/commits")
+    public String getCommitsByMemberEmail(@CookieValue(value = "sessionId") String jwt,
+                                          HttpServletResponse response,
+                                          @PathVariable int projectId,
+                                          @RequestParam(required = false, defaultValue = "0") long since,
+                                          @RequestParam(required = false, defaultValue = "-1") long until, @PathVariable String memberEmail) {
+
+        Date dateSince = new Date(since * EPOCH_TO_DATE_FACTOR);
+        ;
+        Date dateUntil = calculateUntil(until);
         Gson gson = new Gson();
-        return gson.toJson(allCommitsByAuthorId);
+        List<CommitDTO> allCommitsByMemberEmail = new ArrayList<>();
+        List<CommitDTO> allCommits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
+        for (CommitDTO c : allCommits) {
+            if (c.getAuthorEmail().equal(memberEmail)) {
+                allCommitsByMemberEmail.add(c);
+            }
+        }
+        response.setStatus(allCommitsByMemberEmail == null ? 401 : 200);
+        return gson.toJson(allCommitsByMemberEmail);
     }
 
     @GetMapping("/api/core/{projectId}/members/{memberId}/mergerequests")
-    public String getMergeRequestsByAuthorID(@CookieValue(value = "sessionId") String jwt,
-                                       HttpServletResponse response,
-                                       @PathVariable int projectId,
-                                       @RequestParam(required = false) String since,
-                                       @RequestParam(required = false) String until, @PathVariable int memberId) throws GitLabApiException {
+    public String getMergeRequestsByMemberID(@CookieValue(value = "sessionId") String jwt,
+                                             HttpServletResponse response,
+                                             @PathVariable int projectId,
+                                             @RequestParam(required = false, defaultValue = "0") long since,
+                                             @RequestParam(required = false, defaultValue = "-1") long until, @PathVariable int memberId) throws GitLabApiException {
 
-        Date dateSince;
-        Date dateUntil;
-        List<MergeRequestDTO> allMergeRequestsByAuthorId;
-        if (since != null) {
-            dateSince = new Date(Long.parseLong(since) * EPOCH_TO_DATE_FACTOR); // since given value
-            if (until != null) {
-                dateUntil = new Date(Long.parseLong(until) * EPOCH_TO_DATE_FACTOR); // until given value
-            } else {
-                dateUntil = new Date(); // until now
-            }
-            allMergeRequestsByAuthorId = mergeRequestService.getAllMergeRequests(jwt,projectId,dateSince,dateUntil);
-        }else if (until != null) {
-            dateSince = new Date(0); // since 1969
-            dateUntil = new Date(Long.parseLong(until) * EPOCH_TO_DATE_FACTOR); // until given value
-            allMergeRequestsByAuthorId = mergeRequestService.getAllMergeRequests(jwt,projectId,dateSince,dateUntil);
-        }else {
-            dateSince = new Date(0); // since 1969
-            dateUntil = new Date(); // until now
-            allMergeRequestsByAuthorId = mergeRequestService.getAllMergeRequests(jwt,projectId,dateSince,dateUntil);
-        }
-        response.setStatus(allMergeRequestsByAuthorId == null ? 401 : 200);
+        Date dateSince = new Date(since * EPOCH_TO_DATE_FACTOR);
+        Date dateUntil = calculateUntil(until);
         Gson gson = new Gson();
-        return gson.toJson(allMergeRequestsByAuthorId);
+        List<MergeRequestDTO> allMergeRequestsByMemberId = new ArrayList<>();
+        List<MergeRequestDTO> allMergeRequests = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
+        for (MergeRequestDTO mr : allMergeRequests) {
+            if (mr.getUserID() == memberId) {
+                allMergeRequestsByMemberId.add(mr);
+            }
+        }
+        response.setStatus(allMergeRequestsByMemberId == null ? 401 : 200);
+        return gson.toJson(allMergeRequestsByMemberId);
     }
 
 

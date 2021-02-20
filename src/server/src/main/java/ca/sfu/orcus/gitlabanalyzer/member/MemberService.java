@@ -1,12 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitDTO;
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDTO;
-
-
-import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestRepository;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
@@ -14,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,29 +22,24 @@ public class MemberService {
         this.authService = authService;
     }
 
-    public List<MemberDTO> getAllMembers(String jwt, int projectID) throws GitLabApiException {
+    public List<MemberDTO> getAllMembers(String jwt, int projectID) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
-            return getAllMemberDTOs(gitLabApi, projectID);
-        } else {
-            return null;
-        }
-
-    }
-    public List<MemberDTO> getAllMemberDTOs(GitLabApi gitLabApi, int projectID) throws GitLabApiException {
-        try{
-            List<MemberDTO> allMembers = new ArrayList<>();
-            List<Member> members = gitLabApi.getProjectApi().getAllMembers(projectID);
-
-            for (Member m : members) {
-                MemberDTO presentMember = new MemberDTO(gitLabApi, projectID, m);
-                allMembers.add(presentMember);
+            List<MemberDTO> filteredAllMembers = new ArrayList<>();
+            try {
+                List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectID);
+                for (Member m : allMembers) {
+                    MemberDTO presentMember = new MemberDTO(gitLabApi, projectID, m);
+                    filteredAllMembers.add(presentMember);
+                }
+                return filteredAllMembers;
             }
-            return allMembers;
-        } catch (GitLabApiException e){
+            catch (GitLabApiException g) {
+                return null;
+            }
+        }else{
             return null;
         }
     }
-
 
 }
