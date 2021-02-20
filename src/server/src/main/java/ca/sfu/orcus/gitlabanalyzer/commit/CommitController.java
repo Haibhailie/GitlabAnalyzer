@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
-
 import com.google.gson.Gson;
 import org.gitlab4j.api.models.Diff;
 import org.gitlab4j.api.utils.ISO8601;
@@ -16,7 +15,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CommitController {
     private static final long EPOCH_TO_DATE_FACTOR = 1000;
-    private static final String BEFORE_GITLAB_EXISTED = "2013-01-01T00:00:00Z";
+    private static final String EARLIEST_DATE = "1973-03-30T00:00:00Z"; // earliest date commitsApi works with
     private static final long DEFAULT_SINCE = 0;
     private static final long DEFAULT_UNTIL = -1;
 
@@ -50,10 +49,10 @@ public class CommitController {
     }
 
     private Date getDateSince(long since) throws ParseException {
-        if(since != DEFAULT_SINCE) {
+        if(since > DEFAULT_SINCE) {
             return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
         } else {
-            return ISO8601.toDate(BEFORE_GITLAB_EXISTED);  // since 2013
+            return ISO8601.toDate(EARLIEST_DATE);  // since 1973
         }
     }
 
