@@ -17,5 +17,3 @@ get:
     - name: memberId
       in: path
       required: true
-    - name: role
-      in: query

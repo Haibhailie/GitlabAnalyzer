@@ -2,12 +2,12 @@ type: array
 items:
   type: object
   required:
-    - hash
+    - sha
     - author
     - time
     - score
   properties:
-    hash:
+    sha:
       type: string
     author:
       type: string

@@ -13,7 +13,6 @@ get:
               - members
               - branches
               - commits
-              - avgCommits
               - repoSize
               - createdAt
             properties:
