@@ -36,7 +36,7 @@ public class CommitDto {
 
         List<Diff> allDiffs = new ArrayList<>();
         List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectID, commit.getId());
-        allDiffs.addAll(gitDiffs); // equivalent to a for-each loop to add all gitDiffs
+        allDiffs.addAll(gitDiffs);
         this.setDiffs(allDiffs);
     }
 

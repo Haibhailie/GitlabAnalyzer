@@ -47,20 +47,28 @@ public class CommitService {
         }
     }
 
-    public CommitDto getSingleCommit(String jwt, int projectID, String sha) throws GitLabApiException {
+    public CommitDto getSingleCommit(String jwt, int projectID, String sha) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if(gitLabApi != null) {
-            Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectID, sha);
-            return new CommitDto(gitLabApi, projectID, gitCommit);
+            try {
+                Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectID, sha);
+                return new CommitDto(gitLabApi, projectID, gitCommit);
+            } catch (GitLabApiException e) {
+                return null;
+            }
         } else {
             return null;
         }
     }
 
-    public List<Diff> getDiffOfCommit(String jwt, int projectID, String sha) throws GitLabApiException {
+    public List<Diff> getDiffOfCommit(String jwt, int projectID, String sha) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if(gitLabApi != null) {
-            return gitLabApi.getCommitsApi().getDiff(projectID, sha);
+            try {
+                return gitLabApi.getCommitsApi().getDiff(projectID, sha);
+            } catch (GitLabApiException e) {
+                return null;
+            }
         } else {
             return null;
         }
