@@ -14,7 +14,6 @@ import java.util.List;
 
 @Service
 public class CommitService {
-    private final static String defaultBranch = "master";
     private final CommitRepository commitRepository;
     private final AuthenticationService authService;
 
@@ -33,12 +32,13 @@ public class CommitService {
         }
     }
 
-    private ArrayList<CommitDto> getAllCommitDTOs(GitLabApi gitLabApi, int projectID, Date since, Date until) {
+    private ArrayList<CommitDto> getAllCommitDTOs(GitLabApi gitLabApi, int projectId, Date since, Date until) {
         try {
-            List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectID, defaultBranch, since, until);
+            String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
+            List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
             ArrayList<CommitDto> allCommits = new ArrayList<>();
             for(Commit commit : allGitCommits) {
-                CommitDto presentCommit = new CommitDto(gitLabApi, projectID, commit);
+                CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit);
                 allCommits.add(presentCommit);
             }
             return allCommits;
