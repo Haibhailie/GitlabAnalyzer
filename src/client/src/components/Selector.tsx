@@ -3,48 +3,39 @@ import { useState } from 'react'
 import styles from '../css/Selector.module.css'
 
 export interface ISelectorProps {
-  children: JSX.Element | JSX.Element[]
+  children: JSX.Element[]
   headers: string[]
+  defaultHeader?: number
 }
 
-const Selector = ({ children, headers }: ISelectorProps) => {
-  const [selected, setSelected] = useState(0)
-
-  if (!(children instanceof Array)) {
-    children = [children]
-  }
+const Selector = ({ children, headers, defaultHeader }: ISelectorProps) => {
+  const [selected, setSelected] = useState(defaultHeader ?? 0)
 
   if (headers.length != children.length) {
+    console.error(
+      `Size of children (${children.length}) does not match the size of headers (${headers.length})`
+    )
     return null
   }
 
   return (
-    <div>
+    <>
       <div className={styles.selectorHeaders}>
         {headers.map((header, index) => (
-          <button key={index} onClick={() => setSelected(index)}>
+          <button
+            className={
+              index === selected ? styles.activeTab : styles.inactiveTab
+            }
+            key={header}
+            onClick={() => setSelected(index)}
+          >
             {header}
           </button>
         ))}
       </div>
-      <div className={styles.selectorBody}>{children[selected]}</div>
-    </div>
+      {children[selected]}
+    </>
   )
 }
 
 export default Selector
-
-/**
- *<Selector headers={['A', 'B']}>
-      <form>
-        <label>A</label>
-        <input type="text" />
-        <input type="password" />
-      </form>
-      <form>
-        <label>B</label>
-        <input type="text" />
-        <input type="password" />
-      </form>
-    </Selector>
- */
