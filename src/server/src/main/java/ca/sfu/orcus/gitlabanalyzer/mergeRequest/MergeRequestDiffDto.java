@@ -3,7 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
 
-public class MergeRequestDiffDTO {
+public class MergeRequestDiffDto {
 
     private boolean isNewFile;
     private boolean isDeletedFile;
@@ -13,7 +13,7 @@ public class MergeRequestDiffDTO {
     private String oldPath;
     private String diff;
 
-    public MergeRequestDiffDTO(Commit presentCommit, Diff presentDiff){
+    public MergeRequestDiffDto(Commit presentCommit, Diff presentDiff){
         setCommitName(presentCommit.getTitle());
         setDiff(presentDiff.getDiff());
         setDeletedFile(presentDiff.getDeletedFile());

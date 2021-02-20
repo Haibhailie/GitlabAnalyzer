@@ -5,7 +5,7 @@ import org.gitlab4j.api.models.Member;
 
 import java.util.Date;
 
-public class MemberDTO {
+public class MemberDto {
 
     private String name;
     private String email;
@@ -16,7 +16,7 @@ public class MemberDTO {
     private String avatar_url;
     private Date expires_at;
 
-    public MemberDTO(Member presentMember) throws GitLabApiException {
+    public MemberDto(Member presentMember) throws GitLabApiException {
         setName(presentMember.getName());
         setEmail(presentMember.getEmail());
         setId(presentMember.getId());

@@ -22,14 +22,14 @@ public class MemberService {
         this.authService = authService;
     }
 
-    public List<MemberDTO> getAllMembers(String jwt, int projectID) {
+    public List<MemberDto> getAllMembers(String jwt, int projectID) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
-            List<MemberDTO> filteredAllMembers = new ArrayList<>();
+            List<MemberDto> filteredAllMembers = new ArrayList<>();
             try {
                 List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectID);
                 for (Member m : allMembers) {
-                    MemberDTO presentMember = new MemberDTO(m);
+                    MemberDto presentMember = new MemberDto(m);
                     filteredAllMembers.add(presentMember);
                 }
                 return filteredAllMembers;

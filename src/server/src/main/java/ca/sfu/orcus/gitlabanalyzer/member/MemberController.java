@@ -1,8 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitDTO;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDTO;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class MemberController {
     public String getMembers(@CookieValue(value = "sessionId") String jwt,
                              HttpServletResponse response, @PathVariable int projectId) {
 
-        List<MemberDTO> members = memberService.getAllMembers(jwt, projectId);
+        List<MemberDto> members = memberService.getAllMembers(jwt, projectId);
         response.setStatus(members == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(members);
@@ -58,10 +58,10 @@ public class MemberController {
         ;
         Date dateUntil = calculateUntil(until);
         Gson gson = new Gson();
-        List<CommitDTO> allCommitsByMemberEmail = new ArrayList<>();
-        List<CommitDTO> allCommits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
-        for (CommitDTO c : allCommits) {
-            if (c.getAuthorEmail().equal(memberEmail)) {
+        List<CommitDto> allCommitsByMemberEmail = new ArrayList<>();
+        List<CommitDto> allCommits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
+        for (CommitDto c : allCommits) {
+            if (c.getAuthorEmail().equals(memberEmail)) {
                 allCommitsByMemberEmail.add(c);
             }
         }
@@ -79,9 +79,9 @@ public class MemberController {
         Date dateSince = new Date(since * EPOCH_TO_DATE_FACTOR);
         Date dateUntil = calculateUntil(until);
         Gson gson = new Gson();
-        List<MergeRequestDTO> allMergeRequestsByMemberId = new ArrayList<>();
-        List<MergeRequestDTO> allMergeRequests = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
-        for (MergeRequestDTO mr : allMergeRequests) {
+        List<MergeRequestDto> allMergeRequestsByMemberId = new ArrayList<>();
+        List<MergeRequestDto> allMergeRequests = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
+        for (MergeRequestDto mr : allMergeRequests) {
             if (mr.getUserID() == memberId) {
                 allMergeRequestsByMemberId.add(mr);
             }
