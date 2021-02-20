@@ -1,8 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitDTO;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDTO;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestService;
 import com.google.gson.Gson;
 import org.gitlab4j.api.GitLabApiException;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class MemberController {
 
         Date dateSince;
         Date dateUntil;
-        List<CommitDTO> allCommitsByAuthorId;
+        List<CommitDto> allCommitsByAuthorId;
         if (since != null) {
             dateSince = new Date(Long.parseLong(since) * EPOCH_TO_DATE_FACTOR); // since given value
             if (until != null) {
@@ -80,7 +79,7 @@ public class MemberController {
 
         Date dateSince;
         Date dateUntil;
-        List<MergeRequestDTO> allMergeRequestsByAuthorId;
+        List<MergeRequestDto> allMergeRequestsByAuthorId;
         if (since != null) {
             dateSince = new Date(Long.parseLong(since) * EPOCH_TO_DATE_FACTOR); // since given value
             if (until != null) {
