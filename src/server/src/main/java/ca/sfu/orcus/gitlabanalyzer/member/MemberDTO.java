@@ -72,36 +72,5 @@ public class MemberDTO {
     public void setExpires_at(Date expires_at) {
         this.expires_at = expires_at;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public Integer getAccess_level() {
-        return access_level;
-    }
-
-    public String getAvatar_url() {
-        return avatar_url;
-    }
-
-    public Date getExpires_at() {
-        return expires_at;
-    }
+    
 }
