@@ -47,7 +47,7 @@ public class CommitController {
         response.setStatus(commits == null ? 401 : 200);
         return gson.toJson(commits);
     }
-
+    // TODO: ensure that since is earlier than until
     private Date getDateSince(long since) throws ParseException {
         if(since < EARLIEST_DATE_LONG) {
             return ISO8601.toDate(EARLIEST_DATE);  // since 1973
