@@ -37,10 +37,12 @@ public class MergeRequestDTO{
         setUserID(presentMergeRequest.getAuthor().getId());
         setSourceBranch(presentMergeRequest.getSourceBranch());
         setTargetBranch(presentMergeRequest.getTargetBranch());
-        if(presentMergeRequest.getAssignee().getName()==null)
+        if(presentMergeRequest.getAssignee().getName()==null) {
             setAssignedTo("Unassigned");
-        else
+        }
+        else {
             setAssignedTo(presentMergeRequest.getAssignee().getName());
+        }
         setDescription(presentMergeRequest.getDescription());
         setHasConflicts(presentMergeRequest.getHasConflicts());
         setCommiters(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
