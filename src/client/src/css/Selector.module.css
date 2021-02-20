@@ -1,36 +1,36 @@
 .selectorHeaders {
   display: flex;
-  flex-wrap: wrap;
-  border-bottom: 1px solid grey;
-  position: relative;
+  flex-direction: row;
+  align-items: flex-start;
 }
 
-.selectorHeaders button {
-  border-width: 1px;
-  border-style: solid;
-  border-color: transparent;
-  display: block;
-  padding: 0.5rem 1rem;
+.activeTab:hover,
+.inactiveTab:hover {
   cursor: pointer;
-  background-color: #fff;
-  transition: border 0.2s ease-in-out 0s;
 }
 
-.selectorHeaders button.active,
-.selectorHeaders button:focus,
-.selectorHeaders button:hover {
-  border-width: 1px;
-  border-color: #e9ecef #e9ecef var(--color-header);
+.activeTab:focus,
+.inactiveTab:focus {
+  outline: none;
 }
 
-.selectorHeaders button.active {
-  color: #495057;
-  background-color: #f8f8f8;
+.activeTab,
+.inactiveTab {
+  background: none;
+  font: var(--font-item-label);
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  width: 250px;
 }
 
-.selectorBody {
-  text-align: left;
-  padding: 1rem;
-  background-color: #f8f8f8;
-  box-shadow: 1px 1px 2px rgb(204 204 204 / 75%);
+.activeTab {
+  color: var(--color-primary);
+  border-bottom: 3px solid var(--color-primary);
+  padding: 15px 0;
+}
+
+.inactiveTab {
+  border-bottom: 2px solid var(--color-darkgray);
+  padding: 15px 0 16px;
 }
