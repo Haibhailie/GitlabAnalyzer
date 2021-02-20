@@ -26,18 +26,23 @@ public class MergeRequestService {
         this.authService = authService;
     }
 
-    public List<MergeRequestDTO> getAllMergeRequests(String jwt, int projectID, Date since, Date until) throws GitLabApiException {
+    public List<MergeRequestDTO> getAllMergeRequests(String jwt, int projectID, Date since, Date until){
 
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
             List<MergeRequestDTO> filteredMergeRequests = new ArrayList<>();
-            List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
-            for (MergeRequest mr : allMergeRequests) {
-                MergeRequestDTO presentMergeRequest = new MergeRequestDTO(gitLabApi, projectID, mr);
-                if (mr.getCreatedAt().after(since) && mr.getCreatedAt().before(until))
-                    filteredMergeRequests.add(presentMergeRequest);
+            try {
+                List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
+                for (MergeRequest mr : allMergeRequests) {
+                    MergeRequestDTO presentMergeRequest = new MergeRequestDTO(gitLabApi, projectID, mr);
+                    if (mr.getCreatedAt().after(since) && mr.getCreatedAt().before(until))
+                        filteredMergeRequests.add(presentMergeRequest);
+                }
+                return filteredMergeRequests;
             }
-            return filteredMergeRequests;
+            catch (GitLabApiException g){
+                return null;
+            }
         } else {
             return null;
         }
@@ -62,23 +67,28 @@ public class MergeRequestService {
         }
     }
 
-    public List<MergeRequestDiffDTO> getDiffFromMergeRequest(String jwt, int projectID, int mergeRequestID) throws GitLabApiException {
+    public List<MergeRequestDiffDTO> getDiffFromMergeRequest(String jwt, int projectID, int mergeRequestID){
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if ((gitLabApi != null)) {
             List<MergeRequestDiffDTO> listDiff = new ArrayList<>();
-            List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
-            for (MergeRequest mr : mergeRequests) {
-                if (mr.getIid() == mergeRequestID) {
-                    List<Commit> presentCommit = gitLabApi.getMergeRequestApi().getCommits(projectID, mr.getIid());
-                    for (Commit c : presentCommit) {
-                        List<Diff> commitDiffs = gitLabApi.getCommitsApi().getDiff(projectID, c.getShortId());
-                        for (Diff d : commitDiffs) {
-                            listDiff.add(new MergeRequestDiffDTO(c, d));
+            try {
+                List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectID);
+                for (MergeRequest mr : mergeRequests) {
+                    if (mr.getIid() == mergeRequestID) {
+                        List<Commit> presentCommit = gitLabApi.getMergeRequestApi().getCommits(projectID, mr.getIid());
+                        for (Commit c : presentCommit) {
+                            List<Diff> commitDiffs = gitLabApi.getCommitsApi().getDiff(projectID, c.getShortId());
+                            for (Diff d : commitDiffs) {
+                                listDiff.add(new MergeRequestDiffDTO(c, d));
+                            }
                         }
                     }
                 }
+                return listDiff;
             }
-            return listDiff;
+            catch (GitLabApiException g){
+                return null;
+            }
         } else {
             return null;
         }

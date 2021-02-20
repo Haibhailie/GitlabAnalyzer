@@ -11,10 +11,11 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class MergeRequestController {
 
     private final MergeRequestService mergeRequestService;
-    int epochMillisecondScale = 1000; //to multiply the long from parseLong() by 1000 to convert to milliseconds, for Java's date constructor
+    int EPOCH_TO_DATE_FACTOR = 1000; //to multiply the long from parseLong() by 1000 to convert to milliseconds, for Java's date constructor
 
     @Autowired
     public MergeRequestController(MergeRequestService mergeRequestService) {
@@ -26,8 +27,8 @@ public class MergeRequestController {
     public String getMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                                   HttpServletResponse response,
                                                   @PathVariable int projectId,
-                                                  @RequestParam (required = false) String since,
-                                                  @RequestParam (required = false) String until) throws GitLabApiException{
+                                                  @RequestParam (required = false, defaultValue = "-1") long since,
+                                                  @RequestParam (required = false, defaultValue = "0") long until) {
 
         Date dateSince = calculateSince(since);
         Date dateUntil = calculateUntil(until);
@@ -37,18 +38,18 @@ public class MergeRequestController {
         return gson.toJson(mergeRequestDTOS);
     }
 
-    private Date calculateUntil(String until) {
-        if(until == null)
+    private Date calculateUntil(long until) {
+        if(until == 0)
             return new Date(); // until now
         else
-            return new Date(Long.parseLong(until) * epochMillisecondScale); // until given value
+            return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
     }
 
-    private Date calculateSince(String since) {
-        if(since == null)
+    private Date calculateSince(long since) {
+        if(since == -1)
             return new Date(0); //since the beginning of time
         else
-            return new Date(Long.parseLong(since) * epochMillisecondScale); // since given value
+            return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
     }
 
     @GetMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commits")
@@ -67,7 +68,7 @@ public class MergeRequestController {
     public String getDiffsFromMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                                                HttpServletResponse response,
                                                                @PathVariable int mergerequestId,
-                                                               @PathVariable int projectId) throws GitLabApiException {
+                                                               @PathVariable int projectId) {
 
         List<MergeRequestDiffDTO> mergeRequestDiffDTOS=mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(mergeRequestDiffDTOS == null ? 401 : 200);
