@@ -25,11 +25,11 @@ public class CommitService {
 
     public ArrayList<CommitDto> getAllCommits(String jwt, int projectID, Date since, Date until) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        if(gitLabApi != null) {
-            return getAllCommitDTOs(gitLabApi, projectID, since, until);
-        } else {
+        if(gitLabApi == null) {
             return null;
         }
+        return getAllCommitDTOs(gitLabApi, projectID, since, until);
+
     }
 
     private ArrayList<CommitDto> getAllCommitDTOs(GitLabApi gitLabApi, int projectId, Date since, Date until) {
@@ -49,27 +49,25 @@ public class CommitService {
 
     public CommitDto getSingleCommit(String jwt, int projectID, String sha) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        if(gitLabApi != null) {
-            try {
-                Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectID, sha);
-                return new CommitDto(gitLabApi, projectID, gitCommit);
-            } catch (GitLabApiException e) {
-                return null;
-            }
-        } else {
+        if(gitLabApi == null) {
+            return null;
+        }
+        try {
+            Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectID, sha);
+            return new CommitDto(gitLabApi, projectID, gitCommit);
+        } catch (GitLabApiException e) {
             return null;
         }
     }
 
     public List<Diff> getDiffOfCommit(String jwt, int projectID, String sha) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        if(gitLabApi != null) {
-            try {
-                return gitLabApi.getCommitsApi().getDiff(projectID, sha);
-            } catch (GitLabApiException e) {
-                return null;
-            }
-        } else {
+        if(gitLabApi == null) {
+            return null;
+        }
+        try {
+            return gitLabApi.getCommitsApi().getDiff(projectID, sha);
+        } catch (GitLabApiException e) {
             return null;
         }
     }
