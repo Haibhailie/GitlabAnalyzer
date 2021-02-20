@@ -1,6 +1,8 @@
-import styles from '../css/Login.module.css'
-import astronaut from '../assets/splash.svg'
 import LoginFields from '../components/LoginFields'
+
+import styles from '../css/Login.module.css'
+
+import astronaut from '../assets/splash.svg'
 
 const Login = () => {
   return (
@@ -13,7 +15,6 @@ const Login = () => {
         />
       </div>
 
-      {/* <button className={styles.loginButton}>Login</button> */}
       <div className={styles.loginContainer}>
         <LoginFields />
       </div>
