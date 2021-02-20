@@ -79,11 +79,12 @@
 
 .loginError {
   border-radius: 5px;
-  background-color: #FFC9C9;
-  color: #C21C1C;
+  background-color: #ffc9c9;
+  color: #c21c1c;
   width: 300px;
   text-align: center;
   margin: 10px 0px;
+  padding: 3px 0px;
 }
 
 @media only screen and (max-width: 900px) {
