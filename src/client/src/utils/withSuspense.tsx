@@ -70,12 +70,12 @@ const withSuspense = <DataType, ErrorType>(
 
     if (loading) {
       if (typeof Fallback === 'string') {
-        return <DefaultLoader message={Fallback} />
+        Fallback = <DefaultLoader message={Fallback} />
       }
       return Fallback
     } else if (failed && Error) {
       if (typeof Error === 'string') {
-        return <DefaultError message={Error} />
+        Error = <DefaultError message={Error} />
       }
       return Error
     } else {
