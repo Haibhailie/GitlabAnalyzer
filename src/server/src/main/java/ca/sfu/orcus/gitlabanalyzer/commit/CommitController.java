@@ -44,7 +44,7 @@ public class CommitController {
             return gson.toJson(null);
         }
 
-        List<CommitDTO> commits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
+        List<CommitDto> commits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
 
         response.setStatus(commits == null ? 401 : 200);
         return gson.toJson(commits);
@@ -55,7 +55,7 @@ public class CommitController {
                                   @PathVariable int projectId,
                                   @PathVariable String sha,
                                   HttpServletResponse response) throws GitLabApiException {
-        CommitDTO commit = commitService.getSingleCommit(jwt, projectId, sha);
+        CommitDto commit = commitService.getSingleCommit(jwt, projectId, sha);
         response.setStatus(commit == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(commit);

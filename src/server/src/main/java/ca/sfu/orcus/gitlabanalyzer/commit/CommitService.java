@@ -24,7 +24,7 @@ public class CommitService {
         this.authService = authService;
     }
 
-    public ArrayList<CommitDTO> getAllCommits(String jwt, int projectID, Date since, Date until) {
+    public ArrayList<CommitDto> getAllCommits(String jwt, int projectID, Date since, Date until) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if(gitLabApi != null) {
             return getAllCommitDTOs(gitLabApi, projectID, since, until);
@@ -33,12 +33,12 @@ public class CommitService {
         }
     }
 
-    private ArrayList<CommitDTO> getAllCommitDTOs(GitLabApi gitLabApi, int projectID, Date since, Date until) {
+    private ArrayList<CommitDto> getAllCommitDTOs(GitLabApi gitLabApi, int projectID, Date since, Date until) {
         try {
             List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectID, defaultBranch, since, until);
-            ArrayList<CommitDTO> allCommits = new ArrayList<>();
+            ArrayList<CommitDto> allCommits = new ArrayList<>();
             for(Commit commit : allGitCommits) {
-                CommitDTO presentCommit = new CommitDTO(gitLabApi, projectID, commit);
+                CommitDto presentCommit = new CommitDto(gitLabApi, projectID, commit);
                 allCommits.add(presentCommit);
             }
             return allCommits;
@@ -47,11 +47,11 @@ public class CommitService {
         }
     }
 
-    public CommitDTO getSingleCommit(String jwt, int projectID, String sha) throws GitLabApiException {
+    public CommitDto getSingleCommit(String jwt, int projectID, String sha) throws GitLabApiException {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if(gitLabApi != null) {
             Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectID, sha);
-            return new CommitDTO(gitLabApi, projectID, gitCommit);
+            return new CommitDto(gitLabApi, projectID, gitCommit);
         } else {
             return null;
         }

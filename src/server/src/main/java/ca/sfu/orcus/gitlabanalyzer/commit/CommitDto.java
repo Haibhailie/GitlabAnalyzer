@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CommitDTO {
+public class CommitDto {
     private String title;
     private String author;
     private String authorEmail;
@@ -21,7 +21,7 @@ public class CommitDTO {
     private int total;
     private List<Diff> diffs;
 
-    public CommitDTO(GitLabApi gitLabApi, int projectID, Commit commit) throws GitLabApiException {
+    public CommitDto(GitLabApi gitLabApi, int projectID, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
         this.setAuthor(commit.getAuthorName());
         this.setAuthorEmail(commit.getAuthorEmail());
