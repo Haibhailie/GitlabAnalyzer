@@ -1,0 +1,63 @@
+get:
+  description: 'Get the details of a merge request.'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            type: object
+            required:
+              - id
+              - title
+              - comments
+              - author
+              - committers
+              - contributors
+              - time
+              - insertions
+              - deletions
+              - srcBranch
+              - destBranch
+              - score
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              author:
+                $ref: './components/author.yml'
+              committers:
+                type: array
+                items:
+                  $ref: './components/author.yml'
+              contributors:
+                type: array
+                items:
+                  $ref: './components/author.yml'
+              commits:
+                $ref: './components/commits.yml'
+              time:
+                $ref: './components/epoch.yml'
+              insertions:
+                type: integer
+                minimum: 0
+              deletions:
+                type: integer
+                minimum: 0
+              srcBranch:
+                type: string
+              destBranch:
+                type: string
+              score:
+                type: number
+    '401':
+      description: Invalid JWT Token.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
+    - $ref: './components/projectId.yml'
+    - name: mergerequestId
+      in: path
+      required: true

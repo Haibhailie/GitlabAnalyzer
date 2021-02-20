@@ -1,0 +1,3 @@
+in: cookie
+name: sessionId
+description: 'Session JWT by the server'

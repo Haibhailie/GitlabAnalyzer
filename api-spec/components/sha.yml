@@ -1,0 +1,3 @@
+name: commitSha
+in: path
+required: true
