@@ -15,9 +15,9 @@ paths:
     $ref: './project.yml'
   /api/project/{projectId}/commits:
     $ref: './commits.yml'
-  /api/project/{projectId}/commit/{commitHash}:
+  /api/project/{projectId}/commit/{commitSha}:
     $ref: './commit.yml'
-  /api/project/{projectId}/commit/{commitHash}/diff:
+  /api/project/{projectId}/commit/{commitSha}/diff:
     $ref: './commitDiff.yml'
   /api/project/{projectId}/mergerequests:
     $ref: './mergerequests.yml'
