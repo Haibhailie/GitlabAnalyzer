@@ -4,32 +4,38 @@ import styles from '../css/Selector.module.css'
 
 export interface ISelectorProps {
   children: JSX.Element[]
-  headers: string[]
-  defaultHeader?: number
+  tabHeaders: string[]
+  defaultTabHeader?: number
 }
 
-const Selector = ({ children, headers, defaultHeader }: ISelectorProps) => {
-  const [selected, setSelected] = useState(defaultHeader ?? 0)
+const Selector = ({
+  children,
+  tabHeaders,
+  defaultTabHeader,
+}: ISelectorProps) => {
+  const [selected, setSelected] = useState(defaultTabHeader ?? 0)
 
-  if (headers.length != children.length) {
+  if (tabHeaders.length != children.length) {
     console.error(
-      `Size of children (${children.length}) does not match the size of headers (${headers.length})`
+      `Size of children (${children.length}) does not match the size of tab headers (${tabHeaders.length})`
     )
     return null
   }
 
   return (
     <>
-      <div className={styles.selectorHeaders}>
-        {headers.map((header, index) => (
+      <div className={styles.selectorTabHeaders}>
+        {tabHeaders.map((tabHeader, index) => (
           <button
             className={
-              index === selected ? styles.activeTab : styles.inactiveTab
+              index === selected
+                ? styles.activeTabHeader
+                : styles.inactiveTabHeader
             }
-            key={header}
+            key={tabHeader}
             onClick={() => setSelected(index)}
           >
-            {header}
+            {tabHeader}
           </button>
         ))}
       </div>
