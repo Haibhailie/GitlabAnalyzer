@@ -1,0 +1,35 @@
+get:
+  description: 'Get a list of projects (repos) that the user has access to.'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            type: array
+            items:
+              type: object
+              required:
+                - id
+                - name
+                - role
+                - latestUpdate
+                - analyzed
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                role:
+                  type: string
+                latestUpdate:
+                  $ref: './components/epoch.yml'
+                analyzed:
+                  description: If analysis has been done including the most recent repo change.
+                  type: boolean
+    '401':
+      description: Invalid session JWT.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'

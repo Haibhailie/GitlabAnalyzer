@@ -1,0 +1,4 @@
+description: epoch time (in milliseconds).
+type: integer
+format: int64
+minimum: 0

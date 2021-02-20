@@ -1,0 +1,15 @@
+type: object
+required:
+  - id
+  - username
+  - displayName
+  - role
+properties:
+  id:
+    type: string
+  username:
+    type: string
+  displayName:
+    type: string
+  role:
+    type: string

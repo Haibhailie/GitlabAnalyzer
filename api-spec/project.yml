@@ -1,0 +1,45 @@
+get:
+  description: 'Get details of a specific project.'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            type: object
+            required:
+              - id
+              - name
+              - members
+              - branches
+              - commits
+              - repoSize
+              - createdAt
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              members:
+                type: array
+                items:
+                  $ref: './components/author.yml'
+              branches:
+                description: number of open branches (not Merged nor deleted).
+                type: integer
+                minimum: 1
+              commits:
+                description: number of commits on the default branch.
+                type: integer
+                minimum: 1
+              repoSize:
+                description: size of the repo in bytes.
+                type: integer
+                minimum: 0
+    '401':
+      description: Invalid JWT Token.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
+    - $ref: './components/projectId.yml'

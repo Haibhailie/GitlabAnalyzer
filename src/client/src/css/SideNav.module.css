@@ -1,10 +1,11 @@
 .sideNav {
   height: 100%;
-  width: 230px;
-  position: absolute;
+  width: var(--sidenav-width);
+  position: fixed;
   left: 0;
   transition: left 0.4s ease-in-out;
   border-right: 1px solid var(--color-lightgray);
+  background-color: #ffffff;
 }
 
 .hideSideNav {
