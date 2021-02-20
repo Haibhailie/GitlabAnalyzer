@@ -1,22 +1,9 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-//Vaild access levels
-//No access (0)
-//Minimal access (5) (Introduced in GitLab 13.5.)
-//Guest (10)
-//Reporter (20)
-//Developer (30)
-//Maintainer (40)
-//Owner (50)
-
-import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Member;
-import org.gitlab4j.api.models.MergeRequest;
 
 import java.util.Date;
-import java.util.List;
 
 public class MemberDTO {
 
@@ -25,17 +12,17 @@ public class MemberDTO {
     private Integer id;
     private String username;
     private String state;
-    private Integer access_level;
+    private String member_role;
     private String avatar_url;
     private Date expires_at;
 
-    public MemberDTO(GitLabApi gitLabApi, int projectID, Member presentMember) throws GitLabApiException {
+    public MemberDTO(Member presentMember) throws GitLabApiException {
         setName(presentMember.getName());
         setEmail(presentMember.getEmail());
         setId(presentMember.getId());
         setUsername(presentMember.getUsername());
         setState(presentMember.getState());
-        setAccess_level(presentMember.getAccessLevel().value);
+        setMemberRole(MemberUtils.getMemberRoleFromAccessLevel(presentMember.getAccessLevel().value));
         setAvatar_url(presentMember.getAvatarUrl());
         setExpires_at(presentMember.getExpiresAt());
     }
@@ -61,8 +48,8 @@ public class MemberDTO {
         this.state = state;
     }
 
-    public void setAccess_level(Integer access_level) {
-        this.access_level = access_level;
+    public void setMemberRole(String member_role) {
+        this.member_role = member_role;
     }
 
     public void setAvatar_url(String avatar_url) {
@@ -72,5 +59,5 @@ public class MemberDTO {
     public void setExpires_at(Date expires_at) {
         this.expires_at = expires_at;
     }
-    
+
 }

@@ -29,7 +29,7 @@ public class MemberService {
             try {
                 List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectID);
                 for (Member m : allMembers) {
-                    MemberDTO presentMember = new MemberDTO(gitLabApi, projectID, m);
+                    MemberDTO presentMember = new MemberDTO(m);
                     filteredAllMembers.add(presentMember);
                 }
                 return filteredAllMembers;

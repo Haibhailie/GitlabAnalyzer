@@ -5,10 +5,8 @@ import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDTO;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestService;
 import com.google.gson.Gson;
-import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,7 +74,7 @@ public class MemberController {
                                              HttpServletResponse response,
                                              @PathVariable int projectId,
                                              @RequestParam(required = false, defaultValue = "0") long since,
-                                             @RequestParam(required = false, defaultValue = "-1") long until, @PathVariable int memberId) throws GitLabApiException {
+                                             @RequestParam(required = false, defaultValue = "-1") long until, @PathVariable int memberId) {
 
         Date dateSince = new Date(since * EPOCH_TO_DATE_FACTOR);
         Date dateUntil = calculateUntil(until);
