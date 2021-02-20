@@ -25,38 +25,31 @@ public class MergeRequestController {
 
     @GetMapping("/api/project/{projectId}/mergeRequests")
     public String getMergeRequests(@CookieValue(value = "sessionId") String jwt,
-                                                  HttpServletResponse response,
-                                                  @PathVariable int projectId,
-                                                  @RequestParam (required = false, defaultValue = "-1") long since,
-                                                  @RequestParam (required = false, defaultValue = "0") long until) {
+                                   HttpServletResponse response,
+                                   @PathVariable int projectId,
+                                   @RequestParam(required = false, defaultValue = "0") long since,
+                                   @RequestParam(required = false, defaultValue = "-1") long until) {
 
-        Date dateSince = calculateSince(since);
+        Date dateSince = new Date(since * EPOCH_TO_DATE_FACTOR);
         Date dateUntil = calculateUntil(until);
         Gson gson = new Gson();
-        List <MergeRequestDTO> mergeRequestDTOS = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
+        List<MergeRequestDTO> mergeRequestDTOS = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
         response.setStatus(mergeRequestDTOS == null ? 401 : 200);
         return gson.toJson(mergeRequestDTOS);
     }
 
     private Date calculateUntil(long until) {
-        if(until == 0)
+        if (until == -1)
             return new Date(); // until now
         else
             return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
     }
 
-    private Date calculateSince(long since) {
-        if(since == -1)
-            return new Date(0); //since the beginning of time
-        else
-            return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
-    }
-
     @GetMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commits")
     public String getCommitsFromMergeRequests(@CookieValue(value = "sessionId") String jwt,
-                                                       HttpServletResponse response,
-                                                       @PathVariable int mergerequestId,
-                                                       @PathVariable int projectId) {
+                                              HttpServletResponse response,
+                                              @PathVariable int mergerequestId,
+                                              @PathVariable int projectId) {
 
         List<CommitDTO> commitDTOS = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(commitDTOS == null ? 401 : 200);
@@ -66,11 +59,11 @@ public class MergeRequestController {
 
     @GetMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/diff")
     public String getDiffsFromMergeRequests(@CookieValue(value = "sessionId") String jwt,
-                                                               HttpServletResponse response,
-                                                               @PathVariable int mergerequestId,
-                                                               @PathVariable int projectId) {
+                                            HttpServletResponse response,
+                                            @PathVariable int mergerequestId,
+                                            @PathVariable int projectId) {
 
-        List<MergeRequestDiffDTO> mergeRequestDiffDTOS=mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
+        List<MergeRequestDiffDTO> mergeRequestDiffDTOS = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(mergeRequestDiffDTOS == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(mergeRequestDiffDTOS);
