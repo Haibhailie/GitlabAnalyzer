@@ -9,10 +9,10 @@ public class ProjectDto {
     private Long lastActivityAt;
     private Boolean analyzed;
 
-    public ProjectDto(Project project) {
+    public ProjectDto(Project project, String role) {
         setId(project.getId());
         setName(project.getName());
-        setRole("TODO");
+        setRole(role);
         setLastActivityAt(project.getLastActivityAt().getTime());
         setAnalyzed(false); // TODO: Iteration 2
     }

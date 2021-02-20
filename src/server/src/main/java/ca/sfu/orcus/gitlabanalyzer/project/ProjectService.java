@@ -3,8 +3,10 @@ package ca.sfu.orcus.gitlabanalyzer.project;
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDTO;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
+import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Member;
 import org.gitlab4j.api.models.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +41,8 @@ public class ProjectService {
             ArrayList<ProjectDto> projectDtos = new ArrayList<>();
             List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
             for (Project p: projects) {
-                ProjectDto projectDto = new ProjectDto(p);
+                String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, p.getId());
+                ProjectDto projectDto = new ProjectDto(p, memberRole);
                 projectDtos.add(projectDto);
             }
             return projectDtos;
@@ -68,4 +71,10 @@ public class ProjectService {
         }
     }
 
+    private String getAuthenticatedMembersRoleInProject(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
+        Integer currentUserId = gitLabApi.getUserApi().getCurrentUser().getId();
+        Member currentMember = gitLabApi.getProjectApi().getMember(projectId, currentUserId);
+        Integer currentAccessLevel = currentMember.getAccessLevel().value;
+        return MemberUtils.getMemberRoleFromAccessLevel(currentAccessLevel);
+    }
 }
