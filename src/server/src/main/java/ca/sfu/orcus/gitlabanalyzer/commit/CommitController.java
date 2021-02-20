@@ -18,6 +18,8 @@ import java.util.List;
 public class CommitController {
     private static final long EPOCH_TO_DATE_FACTOR = 1000;
     private static final String BEFORE_GITLAB_EXISTED = "2013-01-01T00:00:00Z";
+    private static final long DEFAULT_SINCE = 0;
+    private static final long DEFAULT_UNTIL = -1;
 
     private final CommitService commitService;
 
@@ -29,14 +31,13 @@ public class CommitController {
     @GetMapping("/api/project/{projectId}/commits")
     public String getCommits(@CookieValue(value = "sessionId") String jwt,
                              @PathVariable int projectId,
-                             @RequestParam (required = false) String since,
-                             @RequestParam (required = false) String until,
-                             HttpServletResponse response) throws GitLabApiException, ParseException {
-        List<CommitDTO> commits;
+                             @RequestParam (required = false, defaultValue = "0") long since,
+                             @RequestParam (required = false, defaultValue = "-1") long until,
+                             HttpServletResponse response) throws ParseException {
         Date dateSince = getDateSince(since);
         Date dateUntil = getDateUntil(until);
 
-        commits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
+        List<CommitDTO> commits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
 
         response.setStatus(commits == null ? 401 : 200);
         Gson gson = new Gson();
@@ -65,19 +66,19 @@ public class CommitController {
         return gson.toJson(diffs);
     }
 
-    private Date getDateSince(String since) throws ParseException {
-        if(since != null) {
-            return new Date(Long.parseLong(since) * EPOCH_TO_DATE_FACTOR);      // since given value
+    private Date getDateSince(long since) throws ParseException {
+        if(since != DEFAULT_SINCE) {
+            return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
         } else {
-            return ISO8601.toDate(BEFORE_GITLAB_EXISTED);                      // since 2013
+            return ISO8601.toDate(BEFORE_GITLAB_EXISTED);  // since 2013
         }
     }
 
-    private Date getDateUntil(String until) {
-        if(until != null) {
-            return new Date(Long.parseLong(until) * EPOCH_TO_DATE_FACTOR); // until given value
+    private Date getDateUntil(long until) {
+        if(until != DEFAULT_UNTIL) {
+            return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
         } else {
-            return new Date();                                             // until now
+            return new Date();                             // until now
         }
     }
 }
