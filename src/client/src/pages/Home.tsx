@@ -28,7 +28,7 @@ const [Suspense, useContent] = withSuspense<TProjects, Error>(
       })
       .catch(err => {
         if (err.message === '401') {
-          window.location.href = '/'
+          window.location.href = '/login'
         } else if (err.message === 'Failed to fetch') {
           setError(new Error('Could not connect to server'))
         } else {
