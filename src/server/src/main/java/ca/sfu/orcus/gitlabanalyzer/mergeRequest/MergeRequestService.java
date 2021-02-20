@@ -1,7 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitDTO;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -47,14 +47,14 @@ public class MergeRequestService {
         }
     }
 
-    public List<CommitDTO> getAllCommitsFromMergeRequest(String jwt, int projectID, int mergeRequestID) {
+    public List<CommitDto> getAllCommitsFromMergeRequest(String jwt, int projectID, int mergeRequestID) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if ((gitLabApi != null)) {
-            List<CommitDTO> filteredCommits = new ArrayList<>();
+            List<CommitDto> filteredCommits = new ArrayList<>();
             try {
                 List<Commit> allCommits = gitLabApi.getMergeRequestApi().getCommits(projectID, mergeRequestID);
                 for (Commit c : allCommits) {
-                    filteredCommits.add(new CommitDTO(gitLabApi, projectID, c));
+                    filteredCommits.add(new CommitDto(gitLabApi, projectID, c));
                 }
                 return filteredCommits;
             } catch (GitLabApiException e) {

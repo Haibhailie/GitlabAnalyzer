@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitDTO;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +51,7 @@ public class MergeRequestController {
                                               HttpServletResponse response,
                                               @PathVariable int mergerequestId,
                                               @PathVariable int projectId) {
-        List<CommitDTO> commitDTOS = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
+        List<CommitDto> commitDTOS = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(commitDTOS == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(commitDTOS);
