@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CommitController {
     private static final long EPOCH_TO_DATE_FACTOR = 1000;
     private static final String BEFORE_GITLAB_EXISTED = "2013-01-01T00:00:00Z";
