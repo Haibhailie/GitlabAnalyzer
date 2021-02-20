@@ -1,0 +1,36 @@
+.selectorTabHeaders {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.activeTabHeader:hover,
+.inactiveTabHeader:hover {
+  cursor: pointer;
+}
+
+.activeTabHeader:focus,
+.inactiveTabHeader:focus {
+  outline: none;
+}
+
+.activeTabHeader,
+.inactiveTabHeader {
+  background: none;
+  font: var(--font-item-label);
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  width: 250px;
+}
+
+.activeTabHeader {
+  color: var(--color-primary);
+  border-bottom: 3px solid var(--color-primary);
+  padding: 15px 0;
+}
+
+.inactiveTabHeader {
+  border-bottom: 2px solid var(--color-darkgray);
+  padding: 15px 0 16px;
+}
