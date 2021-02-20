@@ -53,16 +53,27 @@ const useSuspense = <DataType, ErrorType>(
   }) => {
     if (status.current === 'PENDING') {
       if (typeof Fallback === 'string') {
-        return <DefaultLoader message={Fallback} />
+        Fallback = <DefaultLoader message={Fallback} />
       }
-      return Fallback
+      return (
+        <>
+          {Fallback}
+          <div key="preventTreeUpdate" style={{ display: 'none' }}>
+            {LoadedComp}
+          </div>
+        </>
+      )
     } else if (status.current === 'ERROR' && Error) {
       if (typeof Error === 'string') {
-        return <DefaultError message={Error} />
+        Error = <DefaultError message={Error} />
       }
       return Error
     } else {
-      return LoadedComp
+      return (
+        <div key="preventTreeUpdate" style={{ width: '100%', height: '100%' }}>
+          {LoadedComp}
+        </div>
+      )
     }
   }
 

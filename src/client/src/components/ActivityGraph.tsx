@@ -8,7 +8,6 @@ import {
   Legend,
   Bar,
   ResponsiveContainer,
-  ReferenceLine,
 } from 'recharts'
 
 import { onError } from '../utils/suspenseDefaults'
@@ -88,7 +87,6 @@ const computeGraphData = (
     fieldScore: 'commitScore' | 'mergeScore'
   ) => {
     data.forEach(({ time, score }: { time: number; score: number }) => {
-      console.log(time)
       oldestCommit = Math.min(oldestCommit, time)
       const date = epochToDate(time)
       fillIfMissing(date)
@@ -108,7 +106,6 @@ const computeGraphData = (
 
   const now = Date.now()
   while (oldestCommit <= now) {
-    console.log(oldestCommit, now)
     const date = epochToDate(oldestCommit)
 
     fillIfMissing(date)
@@ -179,11 +176,11 @@ const ActivityGraph = ({
                   ? 'Number of Commits/Merge Requests'
                   : 'Score of Commits/Merge Requests',
               angle: -90,
+              viewBox: { x: -60, y: 150, width: 200, height: 200 },
             }}
           />
           <Tooltip />
-          <Legend align="right" verticalAlign="top" layout="vertical" />
-          <ReferenceLine y={0} stroke="#000000" />
+          <Legend align="center" verticalAlign="bottom" layout="vertical" />
           <Bar
             name="Merge Requests"
             dataKey={yAxisValue === 'number' ? 'merges' : 'mergeScore'}
