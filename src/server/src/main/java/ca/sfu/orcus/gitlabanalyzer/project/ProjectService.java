@@ -36,7 +36,7 @@ public class ProjectService {
         }
     }
 
-    public ArrayList<ProjectDto> getAllProjects(GitLabApi gitLabApi) {
+    private ArrayList<ProjectDto> getAllProjects(GitLabApi gitLabApi) {
         try {
             ArrayList<ProjectDto> projectDtos = new ArrayList<>();
             List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
@@ -60,7 +60,7 @@ public class ProjectService {
         }
     }
 
-    public ProjectExtendedDto getProject(GitLabApi gitLabApi, int projectId) {
+    private ProjectExtendedDto getProject(GitLabApi gitLabApi, int projectId) {
         try {
             Project project = gitLabApi.getProjectApi().getProject(projectId, true);
             Long numBranches = (long) gitLabApi.getRepositoryApi().getBranches(projectId).size();
