@@ -69,11 +69,11 @@ const Project = () => {
                 name="Average commits per day"
                 value={(
                   project.commits / calcAgeInDays(project.createdAt)
-                ).toPrecision(2)}
+                ).toFixed(2)}
               />
               <ProjectStat
                 name="Files"
-                value={bytesToMb(project.repoSize).toPrecision(2)}
+                value={`${bytesToMb(project.repoSize).toFixed(2)} MB`}
               />
             </div>
           )}
