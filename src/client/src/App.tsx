@@ -12,9 +12,7 @@ const App = () => {
           <Route path="/home">
             <Home />
           </Route>
-          <Route path="/">
-            <ActivityGraph mergeUrl="/t" commitUrl="/tt" />
-          </Route>
+          <Route path="/"></Route>
         </Switch>
       </Router>
     </Provider>

@@ -36,6 +36,7 @@ export interface IActivityData {
 export interface IActivityGraphProps {
   mergeUrl: string
   commitUrl: string
+  yAxisValue?: 'score' | 'number'
 }
 
 export type TGraphData = {
@@ -50,6 +51,9 @@ const dateRegex = /\d{4}-\d{2}-\d{2}/
 
 const epochToDate = (epoch: number) =>
   new Date(epoch).toISOString().match(dateRegex)?.[0] ?? 'none'
+
+const roundToTwoPlaces = (number: number) =>
+  Math.round((number + Number.EPSILON) * 100) / 100
 
 const computeGraphData = (
   commitData: ICommitData[],
@@ -81,8 +85,7 @@ const computeGraphData = (
   const fillObj = (
     data: ICommitData[] | IMergeData[],
     field: 'commits' | 'merges',
-    fieldScore: 'commitScore' | 'mergeScore',
-    multiplier: number
+    fieldScore: 'commitScore' | 'mergeScore'
   ) => {
     data.forEach(({ time, score }: { time: number; score: number }) => {
       console.log(time)
@@ -91,12 +94,17 @@ const computeGraphData = (
       fillIfMissing(date)
 
       graphObj[date][fieldScore] += score
-      graphObj[date][field] += multiplier
+      graphObj[date][field] += 1
     })
   }
 
-  fillObj(commitData, 'commits', 'commitScore', 1)
-  fillObj(mergeData, 'merges', 'mergeScore', -1)
+  fillObj(commitData, 'commits', 'commitScore')
+  fillObj(mergeData, 'merges', 'mergeScore')
+
+  Object.entries(graphObj).forEach(([key, { commitScore, mergeScore }]) => {
+    graphObj[key].commitScore = roundToTwoPlaces(commitScore)
+    graphObj[key].mergeScore = roundToTwoPlaces(mergeScore)
+  })
 
   const now = Date.now()
   while (oldestCommit <= now) {
@@ -120,7 +128,11 @@ const computeGraphData = (
   return graphData
 }
 
-const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
+const ActivityGraph = ({
+  mergeUrl,
+  commitUrl,
+  yAxisValue = 'number',
+}: IActivityGraphProps) => {
   const { Suspense, data, error } = useSuspense<TGraphData, Error>(
     (setData, setError) => {
       let otherData: ICommitData[] | IMergeData[] | null = null
@@ -157,27 +169,30 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
           width={730}
           height={250}
           data={selectedRange}
-          stackOffset="sign"
           margin={{ top: 40, left: 40, bottom: 40, right: 40 }}
         >
           <XAxis dataKey="date" />
           <YAxis
-            label={{ value: 'Number of Commits/Merge Requests', angle: -90 }}
+            label={{
+              value:
+                yAxisValue === 'number'
+                  ? 'Number of Commits/Merge Requests'
+                  : 'Score of Commits/Merge Requests',
+              angle: -90,
+            }}
           />
           <Tooltip />
           <Legend align="right" verticalAlign="top" layout="vertical" />
           <ReferenceLine y={0} stroke="#000000" />
           <Bar
             name="Merge Requests"
-            dataKey="merges"
-            stackId="a"
-            fill="#ffa2a2"
+            dataKey={yAxisValue === 'number' ? 'merges' : 'mergeScore'}
+            fill="var(--color-secondary)"
           />
           <Bar
             name="Commits"
-            dataKey="commits"
-            stackId="a"
-            fill="var(--color-primary)"
+            dataKey={yAxisValue === 'number' ? 'commits' : 'commitScore'}
+            fill="var(--color-header)"
           />
         </BarChart>
       </ResponsiveContainer>
