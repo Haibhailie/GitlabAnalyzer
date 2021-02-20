@@ -140,7 +140,7 @@ public class AuthenticationService {
         try {
             String authToken = repository.getAuthTokenFor(jwt);
             testAuthToken(authToken);
-            return new GitLabApi("GITLAB_URL", Constants.TokenType.OAUTH2_ACCESS, authToken);
+            return new GitLabApi(System.getenv("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
         } catch (GitLabApiException e) {
             return null;
         }
