@@ -79,4 +79,8 @@ public class CommitDTO {
     public void setDiffs(List<Diff> diffs) {
         this.diffs = diffs;
     }
+
+    public String getAuthorEmail() {
+        return authorEmail;
+    }
 }
