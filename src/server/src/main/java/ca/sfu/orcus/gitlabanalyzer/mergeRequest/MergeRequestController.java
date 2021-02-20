@@ -39,10 +39,12 @@ public class MergeRequestController {
     }
 
     private Date calculateUntil(long until) {
-        if (until == -1)
+        if (until == -1) {
             return new Date(); // until now
-        else
+        }
+        else {
             return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
+        }
     }
 
     @GetMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commits")
@@ -50,7 +52,6 @@ public class MergeRequestController {
                                               HttpServletResponse response,
                                               @PathVariable int mergerequestId,
                                               @PathVariable int projectId) {
-
         List<CommitDTO> commitDTOS = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(commitDTOS == null ? 401 : 200);
         Gson gson = new Gson();
@@ -62,7 +63,6 @@ public class MergeRequestController {
                                             HttpServletResponse response,
                                             @PathVariable int mergerequestId,
                                             @PathVariable int projectId) {
-
         List<MergeRequestDiffDTO> mergeRequestDiffDTOS = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(mergeRequestDiffDTOS == null ? 401 : 200);
         Gson gson = new Gson();

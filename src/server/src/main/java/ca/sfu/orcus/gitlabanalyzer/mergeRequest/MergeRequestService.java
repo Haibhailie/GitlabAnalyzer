@@ -27,7 +27,6 @@ public class MergeRequestService {
     }
 
     public List<MergeRequestDTO> getAllMergeRequests(String jwt, int projectID, Date since, Date until){
-
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
             List<MergeRequestDTO> filteredMergeRequests = new ArrayList<>();
@@ -49,7 +48,6 @@ public class MergeRequestService {
     }
 
     public List<CommitDTO> getAllCommitsFromMergeRequest(String jwt, int projectID, int mergeRequestID) {
-
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if ((gitLabApi != null)) {
             List<CommitDTO> filteredCommits = new ArrayList<>();

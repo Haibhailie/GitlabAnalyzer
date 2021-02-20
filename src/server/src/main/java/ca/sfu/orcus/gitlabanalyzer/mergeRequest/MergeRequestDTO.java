@@ -10,8 +10,7 @@ import org.gitlab4j.api.models.Participant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MergeRequestDTO{
-
+public class MergeRequestDTO {
 
     private int mergeRequestID;
     private boolean hasConflicts;
@@ -26,26 +25,24 @@ public class MergeRequestDTO{
     private int numDeletions;
     private ArrayList<String> notesName;
     private ArrayList<String> notes;
-    private ArrayList<String> commiters;
+    private ArrayList<String> committers;
     private List<Participant> participants;
 
     public MergeRequestDTO(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
-
         setMergeRequestID(presentMergeRequest.getIid());
         setOpen(presentMergeRequest.getState().compareTo("opened") == 0);
         setAuthor(presentMergeRequest.getAuthor().getName());
         setUserID(presentMergeRequest.getAuthor().getId());
         setSourceBranch(presentMergeRequest.getSourceBranch());
         setTargetBranch(presentMergeRequest.getTargetBranch());
-        if(presentMergeRequest.getAssignee().getName()==null) {
+        if (presentMergeRequest.getAssignee().getName() == null) {
             setAssignedTo("Unassigned");
-        }
-        else {
+        } else {
             setAssignedTo(presentMergeRequest.getAssignee().getName());
         }
         setDescription(presentMergeRequest.getDescription());
         setHasConflicts(presentMergeRequest.getHasConflicts());
-        setCommiters(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
+        setCommitters(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()));
 
         setNumAdditions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()), gitLabApi, projectID);
         setNumDeletions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()), gitLabApi, projectID);
@@ -109,40 +106,41 @@ public class MergeRequestDTO{
     }
 
     public void setNumAdditions(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
-
         numAdditions = 0;
-        for(Commit c : commits){
+        for (Commit c : commits) {
             Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
-            if(presentCommit.getStats()!=null)
-                numAdditions+=presentCommit.getStats().getAdditions();
+            if (presentCommit.getStats() != null) {
+                numAdditions += presentCommit.getStats().getAdditions();
+            }
         }
     }
 
     public void setNumDeletions(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
         numDeletions = 0;
-        for(Commit c : commits){
+        for (Commit c : commits) {
             Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
-            if(presentCommit.getStats()!=null)
-                numDeletions+=presentCommit.getStats().getDeletions();
+            if (presentCommit.getStats() != null) {
+                numDeletions += presentCommit.getStats().getDeletions();
+            }
         }
     }
 
-    public void setCommiters(List<Commit> commits) {
-        commiters = new ArrayList<>();
-        for(Commit c : commits){
-            //Checks if commiter is already present in list, prevent duplicate authors
+    public void setCommitters(List<Commit> commits) {
+        committers = new ArrayList<>();
+        for (Commit c : commits) {
+            //Checks if committer is already present in list, prevent duplicate authors
             String commitAuthor = c.getAuthorName();
             boolean isPresent = false;
-            for (String commiter : commiters) {
-                if (commiter.compareTo(commitAuthor) == 0) {
+            for (String committer : committers) {
+                if (committer.compareTo(commitAuthor) == 0) {
                     isPresent = true;
                     break;
                 }
             }
-            if(!isPresent)
-                commiters.add(commitAuthor);
+            if (!isPresent) {
+                committers.add(commitAuthor);
+            }
         }
-
     }
 
     public void setUserID(int userID) {
