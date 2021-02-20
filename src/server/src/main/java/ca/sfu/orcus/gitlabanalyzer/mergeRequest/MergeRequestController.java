@@ -2,7 +2,6 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDTO;
 import com.google.gson.Gson;
-import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,9 +32,9 @@ public class MergeRequestController {
         Date dateSince = new Date(since * EPOCH_TO_DATE_FACTOR);
         Date dateUntil = calculateUntil(until);
         Gson gson = new Gson();
-        List<MergeRequestDTO> mergeRequestDTOS = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
-        response.setStatus(mergeRequestDTOS == null ? 401 : 200);
-        return gson.toJson(mergeRequestDTOS);
+        List<MergeRequestDto> mergeRequestDtos = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
+        response.setStatus(mergeRequestDtos == null ? 401 : 200);
+        return gson.toJson(mergeRequestDtos);
     }
 
     private Date calculateUntil(long until) {
@@ -63,9 +62,9 @@ public class MergeRequestController {
                                             HttpServletResponse response,
                                             @PathVariable int mergerequestId,
                                             @PathVariable int projectId) {
-        List<MergeRequestDiffDTO> mergeRequestDiffDTOS = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
-        response.setStatus(mergeRequestDiffDTOS == null ? 401 : 200);
+        List<MergeRequestDiffDto> mergeRequestDiffDtos = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
+        response.setStatus(mergeRequestDiffDtos == null ? 401 : 200);
         Gson gson = new Gson();
-        return gson.toJson(mergeRequestDiffDTOS);
+        return gson.toJson(mergeRequestDiffDtos);
     }
 }

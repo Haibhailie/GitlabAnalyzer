@@ -10,7 +10,7 @@ import org.gitlab4j.api.models.Participant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MergeRequestDTO {
+public class MergeRequestDto {
 
     private int mergeRequestID;
     private boolean hasConflicts;
@@ -28,7 +28,7 @@ public class MergeRequestDTO {
     private ArrayList<String> committers;
     private List<Participant> participants;
 
-    public MergeRequestDTO(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
+    public MergeRequestDto(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
         setMergeRequestID(presentMergeRequest.getIid());
         setOpen(presentMergeRequest.getState().compareTo("opened") == 0);
         setAuthor(presentMergeRequest.getAuthor().getName());
