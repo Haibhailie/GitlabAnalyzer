@@ -7,7 +7,9 @@ import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.gitlab4j.api.utils.ISO8601;
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +20,12 @@ public class MemberController {
     private final MemberService memberService;
     private final MergeRequestService mergeRequestService;
     private final CommitService commitService;
+
     int EPOCH_TO_DATE_FACTOR = 1000; //to multiply the long from parseLong() by 1000 to convert to milliseconds, for Java's date constructor
+    private static final String EARLIEST_DATE = "1973-03-30T00:00:00Z"; // earliest date commitsApi works with
+    private static final long EARLIEST_DATE_LONG = 102297600;
+    private static final long DEFAULT_UNTIL = -1;
+
 
 
     @Autowired
@@ -39,14 +46,6 @@ public class MemberController {
         return gson.toJson(members);
     }
 
-    private Date calculateUntil(long until) {
-        if (until == -1) {
-            return new Date(); // until now
-        } else {
-            return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
-        }
-    }
-
     @GetMapping("/api/core/{projectId}/members/{memberEmail}/commits")
     public String getCommitsByMemberEmail(@CookieValue(value = "sessionId") String jwt,
                                           HttpServletResponse response,
@@ -54,10 +53,17 @@ public class MemberController {
                                           @RequestParam(required = false, defaultValue = "0") long since,
                                           @RequestParam(required = false, defaultValue = "-1") long until, @PathVariable String memberEmail) {
 
-        Date dateSince = new Date(since * EPOCH_TO_DATE_FACTOR);
-        ;
-        Date dateUntil = calculateUntil(until);
+        Date dateSince;
         Gson gson = new Gson();
+        try {
+            dateSince = getDateSince(since);
+        } catch (ParseException e) {
+            response.setStatus(400);
+            return gson.toJson(null);
+        }
+        Date dateUntil = getDateUntil(until);
+
+
         List<CommitDto> allCommitsByMemberEmail = new ArrayList<>();
         List<CommitDto> allCommits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
         for (CommitDto c : allCommits) {
@@ -69,6 +75,24 @@ public class MemberController {
         return gson.toJson(allCommitsByMemberEmail);
     }
 
+    // TODO: ensure that since is earlier than until
+    private Date getDateSince(long since) throws ParseException {
+        if(since < EARLIEST_DATE_LONG) {
+            return ISO8601.toDate(EARLIEST_DATE);  // since 1973
+        } else {
+            return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
+
+        }
+    }
+
+    private Date getDateUntil(long until) {
+        if(until != DEFAULT_UNTIL) {
+            return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
+        } else {
+            return new Date();                             // until now
+        }
+    }
+
     @GetMapping("/api/core/{projectId}/members/{memberId}/mergerequests")
     public String getMergeRequestsByMemberID(@CookieValue(value = "sessionId") String jwt,
                                              HttpServletResponse response,
@@ -76,9 +100,15 @@ public class MemberController {
                                              @RequestParam(required = false, defaultValue = "0") long since,
                                              @RequestParam(required = false, defaultValue = "-1") long until, @PathVariable int memberId) {
 
-        Date dateSince = new Date(since * EPOCH_TO_DATE_FACTOR);
-        Date dateUntil = calculateUntil(until);
+        Date dateSince;
         Gson gson = new Gson();
+        try {
+            dateSince = getDateSince(since);
+        } catch (ParseException e) {
+            response.setStatus(400);
+            return gson.toJson(null);
+        }
+        Date dateUntil = getDateUntil(until);
         List<MergeRequestDto> allMergeRequestsByMemberId = new ArrayList<>();
         List<MergeRequestDto> allMergeRequests = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
         for (MergeRequestDto mr : allMergeRequests) {

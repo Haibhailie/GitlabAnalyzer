@@ -6,7 +6,6 @@ import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,20 +23,18 @@ public class MemberService {
 
     public List<MemberDto> getAllMembers(String jwt, int projectID) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        if (gitLabApi != null) {
-            List<MemberDto> filteredAllMembers = new ArrayList<>();
-            try {
-                List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectID);
-                for (Member m : allMembers) {
-                    MemberDto presentMember = new MemberDto(m);
-                    filteredAllMembers.add(presentMember);
-                }
-                return filteredAllMembers;
+        if (gitLabApi == null) {
+            return null;
+        }
+        List<MemberDto> filteredAllMembers = new ArrayList<>();
+        try {
+            List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectID);
+            for (Member m : allMembers) {
+                MemberDto presentMember = new MemberDto(m);
+                filteredAllMembers.add(presentMember);
             }
-            catch (GitLabApiException g) {
-                return null;
-            }
-        }else{
+            return filteredAllMembers;
+        } catch (GitLabApiException g) {
             return null;
         }
     }
