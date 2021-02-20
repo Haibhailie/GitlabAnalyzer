@@ -2,7 +2,10 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.*;
+import org.gitlab4j.api.models.Commit;
+import org.gitlab4j.api.models.MergeRequest;
+import org.gitlab4j.api.models.Note;
+import org.gitlab4j.api.models.Participant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +31,10 @@ public class MergeRequestDTO{
 
     public MergeRequestDTO(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
 
-        setUserID(presentMergeRequest.getAuthor().getId());
         setMergeRequestID(presentMergeRequest.getIid());
         setOpen(presentMergeRequest.getState().compareTo("opened") == 0);
         setAuthor(presentMergeRequest.getAuthor().getName());
+        setUserID(presentMergeRequest.getAuthor().getId());
         setSourceBranch(presentMergeRequest.getSourceBranch());
         setTargetBranch(presentMergeRequest.getTargetBranch());
         if(presentMergeRequest.getAssignee().getName()==null)
@@ -122,19 +125,17 @@ public class MergeRequestDTO{
         }
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
-    }
-
     public void setCommiters(List<Commit> commits) {
         commiters = new ArrayList<>();
         for(Commit c : commits){
             //Checks if commiter is already present in list, prevent duplicate authors
             String commitAuthor = c.getAuthorName();
             boolean isPresent = false;
-            for(int i=0;i<commiters.size();i++){
-                if(commiters.get(i).compareTo(commitAuthor)==0)
+            for (String commiter : commiters) {
+                if (commiter.compareTo(commitAuthor) == 0) {
                     isPresent = true;
+                    break;
+                }
             }
             if(!isPresent)
                 commiters.add(commitAuthor);
@@ -142,66 +143,8 @@ public class MergeRequestDTO{
 
     }
 
-
-    public int getMergeRequestID() {
-        return mergeRequestID;
-    }
-
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public boolean isHasConflicts() {
-        return hasConflicts;
-    }
-
-    public boolean isOpen() {
-        return isOpen;
-    }
-
-    public String getAssignedTo() {
-        return assignedTo;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getSourceBranch() {
-        return sourceBranch;
-    }
-
-    public String getTargetBranch() {
-        return targetBranch;
-    }
-
-    public int getNumAdditions() {
-        return numAdditions;
-    }
-
-    public int getUserID() {
-        return userID;
-    }
-
-    public int getNumDeletions() {
-        return numDeletions;
-    }
-
-    public ArrayList<String> getNotesName() {
-        return notesName;
-    }
-
-    public ArrayList<String> getNotes() {
-        return notes;
-    }
-
-    public ArrayList<String> getCommiters() {
-        return commiters;
-    }
-
-    public List<Participant> getParticipants() {
-        return participants;
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
 

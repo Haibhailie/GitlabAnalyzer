@@ -1,10 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
-import org.gitlab4j.api.GitLabApi;
-import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
-import org.gitlab4j.api.models.MergeRequest;
 
 public class MergeRequestDiffDTO {
 
@@ -16,7 +13,7 @@ public class MergeRequestDiffDTO {
     private String oldPath;
     private String diff;
 
-    public MergeRequestDiffDTO(Commit presentCommit, Diff presentDiff) throws GitLabApiException {
+    public MergeRequestDiffDTO(Commit presentCommit, Diff presentDiff){
         setCommitName(presentCommit.getTitle());
         setDiff(presentDiff.getDiff());
         setDeletedFile(presentDiff.getDeletedFile());
@@ -25,7 +22,6 @@ public class MergeRequestDiffDTO {
         setOldPath(presentDiff.getOldPath());
         setRenamedFile(presentDiff.getRenamedFile());
     }
-
 
     public void setCommitName(String commitName) {
         this.commitName = commitName;
@@ -53,35 +49,6 @@ public class MergeRequestDiffDTO {
 
     public void setDiff(String diff) {
         this.diff = diff;
-    }
-
-
-    public boolean isNewFile() {
-        return isNewFile;
-    }
-
-    public boolean isDeletedFile() {
-        return isDeletedFile;
-    }
-
-    public boolean isRenamedFile() {
-        return isRenamedFile;
-    }
-
-    public String getCommitName() {
-        return commitName;
-    }
-
-    public String getNewPath() {
-        return newPath;
-    }
-
-    public String getOldPath() {
-        return oldPath;
-    }
-
-    public String getDiff() {
-        return diff;
     }
 
 
