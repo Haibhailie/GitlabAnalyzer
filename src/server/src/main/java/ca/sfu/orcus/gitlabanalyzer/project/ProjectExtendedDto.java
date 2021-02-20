@@ -12,6 +12,7 @@ public class ProjectExtendedDto {
     private Long numBranches;
     private Long numCommits;
     private Long repoSize;
+    private Long createdAt;
 
     public ProjectExtendedDto(Project project, List<MemberDTO> memberDtos, Long numBranches) {
         setId(project.getId());
@@ -20,6 +21,7 @@ public class ProjectExtendedDto {
         setNumBranches(numBranches);
         setNumCommits(project.getStatistics().getCommitCount());
         setRepoSize(project.getStatistics().getRepositorySize());
+        setCreatedAt(project.getCreatedAt().getTime());
     }
 
     public void setId(Integer id) {
@@ -44,5 +46,9 @@ public class ProjectExtendedDto {
 
     public void setRepoSize(Long repoSize) {
         this.repoSize = repoSize;
+    }
+
+    public void setCreatedAt(Long createdAt) {
+        this.createdAt = createdAt;
     }
 }
