@@ -14,6 +14,12 @@ const LoginFields = () => {
 
   const handleUserPassSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    if (username.length === 0 || password.length === 0) {
+      setErrorUserPass('Please fill in both fields')
+      return
+    }
+
     fetch('/api/signin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -38,6 +44,12 @@ const LoginFields = () => {
 
   const handlePatSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    if (pat.length === 0) {
+      setErrorPat('Please fill in your token')
+      return
+    }
+
     fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
