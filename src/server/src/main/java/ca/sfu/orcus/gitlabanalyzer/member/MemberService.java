@@ -27,8 +27,8 @@ public class MemberService {
         if (gitLabApi == null) {
             return null;
         }
-        List<MemberDto> filteredAllMembers = new ArrayList<>();
         try {
+            List<MemberDto> filteredAllMembers = new ArrayList<>();
             List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectID);
             for (Member m : allMembers) {
                 MemberDto presentMember = new MemberDto(m);
