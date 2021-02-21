@@ -32,8 +32,8 @@ public class MergeRequestService {
         if (gitLabApi == null) {
             return null;
         }
-        List<MergeRequestDto> filteredMergeRequests = new ArrayList<>();
         try {
+            List<MergeRequestDto> filteredMergeRequests = new ArrayList<>();
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
             if (memberId != -1) {
                 for (MergeRequest mr : allMergeRequests) {
