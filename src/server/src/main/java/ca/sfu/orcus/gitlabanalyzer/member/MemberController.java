@@ -36,7 +36,7 @@ public class MemberController {
 
     }
 
-    @GetMapping("/api/core/{projectId}/members")
+    @GetMapping("/api/project/{projectId}/members")
     public String getMembers(@CookieValue(value = "sessionId") String jwt,
                              HttpServletResponse response, @PathVariable int projectId) {
 
@@ -46,7 +46,7 @@ public class MemberController {
         return gson.toJson(members);
     }
 
-    @GetMapping("/api/core/{projectId}/members/{memberEmail}/commits")
+    @GetMapping("/api/project/{projectId}/members/{memberEmail}/commits")
     public String getCommitsByMemberEmail(@CookieValue(value = "sessionId") String jwt,
                                           HttpServletResponse response,
                                           @PathVariable int projectId,
@@ -93,7 +93,7 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/api/core/{projectId}/members/{memberId}/mergerequests")
+    @GetMapping("/api/project/{projectId}/members/{memberId}/mergerequests")
     public String getMergeRequestsByMemberID(@CookieValue(value = "sessionId") String jwt,
                                              HttpServletResponse response,
                                              @PathVariable int projectId,
