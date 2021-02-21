@@ -27,27 +27,6 @@ public class MergeRequestService {
         this.authService = authService;
     }
 
-    public List<MergeRequestDto> getAllMergeRequests(String jwt, int projectId, Date since, Date until) {
-        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
-            return null;
-        }
-        List<MergeRequestDto> filteredMergeRequests = new ArrayList<>();
-        try {
-            List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
-            for (MergeRequest mr : allMergeRequests) {
-                if (mr.getCreatedAt().after(since) && mr.getCreatedAt().before(until)) {
-                    MergeRequestDto presentMergeRequest = new MergeRequestDto(gitLabApi, projectId, mr);
-                    filteredMergeRequests.add(presentMergeRequest);
-                }
-            }
-            return filteredMergeRequests;
-        } catch (GitLabApiException g) {
-            return null;
-        }
-    }
-
-    // TODO: Refactor this and the function above
     public List<MergeRequestDto> getAllMergeRequests(String jwt, int projectId, Date since, Date until, int memberId) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
@@ -56,13 +35,20 @@ public class MergeRequestService {
         List<MergeRequestDto> filteredMergeRequests = new ArrayList<>();
         try {
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
-            for (MergeRequest mr : allMergeRequests) {
-                if (mr.getAuthor().getId() == memberId
-                        && mr.getCreatedAt().after(since)
-                        && mr.getCreatedAt().before(until)) {
+            if (memberId != -1) {
+                for (MergeRequest mr : allMergeRequests) {
+                    if (mr.getAuthor().getId() == memberId && mr.getCreatedAt().after(since) && mr.getCreatedAt().before(until)) {
 
-                    MergeRequestDto presentMergeRequest = new MergeRequestDto(gitLabApi, projectId, mr);
-                    filteredMergeRequests.add(presentMergeRequest);
+                        MergeRequestDto presentMergeRequest = new MergeRequestDto(gitLabApi, projectId, mr);
+                        filteredMergeRequests.add(presentMergeRequest);
+                    }
+                }
+            } else {
+                for (MergeRequest mr : allMergeRequests) {
+                    if (mr.getCreatedAt().after(since) && mr.getCreatedAt().before(until)) {
+                        MergeRequestDto presentMergeRequest = new MergeRequestDto(gitLabApi, projectId, mr);
+                        filteredMergeRequests.add(presentMergeRequest);
+                    }
                 }
             }
             return filteredMergeRequests;

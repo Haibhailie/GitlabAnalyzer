@@ -66,13 +66,6 @@ public class MemberService {
     }
 
     public List<MergeRequestDto> getMergeRequestsByMemberID(String jwt, int projectID, Date since, Date until, int memberId) {
-        List<MergeRequestDto> allMergeRequests = mergeRequestService.getAllMergeRequests(jwt, projectID, since, until);
-        List<MergeRequestDto> allMergeRequestsByMemberId = new ArrayList<>();
-        for (MergeRequestDto mr : allMergeRequests) {
-            if (mr.getUserID() == memberId) {
-                allMergeRequestsByMemberId.add(mr);
-            }
-        }
-        return allMergeRequestsByMemberId;
+        return mergeRequestService.getAllMergeRequests(jwt, projectID, since, until, memberId);
     }
 }
