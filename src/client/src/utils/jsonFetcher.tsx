@@ -1,4 +1,4 @@
-const base = 'http://localhost:8080'
+import { URLBASE } from './constants'
 
 const jsonFetcher = <DataType extends unknown>(
   url: string,
@@ -10,7 +10,7 @@ const jsonFetcher = <DataType extends unknown>(
   }
 
   return new Promise<DataType>((resolve, reject) => {
-    fetch(`${base}${url}`, options)
+    fetch(`${URLBASE}${url}`, options)
       .then(res => {
         if (res.status === 200) {
           res.json().then(resolve)

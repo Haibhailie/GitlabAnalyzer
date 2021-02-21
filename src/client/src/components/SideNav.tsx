@@ -12,7 +12,7 @@ export interface ISideNavProps {
 }
 
 const items = [
-  { icon: repoIcon, label: 'Projects', dest: '/projects' },
+  { icon: repoIcon, label: 'Projects', dest: '/home' },
   { icon: reportIcon, label: 'Reports', dest: '/reports' },
   { icon: settingsIcon, label: 'Settings', dest: '/settings' },
 ]

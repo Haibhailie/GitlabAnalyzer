@@ -17,7 +17,7 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
 
   if (!project) return null
 
-  const { id, members, branches, commits, createdAt, repoSize } = project
+  const { id, members, numBranches, numCommits, createdAt, repoSize } = project
 
   return (
     <div className={styles.container}>
@@ -54,11 +54,11 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
         </div>
         <div className={styles.stats}>
           <ProjectStat name="Members" value={members.length} />
-          <ProjectStat name="Branches" value={branches} />
-          <ProjectStat name="Commits" value={commits} />
+          <ProjectStat name="Branches" value={numBranches} />
+          <ProjectStat name="Commits" value={numCommits} />
           <ProjectStat
             name="Average commits per day"
-            value={(commits / calcAgeInDays(createdAt)).toFixed(2)}
+            value={(numCommits / calcAgeInDays(createdAt)).toFixed(2)}
           />
           <ProjectStat
             name="Files"

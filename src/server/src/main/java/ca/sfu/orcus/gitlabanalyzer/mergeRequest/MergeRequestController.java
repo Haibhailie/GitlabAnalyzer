@@ -21,7 +21,7 @@ public class MergeRequestController {
         this.mergeRequestService = mergeRequestService;
     }
 
-    @GetMapping("/api/project/{projectId}/mergeRequests")
+    @GetMapping("/api/project/{projectId}/mergerequests")
     public String getMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                    HttpServletResponse response,
                                    @PathVariable int projectId,

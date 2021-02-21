@@ -3,6 +3,7 @@ import ErrorComp from '../components/Error'
 
 const onError = (setError: (error: Error) => void) => {
   return (error: Error) => {
+    console.error(error)
     if (error.message === '401') {
       window.location.href = '/'
     } else if (error.message === 'Failed to fetch') {
