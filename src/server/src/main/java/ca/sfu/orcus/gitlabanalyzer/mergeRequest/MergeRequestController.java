@@ -31,7 +31,7 @@ public class MergeRequestController {
         Date dateSince = new Date(since * EPOCH_TO_DATE_FACTOR);
         Date dateUntil = calculateUntil(until);
         Gson gson = new Gson();
-        List<MergeRequestDto> mergeRequestDtos = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil, -1);
+        List<MergeRequestDto> mergeRequestDtos = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
         response.setStatus(mergeRequestDtos == null ? 401 : 200);
         return gson.toJson(mergeRequestDtos);
     }
