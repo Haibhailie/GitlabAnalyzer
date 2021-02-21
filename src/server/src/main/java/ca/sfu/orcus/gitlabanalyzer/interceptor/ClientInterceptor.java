@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 public class ClientInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println(request.getRequestURI());
 
         if (!request.getRequestURI().startsWith("/api/") && !request.getRequestURI().equals("/") && !request.getRequestURI().startsWith("/index.html")) {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/");
