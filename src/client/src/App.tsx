@@ -14,7 +14,9 @@ import Project from './pages/Project'
 const AuthCheck = () => {
   const history = useHistory()
   useEffect(() => {
-    fetch('http:localhost:8080/ping').then(res => {
+    fetch('http://localhost:8080/api/ping', {
+      credentials: 'include',
+    }).then(res => {
       if (res.status === 200) {
         history.push('/home')
       } else {
