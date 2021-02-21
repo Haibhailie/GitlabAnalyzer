@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState } from 'react'
 
 import styles from '../css/Selector.module.css'
 import classNames from '../utils/classNames'
