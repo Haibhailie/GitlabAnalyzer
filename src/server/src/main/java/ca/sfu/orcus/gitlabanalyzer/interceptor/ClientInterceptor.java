@@ -12,7 +12,9 @@ public class ClientInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        if (!request.getRequestURI().startsWith("/api/") && !request.getRequestURI().equals("/") && !request.getRequestURI().startsWith("/index.html")) {
+        String endpoint = request.getRequestURI();
+
+        if (!endpoint.startsWith("/api/") && !endpoint.equals("/") && !endpoint.startsWith("/index.html") && !endpoint.contains("/static/")) {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/");
             requestDispatcher.forward(request, response);
             return false;
