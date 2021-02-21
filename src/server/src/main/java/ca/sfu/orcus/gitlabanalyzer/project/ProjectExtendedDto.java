@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
-import ca.sfu.orcus.gitlabanalyzer.member.MemberDTO;
+import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import org.gitlab4j.api.models.Project;
 
 import java.util.List;
@@ -8,13 +8,13 @@ import java.util.List;
 public class ProjectExtendedDto {
     private int id;
     private String name;
-    private List<MemberDTO> members;
+    private List<MemberDto> members;
     private long numBranches;
     private long numCommits;
     private long repoSize;
     private long createdAt;
 
-    public ProjectExtendedDto(Project project, List<MemberDTO> memberDtos, long numBranches) {
+    public ProjectExtendedDto(Project project, List<MemberDto> memberDtos, long numBranches) {
         setId(project.getId());
         setName(project.getName());
         setMembers(memberDtos);
@@ -32,7 +32,7 @@ public class ProjectExtendedDto {
         this.name = name;
     }
 
-    public void setMembers(List<MemberDTO> members) {
+    public void setMembers(List<MemberDto> members) {
         this.members = members;
     }
 

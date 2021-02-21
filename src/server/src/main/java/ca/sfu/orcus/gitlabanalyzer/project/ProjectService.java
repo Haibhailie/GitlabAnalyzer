@@ -1,7 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberDTO;
+import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import org.gitlab4j.api.GitLabApi;
@@ -64,7 +64,7 @@ public class ProjectService {
         try {
             Project project = gitLabApi.getProjectApi().getProject(projectId, true);
             long numBranches = gitLabApi.getRepositoryApi().getBranches(projectId).size();
-            List<MemberDTO> memberDtos = memberService.getAllMemberDTOs(gitLabApi, projectId);
+            List<MemberDto> memberDtos = memberService.getAllMemberDtos(gitLabApi, projectId);
             return new ProjectExtendedDto(project, memberDtos, numBranches);
         } catch (GitLabApiException e) {
             return null;
