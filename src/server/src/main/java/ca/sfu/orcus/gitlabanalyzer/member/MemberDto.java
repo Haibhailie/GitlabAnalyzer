@@ -9,14 +9,14 @@ public class MemberDto {
     private String email;
     private int id;
     private String username;
-    private String member_role;
+    private String role;
 
     public MemberDto(Member presentMember) throws GitLabApiException {
         setDisplayName(presentMember.getName());
         setEmail(presentMember.getEmail());
         setId(presentMember.getId());
         setUsername(presentMember.getUsername());
-        setMemberRole(MemberUtils.getMemberRoleFromAccessLevel(presentMember.getAccessLevel().value));
+        setRole(MemberUtils.getMemberRoleFromAccessLevel(presentMember.getAccessLevel().value));
     }
 
 
@@ -36,8 +36,8 @@ public class MemberDto {
         this.username = username;
     }
 
-    public void setMemberRole(String member_role) {
-        this.member_role = member_role;
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }
