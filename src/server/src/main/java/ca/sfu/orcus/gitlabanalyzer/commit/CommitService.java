@@ -23,7 +23,7 @@ public class CommitService {
         this.authService = authService;
     }
 
-    public ArrayList<CommitDto> getAllCommits(String jwt, int projectID, Date since, Date until) {
+    public List<CommitDto> getAllCommits(String jwt, int projectID, Date since, Date until) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if(gitLabApi == null) {
             return null;
@@ -31,11 +31,11 @@ public class CommitService {
         return getAllCommitDtos(gitLabApi, projectID, since, until);
     }
 
-    private ArrayList<CommitDto> getAllCommitDtos(GitLabApi gitLabApi, int projectId, Date since, Date until) {
+    private List<CommitDto> getAllCommitDtos(GitLabApi gitLabApi, int projectId, Date since, Date until) {
         try {
             String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
             List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
-            ArrayList<CommitDto> allCommits = new ArrayList<>();
+            List<CommitDto> allCommits = new ArrayList<>();
             for(Commit commit : allGitCommits) {
                 CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit);
                 allCommits.add(presentCommit);
