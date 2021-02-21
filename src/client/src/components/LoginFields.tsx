@@ -14,7 +14,7 @@ const LoginFields = () => {
 
   const handleUserPassSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    fetch('http://localhost:8080/api/signin', {
+    fetch('/api/signin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: username, password: password }),
@@ -38,7 +38,7 @@ const LoginFields = () => {
 
   const handlePatSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    fetch('http://localhost:8080/api/auth', {
+    fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pat: pat }),
