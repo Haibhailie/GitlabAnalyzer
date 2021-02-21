@@ -1,6 +1,10 @@
 :root {
-  --color-main: black;
+  --color-main: #000000;
   --color-header: #364fc7;
+  --color-text-header: #e9ecef;
+  --color-text-body: #000000;
+  --color-button-hover: #4263eb;
+  --color-input-background: #dfdfdf;
   --color-primary: #074ee8;
   --color-secondary: #ffa94d;
   --color-table-header-background: #eeeeee;
@@ -9,18 +13,29 @@
   --color-lightgray: #d6d5d5;
   --color-lightblue: #dbe4ff;
   --color-text-lightgray: #9fa2b4;
+  --font-title: 500 72px Poppins;
+  --font-sub-title: 400 58px Poppins;
   --font-header: 400 24px Poppins;
+  --font-sub-header: 400 18px Poppins;
   --font-item-label: 400 16px Poppins;
   --font-small: 400 14px Poppins;
+  --font-button: 400 26px Poppins;
   --header-height: 72px;
   --sidenav-width: 230px;
 }
 
 body {
+  width: 100vw;
+  height: 100vh;
   margin: 0;
   width: 100vw;
   height: 100vh;
   font-family: Poppins;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
 }
 
 #root {

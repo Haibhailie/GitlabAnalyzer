@@ -1,0 +1,39 @@
+.splash {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.splashImg {
+  width: 100%;
+  min-width: 400px;
+  max-width: 550px;
+}
+
+.logoContainer {
+  width: 45%;
+  height: 100%;
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-right: thin solid black;
+}
+
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  width: 55%;
+}
+
+@media only screen and (max-width: 900px) {
+  .logoContainer {
+    display: none;
+  }
+
+  .loginContainer {
+    width: 100%;
+  }
+}
