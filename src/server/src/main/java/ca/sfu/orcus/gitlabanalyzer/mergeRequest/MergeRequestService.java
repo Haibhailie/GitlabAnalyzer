@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -33,9 +34,33 @@ public class MergeRequestService {
         }
         List<MergeRequestDto> filteredMergeRequests = new ArrayList<>();
         try {
-            List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId);
+            List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
             for (MergeRequest mr : allMergeRequests) {
                 if (mr.getCreatedAt().after(since) && mr.getCreatedAt().before(until)) {
+                    MergeRequestDto presentMergeRequest = new MergeRequestDto(gitLabApi, projectId, mr);
+                    filteredMergeRequests.add(presentMergeRequest);
+                }
+            }
+            return filteredMergeRequests;
+        } catch (GitLabApiException g) {
+            return null;
+        }
+    }
+
+    // TODO: Refactor this and the function above
+    public List<MergeRequestDto> getAllMergeRequests(String jwt, int projectId, Date since, Date until, int memberId) {
+        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
+        List<MergeRequestDto> filteredMergeRequests = new ArrayList<>();
+        try {
+            List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
+            for (MergeRequest mr : allMergeRequests) {
+                if (mr.getAuthor().getId() == memberId
+                        && mr.getCreatedAt().after(since)
+                        && mr.getCreatedAt().before(until)) {
+
                     MergeRequestDto presentMergeRequest = new MergeRequestDto(gitLabApi, projectId, mr);
                     filteredMergeRequests.add(presentMergeRequest);
                 }
@@ -69,7 +94,7 @@ public class MergeRequestService {
         if ((gitLabApi != null)) {
             List<MergeRequestDiffDto> listDiff = new ArrayList<>();
             try {
-                List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId);
+                List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
                 for (MergeRequest mr : mergeRequests) {
                     if (mr.getIid() == mergeRequestID) {
                         List<Commit> presentCommit = gitLabApi.getMergeRequestApi().getCommits(projectId, mr.getIid());
