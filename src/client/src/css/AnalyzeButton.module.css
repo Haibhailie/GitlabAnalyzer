@@ -1,0 +1,17 @@
+.analyze {
+  border: 2px solid var(--color-primary);
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 110px;
+  height: 33px;
+  padding: 0px 12px;
+  margin: auto;
+}
+
+.analyze:hover {
+  cursor: pointer;
+}

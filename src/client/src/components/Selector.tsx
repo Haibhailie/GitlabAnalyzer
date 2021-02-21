@@ -1,17 +1,20 @@
 import { useState } from 'react'
 
 import styles from '../css/Selector.module.css'
+import classNames from '../utils/classNames'
 
 export interface ISelectorProps {
   children: JSX.Element[]
   tabHeaders: string[]
   defaultTabHeader?: number
+  className?: string
 }
 
 const Selector = ({
   children,
   tabHeaders,
   defaultTabHeader,
+  className,
 }: ISelectorProps) => {
   const [selected, setSelected] = useState(defaultTabHeader ?? 0)
 
@@ -24,7 +27,7 @@ const Selector = ({
 
   return (
     <>
-      <div className={styles.selectorTabHeaders}>
+      <div className={classNames(styles.selectorTabHeaders, className)}>
         {tabHeaders.map((tabHeader, index) => (
           <button
             className={
@@ -39,7 +42,18 @@ const Selector = ({
           </button>
         ))}
       </div>
-      {children[selected]}
+      {children.map((child, i) => (
+        <div
+          key={i}
+          style={{
+            display: i !== selected ? 'none' : '',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          {child}
+        </div>
+      ))}
     </>
   )
 }
