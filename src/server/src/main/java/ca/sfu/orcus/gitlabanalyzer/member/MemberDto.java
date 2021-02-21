@@ -7,7 +7,7 @@ public class MemberDto {
 
     private String displayName;
     private String email;
-    private Integer id;
+    private int id;
     private String username;
     private String member_role;
 
@@ -28,7 +28,7 @@ public class MemberDto {
         this.email = email;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

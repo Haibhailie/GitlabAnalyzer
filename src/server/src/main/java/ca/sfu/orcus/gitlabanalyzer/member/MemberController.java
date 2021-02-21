@@ -27,13 +27,11 @@ public class MemberController {
     private static final long EARLIEST_DATE_LONG = 102297600;
     private static final long DEFAULT_UNTIL = -1;
 
-
     @Autowired
     public MemberController(MemberService memberService, MergeRequestService mergeRequestService, CommitService commitService) {
         this.memberService = memberService;
         this.mergeRequestService = mergeRequestService;
         this.commitService = commitService;
-
     }
 
     @GetMapping("/api/project/{projectId}/members")
@@ -63,6 +61,7 @@ public class MemberController {
 
         List<CommitDto> allCommitsByMemberEmail = new ArrayList<>();
         List<CommitDto> allCommits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
+
         for (CommitDto c : allCommits) {
             if (c.getAuthorEmail().equals(memberEmail)) {
                 allCommitsByMemberEmail.add(c);
@@ -78,7 +77,6 @@ public class MemberController {
             return ISO8601.toDate(EARLIEST_DATE);  // since 1973
         } else {
             return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
-
         }
     }
 
