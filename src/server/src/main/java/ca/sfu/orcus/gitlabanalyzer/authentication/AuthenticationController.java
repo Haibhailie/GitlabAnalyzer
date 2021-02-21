@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthenticationController {
 
     private final AuthenticationService authService;
@@ -33,6 +34,8 @@ public class AuthenticationController {
             response.addCookie(cookie);
             response.setStatus(200);
         } catch (IllegalArgumentException e) {
+            response.setStatus(401);
+        } catch (BadRequestException e) {
             response.setStatus(400);
         }
     }

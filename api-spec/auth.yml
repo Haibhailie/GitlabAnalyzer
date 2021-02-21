@@ -1,0 +1,22 @@
+post:
+  description: 'Sign in with a Personal Access Token provided by GitLab.'
+  responses:
+    '200':
+      $ref: './components/auth200.yml'
+    '400':
+      description: Bad request.
+    '401':
+      description: Invalid Personal Access Token.
+    '500':
+      description: An error un-related to this request occurred.
+  requestBody:
+    content:
+      'application/json':
+        schema:
+          type: object
+          required:
+            - pat
+          properties:
+            pat:
+              type: string
+              format: password

@@ -9,6 +9,8 @@ import {
 import Provider from './context/ProjectContext'
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Project from './pages/Project'
+
 const AuthCheck = () => {
   const history = useHistory()
   useEffect(() => {
@@ -30,6 +32,9 @@ const App = () => {
         <Switch>
           <Route path="/home">
             <Home />
+          </Route>
+          <Route path="/project/:id">
+            <Project />
           </Route>
           <Route path="/login">
             <Login />

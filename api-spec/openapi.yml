@@ -1,0 +1,35 @@
+openapi: '3.0.2'
+info:
+  title: GitLabAnalyzer
+  version: '1.0.0'
+paths:
+  /api/signin:
+    $ref: './signin.yml'
+  /api/auth:
+    $ref: './auth.yml'
+  /api/ping:
+    $ref: './ping.yml'
+  /api/projects:
+    $ref: './projects.yml'
+  /api/project/{projectId}:
+    $ref: './project.yml'
+  /api/project/{projectId}/commits:
+    $ref: './commits.yml'
+  /api/project/{projectId}/commit/{commitSha}:
+    $ref: './commit.yml'
+  /api/project/{projectId}/commit/{commitSha}/diff:
+    $ref: './commitDiff.yml'
+  /api/project/{projectId}/mergerequests:
+    $ref: './mergerequests.yml'
+  /api/project/{projectId}/mergerequest/{mergerequestsId}:
+    $ref: './mergerequest.yml'
+  /api/project/{projectId}/mergerequest/{mergerequestsId}/diff:
+    $ref: './mergerequestDiff.yml'
+  /api/project/{projectId}/members:
+    $ref: './members.yml'
+  /api/project/{projectId}/member/{memberId}/commits:
+    $ref: './memberCommits.yml'
+  /api/project/{projectId}/member/{memberId}/mergerequests:
+    $ref: './memberMergerequests.yml'
+  /api/project/{projectId}/member/{memberId}/notes:
+    $ref: './memberNotes.yml'
