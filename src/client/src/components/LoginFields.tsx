@@ -1,13 +1,17 @@
 import { useHistory } from 'react-router-dom'
 import { useState } from 'react'
 
-import styles from '../css/Login.module.css'
+import styles from '../css/LoginFields.module.css'
+import Selector from './Selector'
 
 const LoginFields = () => {
   const history = useHistory()
-  const [error, setError] = useState('')
+  const [errorUserPass, setErrorUserPass] = useState('')
+  const [errorPat, setErrorPat] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [pat, setPat] = useState('')
+
   const handleUserPassSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     fetch('http://localhost:8080/api/signin', {
@@ -19,80 +23,80 @@ const LoginFields = () => {
         if (res.status === 200) {
           history.push('/home')
         } else if (res.status === 400) {
-          setError('Please fill in both fields')
+          setErrorUserPass('Please fill in both fields')
         } else if (res.status === 401) {
-          setError('Invalid credentials')
+          setErrorUserPass('Invalid credentials')
         } else if (res.status === 500) {
-          setError('Could not connect to server')
+          setErrorUserPass('Could not connect to server')
         }
       })
       .catch(error => {
-        setError('Could not connect to server')
+        setErrorUserPass('Could not connect to server')
       })
   }
 
   const handlePatSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log(username)
     fetch('http://localhost:8080/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pat: username }),
+      body: JSON.stringify({ pat: pat }),
     })
       .then(res => {
         if (res.status === 200) {
           history.push('/home')
         } else if (res.status === 400) {
-          setError('Please fill in both fields')
+          setErrorPat('Please fill in your token')
         } else if (res.status === 401) {
-          setError('Invalid Personal Access Token')
+          setErrorPat('Invalid Personal Access Token')
         } else if (res.status === 500) {
-          setError('Could not connect to server')
+          setErrorPat('Could not connect to server')
         }
       })
       .catch(error => {
-        setError('Could not connect to server')
+        setErrorPat('Could not connect to server')
       })
   }
 
   return (
-    <div className={styles.loginFieldsContainer}>
-      <h1 className={styles.loginTitle}>Login</h1>
-      {/** TODO: ADD GENERIC SELECTOR */}
-      <form className={styles.loginFields} onSubmit={handleUserPassSubmit}>
-        {error && <p className={styles.loginError}>{error}</p>}
-        <label className={styles.loginHeader}>Username</label>
-        <input
-          type="text"
-          name="username"
-          placeholder="Enter username"
-          className={styles.loginField}
-          onChange={event => setUsername(event.target.value)}
-        />
-        <label className={styles.loginHeader}>Password</label>
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter password"
-          className={styles.loginField}
-          onChange={event => setPassword(event.target.value)}
-        />
-        <input type="submit" value="Log In" className={styles.loginButton} />
-      </form>
-      <form className={styles.loginFields} onSubmit={handlePatSubmit}>
-        {error && <p className={styles.loginError}>{error}</p>}
-        <label className={styles.loginHeader}>
-          GitLab Personal Access Token
-        </label>
-        <input
-          type="text"
-          name="pat"
-          placeholder="Enter GitLab Personal Access Token"
-          className={styles.loginField}
-          onChange={event => setUsername(event.target.value)}
-        />
-        <input type="submit" value="Log In" className={styles.loginButton} />
-      </form>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Login</h1>
+      <Selector tabHeaders={['Username/Password', 'Personal Access Token']}>
+        <form className={styles.fields} onSubmit={handleUserPassSubmit}>
+          {errorUserPass && <p className={styles.error}>{errorUserPass}</p>}
+          <label className={styles.fieldHeader}>Username</label>
+          <input
+            type="text"
+            name="username"
+            placeholder="Enter username"
+            className={styles.field}
+            onChange={event => setUsername(event.target.value)}
+          />
+          <label className={styles.fieldHeader}>Password</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter password"
+            className={styles.field}
+            onChange={event => setPassword(event.target.value)}
+          />
+          <input type="submit" value="Log In" className={styles.button} />
+        </form>
+        <form className={styles.fields} onSubmit={handlePatSubmit}>
+          {errorPat && <p className={styles.error}>{errorPat}</p>}
+          <label className={styles.fieldHeader}>
+            GitLab Personal Access Token
+          </label>
+          <input
+            type="text"
+            name="pat"
+            placeholder="Enter GitLab Personal Access Token"
+            className={styles.field}
+            onChange={event => setPat(event.target.value)}
+          />
+          <input type="submit" value="Log In" className={styles.button} />
+        </form>
+      </Selector>
     </div>
   )
 }
