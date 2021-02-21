@@ -18,6 +18,7 @@ const LoginFields = () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: username, password: password }),
+      credentials: 'include',
     })
       .then(res => {
         if (res.status === 200) {
@@ -41,6 +42,7 @@ const LoginFields = () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pat: pat }),
+      credentials: 'include',
     })
       .then(res => {
         if (res.status === 200) {
