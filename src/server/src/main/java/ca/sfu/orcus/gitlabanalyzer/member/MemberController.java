@@ -59,14 +59,8 @@ public class MemberController {
         }
         Date dateUntil = getDateUntil(until);
 
-        List<CommitDto> allCommitsByMemberEmail = new ArrayList<>();
         List<CommitDto> allCommits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
-
-        for (CommitDto c : allCommits) {
-            if (c.getAuthorEmail().equals(memberEmail)) {
-                allCommitsByMemberEmail.add(c);
-            }
-        }
+        List<CommitDto> allCommitsByMemberEmail = memberService.getCommitsByMemberEmail(allCommits,memberEmail);
         response.setStatus(allCommitsByMemberEmail == null ? 401 : 200);
         return gson.toJson(allCommitsByMemberEmail);
     }
@@ -102,13 +96,8 @@ public class MemberController {
             return gson.toJson(null);
         }
         Date dateUntil = getDateUntil(until);
-        List<MergeRequestDto> allMergeRequestsByMemberId = new ArrayList<>();
         List<MergeRequestDto> allMergeRequests = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
-        for (MergeRequestDto mr : allMergeRequests) {
-            if (mr.getUserID() == memberId) {
-                allMergeRequestsByMemberId.add(mr);
-            }
-        }
+        List<MergeRequestDto> allMergeRequestsByMemberId = memberService.getMergeRequestsByMemberID(allMergeRequests,memberId);
         response.setStatus(allMergeRequestsByMemberId == null ? 401 : 200);
         return gson.toJson(allMergeRequestsByMemberId);
     }
