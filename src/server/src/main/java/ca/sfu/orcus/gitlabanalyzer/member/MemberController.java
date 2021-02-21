@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.gitlab4j.api.utils.ISO8601;
+
 import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ public class MemberController {
     private static final long DEFAULT_UNTIL = -1;
 
 
-
     @Autowired
     public MemberController(MemberService memberService, MergeRequestService mergeRequestService, CommitService commitService) {
         this.memberService = memberService;
@@ -39,7 +39,6 @@ public class MemberController {
     @GetMapping("/api/project/{projectId}/members")
     public String getMembers(@CookieValue(value = "sessionId") String jwt,
                              HttpServletResponse response, @PathVariable int projectId) {
-
         List<MemberDto> members = memberService.getAllMembers(jwt, projectId);
         response.setStatus(members == null ? 401 : 200);
         Gson gson = new Gson();
@@ -52,7 +51,6 @@ public class MemberController {
                                           @PathVariable int projectId,
                                           @RequestParam(required = false, defaultValue = "0") long since,
                                           @RequestParam(required = false, defaultValue = "-1") long until, @PathVariable String memberEmail) {
-
         Date dateSince;
         Gson gson = new Gson();
         try {
@@ -62,7 +60,6 @@ public class MemberController {
             return gson.toJson(null);
         }
         Date dateUntil = getDateUntil(until);
-
 
         List<CommitDto> allCommitsByMemberEmail = new ArrayList<>();
         List<CommitDto> allCommits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
@@ -77,7 +74,7 @@ public class MemberController {
 
     // TODO: ensure that since is earlier than until
     private Date getDateSince(long since) throws ParseException {
-        if(since < EARLIEST_DATE_LONG) {
+        if (since < EARLIEST_DATE_LONG) {
             return ISO8601.toDate(EARLIEST_DATE);  // since 1973
         } else {
             return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
@@ -86,7 +83,7 @@ public class MemberController {
     }
 
     private Date getDateUntil(long until) {
-        if(until != DEFAULT_UNTIL) {
+        if (until != DEFAULT_UNTIL) {
             return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
         } else {
             return new Date();                             // until now
@@ -99,7 +96,6 @@ public class MemberController {
                                              @PathVariable int projectId,
                                              @RequestParam(required = false, defaultValue = "0") long since,
                                              @RequestParam(required = false, defaultValue = "-1") long until, @PathVariable int memberId) {
-
         Date dateSince;
         Gson gson = new Gson();
         try {
@@ -119,6 +115,4 @@ public class MemberController {
         response.setStatus(allMergeRequestsByMemberId == null ? 401 : 200);
         return gson.toJson(allMergeRequestsByMemberId);
     }
-
-
 }
