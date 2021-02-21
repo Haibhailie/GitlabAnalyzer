@@ -1,6 +1,6 @@
 .container {
   height: 100%;
-  width: 65%;
+  width: 100%;
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -14,18 +14,16 @@
   margin: 50px 0 40px;
 }
 
-.main {
+.summaryContainer {
   display: flex;
-  width: 100%;
-  border: 1px solid var(--color-lightgray);
-  border-radius: 5px;
+  width: 85%;
+  height: auto;
+  margin: auto;
 }
 
-.graph {
-  width: 64%;
-  height: 100%;
-}
-
-.stats {
-  width: 36%;
+.memberContainer {
+  display: flex;
+  width: 58%;
+  height: auto;
+  margin: auto;
 }

@@ -180,7 +180,7 @@ const ActivityGraph = ({
             }}
           />
           <Tooltip />
-          <Legend align="center" verticalAlign="bottom" layout="vertical" />
+          <Legend align="right" verticalAlign="top" layout="horizontal" />
           <Bar
             name="Merge Requests"
             dataKey={yAxisValue === 'number' ? 'merges' : 'mergeScore'}

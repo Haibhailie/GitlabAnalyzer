@@ -4,10 +4,11 @@ import { useParams } from 'react-router-dom'
 
 import Loading from '../components/Loading'
 import ErrorComp from '../components/Error'
+import Selector from '../components/Selector'
+import MemberTable from '../components/MemberTable'
+import ProjectSummary from '../components/ProjectSummary'
 
 import styles from '../css/Project.module.css'
-import ProjectStat from '../components/ProjectStat'
-import ActivityGraph from '../components/ActivityGraph'
 
 export interface IMember {
   id: string
@@ -25,13 +26,6 @@ export interface IProjectData {
   repoSize: number
   createdAt: number
 }
-
-const calcAgeInDays = (birth: number) => {
-  const diff = Date.now() - birth
-  return diff / (24 * 60 * 60 * 1000)
-}
-
-const bytesToMb = (bytes: number) => bytes / (1024 * 1024)
 
 const Project = () => {
   const { id } = useParams<{ id: string }>()
@@ -59,31 +53,14 @@ const Project = () => {
     >
       <div className={styles.container}>
         <h1 className={styles.header}>{project?.name}</h1>
-        <div className={styles.main}>
-          <div className={styles.graph}>
-            <ActivityGraph
-              mergeUrl={`/api/project/${id}/mergerequests`}
-              commitUrl={`/api/project/${id}/commits`}
-            />
+        <Selector tabHeaders={['Summary', 'Members']}>
+          <div className={styles.summaryContainer}>
+            <ProjectSummary project={project} />
           </div>
-          {project && (
-            <div className={styles.stats}>
-              <ProjectStat name="Members" value={project.members.length} />
-              <ProjectStat name="Branches" value={project.branches} />
-              <ProjectStat name="Commits" value={project.commits} />
-              <ProjectStat
-                name="Average commits per day"
-                value={(
-                  project.commits / calcAgeInDays(project.createdAt)
-                ).toFixed(2)}
-              />
-              <ProjectStat
-                name="Files"
-                value={`${bytesToMb(project.repoSize).toFixed(2)} MB`}
-              />
-            </div>
-          )}
-        </div>
+          <div className={styles.memberContainer}>
+            <MemberTable projectId={id} projectName={project?.name ?? ''} />
+          </div>
+        </Selector>
       </div>
     </Suspense>
   )

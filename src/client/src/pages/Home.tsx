@@ -7,10 +7,9 @@ import { ProjectContext } from '../context/ProjectContext'
 import Table from '../components/Table'
 import Loading from '../components/Loading'
 import ErrorComp from '../components/Error'
+import AnalyzeButton from '../components/AnalyzeButton'
 
 import styles from '../css/Home.module.css'
-
-import gt from '../assets/greater-than.svg'
 
 export type TProjects = {
   id: string
@@ -64,13 +63,11 @@ const Home = () => {
                 latestUpdate,
                 analyzed: analyzed ? 'Yes' : 'No',
                 action: (
-                  <button
-                    className={styles.analyze}
-                    onClick={() => onAnalyze(id)}
-                  >
-                    Analyze
-                    <img src={gt} />
-                  </button>
+                  <AnalyzeButton
+                    id={id}
+                    onClick={onAnalyze}
+                    message="Analyze"
+                  />
                 ),
               }
             })}

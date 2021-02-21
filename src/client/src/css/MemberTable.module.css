@@ -1,0 +1,37 @@
+.header {
+  width: calc(100% - 20px);
+  height: 42px;
+  background-color: var(--color-header);
+  color: #ffffff;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.table {
+  border-left: 1px solid var(--color-table-border);
+  border-right: 1px solid var(--color-table-border);
+  width: calc(100% - 2px);
+}
+
+.theader,
+.tdata {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  height: 56px;
+  font: var(--font-small);
+  border-bottom: 1px solid var(--color-table-border);
+}
+
+.theader {
+  background-color: var(--color-table-header-background);
+}
+
+.analyze {
+  width: 80%;
+  max-width: 200px;
+  height: fit-content;
+  padding: 5px 12px;
+}
