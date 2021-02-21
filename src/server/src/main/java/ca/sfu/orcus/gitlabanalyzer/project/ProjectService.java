@@ -64,7 +64,7 @@ public class ProjectService {
         try {
             Project project = gitLabApi.getProjectApi().getProject(projectId, true);
             long numBranches = gitLabApi.getRepositoryApi().getBranches(projectId).size();
-            List<MemberDto> memberDtos = memberService.getAllMemberDtos(gitLabApi, projectId);
+            List<MemberDto> memberDtos = memberService.getAllMembers(gitLabApi, projectId);
             return new ProjectExtendedDto(project, memberDtos, numBranches);
         } catch (GitLabApiException e) {
             return null;

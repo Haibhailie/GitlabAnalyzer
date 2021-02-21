@@ -33,18 +33,23 @@ public class MemberService {
 
     public List<MemberDto> getAllMembers(String jwt, int projectID) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
+        if (gitLabApi != null) {
+            return getAllMembers(gitLabApi, projectID);
+        } else {
             return null;
         }
+    }
+
+    public List<MemberDto> getAllMembers(GitLabApi gitLabApi, int projectId) {
         try {
             List<MemberDto> filteredAllMembers = new ArrayList<>();
-            List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectID);
+            List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectId);
             for (Member m : allMembers) {
                 MemberDto presentMember = new MemberDto(m);
                 filteredAllMembers.add(presentMember);
             }
             return filteredAllMembers;
-        } catch (GitLabApiException g) {
+        } catch (GitLabApiException | NullPointerException e) {
             return null;
         }
     }
