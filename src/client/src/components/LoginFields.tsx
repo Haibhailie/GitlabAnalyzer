@@ -31,7 +31,7 @@ const LoginFields = () => {
           setErrorUserPass('Could not connect to server')
         }
       })
-      .catch(error => {
+      .catch(() => {
         setErrorUserPass('Could not connect to server')
       })
   }
@@ -55,7 +55,7 @@ const LoginFields = () => {
           setErrorPat('Could not connect to server')
         }
       })
-      .catch(error => {
+      .catch(() => {
         setErrorPat('Could not connect to server')
       })
   }
