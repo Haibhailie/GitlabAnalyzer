@@ -29,7 +29,6 @@ public class CommitService {
             return null;
         }
         return getAllCommitDtos(gitLabApi, projectID, since, until);
-
     }
 
     private List<CommitDto> getAllCommitDtos(GitLabApi gitLabApi, int projectId, Date since, Date until) {
@@ -71,5 +70,4 @@ public class CommitService {
             return null;
         }
     }
-
 }

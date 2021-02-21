@@ -13,7 +13,7 @@ get:
                 - id
                 - name
                 - role
-                - latestUpdate
+                - lastActivityAt
                 - analyzed
               properties:
                 id:
@@ -22,8 +22,8 @@ get:
                   type: string
                 role:
                   type: string
-                latestUpdate:
-                  $ref: './components/epoch.yml'
+                lastActivityAt:
+                  $ref: "./components/epoch.yml"
                 analyzed:
                   description: If analysis has been done including the most recent repo change.
                   type: boolean
