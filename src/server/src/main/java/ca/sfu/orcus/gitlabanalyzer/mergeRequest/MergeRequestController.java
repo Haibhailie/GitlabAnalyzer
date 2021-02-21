@@ -14,7 +14,7 @@ import java.util.List;
 public class MergeRequestController {
 
     private final MergeRequestService mergeRequestService;
-    int EPOCH_TO_DATE_FACTOR = 1000; //to multiply the long from parseLong() by 1000 to convert to milliseconds, for Java's date constructor
+    private static final long EPOCH_TO_DATE_FACTOR = 1000; //to multiply the long from parseLong() by 1000 to convert to milliseconds, for Java's date constructor
 
     @Autowired
     public MergeRequestController(MergeRequestService mergeRequestService) {
