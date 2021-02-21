@@ -7,6 +7,7 @@ import ErrorComp from '../components/Error'
 
 import styles from '../css/Project.module.css'
 import ProjectStat from '../components/ProjectStat'
+import ActivityGraph from '../components/ActivityGraph'
 
 export interface IMember {
   id: string
@@ -59,7 +60,12 @@ const Project = () => {
       <div className={styles.container}>
         <h1 className={styles.header}>{project?.name}</h1>
         <div className={styles.main}>
-          <div className={styles.graph}></div>
+          <div className={styles.graph}>
+            <ActivityGraph
+              mergeUrl={`/api/project/${id}/mergerequests`}
+              commitUrl={`/api/project/${id}/commits`}
+            />
+          </div>
           {project && (
             <div className={styles.stats}>
               <ProjectStat name="Members" value={project.members.length} />

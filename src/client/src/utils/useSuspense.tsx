@@ -1,9 +1,12 @@
 import { useState, useRef } from 'react'
 
+import DefaultLoader from '../components/Loading'
+import DefaultError from '../components/Error'
+
 export interface ISuspenseProps {
   children: JSX.Element
-  fallback: JSX.Element
-  error?: JSX.Element
+  fallback: JSX.Element | string
+  error?: JSX.Element | string
 }
 
 export type TSuspenseFunction = (props: ISuspenseProps) => JSX.Element
@@ -49,11 +52,28 @@ const useSuspense = <DataType, ErrorType>(
     error: Error,
   }) => {
     if (status.current === 'PENDING') {
-      return Fallback
+      if (typeof Fallback === 'string') {
+        Fallback = <DefaultLoader message={Fallback} />
+      }
+      return (
+        <>
+          {Fallback}
+          <div key="preventTreeUpdate" style={{ display: 'none' }}>
+            {LoadedComp}
+          </div>
+        </>
+      )
     } else if (status.current === 'ERROR' && Error) {
+      if (typeof Error === 'string') {
+        Error = <DefaultError message={Error} />
+      }
       return Error
     } else {
-      return LoadedComp
+      return (
+        <div key="preventTreeUpdate" style={{ width: '100%', height: '100%' }}>
+          {LoadedComp}
+        </div>
+      )
     }
   }
 
