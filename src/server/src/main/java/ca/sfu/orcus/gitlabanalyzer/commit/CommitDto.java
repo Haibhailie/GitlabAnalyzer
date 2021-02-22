@@ -15,6 +15,7 @@ public class CommitDto {
     private String authorEmail;
     private String id;
     private Date dateCommitted;
+    private long time;
     private String message;
     private int numAdditions;
     private int numDeletions;
@@ -27,6 +28,7 @@ public class CommitDto {
         this.setAuthorEmail(commit.getAuthorEmail());
         this.setId(commit.getId());
         this.setDateCommitted(commit.getCommittedDate());
+        this.setTime(commit.getCommittedDate().getTime());
         this.setMessage(commit.getMessage());
 
         Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectID, commit.getShortId()); // Needed otherwise getStats() returns null
@@ -59,6 +61,8 @@ public class CommitDto {
     public void setDateCommitted(Date dateCommitted) {
         this.dateCommitted = dateCommitted;
     }
+
+    public void setTime(long time) { this.time = time; }
 
     public void setMessage(String message) {
         this.message = message;

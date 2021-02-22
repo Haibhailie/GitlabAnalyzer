@@ -17,7 +17,7 @@ public class AuthenticationRepository {
     public AuthenticationRepository() {
         MongoClient mongoClient = MongoClients.create(System.getenv("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(System.getenv("DATABASE"));
-        this.collection = database.getCollection(System.getenv("USERS-COLLECTION"));
+        this.collection = database.getCollection(System.getenv("USERS_COLLECTION"));
     }
 
     public void addNewUser(AuthenticationUser newUser) {

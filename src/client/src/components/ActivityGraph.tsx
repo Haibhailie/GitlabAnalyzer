@@ -96,6 +96,8 @@ const computeGraphData = (
     })
   }
 
+  oldestCommit = Math.min(oldestCommit, Date.now() - 7 * 24 * 60 * 60 * 1000)
+
   fillObj(commitData, 'commits', 'commitScore')
   fillObj(mergeData, 'merges', 'mergeScore')
 

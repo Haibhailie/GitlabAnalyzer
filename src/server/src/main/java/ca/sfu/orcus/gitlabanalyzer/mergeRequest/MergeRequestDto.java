@@ -8,6 +8,7 @@ import org.gitlab4j.api.models.Note;
 import org.gitlab4j.api.models.Participant;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MergeRequestDto {
@@ -27,6 +28,7 @@ public class MergeRequestDto {
     private ArrayList<String> notes;
     private ArrayList<String> committers;
     private List<Participant> participants;
+    private long time;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectID, MergeRequest presentMergeRequest) throws GitLabApiException {
         setMergeRequestID(presentMergeRequest.getIid());
@@ -35,7 +37,7 @@ public class MergeRequestDto {
         setUserID(presentMergeRequest.getAuthor().getId());
         setSourceBranch(presentMergeRequest.getSourceBranch());
         setTargetBranch(presentMergeRequest.getTargetBranch());
-        if (presentMergeRequest.getAssignee().getName() == null) {
+        if (presentMergeRequest.getAssignee() == null) {
             setAssignedTo("Unassigned");
         } else {
             setAssignedTo(presentMergeRequest.getAssignee().getName());
@@ -46,6 +48,8 @@ public class MergeRequestDto {
 
         setNumAdditions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()), gitLabApi, projectID);
         setNumDeletions(gitLabApi.getMergeRequestApi().getCommits(projectID, presentMergeRequest.getIid()), gitLabApi, projectID);
+
+        setTime(presentMergeRequest.getMergedAt().getTime());
 
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectID, presentMergeRequest.getIid()));
         ArrayList<String> notesName = new ArrayList<>();
@@ -146,6 +150,8 @@ public class MergeRequestDto {
     public void setUserID(int userID) {
         this.userID = userID;
     }
+
+    public void setTime(long time) { this.time = time; }
 
     public int getUserID(){
         return userID;

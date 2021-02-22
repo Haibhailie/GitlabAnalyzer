@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
-import withSuspense from '../utils/withSuspense'
+import useSuspense from '../utils/useSuspense'
 import jsonFetch from '../utils/jsonFetcher'
 
 import { ProjectContext } from '../context/ProjectContext'
@@ -15,32 +15,30 @@ export type TProjects = {
   id: string
   name: string
   role: string
-  latestUpdate: number
+  lastActivityAt: number
   analyzed: boolean
 }[]
 
-const [Suspense, useContent] = withSuspense<TProjects, Error>(
-  (setData, setError) => {
-    jsonFetch<TProjects>('/api/projects')
-      .then(data => {
-        setData(data)
-      })
-      .catch(err => {
-        if (err.message === '401') {
-          window.location.href = '/login'
-        } else if (err.message === 'Failed to fetch') {
-          setError(new Error('Could not connect to server'))
-        } else {
-          setError(new Error('Server error. Please try again.'))
-        }
-      })
-  }
-)
-
 const Home = () => {
-  const { data, error } = useContent()
   const history = useHistory()
   const { dispatch } = useContext(ProjectContext)
+  const { Suspense, data, error } = useSuspense<TProjects, Error>(
+    (setData, setError) => {
+      jsonFetch<TProjects>('/api/projects')
+        .then(data => {
+          setData(data)
+        })
+        .catch(err => {
+          if (err.message === '401' || err.message === '400') {
+            history.push('/login')
+          } else if (err.message === 'Failed to fetch') {
+            setError(new Error('Could not connect to server'))
+          } else {
+            setError(new Error('Server error. Please try again.'))
+          }
+        })
+    }
+  )
 
   const onAnalyze = (id: string) => {
     dispatch({ type: 'SET_ID', id })
@@ -56,11 +54,11 @@ const Home = () => {
         <h1 className={styles.header}>Your Projects</h1>
         {data && (
           <Table
-            data={data?.map(({ id, name, analyzed, latestUpdate, role }) => {
+            data={data?.map(({ id, name, analyzed, lastActivityAt, role }) => {
               return {
                 name,
                 role,
-                latestUpdate,
+                lastActivityAt: new Date(lastActivityAt).toISOString(),
                 analyzed: analyzed ? 'Yes' : 'No',
                 action: (
                   <AnalyzeButton

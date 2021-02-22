@@ -21,8 +21,8 @@ export interface IProjectData {
   id: string
   name: string
   members: IMember[]
-  branches: number
-  commits: number
+  numBranches: number
+  numCommits: number
   repoSize: number
   createdAt: number
 }

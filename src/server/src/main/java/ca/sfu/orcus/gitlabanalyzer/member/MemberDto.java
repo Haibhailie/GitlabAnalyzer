@@ -20,7 +20,7 @@ public class MemberDto {
     }
 
 
-    public void setDisplayName(String name) {
+    public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 

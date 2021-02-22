@@ -1,5 +1,6 @@
 import { useHistory } from 'react-router-dom'
 import { useState } from 'react'
+import { URLBASE } from '../utils/constants'
 
 import styles from '../css/LoginFields.module.css'
 import Selector from './Selector'
@@ -20,7 +21,7 @@ const LoginFields = () => {
       return
     }
 
-    fetch('/api/signin', {
+    fetch(`${URLBASE}/api/signin`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: username, password: password }),
@@ -50,7 +51,7 @@ const LoginFields = () => {
       return
     }
 
-    fetch('/api/auth', {
+    fetch(`${URLBASE}/api/auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pat: pat }),
@@ -102,7 +103,7 @@ const LoginFields = () => {
             GitLab Personal Access Token
           </label>
           <input
-            type="text"
+            type="password"
             name="pat"
             placeholder="Enter GitLab Personal Access Token"
             className={styles.field}
