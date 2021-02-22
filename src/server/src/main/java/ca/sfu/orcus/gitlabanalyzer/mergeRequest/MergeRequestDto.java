@@ -37,7 +37,7 @@ public class MergeRequestDto {
         setUserID(presentMergeRequest.getAuthor().getId());
         setSourceBranch(presentMergeRequest.getSourceBranch());
         setTargetBranch(presentMergeRequest.getTargetBranch());
-        if (presentMergeRequest.getAssignee().getName() == null) {
+        if (presentMergeRequest.getAssignee() == null) {
             setAssignedTo("Unassigned");
         } else {
             setAssignedTo(presentMergeRequest.getAssignee().getName());
