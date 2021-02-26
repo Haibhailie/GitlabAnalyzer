@@ -11,14 +11,11 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import static ca.sfu.orcus.gitlabanalyzer.Constants.*;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CommitController {
-    private static final long EPOCH_TO_DATE_FACTOR = 1000;
-    private static final String EARLIEST_DATE = "1973-03-30T00:00:00Z"; // earliest date commitsApi works with
-    private static final long EARLIEST_DATE_LONG = 102297600;
-    private static final long DEFAULT_UNTIL = -1;
-
     private final CommitService commitService;
 
     @Autowired

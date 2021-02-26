@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 
 public class MergeRequestDto {
-
     private int mergeRequestID;
     private boolean hasConflicts;
     private boolean isOpen;
