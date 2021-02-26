@@ -1,6 +1,6 @@
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
-import _ from 'lodash'
+import { round } from 'lodash'
 import {
   BarChart,
   XAxis,
@@ -100,8 +100,8 @@ const computeGraphData = (
   fillObj(mergeData, 'merges', 'mergeScore')
 
   Object.entries(graphObj).forEach(([key, { commitScore, mergeScore }]) => {
-    graphObj[key].commitScore = _.round(commitScore, 2)
-    graphObj[key].mergeScore = _.round(mergeScore, 2)
+    graphObj[key].commitScore = round(commitScore, 2)
+    graphObj[key].mergeScore = round(mergeScore, 2)
   })
 
   const now = Date.now()
