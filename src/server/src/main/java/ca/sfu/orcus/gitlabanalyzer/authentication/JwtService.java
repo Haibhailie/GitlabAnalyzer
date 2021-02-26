@@ -16,7 +16,6 @@ import java.util.Date;
 @Service
 public class JwtService {
     enum JwtType {PAT, USER_PASS}
-
     Key secretKey;
 
     @Autowired

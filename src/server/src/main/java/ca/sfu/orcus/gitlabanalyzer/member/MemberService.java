@@ -17,7 +17,6 @@ import java.util.List;
 
 @Service
 public class MemberService {
-
     private final MemberRepository memberRepository;
     private final AuthenticationService authService;
     private final MergeRequestService mergeRequestService;
@@ -54,8 +53,8 @@ public class MemberService {
         }
     }
 
-    public List<CommitDto> getCommitsByMemberEmail(String jwt, int projectID, Date since, Date until, String memberEmail) {
-        List<CommitDto> allCommits = commitService.getAllCommits(jwt, projectID, since, until);
+    public List<CommitDto> getCommitsByMemberEmail(String jwt, int projectId, Date since, Date until, String memberEmail) {
+        List<CommitDto> allCommits = commitService.getAllCommits(jwt, projectId, since, until);
         List<CommitDto> allCommitsByMemberEmail = new ArrayList<>();
         for (CommitDto c : allCommits) {
             if (c.getAuthorEmail().equals(memberEmail)) {
@@ -65,8 +64,8 @@ public class MemberService {
         return allCommitsByMemberEmail;
     }
 
-    public List<MergeRequestDto> getMergeRequestsByMemberID(String jwt, int projectID, Date since, Date until, int memberId) {
+    public List<MergeRequestDto> getMergeRequestsByMemberID(String jwt, int projectId, Date since, Date until, int memberId) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        return mergeRequestService.getAllMergeRequests(gitLabApi, projectID, since, until, memberId);
+        return mergeRequestService.getAllMergeRequests(gitLabApi, projectId, since, until, memberId);
     }
 }

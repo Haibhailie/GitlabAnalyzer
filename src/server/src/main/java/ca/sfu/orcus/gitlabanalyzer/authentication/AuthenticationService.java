@@ -13,7 +13,6 @@ import static ca.sfu.orcus.gitlabanalyzer.authentication.JwtService.JwtType;
 
 @Service
 public class AuthenticationService {
-
     private final AuthenticationRepository repository;
     private final JwtService jwtService;
 
