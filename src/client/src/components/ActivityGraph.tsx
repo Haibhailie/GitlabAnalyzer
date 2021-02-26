@@ -1,5 +1,6 @@
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
+import _ from 'lodash'
 import {
   BarChart,
   XAxis,
@@ -51,9 +52,6 @@ const dateRegex = /\d{4}-\d{2}-\d{2}/
 const epochToDate = (epoch: number) =>
   new Date(epoch).toISOString().match(dateRegex)?.[0] ?? 'none'
 
-const roundToTwoPlaces = (number: number) =>
-  Math.round((number + Number.EPSILON) * 100) / 100
-
 const computeGraphData = (
   commitData: ICommitData[],
   mergeData: IMergeData[]
@@ -102,8 +100,8 @@ const computeGraphData = (
   fillObj(mergeData, 'merges', 'mergeScore')
 
   Object.entries(graphObj).forEach(([key, { commitScore, mergeScore }]) => {
-    graphObj[key].commitScore = roundToTwoPlaces(commitScore)
-    graphObj[key].mergeScore = roundToTwoPlaces(mergeScore)
+    graphObj[key].commitScore = _.round(commitScore, 2)
+    graphObj[key].mergeScore = _.round(mergeScore, 2)
   })
 
   const now = Date.now()
