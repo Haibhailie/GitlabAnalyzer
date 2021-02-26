@@ -39,8 +39,6 @@ const useSuspense = <DataType, ErrorType = Error>(
   })
 
   useEffect(() => {
-    console.log(dependencies)
-    console.log(suspenseRef.firstPass)
     if (suspenseRef.firstPass) {
       suspenseRef.firstPass = false
     } else if (suspenseRef.setData && suspenseRef.setError) {
