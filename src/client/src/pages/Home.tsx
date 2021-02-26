@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSuspense from '../utils/useSuspense'
 import jsonFetch from '../utils/jsonFetcher'
+import dateConverter from '../utils/dateConverter'
 
 import { ProjectContext } from '../context/ProjectContext'
 import Table from '../components/Table'
@@ -58,7 +59,7 @@ const Home = () => {
               return {
                 name,
                 role,
-                lastActivityAt: new Date(lastActivityAt).toISOString(),
+                lastActivityAt: dateConverter(lastActivityAt, true),
                 analyzed: analyzed ? 'Yes' : 'No',
                 action: (
                   <AnalyzeButton
