@@ -2,8 +2,9 @@ import { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSuspense from '../utils/useSuspense'
 import jsonFetch from '../utils/jsonFetcher'
-
+import { NETWORK_ERROR, SERVER_ERROR } from '../utils/constants'
 import { ProjectContext } from '../context/ProjectContext'
+
 import Table from '../components/Table'
 import Loading from '../components/Loading'
 import ErrorComp from '../components/Error'
@@ -32,9 +33,9 @@ const Home = () => {
           if (err.message === '401' || err.message === '400') {
             history.push('/login')
           } else if (err.message === 'Failed to fetch') {
-            setError(new Error('Could not connect to server'))
+            setError(new Error(NETWORK_ERROR))
           } else {
-            setError(new Error('Server error. Please try again.'))
+            setError(new Error(SERVER_ERROR))
           }
         })
     }
