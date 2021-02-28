@@ -147,9 +147,8 @@ public class MergeRequestDto {
         this.userID = userID;
     }
 
-    public int getUserID(){
+    public int getUserID() {
         return userID;
     }
-
 
 }

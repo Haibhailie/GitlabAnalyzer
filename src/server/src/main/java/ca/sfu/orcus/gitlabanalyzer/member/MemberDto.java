@@ -19,7 +19,6 @@ public class MemberDto {
         setRole(MemberUtils.getMemberRoleFromAccessLevel(presentMember.getAccessLevel().value));
     }
 
-
     public void setDisplayName(String name) {
         this.displayName = displayName;
     }

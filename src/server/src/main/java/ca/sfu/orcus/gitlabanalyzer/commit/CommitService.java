@@ -25,7 +25,7 @@ public class CommitService {
 
     public List<CommitDto> getAllCommits(String jwt, int projectID, Date since, Date until) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        if(gitLabApi == null) {
+        if (gitLabApi == null) {
             return null;
         }
         return getAllCommitDtos(gitLabApi, projectID, since, until);
@@ -36,19 +36,19 @@ public class CommitService {
             String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
             List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
             List<CommitDto> allCommits = new ArrayList<>();
-            for(Commit commit : allGitCommits) {
+            for (Commit commit : allGitCommits) {
                 CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit);
                 allCommits.add(presentCommit);
             }
             return allCommits;
-        } catch(GitLabApiException e) {
+        } catch (GitLabApiException e) {
             return null;
         }
     }
 
     public CommitDto getSingleCommit(String jwt, int projectID, String sha) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        if(gitLabApi == null) {
+        if (gitLabApi == null) {
             return null;
         }
         try {
@@ -61,7 +61,7 @@ public class CommitService {
 
     public List<Diff> getDiffOfCommit(String jwt, int projectID, String sha) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
-        if(gitLabApi == null) {
+        if (gitLabApi == null) {
             return null;
         }
         try {
