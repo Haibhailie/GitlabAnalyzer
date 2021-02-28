@@ -8,7 +8,7 @@ import java.util.Date;
 
 public final class DateUtils {
     private static final long EPOCH_TO_DATE_FACTOR = 1000;
-    private static final String EARLIEST_DATE_STRING = "2005-01-01T00:00:00Z"; // Git launched in 2015
+    private static final String EARLIEST_DATE_STRING = "2005-01-01T00:00:00Z"; // Git launched in 2005
 
     private DateUtils() {
         throw new AssertionError();
