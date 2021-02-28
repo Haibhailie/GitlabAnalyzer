@@ -30,8 +30,9 @@ public class MergeRequestService {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
-        } else
+        } else {
             return getAllMergeRequests(gitLabApi, projectId, since, until);
+        }
     }
 
     private List<MergeRequestDto> getAllMergeRequests(GitLabApi gitLabApi, int projectId, Date since, Date until) {

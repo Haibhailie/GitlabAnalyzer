@@ -39,8 +39,7 @@ public class MergeRequestController {
     private Date calculateUntil(long until) {
         if (until == -1) {
             return new Date();                              // until now
-        }
-        else {
+        } else {
             return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
         }
     }

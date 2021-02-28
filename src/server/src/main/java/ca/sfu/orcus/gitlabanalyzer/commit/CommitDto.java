@@ -61,7 +61,9 @@ public class CommitDto {
         this.dateCommitted = dateCommitted;
     }
 
-    public void setTime(long time) { this.time = time; }
+    public void setTime(long time) {
+        this.time = time;
+    }
 
     public void setMessage(String message) {
         this.message = message;
