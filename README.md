@@ -2,7 +2,7 @@
 
 > Analyze GitLab projects like never before.
 
-GitLab Analyzer is an analysis tool to analyze user contributions to a GitLab project. This piece of software is especially useful for instructors and teaching assistans who want to grade students' contribution to their team projects using various metrics, such as - code contribution through commits and merge requests, GitLab issues and code review comments, and so on.
+GitLab Analyzer is an analysis tool to analyze user contributions to a GitLab project. This piece of software is especially useful for instructors and teaching assistants who want to grade students' contribution to their team projects using various metrics, such as - code contribution through commits and merge requests, GitLab issues and code review comments, and so on.
 
 - Homepage: http://cmpt373-1211-09.cmpt.sfu.ca/
 - Source: https://csil-git1.cs.surrey.sfu.ca/373-2021-1-Orcus/gitlabanalyzer
