@@ -4,7 +4,6 @@ import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
 
 public class MemberDto {
-
     private String displayName;
     private String email;
     private int id;
@@ -19,7 +18,7 @@ public class MemberDto {
         setRole(MemberUtils.getMemberRoleFromAccessLevel(presentMember.getAccessLevel().value));
     }
 
-    public void setDisplayName(String name) {
+    public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
@@ -38,5 +37,4 @@ public class MemberDto {
     public void setRole(String role) {
         this.role = role;
     }
-
 }

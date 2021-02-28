@@ -5,16 +5,18 @@ import {
   Route,
   useHistory,
 } from 'react-router-dom'
+import { URLBASE } from './utils/constants'
 
 import Provider from './context/ProjectContext'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Project from './pages/Project'
+import PageWrapper from './components/PageWrapper'
 
 const AuthCheck = () => {
   const history = useHistory()
   useEffect(() => {
-    fetch('/api/ping', {
+    fetch(`${URLBASE}/api/ping`, {
       credentials: 'include',
     }).then(res => {
       if (res.status === 200) {
@@ -33,11 +35,17 @@ const App = () => {
       <Router>
         <Switch>
           <Route path="/home">
-            <Home />
+            <PageWrapper>
+              <Home />
+            </PageWrapper>
           </Route>
           <Route path="/project/:id">
-            <Project />
+            <PageWrapper>
+              <Project />
+            </PageWrapper>
           </Route>
+        </Switch>
+        <Switch>
           <Route path="/login">
             <Login />
           </Route>

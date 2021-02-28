@@ -15,28 +15,29 @@ public class CommitDto {
     private String authorEmail;
     private String id;
     private Date dateCommitted;
+    private long time;
     private String message;
     private int numAdditions;
     private int numDeletions;
     private int total;
     private List<Diff> diffs;
 
-    public CommitDto(GitLabApi gitLabApi, int projectID, Commit commit) throws GitLabApiException {
+    public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
         this.setAuthor(commit.getAuthorName());
         this.setAuthorEmail(commit.getAuthorEmail());
         this.setId(commit.getId());
         this.setDateCommitted(commit.getCommittedDate());
+        this.setTime(commit.getCommittedDate().getTime());
         this.setMessage(commit.getMessage());
 
-        Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectID, commit.getShortId()); // Needed otherwise getStats() returns null
+        Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, commit.getShortId()); // Needed otherwise getStats() returns null
         this.setNumAdditions(presentCommit.getStats().getAdditions());
         this.setNumDeletions(presentCommit.getStats().getDeletions());
         this.setTotal(presentCommit.getStats().getTotal());
 
-        List<Diff> allDiffs = new ArrayList<>();
-        List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectID, commit.getId());
-        allDiffs.addAll(gitDiffs);
+        List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
+        List<Diff> allDiffs = new ArrayList<>(gitDiffs);
         this.setDiffs(allDiffs);
     }
 
@@ -58,6 +59,10 @@ public class CommitDto {
 
     public void setDateCommitted(Date dateCommitted) {
         this.dateCommitted = dateCommitted;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public void setMessage(String message) {

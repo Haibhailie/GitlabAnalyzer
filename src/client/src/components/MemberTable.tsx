@@ -24,7 +24,7 @@ const MemberTable = ({ projectId, projectName }: IActivityGraphProps) => {
   const history = useHistory()
   const { Suspense, data, error } = useSuspense<TMemberData, Error>(
     (setData, setError) => {
-      jsonFetcher<TMemberData>(`/api/${projectId}/members`)
+      jsonFetcher<TMemberData>(`/api/project/${projectId}/members`)
         .then(members => {
           setData(members)
         })

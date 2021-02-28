@@ -23,12 +23,12 @@ public class CommitService {
         this.authService = authService;
     }
 
-    public List<CommitDto> getAllCommits(String jwt, int projectID, Date since, Date until) {
+    public List<CommitDto> getAllCommits(String jwt, int projectId, Date since, Date until) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        return getAllCommitDtos(gitLabApi, projectID, since, until);
+        return getAllCommitDtos(gitLabApi, projectId, since, until);
     }
 
     private List<CommitDto> getAllCommitDtos(GitLabApi gitLabApi, int projectId, Date since, Date until) {
@@ -46,26 +46,26 @@ public class CommitService {
         }
     }
 
-    public CommitDto getSingleCommit(String jwt, int projectID, String sha) {
+    public CommitDto getSingleCommit(String jwt, int projectId, String sha) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
         try {
-            Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectID, sha);
-            return new CommitDto(gitLabApi, projectID, gitCommit);
+            Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectId, sha);
+            return new CommitDto(gitLabApi, projectId, gitCommit);
         } catch (GitLabApiException e) {
             return null;
         }
     }
 
-    public List<Diff> getDiffOfCommit(String jwt, int projectID, String sha) {
+    public List<Diff> getDiffOfCommit(String jwt, int projectId, String sha) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
         try {
-            return gitLabApi.getCommitsApi().getDiff(projectID, sha);
+            return gitLabApi.getCommitsApi().getDiff(projectId, sha);
         } catch (GitLabApiException e) {
             return null;
         }

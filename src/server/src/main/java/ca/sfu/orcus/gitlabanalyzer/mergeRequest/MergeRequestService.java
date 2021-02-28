@@ -17,7 +17,6 @@ import java.util.List;
 
 @Service
 public class MergeRequestService {
-
     private final MergeRequestRepository mergeRequestRepository;
     private final AuthenticationService authService;
 

@@ -1,4 +1,7 @@
 .headerDiv {
+  position: fixed;
+  width: calc(100% - 72px);
+  z-index: 2;
   display: flex;
   align-items: center;
   background-color: var(--color-header);

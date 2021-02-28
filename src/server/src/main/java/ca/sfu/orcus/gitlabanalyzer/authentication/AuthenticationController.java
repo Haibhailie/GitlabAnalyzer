@@ -11,7 +11,6 @@ import javax.ws.rs.BadRequestException;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthenticationController {
-
     private final AuthenticationService authService;
 
     @Autowired

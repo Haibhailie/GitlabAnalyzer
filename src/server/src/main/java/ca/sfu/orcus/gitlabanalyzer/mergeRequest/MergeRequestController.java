@@ -9,19 +9,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
+import static ca.sfu.orcus.gitlabanalyzer.Constants.*;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class MergeRequestController {
-
     private final MergeRequestService mergeRequestService;
-    private static final long EPOCH_TO_DATE_FACTOR = 1000; //to multiply the long from parseLong() by 1000 to convert to milliseconds, for Java's date constructor
 
     @Autowired
     public MergeRequestController(MergeRequestService mergeRequestService) {
         this.mergeRequestService = mergeRequestService;
     }
 
-    @GetMapping("/api/project/{projectId}/mergeRequests")
+    @GetMapping("/api/project/{projectId}/mergerequests")
     public String getMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                    HttpServletResponse response,
                                    @PathVariable int projectId,
@@ -38,7 +38,7 @@ public class MergeRequestController {
 
     private Date calculateUntil(long until) {
         if (until == -1) {
-            return new Date(); // until now
+            return new Date();                              // until now
         } else {
             return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
         }
