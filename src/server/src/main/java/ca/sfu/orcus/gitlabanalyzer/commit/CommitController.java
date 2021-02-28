@@ -1,8 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
+import ca.sfu.orcus.gitlabanalyzer.Constants;
 import com.google.gson.Gson;
 import org.gitlab4j.api.models.Diff;
-import org.gitlab4j.api.utils.ISO8601;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +11,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-import static ca.sfu.orcus.gitlabanalyzer.Constants.*;
+import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
@@ -26,40 +26,22 @@ public class CommitController {
     @GetMapping("/api/project/{projectId}/commits")
     public String getCommits(@CookieValue(value = "sessionId") String jwt,
                              @PathVariable int projectId,
-                             @RequestParam (required = false, defaultValue = "0") long since,
-                             @RequestParam (required = false, defaultValue = "-1") long until,
+                             @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
+                             @RequestParam(required = false, defaultValue = Constants.DEFAULT_UNTIL) long until,
                              HttpServletResponse response) {
         Gson gson = new Gson();
-        Date dateSince;
+        Date dateSince, dateUntil;
         try {
-            dateSince = getDateSince(since);
+            dateSince = DateUtils.getDateSinceOrEarliest(since);
+            dateUntil = DateUtils.getDateUntilOrNow(until);
         } catch (ParseException e) {
             response.setStatus(400);
             return gson.toJson(null);
         }
-        Date dateUntil = getDateUntil(until);
 
         List<CommitDto> commits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
-
         response.setStatus(commits == null ? 401 : 200);
         return gson.toJson(commits);
-    }
-    // TODO: ensure that since is earlier than until
-    private Date getDateSince(long since) throws ParseException {
-        if(since < EARLIEST_DATE_LONG) {
-            return ISO8601.toDate(EARLIEST_DATE);           // since 1973
-        } else {
-            return new Date(since * EPOCH_TO_DATE_FACTOR); // since given value
-
-        }
-    }
-
-    private Date getDateUntil(long until) {
-        if(until != DEFAULT_UNTIL) {
-            return new Date(until * EPOCH_TO_DATE_FACTOR); // until given value
-        } else {
-            return new Date();                             // until now
-        }
     }
 
     @GetMapping("/api/project/{projectId}/commit/{sha}")
