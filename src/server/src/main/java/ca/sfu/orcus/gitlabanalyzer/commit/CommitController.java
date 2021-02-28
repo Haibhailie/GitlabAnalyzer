@@ -1,17 +1,15 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.Constants;
+import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import com.google.gson.Gson;
 import org.gitlab4j.api.models.Diff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-
-import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
@@ -29,18 +27,11 @@ public class CommitController {
                              @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
                              @RequestParam(required = false, defaultValue = Constants.DEFAULT_UNTIL) long until,
                              HttpServletResponse response) {
-        Gson gson = new Gson();
-        Date dateSince, dateUntil;
-        try {
-            dateSince = DateUtils.getDateSinceOrEarliest(since);
-            dateUntil = DateUtils.getDateUntilOrNow(until);
-        } catch (ParseException e) {
-            response.setStatus(400);
-            return gson.toJson(null);
-        }
-
+        Date dateSince = DateUtils.getDateSinceOrEarliest(since);
+        Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<CommitDto> commits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
         response.setStatus(commits == null ? 401 : 200);
+        Gson gson = new Gson();
         return gson.toJson(commits);
     }
 

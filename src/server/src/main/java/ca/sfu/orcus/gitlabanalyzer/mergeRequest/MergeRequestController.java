@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -28,18 +27,11 @@ public class MergeRequestController {
                                    @PathVariable int projectId,
                                    @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
                                    @RequestParam(required = false, defaultValue = Constants.DEFAULT_UNTIL) long until) {
-        Gson gson = new Gson();
-        Date dateSince, dateUntil;
-        try {
-            dateSince = DateUtils.getDateSinceOrEarliest(since);
-            dateUntil = DateUtils.getDateUntilOrNow(until);
-        } catch (ParseException e) {
-            response.setStatus(400);
-            return gson.toJson(null);
-        }
-
+        Date dateSince = DateUtils.getDateSinceOrEarliest(since);
+        Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<MergeRequestDto> mergeRequestDtos = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
         response.setStatus(mergeRequestDtos == null ? 401 : 200);
+        Gson gson = new Gson();
         return gson.toJson(mergeRequestDtos);
     }
 
