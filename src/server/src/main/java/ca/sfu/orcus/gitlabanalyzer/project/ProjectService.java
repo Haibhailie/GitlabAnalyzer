@@ -40,7 +40,7 @@ public class ProjectService {
         try {
             ArrayList<ProjectDto> projectDtos = new ArrayList<>();
             List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
-            for (Project p: projects) {
+            for (Project p : projects) {
                 String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, p.getId());
                 ProjectDto projectDto = new ProjectDto(p, memberRole);
                 projectDtos.add(projectDto);

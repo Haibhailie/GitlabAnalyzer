@@ -12,7 +12,7 @@ public class MergeRequestDiffDto {
     private String oldPath;
     private String diff;
 
-    public MergeRequestDiffDto(Commit presentCommit, Diff presentDiff){
+    public MergeRequestDiffDto(Commit presentCommit, Diff presentDiff) {
         setCommitName(presentCommit.getTitle());
         setDiff(presentDiff.getDiff());
         setDeletedFile(presentDiff.getDeletedFile());

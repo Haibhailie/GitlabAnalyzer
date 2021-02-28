@@ -149,9 +149,11 @@ public class MergeRequestDto {
         this.userId = userID;
     }
 
-    public void setTime(long time) { this.time = time; }
+    public void setTime(long time) {
+        this.time = time;
+    }
 
-    public int getUserId(){
+    public int getUserId() {
         return userId;
     }
 }
