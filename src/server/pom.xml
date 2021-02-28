@@ -83,7 +83,6 @@
                     <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
                     <violationSeverity>warning</violationSeverity>
-                    <failOnViolation>false</failOnViolation>
                 </configuration>
                 <dependencies>
                     <dependency>
