@@ -39,7 +39,7 @@ GitLab Analyzer is an analysis tool to analyze user contributions to a GitLab pr
 
 ## Build directions
 
-Dev environment setup guide and build directions can be found [here](https://csil-git1.cs.surrey.sfu.ca/373-2021-1-Orcus/gitlabanalyzer/-/wikis/DevOps%20Guides/Dev%20Environment%20Setup%20Guide).
+Dev environment setup guide and build directions can be found [here](Wikidocs/Dev-Environment-Setup-Guide.md).
 
 ## Dependencies
 
