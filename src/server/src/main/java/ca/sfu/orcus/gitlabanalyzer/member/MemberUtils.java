@@ -5,10 +5,6 @@ import java.util.Map;
 public final class MemberUtils {
     private MemberUtils() {
         throw new AssertionError();
-
-
-
-        
     }
 
     private static final Map<Integer, String> AccessLevelToRoleMap = Map.of(
