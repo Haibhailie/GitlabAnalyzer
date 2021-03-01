@@ -30,8 +30,6 @@ public class MemberController {
         response.setStatus(members == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(members);
-
-        
     }
 
     @GetMapping("/api/project/{projectId}/members/{memberEmail}/commits")
