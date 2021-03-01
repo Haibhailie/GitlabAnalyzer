@@ -1,6 +1,6 @@
 stages:
   - build
-  # - test
+  - test
   - format
   # - deploy
 
@@ -46,6 +46,20 @@ backend build:
     - cd src/server 
     - mvn $MAVEN_CLI_OPTS compile
 
+backend test:
+  stage: test
+  needs: []
+  image: $MAVEN_IMAGE
+  tags:
+    - docker
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID != null || $CI_COMMIT_BRANCH == $STAGING_BRANCH'
+      changes:
+        - src/server/**/*
+      when: always
+  script:
+    - cd src/server 
+    - mvn $MAVEN_CLI_OPTS test
 
 frontend lint:
   stage: format
