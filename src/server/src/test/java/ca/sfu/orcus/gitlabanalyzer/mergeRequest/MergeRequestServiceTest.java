@@ -1,34 +1,42 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 public class MergeRequestServiceTest {
 
+    @InjectMocks
     private MergeRequestService mergeRequestService;
 
+    @Mock
     private MergeRequestRepository mergeRequestRepository;
+    @Mock
     private AuthenticationService authenticationService;
+    @Mock
     private GitLabApi gitLabApi;
+    @Mock
     private MergeRequestApi mergeRequestApi;
+    @Mock
     private CommitsApi commitsApi;
+    @Mock
     private Diff diffApi;
 
     private static MergeRequest mergeRequest;
@@ -62,34 +70,26 @@ public class MergeRequestServiceTest {
     private String oldPath = "";
     private String diff = "";
 
-    @Before
-    public void setup(){
-        mergeRequestRepository = Mockito.mock(MergeRequestRepository.class);
-        authenticationService = Mockito.mock(AuthenticationService.class);
+    @BeforeAll
+    public static void setup() {
 
-        gitLabApi = Mockito.mock(GitLabApi.class);
-        mergeRequestApi = Mockito.mock(MergeRequestApi.class);
-        commitsApi = Mockito.mock(CommitsApi.class);
-        diffApi = Mockito.mock(Diff.class);
-        mergeRequest = generateTestMergeRequest();
-        mergeRequestService = new MergeRequestService(mergeRequestRepository, authenticationService);
     }
 
     @Test
-    public void gitlabAPINullTest(){
+    public void gitlabAPINullTest() {
 
-        Mockito.when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
+        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
         gitLabApi = authenticationService.getGitLabApiFor(jwt);
 
-        Assertions.assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
-        Assertions.assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
-        Assertions.assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
-        Assertions.assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestId));
-        Assertions.assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestId));
+        assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
+        assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
+        assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
+        assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestId));
+        assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestId));
 
     }
 
-    public MergeRequest generateTestMergeRequest(){
+    public MergeRequest generateTestMergeRequest() {
         MergeRequest tempMergeRequest = new MergeRequest();
         Assignee tempAssignee = new Assignee();
         Author tempAuthor = new Author();
@@ -98,7 +98,7 @@ public class MergeRequestServiceTest {
 
         tempMergeRequest.setHasConflicts(hasConflicts);
 
-        if(isOpen)
+        if (isOpen)
             tempMergeRequest.setState("opened");
         else
             tempMergeRequest.setState("closed");
