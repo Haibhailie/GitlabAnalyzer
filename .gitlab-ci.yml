@@ -59,11 +59,6 @@ backend test:
       when: always
   before_script:
     - cd src/server 
-    - echo $MONGO_URI
-    - echo $COLLECTION
-    - echo $USERS_COLLECTION
-    - echo $SECRET
-    - echo $GITLAB_URL
   script:
     - mvn $MAVEN_CLI_OPTS test
 
