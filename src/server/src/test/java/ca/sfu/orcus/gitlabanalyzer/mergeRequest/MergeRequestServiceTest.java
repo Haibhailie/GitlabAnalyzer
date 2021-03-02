@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
@@ -65,6 +66,7 @@ public class MergeRequestServiceTest {
     public void setup(){
         mergeRequestRepository = Mockito.mock(MergeRequestRepository.class);
         authenticationService = Mockito.mock(AuthenticationService.class);
+
         gitLabApi = Mockito.mock(GitLabApi.class);
         mergeRequestApi = Mockito.mock(MergeRequestApi.class);
         commitsApi = Mockito.mock(CommitsApi.class);
@@ -74,15 +76,16 @@ public class MergeRequestServiceTest {
     }
 
     @Test
-    public void gitlabApiNullTest(){
+    public void gitlabAPINullTest(){
 
         Mockito.when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
-
+        gitLabApi = authenticationService.getGitLabApiFor(jwt);
 
         Assertions.assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
+        Assertions.assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
+        Assertions.assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
         Assertions.assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestId));
         Assertions.assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestId));
-
 
     }
 
