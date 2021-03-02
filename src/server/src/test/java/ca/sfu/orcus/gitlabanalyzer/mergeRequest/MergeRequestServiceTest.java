@@ -6,10 +6,11 @@ import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.*;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MergeRequestServiceTest {
+public class MergeRequestServiceTest {
 
     private MergeRequestService mergeRequestService;
 
@@ -70,15 +71,15 @@ class MergeRequestServiceTest {
         diffApi = Mockito.mock(Diff.class);
         mergeRequest = generateTestMergeRequest();
         mergeRequestService = new MergeRequestService(mergeRequestRepository, authenticationService);
-
     }
 
     @Test
     public void gitlabApiNullTest(){
+
         Mockito.when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
 
+
         Assertions.assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
-        Assertions.assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
         Assertions.assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestId));
         Assertions.assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestId));
 
