@@ -10,24 +10,32 @@ import org.gitlab4j.api.RepositoryApi;
 import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Project;
 import org.gitlab4j.api.models.ProjectStatistics;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@ExtendWith(MockitoExtension.class)
 public class ProjectTests {
-    // Class to be tested
-    private ProjectService projectService;
+    @Mock private ProjectRepository projectRepository;
+    @Mock private AuthenticationService authenticationService;
+    @Mock private MemberService memberService;
+    @Mock private GitLabApi gitLabApi;
+    @Mock private ProjectApi projectApi;
+    @Mock private RepositoryApi repositoryApi;
 
-    // Dependencies (will be mocked)
-    private ProjectRepository projectRepository;
-    private AuthenticationService authenticationService;
-    private MemberService memberService;
-    private GitLabApi gitLabApi;
-    private ProjectApi projectApi;
-    private RepositoryApi repositoryApi;
+    // Class to be tested
+    @InjectMocks
+    private ProjectService projectService;
 
     // Test objects, maybe move to separate classes
     private static Project project;
@@ -41,27 +49,18 @@ public class ProjectTests {
     private static final List<MemberDto> memberDtos = new ArrayList<>();
     private static final List<Branch> branches = new ArrayList<>();
 
-    @Before
-    public void setup() {
-        projectRepository = mock(ProjectRepository.class);
-        authenticationService = mock(AuthenticationService.class);
-        memberService = mock(MemberService.class);
-        gitLabApi = mock(GitLabApi.class);
-        projectApi = mock(ProjectApi.class);
-        repositoryApi = mock(RepositoryApi.class);
-
+    @BeforeAll
+    public static void setup() {
         projectStatistics = getTestProjectStatistics();
         project = getTestProject();
-
-        projectService = new ProjectService(projectRepository, authenticationService, memberService);
     }
 
     @Test
     public void nullGitLabApiTest() {
         when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
 
-        Assertions.assertNull(projectService.getProject(jwt, projectId));
-        Assertions.assertNull(projectService.getAllProjects(jwt));
+        assertNull(projectService.getProject(jwt, projectId));
+        assertNull(projectService.getAllProjects(jwt));
     }
 
     @Test
@@ -76,12 +75,12 @@ public class ProjectTests {
         ProjectExtendedDto projectExtendedDto = projectService.getProject(jwt, projectId);
         ProjectExtendedDto expectedProjectExtendedDto = new ProjectExtendedDto(project, memberDtos, branches.size());
 
-        Assertions.assertNotNull(projectExtendedDto);
-        Assertions.assertEquals(projectExtendedDto, expectedProjectExtendedDto);
+        assertNotNull(projectExtendedDto);
+        assertEquals(projectExtendedDto, expectedProjectExtendedDto);
     }
 
     // Can/should be move to another class
-    public Project getTestProject() {
+    public static Project getTestProject() {
         Project project = new Project();
 
         project.setId(projectId);
@@ -93,7 +92,7 @@ public class ProjectTests {
     }
 
     // Can/should be move to another class
-    public ProjectStatistics getTestProjectStatistics() {
+    public static ProjectStatistics getTestProjectStatistics() {
         ProjectStatistics projectStatistics = new ProjectStatistics();
 
         projectStatistics.setCommitCount(count);
