@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
+import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
@@ -39,7 +40,7 @@ public class AuthenticationService {
     }
 
     private String getUsernameFromPat(String pat) throws GitLabApiException {
-        GitLabApi gitLabApi = new GitLabApi(System.getenv("GITLAB_URL"), pat);
+        GitLabApi gitLabApi = new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), pat);
         User currentUser = gitLabApi.getUserApi().getCurrentUser();
         return currentUser.getUsername();
     }
@@ -52,7 +53,7 @@ public class AuthenticationService {
         }
         if (userPassIsValid(user, pass)) {
             try {
-                GitLabApi gitLabApi = GitLabApi.oauth2Login(System.getenv("GITLAB_URL"), user, pass);
+                GitLabApi gitLabApi = GitLabApi.oauth2Login(VariableDecoderUtil.decode("GITLAB_URL"), user, pass);
                 String authToken = gitLabApi.getAuthToken();
                 newUser.setAuthToken(authToken);
                 String jwt = jwtService.createJwt(newUser, JwtType.USER_PASS);
@@ -69,7 +70,7 @@ public class AuthenticationService {
 
     private boolean userPassIsValid(String user, String pass) {
         try {
-            GitLabApi gitLabApi = GitLabApi.oauth2Login(System.getenv("GITLAB_URL"), user, pass);
+            GitLabApi gitLabApi = GitLabApi.oauth2Login(VariableDecoderUtil.decode("GITLAB_URL"), user, pass);
             gitLabApi.getUserApi().getCurrentUser();
             return true;
         } catch (GitLabApiException e) {
@@ -102,7 +103,7 @@ public class AuthenticationService {
 
     // If we can successfully get the current user, then the auth token is valid
     private void testAuthToken(String authToken) throws GitLabApiException {
-        GitLabApi gitLabApi = new GitLabApi(System.getenv("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
+        GitLabApi gitLabApi = new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
         gitLabApi.getUserApi().getCurrentUser();
     }
 
@@ -129,7 +130,7 @@ public class AuthenticationService {
         try {
             String pat = repository.getPatFor(jwt);
             getUsernameFromPat(pat);
-            return new GitLabApi(System.getenv("GITLAB_URL"), pat);
+            return new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), pat);
         } catch (GitLabApiException e) {
             return null;
         }
@@ -139,7 +140,7 @@ public class AuthenticationService {
         try {
             String authToken = repository.getAuthTokenFor(jwt);
             testAuthToken(authToken);
-            return new GitLabApi(System.getenv("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
+            return new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
         } catch (GitLabApiException e) {
             return null;
         }
