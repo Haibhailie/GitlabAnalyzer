@@ -10,10 +10,8 @@ import org.gitlab4j.api.RepositoryApi;
 import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Project;
 import org.gitlab4j.api.models.ProjectStatistics;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,12 +43,12 @@ public class ProjectTests {
 
     @Before
     public void setup() {
-        projectRepository = Mockito.mock(ProjectRepository.class);
-        authenticationService = Mockito.mock(AuthenticationService.class);
-        memberService = Mockito.mock(MemberService.class);
-        gitLabApi = Mockito.mock(GitLabApi.class);
-        projectApi = Mockito.mock(ProjectApi.class);
-        repositoryApi = Mockito.mock(RepositoryApi.class);
+        projectRepository = mock(ProjectRepository.class);
+        authenticationService = mock(AuthenticationService.class);
+        memberService = mock(MemberService.class);
+        gitLabApi = mock(GitLabApi.class);
+        projectApi = mock(ProjectApi.class);
+        repositoryApi = mock(RepositoryApi.class);
 
         projectStatistics = getTestProjectStatistics();
         project = getTestProject();
@@ -60,7 +58,7 @@ public class ProjectTests {
 
     @Test
     public void nullGitLabApiTest() {
-        Mockito.when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
+        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
 
         Assertions.assertNull(projectService.getProject(jwt, projectId));
         Assertions.assertNull(projectService.getAllProjects(jwt));
@@ -68,12 +66,12 @@ public class ProjectTests {
 
     @Test
     public void getSingleProjectTest() throws GitLabApiException {
-        Mockito.when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        Mockito.when(gitLabApi.getProjectApi()).thenReturn(projectApi);
-        Mockito.when(gitLabApi.getRepositoryApi()).thenReturn(repositoryApi);
-        Mockito.when(projectApi.getProject(projectId, true)).thenReturn(project);
-        Mockito.when(repositoryApi.getBranches(projectId)).thenReturn(branches);
-        Mockito.when(memberService.getAllMembers(gitLabApi, projectId)).thenReturn(memberDtos);
+        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApi.getProjectApi()).thenReturn(projectApi);
+        when(gitLabApi.getRepositoryApi()).thenReturn(repositoryApi);
+        when(projectApi.getProject(projectId, true)).thenReturn(project);
+        when(repositoryApi.getBranches(projectId)).thenReturn(branches);
+        when(memberService.getAllMembers(gitLabApi, projectId)).thenReturn(memberDtos);
 
         ProjectExtendedDto projectExtendedDto = projectService.getProject(jwt, projectId);
         ProjectExtendedDto expectedProjectExtendedDto = new ProjectExtendedDto(project, memberDtos, branches.size());
