@@ -16,11 +16,13 @@ import static ca.sfu.orcus.gitlabanalyzer.authentication.JwtService.JwtType;
 public class AuthenticationService {
     private final AuthenticationRepository repository;
     private final JwtService jwtService;
+    private final GitLabApiWrapper gitLabApiWrapper;
 
     @Autowired
-    public AuthenticationService(AuthenticationRepository repository, JwtService jwtService) {
+    public AuthenticationService(AuthenticationRepository repository, JwtService jwtService, GitLabApiWrapper gitLabApiWrapper) {
         this.repository = repository;
         this.jwtService = jwtService;
+        this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
     public String addNewUserFromPat(AuthenticationUser newUser) throws IllegalArgumentException, BadRequestException {
@@ -29,7 +31,7 @@ public class AuthenticationService {
             throw new BadRequestException("Pat is empty");
         }
         try {
-            newUser.setUsername(getUsernameFromPat(pat));
+            newUser.setUsername(gitLabApiWrapper.getUsernameFromPat(pat));
             String jwt = jwtService.createJwt(newUser, JwtType.PAT);
             newUser.setJwt(jwt);
             repository.addNewUser(newUser);
@@ -37,12 +39,6 @@ public class AuthenticationService {
         } catch (GitLabApiException e) {
             throw new IllegalArgumentException("Pat Authentication failed");
         }
-    }
-
-    private String getUsernameFromPat(String pat) throws GitLabApiException {
-        GitLabApi gitLabApi = new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), pat);
-        User currentUser = gitLabApi.getUserApi().getCurrentUser();
-        return currentUser.getUsername();
     }
 
     public String addNewUserByUserPass(AuthenticationUser newUser) throws IllegalArgumentException, BadRequestException {
@@ -79,71 +75,7 @@ public class AuthenticationService {
     }
 
     public boolean jwtIsValid(String jwt) {
-        return (jwtService.jwtIsValid(jwt) && repository.contains(jwt) && canSignIn(jwt));
+        return (jwtService.jwtIsValid(jwt) && repository.contains(jwt) && gitLabApiWrapper.canSignIn(jwt));
     }
 
-    private boolean canSignIn(String jwt) {
-        try {
-            trySigningIntoGitLab(jwt);
-            return true;
-        } catch (GitLabApiException e) {
-            return false;
-        }
-    }
-
-    private void trySigningIntoGitLab(String jwt) throws GitLabApiException {
-        JwtType type = jwtService.getType(jwt);
-        if (type == JwtType.PAT) {
-            String pat = repository.getPatFor(jwt);
-            getUsernameFromPat(pat);        // If we can successfully get the current user, then the pat is valid
-        } else {
-            String authToken = repository.getAuthTokenFor(jwt);
-            testAuthToken(authToken);
-        }
-    }
-
-    // If we can successfully get the current user, then the auth token is valid
-    private void testAuthToken(String authToken) throws GitLabApiException {
-        GitLabApi gitLabApi = new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
-        gitLabApi.getUserApi().getCurrentUser();
-    }
-
-    public GitLabApi getGitLabApiFor(String jwt) {
-        if (jwtIsValid(jwt)) {
-            JwtType type = jwtService.getType(jwt);
-            return getGitLabApiForType(jwt, type);
-        } else {
-            return null;
-        }
-    }
-
-    private GitLabApi getGitLabApiForType(String jwt, JwtType type) {
-        if (type == JwtType.PAT) {
-            return getGitLabApiForPat(jwt);
-        } else if (type == JwtType.USER_PASS) {
-            return getGitLabApiForUserPass(jwt);
-        } else {
-            return null;
-        }
-    }
-
-    private GitLabApi getGitLabApiForPat(String jwt) {
-        try {
-            String pat = repository.getPatFor(jwt);
-            getUsernameFromPat(pat);
-            return new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), pat);
-        } catch (GitLabApiException e) {
-            return null;
-        }
-    }
-
-    private GitLabApi getGitLabApiForUserPass(String jwt) {
-        try {
-            String authToken = repository.getAuthTokenFor(jwt);
-            testAuthToken(authToken);
-            return new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
-        } catch (GitLabApiException e) {
-            return null;
-        }
-    }
 }
