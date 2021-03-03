@@ -2,7 +2,6 @@ package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.Constants;
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
 import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import org.gitlab4j.api.CommitsApi;
 import org.gitlab4j.api.GitLabApi;
@@ -25,11 +24,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CommitServiceTests {
-    @Mock private CommitRepository commitRepository;
     @Mock private AuthenticationService authenticationService;
     @Mock private GitLabApi gitLabApi;
     @Mock private CommitsApi commitsApi;
-    @Mock private RepositoryApi repositoryApi;
 
     // Class to be tested
     @InjectMocks
@@ -41,8 +38,12 @@ public class CommitServiceTests {
 
     private static final String jwt = "";
     private static final int projectId = 5;
+    private static final String title = "title";
+    private static final String author = "Jimmy Jonathon Jacobs";
+    private static final String authorEmail = "jjj@verizon.net";
+    private static final String message = "";
     private static final int count = 10;
-    private static final String sha = "d7d1b7b568e50f99c93216404fa7187564c1738a";
+    private static final String sha = "abcd1234";
     private static final Date since = DateUtils.getDateSinceOrEarliest(Long.parseLong(Constants.DEFAULT_SINCE));
     private static final Date until = DateUtils.getDateSinceOrEarliest(Long.parseLong(Constants.DEFAULT_UNTIL));
 
@@ -61,10 +62,9 @@ public class CommitServiceTests {
     }
 
     @Test
-    public void getSingleCommitTest() throws GitLabApiException {
+    public void TestGetSingleCommit() throws GitLabApiException {
         when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
-        when(gitLabApi.getRepositoryApi()).thenReturn(repositoryApi);
         when(commitsApi.getCommit(projectId, sha)).thenReturn(commit);
 
         CommitDto commitDto = commitService.getSingleCommit(jwt, projectId, sha);
@@ -78,10 +78,14 @@ public class CommitServiceTests {
         Commit commit = new Commit();
 
         commit.setId(String.valueOf(projectId));
+        commit.setTitle(title);
+        commit.setAuthorName(author);
+        commit.setAuthorEmail(authorEmail);
+        commit.setMessage(message);
         commit.setId(sha);
         commit.setCommittedDate(until);
         commit.setStats(commitStats);
-        commit.setShortId(sha.substring(0, 10));
+        commit.setShortId(sha);
 
         return commit;
     }
@@ -95,6 +99,4 @@ public class CommitServiceTests {
 
         return commitStats;
     }
-
-
 }
