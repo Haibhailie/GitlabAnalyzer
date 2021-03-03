@@ -3,12 +3,11 @@ package ca.sfu.orcus.gitlabanalyzer.commit;
 import ca.sfu.orcus.gitlabanalyzer.Constants;
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
-import org.gitlab4j.api.CommitsApi;
-import org.gitlab4j.api.GitLabApi;
-import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.RepositoryApi;
+import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.CommitStats;
+import org.gitlab4j.api.models.Diff;
+import org.gitlab4j.api.models.Project;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +27,7 @@ public class CommitServiceTests {
     @Mock private AuthenticationService authenticationService;
     @Mock private GitLabApi gitLabApi;
     @Mock private CommitsApi commitsApi;
+    @Mock private ProjectApi projectApi;
 
     // Class to be tested
     @InjectMocks
@@ -46,11 +47,16 @@ public class CommitServiceTests {
     private static final String sha = "abcd1234";
     private static final Date since = DateUtils.getDateSinceOrEarliest(Long.parseLong(Constants.DEFAULT_SINCE));
     private static final Date until = DateUtils.getDateSinceOrEarliest(Long.parseLong(Constants.DEFAULT_UNTIL));
+    private static final String defaultBranch = "master";
+    private static final List<Commit> commitList = new ArrayList<>();
+    private static Project project;
+
 
     @BeforeAll
     public static void setup() {
         commitStats = getTestCommitStats();
         commit = getTestCommit();
+        project = getTestProject();
     }
 
     @Test
@@ -62,7 +68,22 @@ public class CommitServiceTests {
     }
 
     @Test
-    public void TestGetSingleCommit() throws GitLabApiException {
+    public void testGetAllCommits() throws GitLabApiException {
+        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
+        when(gitLabApi.getProjectApi()).thenReturn(projectApi);
+        when(projectApi.getProject(projectId)).thenReturn(project);
+        when(commitsApi.getCommits(projectId, defaultBranch, since, until)).thenReturn(commitList);
+
+        List<CommitDto> commitDtos = commitService.getAllCommits(jwt, projectId, since, until);
+        List<CommitDto> expectedCommitDtos = new ArrayList<>();
+
+        assertNotNull(commitDtos);
+        assertEquals(commitDtos, expectedCommitDtos);
+    }
+
+    @Test
+    public void testGetSingleCommit() throws GitLabApiException {
         when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
         when(commitsApi.getCommit(projectId, sha)).thenReturn(commit);
@@ -72,6 +93,18 @@ public class CommitServiceTests {
 
         assertNotNull(commitDto);
         assertEquals(commitDto, expectedCommitDto);
+    }
+
+    @Test
+    public void testGetSingleCommitDiff() {
+        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
+
+        List<Diff> commitDiff = commitService.getDiffOfCommit(jwt, projectId, sha);
+        List<Diff> expectedCommitDiff = new ArrayList<>();
+
+        assertNotNull(commitDiff);
+        assertEquals(commitDiff, expectedCommitDiff);
     }
 
     public static Commit getTestCommit() {
@@ -98,5 +131,13 @@ public class CommitServiceTests {
         commitStats.setTotal(count*2);
 
         return commitStats;
+    }
+
+    private static Project getTestProject() {
+        Project project = new Project();
+
+        project.setDefaultBranch(defaultBranch);
+
+        return project;
     }
 }
