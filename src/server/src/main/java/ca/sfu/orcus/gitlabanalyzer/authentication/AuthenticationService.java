@@ -79,25 +79,26 @@ public class AuthenticationService {
     }
 
     public boolean jwtIsValid(String jwt) {
-        return (jwtService.jwtSignatureOk(jwt) && repository.contains(jwt) && signInSuccess(jwt));
+        return (jwtService.jwtIsValid(jwt) && repository.contains(jwt) && canSignIn(jwt));
     }
 
-    private boolean signInSuccess(String jwt) {
+    private boolean canSignIn(String jwt) {
         try {
-            JwtType type = jwtService.getType(jwt);
-            if (type == JwtType.PAT) {
-                String pat = repository.getPatFor(jwt);
-                getUsernameFromPat(pat);        // If we can successfully get the current user, then the pat is valid
-                return true;
-            } else if (type == JwtType.USER_PASS) {
-                String authToken = repository.getAuthTokenFor(jwt);
-                testAuthToken(authToken);
-                return true;
-            } else {
-                return false;
-            }
+            trySigningIntoGitLab(jwt);
+            return true;
         } catch (GitLabApiException e) {
             return false;
+        }
+    }
+
+    private void trySigningIntoGitLab(String jwt) throws GitLabApiException {
+        JwtType type = jwtService.getType(jwt);
+        if (type == JwtType.PAT) {
+            String pat = repository.getPatFor(jwt);
+            getUsernameFromPat(pat);        // If we can successfully get the current user, then the pat is valid
+        } else {
+            String authToken = repository.getAuthTokenFor(jwt);
+            testAuthToken(authToken);
         }
     }
 
