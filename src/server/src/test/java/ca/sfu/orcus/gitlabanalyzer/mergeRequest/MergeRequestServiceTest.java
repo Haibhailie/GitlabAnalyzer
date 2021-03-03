@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.*;
@@ -44,6 +45,8 @@ public class MergeRequestServiceTest {
     private NotesApi notesApi;
 
     private static List<MergeRequest> mergeRequests;
+    private static List<Commit> commits;
+    private static CommitStats commitStats;
 
     private static int projectId = 10;
     private static String jwt = "";
@@ -69,6 +72,17 @@ public class MergeRequestServiceTest {
     private static long time = 10000000;
     private static List<Note> notesList = new ArrayList<>();
 
+
+    private static final String title = "title";
+    private static final String authorEmail = "jimcarry@carryingyou.com";
+    private static final String message = "";
+    private static final int count = 10;
+    private static final String sha = "123456";
+    private static final String defaultBranch = "master";
+    private static final List<Commit> commitList = new ArrayList<>();
+    private static Project project;
+
+
     private static boolean isNewFile = true;
     private static boolean isDeletedFile = false;
     private static boolean isRenamedFile = false;
@@ -77,9 +91,13 @@ public class MergeRequestServiceTest {
     private static String oldPath = "";
     private static String diff = "";
 
+
     @BeforeAll
     public static void setup() {
         mergeRequests = generateTestMergeRequestList();
+        commitStats = getTestCommitStats();
+        commits = generateTestCommitList();
+
     }
 
     @Test
@@ -111,7 +129,7 @@ public class MergeRequestServiceTest {
 
         assertNotNull(mergeRequestDtoList);
         assertEquals(expectedMergeRequestDtoList.size(), mergeRequestDtoList.size());
-        assertEquals( expectedMergeRequestDtoList, mergeRequestDtoList);
+        assertEquals(expectedMergeRequestDtoList, mergeRequestDtoList);
 
     }
 
@@ -119,7 +137,6 @@ public class MergeRequestServiceTest {
     public void getAllMergeRequestWithMemberID() throws GitLabApiException {
 
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
-        //when(gitLabApi.getNotesApi()).thenReturn(notesApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
         when(gitLabApi.getNotesApi()).thenReturn(notesApi);
         when(notesApi.getMergeRequestNotes(projectId, mergeRequestId)).thenReturn(notesList);
@@ -128,7 +145,7 @@ public class MergeRequestServiceTest {
 
         List<MergeRequestDto> expectedMergeRequestDtoList = new ArrayList<>();
         for (MergeRequest m : mergeRequests) {
-            if(m.getAuthor().getId()==userId)
+            if (m.getAuthor().getId() == userId)
                 expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m));
         }
 
@@ -137,6 +154,26 @@ public class MergeRequestServiceTest {
         assertEquals(mergeRequestDtoList, expectedMergeRequestDtoList);
     }
 
+    @Test
+    public void getAllCommitsFromMergeRequest() throws GitLabApiException {
+
+        when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
+        when(mergeRequestApi.getCommits(projectId, mergeRequestId)).thenReturn(commits);
+        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
+        //when(gitLabApi.getProjectApi()).thenReturn(projectApi);
+        //when(projectApi.getProject(projectId)).thenReturn(project);
+
+        List<CommitDto> commitDtoList = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestId);
+
+        List<CommitDto> expectedCommitDtoList = new ArrayList<>();
+        for (Commit c: commits) {
+                expectedCommitDtoList.add(new CommitDto(gitLabApi, projectId, c));
+        }
+
+        assertNotNull(commitDtoList);
+        assertEquals(expectedCommitDtoList.size(), commitDtoList.size());
+        assertEquals(expectedCommitDtoList, commitDtoList);
+    }
 
     public static List<MergeRequest> generateTestMergeRequestList() {
         List<MergeRequest> tempMergeRequestList = new ArrayList<>();
@@ -190,5 +227,49 @@ public class MergeRequestServiceTest {
         return tempMergeRequestList;
     }
 
+    public static List<Commit> generateTestCommitList() {
+
+
+        Commit commitA = new Commit();
+        Commit commitB = new Commit();
+        List<Commit> generatedCommitList = new ArrayList<>();
+
+        commitA.setId(String.valueOf(projectId));
+        commitA.setTitle(title);
+        commitA.setAuthorName(author);
+        commitA.setAuthorEmail(authorEmail);
+        commitA.setMessage(message);
+        commitA.setId(sha);
+        commitA.setCommittedDate(dateNow);
+        commitA.setStats(commitStats);
+        commitA.setShortId(sha);
+
+        commitB.setId(String.valueOf(projectId));
+        commitB.setTitle(title);
+        commitB.setAuthorName(author);
+        commitB.setAuthorEmail(authorEmail);
+        commitB.setMessage(message);
+        commitB.setId(sha);
+        commitB.setCommittedDate(dateNow);
+        commitB.setStats(commitStats);
+        commitB.setShortId(sha);
+
+        generatedCommitList.add(commitA);
+        generatedCommitList.add(commitB);
+        return generatedCommitList;
+    }
+
+    public static CommitStats getTestCommitStats() {
+        CommitStats commitStats = new CommitStats();
+
+        commitStats.setAdditions(count);
+        commitStats.setDeletions(count);
+        commitStats.setTotal(count*2);
+
+        return commitStats;
+    }
+
+
 
 }
+
