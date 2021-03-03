@@ -7,6 +7,8 @@ import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.User;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class GitLabApiWrapper {
 
@@ -87,6 +89,16 @@ public class GitLabApiWrapper {
     private void testAuthToken(String authToken) throws GitLabApiException {
         GitLabApi gitLabApi = new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
         gitLabApi.getUserApi().getCurrentUser();
+    }
+
+    public Optional<String> getOAuth2AuthToken(String username, String password) {
+        try {
+            GitLabApi gitLabApi = GitLabApi.oauth2Login(VariableDecoderUtil.decode("GITLAB_URL"), username, password);
+            String authToken = gitLabApi.getAuthToken(); // If this fails then the username or password are invalid
+            return Optional.of(authToken);
+        } catch (GitLabApiException e) {
+            return Optional.empty();
+        }
     }
 
 }
