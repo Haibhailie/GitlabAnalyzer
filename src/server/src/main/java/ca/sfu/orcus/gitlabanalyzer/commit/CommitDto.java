@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
+import ca.sfu.orcus.gitlabanalyzer.project.ProjectExtendedDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -87,5 +88,30 @@ public class CommitDto {
 
     public String getAuthorEmail() {
         return authorEmail;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof CommitDto)) {
+            return false;
+        }
+
+        CommitDto c = (CommitDto) o;
+
+        return (this.id.equals(c.id)
+                && this.title.equals(c.title)
+                && this.author.equals(c.author)
+                && this.authorEmail.equals(c.authorEmail)
+                && this.dateCommitted.equals(c.dateCommitted)
+                && this.time == c.time
+                && this.message.equals(c.message)
+                && this.numAdditions == c.numAdditions
+                && this.numDeletions == c.numDeletions
+                && this.total == c.total
+                && this.diffs.equals(c.diffs));
     }
 }
