@@ -51,6 +51,7 @@ public class MergeRequestServiceTest {
     private static boolean hasConflicts = false;
     private static boolean isOpen = true;
     private static int userId = 6;
+    private static int userIdB = 7;
     private static String assignedTo = "John";
     private static String author = "John";
     private static String description = "Random Description";
@@ -64,7 +65,7 @@ public class MergeRequestServiceTest {
     private static List<Participant> participants = new ArrayList<>();
     private static Date dateSince = new Date(System.currentTimeMillis() - 7L * 24 * 3600 * 1000);
     private static Date dateNow = new Date();
-    private static Date dateUntil= new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
+    private static Date dateUntil = new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
     private static long time = 10000000;
 
     private static boolean isNewFile = true;
@@ -93,21 +94,21 @@ public class MergeRequestServiceTest {
     }
 
     @Test
-    public void getAllMergeRequestWithMemberID() throws GitLabApiException {
+    public void getAllMergeRequestWithoutMemberID() throws GitLabApiException {
 
-        lenient().when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
-        lenient().when(gitLabApi.getNotesApi()).thenReturn(notesApi);
-        lenient().when(mergeRequestApi.getMergeRequests(projectId)).thenReturn(mergeRequests);
+        when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
+        when(gitLabApi.getNotesApi()).thenReturn(notesApi);
+        when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
 
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil);
 
         List<MergeRequestDto> expectedMergeRequestDtoList = new ArrayList<>();
-        for(MergeRequest m : mergeRequests)
+        for (MergeRequest m : mergeRequests)
             expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m));
 
-        System.out.println(mergeRequestDtoList);
         assertNotNull(mergeRequestDtoList);
-        assertEquals(expectedMergeRequestDtoList, mergeRequestDtoList);
+        assertEquals(expectedMergeRequestDtoList.size(), mergeRequestDtoList.size());
+        assertEquals(mergeRequestDtoList, expectedMergeRequestDtoList);
     }
 
 
@@ -130,11 +131,15 @@ public class MergeRequestServiceTest {
         tempMergeRequest.setDescription(description);
         tempMergeRequest.setSourceBranch(sourceBranch);
         tempMergeRequest.setTargetBranch(targetBranch);
-        tempMergeRequest.setCreatedAt(dateSince);
+        tempMergeRequest.setCreatedAt(dateNow);
         tempMergeRequest.setHasConflicts(false);
         tempMergeRequest.setMergedAt(dateNow);
 
         List<MergeRequest> tempMergeRequestList = new ArrayList<>();
+        tempMergeRequestList.add(tempMergeRequest);
+
+        tempAuthor.setId(userIdB);
+        tempMergeRequest.setAuthor(tempAuthor);
         tempMergeRequestList.add(tempMergeRequest);
 
         return tempMergeRequestList;

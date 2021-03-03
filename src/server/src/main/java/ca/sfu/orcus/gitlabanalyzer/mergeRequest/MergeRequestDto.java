@@ -155,4 +155,34 @@ public class MergeRequestDto {
     public int getUserId() {
         return userId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof MergeRequestDto)) {
+            return false;
+        }
+
+        MergeRequestDto m = (MergeRequestDto) o;
+
+        return (this.mergeRequestId == (m.mergeRequestId)
+                && this.hasConflicts == (m.hasConflicts)
+                && this.isOpen == (m.isOpen)
+                && this.assignedTo.equals(m.assignedTo)
+                && this.author.equals(m.author)
+                && this.description.equals(m.description)
+                && this.sourceBranch.equals(m.sourceBranch)
+                && this.targetBranch.equals(m.targetBranch)
+                && this.numAdditions == (m.numAdditions)
+                && this.numDeletions == (m.numDeletions)
+                && this.committers.equals(m.committers)
+                && this.participants.equals(m.participants)
+                //&& this.notesName.equals(m.notesName)
+                //&& this.notes.equals(m.notesName)
+                && this.time == (m.time));
+
+    }
 }
