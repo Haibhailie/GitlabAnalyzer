@@ -49,7 +49,7 @@ Dev environment setup guide and build directions can be found [here](Wikidocs/De
 - Lodash: (`4.17.20`) - https://lodash.com/
 - ReactDOM: (`17.0.1`) - https://www.npmjs.com/package/react-dom
 - React Router: (`5.2.0`) - https://reactrouter.com/web/guides/quick-start
-- React Scripts: (`4.0.1`) - (https://www.npmjs.com/package/react-scripts)
+- React Scripts: (`4.0.1`) - https://www.npmjs.com/package/react-scripts
 - Recharts: (`2.0.7`) - https://recharts.org/en-US/
 - Typescript: (`4.1.3`) - https://www.typescriptlang.org/
 
