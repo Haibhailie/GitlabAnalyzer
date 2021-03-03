@@ -45,7 +45,13 @@ Dev environment setup guide and build directions can be found [here](Wikidocs/De
 
 ### Front-end dependencies
 
-- Dependencies
+- "react": (`17.0.1`) - https://reactjs.org/
+- "lodash": (`4.17.20`) - https://lodash.com/
+- "react-dom": (`17.0.1`) - https://www.npmjs.com/package/react-dom
+- "react-router-dom": (`5.2.0`) - https://reactrouter.com/web/guides/quick-start
+- "react-scripts": (`4.0.1`) - (https://www.npmjs.com/package/react-scripts)
+- "recharts": (`2.0.7`) - https://recharts.org/en-US/
+- "typescript": (`4.1.3`) - https://www.typescriptlang.org/
 
 ### Back-end dependencies
 
