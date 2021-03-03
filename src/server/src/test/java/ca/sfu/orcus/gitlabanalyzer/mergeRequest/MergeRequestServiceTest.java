@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,88 +40,104 @@ public class MergeRequestServiceTest {
     private CommitsApi commitsApi;
     @Mock
     private Diff diffApi;
+    @Mock
+    private NotesApi notesApi;
 
-    private static MergeRequest mergeRequest;
+    private static List<MergeRequest> mergeRequests;
 
-    private int projectId = 10;
-    private String jwt = "";
-    private int mergeRequestId = 9;
-    private boolean hasConflicts = false;
-    private boolean isOpen = true;
-    private int userId = 6;
-    private String assignedTo = "John";
-    private String author = "John";
-    private String description = "Random Description";
-    private String sourceBranch = "Testing";
-    private String targetBranch = "master";
-    private int numAdditions = 6;
-    private int numDeletions = 12;
-    private ArrayList<String> notesName = new ArrayList<>();
-    private ArrayList<String> notes = new ArrayList<>();
-    private ArrayList<String> committers = new ArrayList<>();
-    private List<Participant> participants = new ArrayList<>();
-    private Date dateSince = new Date();
-    private Date dateUntil = new Date();
-    private long time = 10000000;
+    private static int projectId = 10;
+    private static String jwt = "";
+    private static int mergeRequestId = 9;
+    private static boolean hasConflicts = false;
+    private static boolean isOpen = true;
+    private static int userId = 6;
+    private static String assignedTo = "John";
+    private static String author = "John";
+    private static String description = "Random Description";
+    private static String sourceBranch = "Testing";
+    private static String targetBranch = "master";
+    private static int numAdditions = 6;
+    private static int numDeletions = 12;
+    private static ArrayList<String> notesName = new ArrayList<>();
+    private static ArrayList<String> notes = new ArrayList<>();
+    private static ArrayList<String> committers = new ArrayList<>();
+    private static List<Participant> participants = new ArrayList<>();
+    private static Date dateSince = new Date(System.currentTimeMillis() - 7L * 24 * 3600 * 1000);
+    private static Date dateNow = new Date();
+    private static Date dateUntil= new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
+    private static long time = 10000000;
 
-    private boolean isNewFile = true;
-    private boolean isDeletedFile = false;
-    private boolean isRenamedFile = false;
-    private String commitName = "Nerf";
-    private String newPath = "root";
-    private String oldPath = "";
-    private String diff = "";
+    private static boolean isNewFile = true;
+    private static boolean isDeletedFile = false;
+    private static boolean isRenamedFile = false;
+    private static String commitName = "Nerf";
+    private static String newPath = "root";
+    private static String oldPath = "";
+    private static String diff = "";
 
     @BeforeAll
     public static void setup() {
-
+        mergeRequests = generateTestMergeRequestList();
     }
 
     @Test
-    public void gitlabAPINullTest() {
+    public void gitlabAPIPrimaryNullTest() {
 
         when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
         gitLabApi = authenticationService.getGitLabApiFor(jwt);
 
         assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
-        assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
         assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
         assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestId));
         assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestId));
-
     }
 
-    public MergeRequest generateTestMergeRequest() {
+    @Test
+    public void getAllMergeRequestWithMemberID() throws GitLabApiException {
+
+        lenient().when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
+        lenient().when(gitLabApi.getNotesApi()).thenReturn(notesApi);
+        lenient().when(mergeRequestApi.getMergeRequests(projectId)).thenReturn(mergeRequests);
+
+        List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil);
+
+        List<MergeRequestDto> expectedMergeRequestDtoList = new ArrayList<>();
+        for(MergeRequest m : mergeRequests)
+            expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m));
+
+        System.out.println(mergeRequestDtoList);
+        assertNotNull(mergeRequestDtoList);
+        assertEquals(expectedMergeRequestDtoList, mergeRequestDtoList);
+    }
+
+
+    public static List<MergeRequest> generateTestMergeRequestList() {
         MergeRequest tempMergeRequest = new MergeRequest();
-        Assignee tempAssignee = new Assignee();
+
         Author tempAuthor = new Author();
-
-        tempMergeRequest.setIid(mergeRequestId);
-
-        tempMergeRequest.setHasConflicts(hasConflicts);
-
-        if (isOpen)
-            tempMergeRequest.setState("opened");
-        else
-            tempMergeRequest.setState("closed");
-
-        tempAssignee.setName(assignedTo);
-        tempAssignee.setId(userId);
-        tempMergeRequest.setAssignee(tempAssignee);
-
         tempAuthor.setName(author);
         tempAuthor.setId(userId);
         tempMergeRequest.setAuthor(tempAuthor);
 
+        tempMergeRequest.setIid(mergeRequestId);
+        tempMergeRequest.setHasConflicts(hasConflicts);
+        tempMergeRequest.setState("opened");
+        Assignee tempAssignee = new Assignee();
+        tempAssignee.setName(assignedTo);
+        tempAssignee.setId(userId);
+        tempMergeRequest.setAssignee(tempAssignee);
+
         tempMergeRequest.setDescription(description);
-
         tempMergeRequest.setSourceBranch(sourceBranch);
-
         tempMergeRequest.setTargetBranch(targetBranch);
+        tempMergeRequest.setCreatedAt(dateSince);
+        tempMergeRequest.setHasConflicts(false);
+        tempMergeRequest.setMergedAt(dateNow);
 
-        tempMergeRequest.setCreatedAt(DateUtils.getDateSinceOrEarliest(time));
+        List<MergeRequest> tempMergeRequestList = new ArrayList<>();
+        tempMergeRequestList.add(tempMergeRequest);
 
-        return tempMergeRequest;
+        return tempMergeRequestList;
     }
 
 }
