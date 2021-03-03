@@ -67,6 +67,7 @@ public class MergeRequestServiceTest {
     private static Date dateNow = new Date();
     private static Date dateUntil = new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
     private static long time = 10000000;
+    private static List<Note> notesList = new ArrayList<>();
 
     private static boolean isNewFile = true;
     private static boolean isDeletedFile = false;
@@ -103,8 +104,33 @@ public class MergeRequestServiceTest {
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil);
 
         List<MergeRequestDto> expectedMergeRequestDtoList = new ArrayList<>();
-        for (MergeRequest m : mergeRequests)
-            expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m));
+        for (MergeRequest m : mergeRequests) {
+            if (m.getCreatedAt().after(dateSince) && m.getCreatedAt().before(dateUntil))
+                expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m));
+        }
+
+        assertNotNull(mergeRequestDtoList);
+        assertEquals(expectedMergeRequestDtoList.size(), mergeRequestDtoList.size());
+        assertEquals( expectedMergeRequestDtoList, mergeRequestDtoList);
+
+    }
+
+    @Test
+    public void getAllMergeRequestWithMemberID() throws GitLabApiException {
+
+        when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
+        //when(gitLabApi.getNotesApi()).thenReturn(notesApi);
+        when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
+        when(gitLabApi.getNotesApi()).thenReturn(notesApi);
+        when(notesApi.getMergeRequestNotes(projectId, mergeRequestId)).thenReturn(notesList);
+
+        List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId);
+
+        List<MergeRequestDto> expectedMergeRequestDtoList = new ArrayList<>();
+        for (MergeRequest m : mergeRequests) {
+            if(m.getAuthor().getId()==userId)
+                expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m));
+        }
 
         assertNotNull(mergeRequestDtoList);
         assertEquals(expectedMergeRequestDtoList.size(), mergeRequestDtoList.size());
@@ -113,36 +139,56 @@ public class MergeRequestServiceTest {
 
 
     public static List<MergeRequest> generateTestMergeRequestList() {
-        MergeRequest tempMergeRequest = new MergeRequest();
-
-        Author tempAuthor = new Author();
-        tempAuthor.setName(author);
-        tempAuthor.setId(userId);
-        tempMergeRequest.setAuthor(tempAuthor);
-
-        tempMergeRequest.setIid(mergeRequestId);
-        tempMergeRequest.setHasConflicts(hasConflicts);
-        tempMergeRequest.setState("opened");
-        Assignee tempAssignee = new Assignee();
-        tempAssignee.setName(assignedTo);
-        tempAssignee.setId(userId);
-        tempMergeRequest.setAssignee(tempAssignee);
-
-        tempMergeRequest.setDescription(description);
-        tempMergeRequest.setSourceBranch(sourceBranch);
-        tempMergeRequest.setTargetBranch(targetBranch);
-        tempMergeRequest.setCreatedAt(dateNow);
-        tempMergeRequest.setHasConflicts(false);
-        tempMergeRequest.setMergedAt(dateNow);
-
         List<MergeRequest> tempMergeRequestList = new ArrayList<>();
-        tempMergeRequestList.add(tempMergeRequest);
+        MergeRequest tempMergeRequestA = new MergeRequest();
+        MergeRequest tempMergeRequestB = new MergeRequest();
 
-        tempAuthor.setId(userIdB);
-        tempMergeRequest.setAuthor(tempAuthor);
-        tempMergeRequestList.add(tempMergeRequest);
+        Author tempAuthorA = new Author();
+        tempAuthorA.setName(author);
+        tempAuthorA.setId(userId);
+        tempMergeRequestA.setAuthor(tempAuthorA);
+
+        tempMergeRequestA.setIid(mergeRequestId);
+        tempMergeRequestA.setHasConflicts(hasConflicts);
+        tempMergeRequestA.setState("opened");
+        Assignee tempAssigneeA = new Assignee();
+        tempAssigneeA.setName(assignedTo);
+        tempAssigneeA.setId(userId);
+        tempMergeRequestA.setAssignee(tempAssigneeA);
+
+        tempMergeRequestA.setDescription(description);
+        tempMergeRequestA.setSourceBranch(sourceBranch);
+        tempMergeRequestA.setTargetBranch(targetBranch);
+        tempMergeRequestA.setCreatedAt(dateNow);
+        tempMergeRequestA.setHasConflicts(false);
+        tempMergeRequestA.setMergedAt(dateNow);
+
+
+        Author tempAuthorB = new Author();
+        tempAuthorB.setName(author);
+        tempAuthorB.setId(userIdB);
+        tempMergeRequestB.setAuthor(tempAuthorB);
+
+        tempMergeRequestB.setIid(mergeRequestId);
+        tempMergeRequestB.setHasConflicts(hasConflicts);
+        tempMergeRequestB.setState("opened");
+        Assignee tempAssigneeB = new Assignee();
+        tempAssigneeB.setName(assignedTo);
+        tempAssigneeB.setId(userId);
+        tempMergeRequestB.setAssignee(tempAssigneeB);
+
+        tempMergeRequestB.setDescription(description);
+        tempMergeRequestB.setSourceBranch(sourceBranch);
+        tempMergeRequestB.setTargetBranch(targetBranch);
+        tempMergeRequestB.setCreatedAt(dateUntil);
+        tempMergeRequestB.setHasConflicts(false);
+        tempMergeRequestB.setMergedAt(dateUntil);
+
+        tempMergeRequestList.add(tempMergeRequestA);
+        tempMergeRequestList.add(tempMergeRequestB);
 
         return tempMergeRequestList;
     }
+
 
 }
