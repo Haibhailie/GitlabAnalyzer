@@ -48,29 +48,29 @@ public class MergeRequestServiceTest {
     private static List<Commit> commits;
     private static CommitStats commitStats;
 
-    private static int projectId = 10;
-    private static String jwt = "";
-    private static int mergeRequestId = 9;
-    private static boolean hasConflicts = false;
-    private static boolean isOpen = true;
-    private static int userId = 6;
-    private static int userIdB = 7;
-    private static String assignedTo = "John";
-    private static String author = "John";
-    private static String description = "Random Description";
-    private static String sourceBranch = "Testing";
-    private static String targetBranch = "master";
-    private static int numAdditions = 6;
-    private static int numDeletions = 12;
-    private static ArrayList<String> notesName = new ArrayList<>();
-    private static ArrayList<String> notes = new ArrayList<>();
-    private static ArrayList<String> committers = new ArrayList<>();
-    private static List<Participant> participants = new ArrayList<>();
-    private static Date dateSince = new Date(System.currentTimeMillis() - 7L * 24 * 3600 * 1000);
-    private static Date dateNow = new Date();
-    private static Date dateUntil = new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
-    private static long time = 10000000;
-    private static List<Note> notesList = new ArrayList<>();
+    private static final int projectId = 10;
+    private static final String jwt = "";
+    private static final int mergeRequestId = 9;
+    private static final boolean hasConflicts = false;
+    private static final boolean isOpen = true;
+    private static final int userId = 6;
+    private static final int userIdB = 7;
+    private static final String assignedTo = "John";
+    private static final String author = "John";
+    private static final String description = "Random Description";
+    private static final String sourceBranch = "Testing";
+    private static final String targetBranch = "master";
+    private static final int numAdditions = 6;
+    private static final int numDeletions = 12;
+    private static final ArrayList<String> notesName = new ArrayList<>();
+    private static final ArrayList<String> notes = new ArrayList<>();
+    private static final ArrayList<String> committers = new ArrayList<>();
+    private static final List<Participant> participants = new ArrayList<>();
+    private static final Date dateSince = new Date(System.currentTimeMillis() - 7L * 24 * 3600 * 1000);
+    private static final Date dateNow = new Date();
+    private static final Date dateUntil = new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
+    private static final long time = 10000000;
+    private static final List<Note> notesList = new ArrayList<>();
 
 
     private static final String title = "title";
@@ -83,13 +83,13 @@ public class MergeRequestServiceTest {
     private static Project project;
 
 
-    private static boolean isNewFile = true;
-    private static boolean isDeletedFile = false;
-    private static boolean isRenamedFile = false;
-    private static String commitName = "Nerf";
-    private static String newPath = "root";
-    private static String oldPath = "";
-    private static String diff = "";
+    private static final boolean isNewFile = true;
+    private static final boolean isDeletedFile = false;
+    private static final boolean isRenamedFile = false;
+    private static final String commitName = "Nerf";
+    private static final String newPath = "root";
+    private static final String oldPath = "";
+    private static final String diff = "";
 
 
     @BeforeAll
@@ -157,13 +157,15 @@ public class MergeRequestServiceTest {
     @Test
     public void getAllCommitsFromMergeRequest() throws GitLabApiException {
 
+        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getCommits(projectId, mergeRequestId)).thenReturn(commits);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
-        //when(gitLabApi.getProjectApi()).thenReturn(projectApi);
-        //when(projectApi.getProject(projectId)).thenReturn(project);
+        //when(commitsApi.getCommits(projectId, defaultBranch, dateSince, dateUntil)).thenReturn(commitList);
+        when(commitsApi.getCommit(projectId,sha)).thenReturn(commits.get(0));
 
         List<CommitDto> commitDtoList = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestId);
+        System.out.println(commitDtoList);
 
         List<CommitDto> expectedCommitDtoList = new ArrayList<>();
         for (Commit c: commits) {
