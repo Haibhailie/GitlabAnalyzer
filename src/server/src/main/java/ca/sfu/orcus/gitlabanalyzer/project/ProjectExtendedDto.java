@@ -51,4 +51,25 @@ public class ProjectExtendedDto {
     public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof ProjectExtendedDto)) {
+            return false;
+        }
+
+        ProjectExtendedDto p = (ProjectExtendedDto) o;
+
+        return (this.id == p.id
+                && this.name.equals(p.name)
+                && this.members.equals(p.members)
+                && this.numBranches == p.numBranches
+                && this.numCommits == p.numCommits
+                && this.repoSize == p.repoSize
+                && this.createdAt == p.createdAt);
+    }
 }
