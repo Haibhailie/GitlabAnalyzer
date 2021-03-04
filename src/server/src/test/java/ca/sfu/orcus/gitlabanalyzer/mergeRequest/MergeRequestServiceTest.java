@@ -2,19 +2,14 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,13 +41,14 @@ public class MergeRequestServiceTest {
 
     private static List<MergeRequest> mergeRequests;
     private static List<Commit> commits;
+    private static List<Diff> diffs;
     private static CommitStats commitStats;
 
     private static final int projectId = 10;
     private static final String jwt = "";
-    private static final int mergeRequestId = 9;
+    private static final int mergeRequestIdA = 9;
+    private static final int mergeRequestIdB = 10;
     private static final boolean hasConflicts = false;
-    private static final boolean isOpen = true;
     private static final int userId = 6;
     private static final int userIdB = 7;
     private static final String assignedTo = "John";
@@ -62,34 +58,16 @@ public class MergeRequestServiceTest {
     private static final String targetBranch = "master";
     private static final int numAdditions = 6;
     private static final int numDeletions = 12;
-    private static final ArrayList<String> notesName = new ArrayList<>();
-    private static final ArrayList<String> notes = new ArrayList<>();
-    private static final ArrayList<String> committers = new ArrayList<>();
-    private static final List<Participant> participants = new ArrayList<>();
     private static final Date dateSince = new Date(System.currentTimeMillis() - 7L * 24 * 3600 * 1000);
     private static final Date dateNow = new Date();
     private static final Date dateUntil = new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
-    private static final long time = 10000000;
     private static final List<Note> notesList = new ArrayList<>();
-
 
     private static final String title = "title";
     private static final String authorEmail = "jimcarry@carryingyou.com";
     private static final String message = "";
-    private static final int count = 10;
     private static final String sha = "123456";
-    private static final String defaultBranch = "master";
-    private static final List<Commit> commitList = new ArrayList<>();
-    private static Project project;
-
-
-    private static final boolean isNewFile = true;
-    private static final boolean isDeletedFile = false;
-    private static final boolean isRenamedFile = false;
-    private static final String commitName = "Nerf";
-    private static final String newPath = "root";
-    private static final String oldPath = "";
-    private static final String diff = "";
+    private static final String mockCodeDiff = "RandomChangesGoHereLol";
 
 
     @BeforeAll
@@ -97,7 +75,7 @@ public class MergeRequestServiceTest {
         mergeRequests = generateTestMergeRequestList();
         commitStats = getTestCommitStats();
         commits = generateTestCommitList();
-
+        diffs = generateTestDiffList();
     }
 
     @Test
@@ -108,12 +86,12 @@ public class MergeRequestServiceTest {
 
         assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
         assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
-        assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestId));
-        assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestId));
+        assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA));
+        assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA));
     }
 
     @Test
-    public void getAllMergeRequestWithoutMemberID() throws GitLabApiException {
+    public void getAllMergeRequestWithoutMemberIDTest() throws GitLabApiException {
 
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(gitLabApi.getNotesApi()).thenReturn(notesApi);
@@ -134,12 +112,12 @@ public class MergeRequestServiceTest {
     }
 
     @Test
-    public void getAllMergeRequestWithMemberID() throws GitLabApiException {
+    public void getAllMergeRequestWithMemberIDTest() throws GitLabApiException {
 
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
         when(gitLabApi.getNotesApi()).thenReturn(notesApi);
-        when(notesApi.getMergeRequestNotes(projectId, mergeRequestId)).thenReturn(notesList);
+        when(notesApi.getMergeRequestNotes(projectId, mergeRequestIdA)).thenReturn(notesList);
 
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId);
 
@@ -155,17 +133,15 @@ public class MergeRequestServiceTest {
     }
 
     @Test
-    public void getAllCommitsFromMergeRequest() throws GitLabApiException {
+    public void getAllCommitsFromMergeRequestTest() throws GitLabApiException {
 
         when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
-        when(mergeRequestApi.getCommits(projectId, mergeRequestId)).thenReturn(commits);
+        when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
-        //when(commitsApi.getCommits(projectId, defaultBranch, dateSince, dateUntil)).thenReturn(commitList);
         when(commitsApi.getCommit(projectId,sha)).thenReturn(commits.get(0));
 
-        List<CommitDto> commitDtoList = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestId);
-        System.out.println(commitDtoList);
+        List<CommitDto> commitDtoList = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA);
 
         List<CommitDto> expectedCommitDtoList = new ArrayList<>();
         for (Commit c: commits) {
@@ -175,6 +151,30 @@ public class MergeRequestServiceTest {
         assertNotNull(commitDtoList);
         assertEquals(expectedCommitDtoList.size(), commitDtoList.size());
         assertEquals(expectedCommitDtoList, commitDtoList);
+    }
+
+    @Test
+    public void getDiffFromMergeRequestTest() throws GitLabApiException {
+        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
+        when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
+        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
+        when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(List.of(commits.get(0)));
+        when(commitsApi.getDiff(projectId, sha)).thenReturn(diffs);
+
+        List<MergeRequestDiffDto> mergeRequestDiffDtoList = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA);
+
+        List<MergeRequestDiffDto> expectedMergeRequestDiffDto = new ArrayList<>();
+        int indexIterator = 0;
+        for (Diff d: diffs) {
+            expectedMergeRequestDiffDto.add(new MergeRequestDiffDto(commits.get(indexIterator), diffs.get(indexIterator)));
+            indexIterator++;
+        }
+
+        assertNotNull(mergeRequestDiffDtoList);
+        assertEquals(expectedMergeRequestDiffDto.size(), mergeRequestDiffDtoList.size());
+        assertEquals(expectedMergeRequestDiffDto, mergeRequestDiffDtoList);
+
     }
 
     public static List<MergeRequest> generateTestMergeRequestList() {
@@ -187,7 +187,7 @@ public class MergeRequestServiceTest {
         tempAuthorA.setId(userId);
         tempMergeRequestA.setAuthor(tempAuthorA);
 
-        tempMergeRequestA.setIid(mergeRequestId);
+        tempMergeRequestA.setIid(mergeRequestIdA);
         tempMergeRequestA.setHasConflicts(hasConflicts);
         tempMergeRequestA.setState("opened");
         Assignee tempAssigneeA = new Assignee();
@@ -208,7 +208,7 @@ public class MergeRequestServiceTest {
         tempAuthorB.setId(userIdB);
         tempMergeRequestB.setAuthor(tempAuthorB);
 
-        tempMergeRequestB.setIid(mergeRequestId);
+        tempMergeRequestB.setIid(mergeRequestIdB);
         tempMergeRequestB.setHasConflicts(hasConflicts);
         tempMergeRequestB.setState("opened");
         Assignee tempAssigneeB = new Assignee();
@@ -264,11 +264,38 @@ public class MergeRequestServiceTest {
     public static CommitStats getTestCommitStats() {
         CommitStats commitStats = new CommitStats();
 
-        commitStats.setAdditions(count);
-        commitStats.setDeletions(count);
-        commitStats.setTotal(count*2);
+        commitStats.setAdditions(numAdditions);
+        commitStats.setDeletions(numDeletions);
+        commitStats.setTotal(numAdditions+numDeletions);
 
         return commitStats;
+    }
+
+    public static List<Diff> generateTestDiffList(){
+        List<Diff> presentTempDiff = new ArrayList<>();
+
+        Diff diffA = new Diff();
+        Diff diffB = new Diff();
+
+        diffA.setDiff(mockCodeDiff);
+        diffA.setDeletedFile(false);
+        diffA.setNewFile(false);
+        diffA.setRenamedFile(true);
+        diffA.setNewPath("Root");
+        diffA.setOldPath("Not Root");
+
+
+        diffB.setDiff(mockCodeDiff);
+        diffB.setDeletedFile(false);
+        diffB.setNewFile(true);
+        diffB.setRenamedFile(false);
+        diffB.setNewPath("Root");
+        diffB.setOldPath("Not Root");
+
+        presentTempDiff.add(diffA);
+        presentTempDiff.add(diffB);
+
+        return presentTempDiff;
     }
 
 
