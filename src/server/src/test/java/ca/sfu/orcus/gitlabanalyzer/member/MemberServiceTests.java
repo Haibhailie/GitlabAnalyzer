@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.member;
 
 import ca.sfu.orcus.gitlabanalyzer.Constants;
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
@@ -30,7 +31,7 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceTests {
     @Mock private MemberRepository memberRepository;
-    @Mock private AuthenticationService authenticationService;
+    @Mock private GitLabApiWrapper gitLabApiWrapper;
     @Mock private MergeRequestService mergeRequestService;
     @Mock private CommitService commitService;
     @Mock private GitLabApi gitLabApi;
@@ -93,8 +94,8 @@ public class MemberServiceTests {
 
     @Test
     public void nullGitLabApiTest() {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
-        gitLabApi = authenticationService.getGitLabApiFor(jwt);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
+        gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
 
         assertNull(memberService.getAllMembers(jwt, projectId));
         assertNull(memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email));
@@ -103,7 +104,7 @@ public class MemberServiceTests {
 
     @Test
     public void getAllMembersTest() throws GitLabApiException {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getProjectApi()).thenReturn(projectApi);
         when(projectApi.getAllMembers(projectId)).thenReturn(members);
 
@@ -129,7 +130,7 @@ public class MemberServiceTests {
 
     @Test
     public void getMergeRequestsByMemberIDTest(){
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, since, until, id)).thenReturn(mergeRequestDtos);
 
         List<MergeRequestDto> mergeRequestByMemberID = memberService.getMergeRequestsByMemberID(jwt, projectId, since, until, id);
@@ -141,7 +142,7 @@ public class MemberServiceTests {
 
     @Test
     public void getCommitsByMemberEmailTest() {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(commitService.getAllCommitDtos(gitLabApi, projectId, since, until,email)).thenReturn(commitDtos);
 
         List<CommitDto> commitsByMemberEmail = memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email);

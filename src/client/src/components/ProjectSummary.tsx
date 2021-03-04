@@ -1,16 +1,17 @@
+import { round } from 'lodash'
+import { useState } from 'react'
+import { IProjectData } from '../pages/Project'
+import bytesConverter from '../utils/bytesConverter'
+
 import ProjectStat from '../components/ProjectStat'
 import ActivityGraph from '../components/ActivityGraph'
 
 import styles from '../css/ProjectSummary.module.css'
-import { IProjectData } from '../pages/Project'
-import { useState } from 'react'
 
 const calcAgeInDays = (birth: number) => {
   const diff = Date.now() - birth
   return diff / (24 * 60 * 60 * 1000)
 }
-
-const bytesToMb = (bytes: number) => bytes / (1024 * 1024)
 
 const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
   const [yAxis, setYAxis] = useState<'number' | 'score'>('number')
@@ -58,12 +59,9 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
           <ProjectStat name="Commits" value={numCommits} />
           <ProjectStat
             name="Average commits per day"
-            value={(numCommits / calcAgeInDays(createdAt)).toFixed(2)}
+            value={round(numCommits / calcAgeInDays(createdAt), 2)}
           />
-          <ProjectStat
-            name="Files"
-            value={`${bytesToMb(repoSize).toFixed(2)} MB`}
-          />
+          <ProjectStat name="Files" value={bytesConverter(repoSize)} />
         </div>
       </div>
     </div>

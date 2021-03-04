@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
-import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
@@ -18,16 +18,16 @@ import java.util.List;
 @Service
 public class MergeRequestService {
     private final MergeRequestRepository mergeRequestRepository;
-    private final AuthenticationService authService;
+    private final GitLabApiWrapper gitLabApiWrapper;
 
     @Autowired
-    public MergeRequestService(MergeRequestRepository mergeRequestRepository, AuthenticationService authService) {
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, GitLabApiWrapper gitLabApiWrapper) {
         this.mergeRequestRepository = mergeRequestRepository;
-        this.authService = authService;
+        this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
     public List<MergeRequestDto> getAllMergeRequests(String jwt, int projectId, Date since, Date until) {
-        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         } else {
@@ -71,7 +71,7 @@ public class MergeRequestService {
     }
 
     public List<CommitDto> getAllCommitsFromMergeRequest(String jwt, int projectId, int mergeRequestID) {
-        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if ((gitLabApi != null)) {
             List<CommitDto> filteredCommits = new ArrayList<>();
             try {
@@ -89,7 +89,7 @@ public class MergeRequestService {
     }
 
     public List<MergeRequestDiffDto> getDiffFromMergeRequest(String jwt, int projectId, int mergeRequestID) {
-        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if ((gitLabApi != null)) {
             List<MergeRequestDiffDto> listDiff = new ArrayList<>();
             try {
