@@ -10,12 +10,16 @@ public class MemberDto {
     private String username;
     private String role;
 
-    public MemberDto(Member presentMember) throws GitLabApiException {
+    public MemberDto(Member presentMember) {
         setDisplayName(presentMember.getName());
         setEmail(presentMember.getEmail());
         setId(presentMember.getId());
         setUsername(presentMember.getUsername());
-        setRole(MemberUtils.getMemberRoleFromAccessLevel(presentMember.getAccessLevel().value));
+        try {
+            setRole(MemberUtils.getMemberRoleFromAccessLevel(presentMember.getAccessLevel().value));
+        } catch (NullPointerException e) {
+            setRole("GUEST");
+        }
     }
 
     public void setDisplayName(String displayName) {
@@ -51,10 +55,10 @@ public class MemberDto {
         MemberDto c = (MemberDto) o;
 
         return (this.displayName.equals(c.displayName)
-            && this.email.equals(c.email)
-            && this.id == c.id
-            && this.username.equals(c.username)
-            && this.role.equals(c.role));
+                && this.email.equals(c.email)
+                && this.id == c.id
+                && this.username.equals(c.username)
+                && this.role.equals(c.role));
     }
 
 }
