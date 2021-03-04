@@ -37,4 +37,24 @@ public class MemberDto {
     public void setRole(String role) {
         this.role = role;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof MemberDto)) {
+            return false;
+        }
+
+        MemberDto c = (MemberDto) o;
+
+        return (this.displayName.equals(c.displayName)
+            && this.email.equals(c.email)
+            && this.id == c.id
+            && this.username.equals(c.username)
+            && this.role.equals(c.role));
+    }
+
 }
