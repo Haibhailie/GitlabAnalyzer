@@ -5,7 +5,7 @@ import org.gitlab4j.api.models.User;
 import java.util.Random;
 import java.util.UUID;
 
-public class UserMock {
+public final class UserMock {
     private static final Random rand = new Random();
     private static final int upperBound = 1000;
 

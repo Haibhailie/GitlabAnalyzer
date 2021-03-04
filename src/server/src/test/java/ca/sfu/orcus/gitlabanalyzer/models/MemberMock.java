@@ -5,7 +5,7 @@ import org.gitlab4j.api.models.Member;
 
 import java.util.Random;
 
-public class MemberMock {
+public final class MemberMock {
     private static final Random rand = new Random();
     private static final int upperBound = 1000;
     private static final AccessLevel[] accessLevels = AccessLevel.values();
