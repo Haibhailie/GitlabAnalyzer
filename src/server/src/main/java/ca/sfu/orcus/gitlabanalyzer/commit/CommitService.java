@@ -46,6 +46,26 @@ public class CommitService {
         }
     }
 
+    public List<CommitDto> getAllCommitDtos(GitLabApi gitLabApi, int projectId, Date since, Date until, String emial) {
+        if (gitLabApi == null) {
+            return null;
+        }
+        try {
+            String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
+            List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
+            List<CommitDto> allCommits = new ArrayList<>();
+            for (Commit commit : allGitCommits) {
+                if (commit.getAuthorEmail().equals(emial)) {
+                    CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit);
+                    allCommits.add(presentCommit);
+                }
+            }
+            return allCommits;
+        } catch (GitLabApiException e) {
+            return null;
+        }
+    }
+
     public CommitDto getSingleCommit(String jwt, int projectId, String sha) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
         if (gitLabApi == null) {

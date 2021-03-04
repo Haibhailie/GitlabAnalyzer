@@ -3,6 +3,8 @@ package ca.sfu.orcus.gitlabanalyzer.member;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
 
+import java.util.Locale;
+
 public class MemberDto {
     private String displayName;
     private String email;
@@ -58,7 +60,7 @@ public class MemberDto {
                 && this.email.equals(c.email)
                 && this.id == c.id
                 && this.username.equals(c.username)
-                && this.role.equals(c.role));
+                && (this.role.toUpperCase()).equals(c.role.toUpperCase()));
     }
 
 }

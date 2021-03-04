@@ -97,7 +97,6 @@ public class MemberServiceTests {
         gitLabApi = authenticationService.getGitLabApiFor(jwt);
 
         assertNull(memberService.getAllMembers(jwt, projectId));
-        assertNull(memberService.getAllMembers(gitLabApi, projectId));
         assertNull(memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email));
         assertNull(memberService.getMergeRequestsByMemberID(jwt, projectId, since, until, id));
     }
@@ -125,22 +124,7 @@ public class MemberServiceTests {
         assertEquals(memberDtos, expectedMemberDtos);
     }
 
-    @Test
-    public void getCommitsByMemberEmailTest(){
-        when(commitService.getAllCommits(jwt, projectId, since, until)).thenReturn(commitDtos);
 
-        List<CommitDto> commitsByMemberEmail = memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email);
-        List<CommitDto> expectedCommitsByMemberEmail = new ArrayList<>();
-
-        for (CommitDto c : commitsByMemberEmail) {
-            if (c.getAuthorEmail().equals(email)) {
-                expectedCommitsByMemberEmail.add(c);
-            }
-        }
-
-        assertNotNull(commitsByMemberEmail);
-        assertEquals(commitsByMemberEmail, expectedCommitsByMemberEmail);
-    }
 
 
     @Test
@@ -153,6 +137,18 @@ public class MemberServiceTests {
 
         assertNotNull(mergeRequestByMemberID);
         assertEquals(mergeRequestByMemberID, expectedMergeRequestByMemberID);
+    }
+
+    @Test
+    public void getCommitsByMemberEmailTest() {
+        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(commitService.getAllCommitDtos(gitLabApi, projectId, since, until,email)).thenReturn(commitDtos);
+
+        List<CommitDto> commitsByMemberEmail = memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email);
+        List<CommitDto> expectedCommitsByMemberEmail = commitDtos;
+
+        assertNotNull(commitsByMemberEmail);
+        assertEquals(commitsByMemberEmail, expectedCommitsByMemberEmail);
     }
 
 

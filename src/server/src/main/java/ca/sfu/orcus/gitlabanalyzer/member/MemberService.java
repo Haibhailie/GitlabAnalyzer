@@ -40,6 +40,9 @@ public class MemberService {
     }
 
     public List<MemberDto> getAllMembers(GitLabApi gitLabApi, int projectId) {
+        if (gitLabApi == null) {
+            return null;
+        }
         try {
             List<MemberDto> filteredAllMembers = new ArrayList<>();
             List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectId);
@@ -54,18 +57,18 @@ public class MemberService {
     }
 
     public List<CommitDto> getCommitsByMemberEmail(String jwt, int projectId, Date since, Date until, String memberEmail) {
-        List<CommitDto> allCommits = commitService.getAllCommits(jwt, projectId, since, until);
-        List<CommitDto> allCommitsByMemberEmail = new ArrayList<>();
-        for (CommitDto c : allCommits) {
-            if (c.getAuthorEmail().equals(memberEmail)) {
-                allCommitsByMemberEmail.add(c);
-            }
+        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
         }
-        return allCommitsByMemberEmail;
+        return commitService.getAllCommitDtos(gitLabApi, projectId, since, until, memberEmail);
     }
 
     public List<MergeRequestDto> getMergeRequestsByMemberID(String jwt, int projectId, Date since, Date until, int memberId) {
         GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
         return mergeRequestService.getAllMergeRequests(gitLabApi, projectId, since, until, memberId);
     }
 }
