@@ -2,8 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.mocks;
 
 import org.gitlab4j.api.*;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public final class GitLabApiMock {
     private GitLabApiMock() {
@@ -22,12 +21,12 @@ public final class GitLabApiMock {
         UserApi userApi = mock(UserApi.class);
 
         // Mock GitLabApi's getApi() methods to return our mocks
-        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
-        when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
-        when(gitLabApi.getNotesApi()).thenReturn(notesApi);
-        when(gitLabApi.getProjectApi()).thenReturn(projectApi);
-        when(gitLabApi.getRepositoryApi()).thenReturn(repositoryApi);
-        when(gitLabApi.getUserApi()).thenReturn(userApi);
+        lenient().when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
+        lenient().when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
+        lenient().when(gitLabApi.getNotesApi()).thenReturn(notesApi);
+        lenient().when(gitLabApi.getProjectApi()).thenReturn(projectApi);
+        lenient().when(gitLabApi.getRepositoryApi()).thenReturn(repositoryApi);
+        lenient().when(gitLabApi.getUserApi()).thenReturn(userApi);
 
         return gitLabApi;
     }
