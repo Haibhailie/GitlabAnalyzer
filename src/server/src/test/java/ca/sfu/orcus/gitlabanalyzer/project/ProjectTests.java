@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
-import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ProjectTests {
     @Mock private ProjectRepository projectRepository;
-    @Mock private AuthenticationService authService;
+    @Mock private GitLabApiWrapper gitLabApiWrapper;
     @Mock private MemberService memberService;
 
     @InjectMocks
@@ -46,19 +46,19 @@ public class ProjectTests {
 
     @Test
     public void getProjectWithNullGitLabApi() {
-        when(authService.getGitLabApiFor(jwt)).thenReturn(null);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
         assertNull(projectService.getProject(jwt, ProjectMock.defaultId));
     }
 
     @Test
     public void getAllProjectsWithNullGitLabApi() {
-        when(authService.getGitLabApiFor(jwt)).thenReturn(null);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
         assertNull(projectService.getAllProjects(jwt));
     }
 
     @Test
     public void getSingleProject() throws GitLabApiException {
-        when(authService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
         ProjectStatistics projectStatistics = ProjectStatisticsMock.createProjectStatistics();
         Project project = ProjectMock.createProject(projectStatistics);
@@ -77,7 +77,7 @@ public class ProjectTests {
 
     @Test
     public void getSingleProjectIfGitLabApiThrows() throws GitLabApiException {
-        when(authService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getProjectApi().getProject(ProjectMock.defaultId, true))
                 .thenThrow(new GitLabApiException("GitLabApi threw up"));
 
@@ -88,7 +88,7 @@ public class ProjectTests {
 
     @Test
     public void getAllProjects() throws GitLabApiException {
-        when(authService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
         User user = UserMock.createUser();
         when(gitLabApi.getUserApi().getCurrentUser()).thenReturn(user);
@@ -117,7 +117,7 @@ public class ProjectTests {
 
     @Test
     public void getAllProjectsIfGitLabApiThrows() throws GitLabApiException {
-        when(authService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getProjectApi().getMemberProjects())
                 .thenThrow(new GitLabApiException("GitLabApi threw up"));
 
