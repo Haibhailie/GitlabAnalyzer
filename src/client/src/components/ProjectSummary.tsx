@@ -26,6 +26,16 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
       name: 'Members',
       value: members.length,
     },
+    {
+      name: 'Total commits',
+      value: numCommits,
+    },
+    {
+      name: 'Files',
+      value: bytesConverter(repoSize),
+      description:
+        'Total size of all files this is a super long description just to test ',
+    },
   ]
   return (
     <div className={styles.container}>
