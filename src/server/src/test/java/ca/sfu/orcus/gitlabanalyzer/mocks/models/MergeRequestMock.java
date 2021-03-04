@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
+package ca.sfu.orcus.gitlabanalyzer.mocks.models;
 
 import org.gitlab4j.api.models.*;
 
@@ -7,27 +7,31 @@ import java.util.Date;
 import java.util.List;
 
 public class MergeRequestMock {
-    static final int projectId = 10;
-    static final int mergeRequestIdA = 9;
-    static final int mergeRequestIdB = 10;
-    static final boolean hasConflicts = false;
-    static final int userId = 6;
-    static final int userIdB = 7;
-    static final String assignedTo = "John";
-    static final String author = "John";
-    static final String description = "Random Description";
-    static final String sourceBranch = "Testing";
-    static final String targetBranch = "master";
-    static final int numAdditions = 6;
-    static final int numDeletions = 12;
-    static final Date dateNow = new Date();
-    static final Date dateUntil = new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
-    static final String title = "title";
-    static final String authorEmail = "jimcarry@carryingyou.com";
-    static final String message = "";
-    static final String sha = "123456";
-    static final String mockCodeDiff = "RandomChangesGoHereLol";
-    static CommitStats commitStats;
+    public static final int projectId = 10;
+    public static final int mergeRequestIdA = 9;
+    public static final int mergeRequestIdB = 10;
+    public static final boolean hasConflicts = false;
+    public static final int userId = 6;
+    public static final int userIdB = 7;
+    public static final String assignedTo = "John";
+    public static final String author = "John";
+    public static final String description = "Random Description";
+    public static final String sourceBranch = "Testing";
+    public static final String targetBranch = "master";
+    public static final int numAdditions = 6;
+    public static final int numDeletions = 12;
+    public static final Date dateNow = new Date();
+    public static final Date dateUntil = new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
+    public static final String title = "title";
+    public static final String authorEmail = "jimcarry@carryingyou.com";
+    public static final String message = "";
+    public static final String sha = "123456";
+    public static final String mockCodeDiff = "RandomChangesGoHereLol";
+    public static CommitStats commitStats;
+
+    public static final String jwt = "";
+    public static final Date dateSince = new Date(System.currentTimeMillis() - 7L * 24 * 3600 * 1000);
+    public static final List<Note> notesList = new ArrayList<>();
 
     public static List<MergeRequest> generateTestMergeRequestList() {
         List<MergeRequest> tempMergeRequestList = new ArrayList<>();
@@ -81,7 +85,7 @@ public class MergeRequestMock {
         return tempMergeRequestList;
     }
 
-    public static List<Commit> generateTestCommitList() {
+    public static List<Commit> generateMRTestCommitList() {
 
 
         Commit commitA = new Commit();

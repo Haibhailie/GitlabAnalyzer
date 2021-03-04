@@ -46,7 +46,7 @@ public class MergeRequestService {
                 }
             }
             return filteredMergeRequests;
-        } catch (GitLabApiException g) {
+        } catch (GitLabApiException e) {
             return null;
         }
     }
