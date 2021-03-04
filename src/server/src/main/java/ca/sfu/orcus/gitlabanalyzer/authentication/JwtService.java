@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
+import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -15,13 +16,12 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    enum JwtType {PAT, USER_PASS}
-
+    enum JwtType { PAT, USER_PASS }
     Key secretKey;
 
     @Autowired
     public JwtService() {
-        String encodedKey = System.getenv("SECRET");
+        String encodedKey = VariableDecoderUtil.decode("SECRET");
         secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(encodedKey));
     }
 

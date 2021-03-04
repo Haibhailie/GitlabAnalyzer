@@ -4,7 +4,6 @@ import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
 
 public class MergeRequestDiffDto {
-
     private boolean isNewFile;
     private boolean isDeletedFile;
     private boolean isRenamedFile;
@@ -13,7 +12,7 @@ public class MergeRequestDiffDto {
     private String oldPath;
     private String diff;
 
-    public MergeRequestDiffDto(Commit presentCommit, Diff presentDiff){
+    public MergeRequestDiffDto(Commit presentCommit, Diff presentDiff) {
         setCommitName(presentCommit.getTitle());
         setDiff(presentDiff.getDiff());
         setDeletedFile(presentDiff.getDeletedFile());
@@ -50,6 +49,4 @@ public class MergeRequestDiffDto {
     public void setDiff(String diff) {
         this.diff = diff;
     }
-
-
 }

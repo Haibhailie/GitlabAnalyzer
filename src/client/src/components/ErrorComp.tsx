@@ -10,7 +10,7 @@ const ErrorComp = ({ message }: IErrorCompProps) => {
   return (
     <div className={styles.container}>
       <img src={error} className={styles.error} />
-      <p className={styles.message}>{message}</p>
+      <p className={styles.message}>{message ?? 'Unknown Error.'}</p>
     </div>
   )
 }

@@ -1,13 +1,16 @@
 stages:
   - build
-  # - test
+  - test
   - format
   # - deploy
 
 variables:
   STAGING_BRANCH: "master"
   NODE_IMAGE: "node:14"
-  # JAVA_IMAGE: ""
+  MAVEN_IMAGE: "maven:3.6.3-openjdk-15"
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.color=false -Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
 
 frontend build:
   stage: build
@@ -27,6 +30,37 @@ frontend build:
     - npm ci
   script:
     - CI=true npm run build
+
+backend build:
+  stage: test
+  needs: []
+  image: $MAVEN_IMAGE
+  tags:
+    - docker
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID != null || $CI_COMMIT_BRANCH == $STAGING_BRANCH'
+      changes:
+        - src/server/**/*
+      when: always
+  script:
+    - cd src/server 
+    - mvn $MAVEN_CLI_OPTS compile
+
+backend test:
+  stage: test
+  needs: []
+  image: $MAVEN_IMAGE
+  tags:
+    - docker
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID != null || $CI_COMMIT_BRANCH == $STAGING_BRANCH'
+      changes:
+        - src/server/**/*
+      when: always
+  before_script:
+    - cd src/server 
+  script:
+    - mvn $MAVEN_CLI_OPTS test
 
 frontend lint:
   stage: format
@@ -61,3 +95,19 @@ frontend format:
     - npm install prettier@^2.2.0 --global
   script:
     - prettier --check "src/client/src/**/*.{ts,tsx}"
+
+backend format:
+  stage: format
+  needs: []
+  image: $MAVEN_IMAGE
+  tags:
+    - docker
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID != null || $CI_COMMIT_BRANCH == $STAGING_BRANCH'
+      changes:
+        - src/server/**/*
+      when: always
+  before_script:
+    - cd src/server
+  script:
+    - mvn $MAVEN_CLI_OPTS checkstyle:check

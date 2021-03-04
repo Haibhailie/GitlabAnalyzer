@@ -19,7 +19,6 @@ public class ClientInterceptor implements HandlerInterceptor {
             requestDispatcher.forward(request, response);
             return false;
         }
-
         return true;
     }
 }
