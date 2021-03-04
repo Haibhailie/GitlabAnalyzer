@@ -53,7 +53,6 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     public void gitlabAPIPrimaryNullTest() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
         gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-
         assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
         assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
         assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA));
@@ -168,20 +167,16 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(List.of(commits.get(0)));
         when(commitsApi.getDiff(projectId, sha)).thenReturn(diffs);
-
         List<MergeRequestDiffDto> mergeRequestDiffDtoList = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA);
-
         List<MergeRequestDiffDto> expectedMergeRequestDiffDto = new ArrayList<>();
         int indexIterator = 0;
         for (Diff d : diffs) {
             expectedMergeRequestDiffDto.add(new MergeRequestDiffDto(commits.get(indexIterator), d));
             indexIterator++;
         }
-
         assertNotNull(mergeRequestDiffDtoList);
         assertEquals(expectedMergeRequestDiffDto.size(), mergeRequestDiffDtoList.size());
         assertEquals(expectedMergeRequestDiffDto, mergeRequestDiffDtoList);
-
     }
 
     @Test
@@ -209,7 +204,6 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(List.of(commits.get(0)));
         when(commitsApi.getDiff(projectId, sha)).thenThrow(GitLabApiException.class);
-
         assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA));
     }
 
