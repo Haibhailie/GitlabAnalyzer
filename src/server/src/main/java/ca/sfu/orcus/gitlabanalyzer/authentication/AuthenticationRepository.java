@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.authentication;
 
+import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -15,12 +16,12 @@ public class AuthenticationRepository {
     MongoCollection<Document> collection;
 
     public AuthenticationRepository() {
-        MongoClient mongoClient = MongoClients.create(System.getenv("MONGO_URI"));
-        MongoDatabase database = mongoClient.getDatabase(System.getenv("DATABASE"));
-        this.collection = database.getCollection(System.getenv("USERS_COLLECTION"));
+        MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
+        MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
+        this.collection = database.getCollection(VariableDecoderUtil.decode("USERS_COLLECTION"));
     }
 
-    public void addNewUser(AuthenticationUser newUser) {
+    public void addNewUserByPat(AuthenticationUser newUser) {
         collection.insertOne(generateUserPatDoc(newUser));
     }
 
