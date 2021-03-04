@@ -41,7 +41,7 @@ public class CommitServiceTests {
     private static final String jwt = UUID.randomUUID().toString();
 
     // Test objects
-    private static final int projectId = ProjectMock.defaultId;
+    private static final int projectId = CommitMock.defaultId;
     private static final Date since = CommitMock.defaultDate;
     private static final Date until = CommitMock.defaultDate;
 
@@ -61,13 +61,13 @@ public class CommitServiceTests {
     @Test
     void getSingleCommitWithNullGitLabApi() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
-        assertNull(commitService.getSingleCommit(jwt, ProjectMock.defaultId, CommitMock.defaultSha));
+        assertNull(commitService.getSingleCommit(jwt, projectId, CommitMock.defaultSha));
     }
 
     @Test
     void getCommitsWithNullGitLabApi() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
-        assertNull(commitService.getAllCommits(jwt, ProjectMock.defaultId, since, until));
+        assertNull(commitService.getAllCommits(jwt, projectId, since, until));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class CommitServiceTests {
         assertNull(commitService.getDiffOfCommit(jwt, projectId, CommitMock.defaultSha));
     }
 
-    // Testing the methods
+    // Testing the CommitService methods
 
     @Test
     public void getSingleCommit() throws GitLabApiException {
