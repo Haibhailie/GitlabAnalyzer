@@ -34,7 +34,11 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
       name: 'Files',
       value: bytesConverter(repoSize),
       description:
-        'Total size of all files this is a super long description just to test ',
+        'Total size of all files this is a super long description just to test',
+    },
+    {
+      name: 'Branches',
+      value: numBranches,
     },
   ]
   return (
