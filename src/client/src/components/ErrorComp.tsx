@@ -2,11 +2,11 @@ import styles from '../css/Error.module.css'
 
 import error from '../assets/error.svg'
 
-export interface ILoadingProps {
+export interface IErrorCompProps {
   message: string
 }
 
-const Loading = ({ message }: ILoadingProps) => {
+const ErrorComp = ({ message }: IErrorCompProps) => {
   return (
     <div className={styles.container}>
       <img src={error} className={styles.error} />
@@ -15,4 +15,4 @@ const Loading = ({ message }: ILoadingProps) => {
   )
 }
 
-export default Loading
+export default ErrorComp

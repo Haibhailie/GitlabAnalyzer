@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { onError } from '../utils/suspenseDefaults'
 
 import Loading from '../components/Loading'
-import ErrorComp from '../components/Error'
+import ErrorComp from '../components/ErrorComp'
 import Selector from '../components/Selector'
 import MemberTable from '../components/MemberTable'
 import ProjectSummary from '../components/ProjectSummary'

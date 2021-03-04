@@ -1,5 +1,5 @@
 import Loading from '../components/Loading'
-import ErrorComp from '../components/Error'
+import ErrorComp from '../components/ErrorComp'
 import { NETWORK_ERROR, SERVER_ERROR, UNKNOWN_ERROR } from './constants'
 
 const onError = (setError: (error: Error) => void) => {
