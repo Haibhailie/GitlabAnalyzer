@@ -11,13 +11,13 @@ import static ca.sfu.orcus.gitlabanalyzer.authentication.JwtService.JwtType;
 
 @Service
 public class AuthenticationService {
-    private final AuthenticationRepository repository;
+    private final AuthenticationRepository authRepository;
     private final JwtService jwtService;
     private final GitLabApiWrapper gitLabApiWrapper;
 
     @Autowired
-    public AuthenticationService(AuthenticationRepository repository, JwtService jwtService, GitLabApiWrapper gitLabApiWrapper) {
-        this.repository = repository;
+    public AuthenticationService(AuthenticationRepository authRepository, JwtService jwtService, GitLabApiWrapper gitLabApiWrapper) {
+        this.authRepository = authRepository;
         this.jwtService = jwtService;
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
@@ -27,7 +27,7 @@ public class AuthenticationService {
         newUser.setUsername(username);
         String jwt = jwtService.createJwt(newUser, JwtType.PAT);
         newUser.setJwt(jwt);
-        repository.addNewUser(newUser);
+        authRepository.addNewUserByPat(newUser);
         return jwt;
     }
 
@@ -48,7 +48,7 @@ public class AuthenticationService {
         newUser.setAuthToken(authToken);
         String jwt = jwtService.createJwt(newUser, JwtType.USER_PASS);
         newUser.setJwt(jwt);
-        repository.addNewUserByUserPass(newUser);
+        authRepository.addNewUserByUserPass(newUser);
         return jwt;
     }
 
@@ -64,7 +64,7 @@ public class AuthenticationService {
     }
 
     public boolean jwtIsValid(String jwt) {
-        return (jwtService.jwtIsValid(jwt) && repository.contains(jwt) && gitLabApiWrapper.canSignIn(jwt));
+        return (jwtService.jwtIsValid(jwt) && authRepository.contains(jwt) && gitLabApiWrapper.canSignIn(jwt));
     }
 
 }

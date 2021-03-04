@@ -13,11 +13,11 @@ import java.util.Optional;
 public class GitLabApiWrapper {
 
     private final JwtService jwtService;
-    private final AuthenticationRepository repo;
+    private final AuthenticationRepository authRepository;
 
-    public GitLabApiWrapper(JwtService jwtService, AuthenticationRepository repo) {
+    public GitLabApiWrapper(JwtService jwtService, AuthenticationRepository authRepository) {
         this.jwtService = jwtService;
-        this.repo = repo;
+        this.authRepository = authRepository;
     }
 
     public GitLabApi getGitLabApiFor(String jwt) {
@@ -41,7 +41,7 @@ public class GitLabApiWrapper {
 
     private GitLabApi getGitLabApiForPat(String jwt) {
         try {
-            String pat = repo.getPatFor(jwt);
+            String pat = authRepository.getPatFor(jwt);
             getUsernameFromPat(pat);
             return new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), pat);
         } catch (GitLabApiException e) {
@@ -51,7 +51,7 @@ public class GitLabApiWrapper {
 
     private GitLabApi getGitLabApiForUserPass(String jwt) {
         try {
-            String authToken = repo.getAuthTokenFor(jwt);
+            String authToken = authRepository.getAuthTokenFor(jwt);
             testAuthToken(authToken);
             return new GitLabApi(VariableDecoderUtil.decode("GITLAB_URL"), Constants.TokenType.OAUTH2_ACCESS, authToken);
         } catch (GitLabApiException e) {
@@ -65,6 +65,7 @@ public class GitLabApiWrapper {
         return currentUser.getUsername();
     }
 
+    // Expects a validated jwt token
     public boolean canSignIn(String jwt) {
         try {
             trySigningIntoGitLab(jwt);
@@ -77,10 +78,10 @@ public class GitLabApiWrapper {
     private void trySigningIntoGitLab(String jwt) throws GitLabApiException {
         JwtService.JwtType type = jwtService.getType(jwt);
         if (type == JwtService.JwtType.PAT) {
-            String pat = repo.getPatFor(jwt);
+            String pat = authRepository.getPatFor(jwt);
             getUsernameFromPat(pat);        // If we can successfully get the current user, then the pat is valid
         } else {
-            String authToken = repo.getAuthTokenFor(jwt);
+            String authToken = authRepository.getAuthTokenFor(jwt);
             testAuthToken(authToken);
         }
     }

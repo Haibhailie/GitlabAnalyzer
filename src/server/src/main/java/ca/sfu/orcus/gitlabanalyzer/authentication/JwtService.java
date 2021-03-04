@@ -35,10 +35,10 @@ public class JwtService {
     }
 
     public boolean jwtIsValid(String jwt) {
-        return (jwtSignatureOk(jwt) && jwtHasValidType(jwt));
+        return (hasValidSignature(jwt) && hasValidType(jwt));
     }
 
-    private boolean jwtSignatureOk(String jwt) {
+    private boolean hasValidSignature(String jwt) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -50,7 +50,7 @@ public class JwtService {
         }
     }
 
-    private boolean jwtHasValidType(String jwt) {
+    private boolean hasValidType(String jwt) {
         JwtType type = getType(jwt);
         return (type == JwtType.PAT || type == JwtType.USER_PASS);
     }
@@ -63,7 +63,6 @@ public class JwtService {
                     .parseClaimsJws(jwt);
             String typeString = claims.getBody().get("type", String.class);
             return JwtType.valueOf(typeString);
-
         } catch (SignatureException e) {
             return null;
         }
