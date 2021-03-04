@@ -49,4 +49,25 @@ public class MergeRequestDiffDto {
     public void setDiff(String diff) {
         this.diff = diff;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof MergeRequestDiffDto)) {
+            return false;
+        }
+
+        MergeRequestDiffDto m = (MergeRequestDiffDto) o;
+
+        return (this.isNewFile == (m.isNewFile)
+                && this.isDeletedFile == (m.isDeletedFile)
+                && this.isRenamedFile == (m.isRenamedFile)
+                && this.diff.equals(m.diff)
+                && this.commitName.equals(m.commitName)
+                && this.newPath.equals(m.newPath)
+                && this.oldPath.equals(m.oldPath));
+    }
 }

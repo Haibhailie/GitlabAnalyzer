@@ -42,14 +42,13 @@ public class MergeRequestDto {
         }
         setDescription(presentMergeRequest.getDescription());
         setHasConflicts(presentMergeRequest.getHasConflicts());
-        setCommitters(gitLabApi.getMergeRequestApi().getCommits(projectId, presentMergeRequest.getIid()));
-
-        setNumAdditions(gitLabApi.getMergeRequestApi().getCommits(projectId, presentMergeRequest.getIid()), gitLabApi, projectId);
-        setNumDeletions(gitLabApi.getMergeRequestApi().getCommits(projectId, presentMergeRequest.getIid()), gitLabApi, projectId);
-
         setTime(presentMergeRequest.getMergedAt().getTime());
 
+        setCommitters(gitLabApi.getMergeRequestApi().getCommits(projectId, presentMergeRequest.getIid()));
+        setNumAdditions(gitLabApi.getMergeRequestApi().getCommits(projectId, presentMergeRequest.getIid()), gitLabApi, projectId);
+        setNumDeletions(gitLabApi.getMergeRequestApi().getCommits(projectId, presentMergeRequest.getIid()), gitLabApi, projectId);
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectId, presentMergeRequest.getIid()));
+
         ArrayList<String> notesName = new ArrayList<>();
         ArrayList<String> notes = new ArrayList<>();
         List<Note> mrNotes = gitLabApi.getNotesApi().getMergeRequestNotes(projectId, presentMergeRequest.getIid());
@@ -155,5 +154,35 @@ public class MergeRequestDto {
 
     public int getUserId() {
         return userId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof MergeRequestDto)) {
+            return false;
+        }
+
+        MergeRequestDto m = (MergeRequestDto) o;
+
+        return (this.mergeRequestId == (m.mergeRequestId)
+                && this.hasConflicts == (m.hasConflicts)
+                && this.isOpen == (m.isOpen)
+                && this.assignedTo.equals(m.assignedTo)
+                && this.author.equals(m.author)
+                && this.description.equals(m.description)
+                && this.sourceBranch.equals(m.sourceBranch)
+                && this.targetBranch.equals(m.targetBranch)
+                && this.numAdditions == (m.numAdditions)
+                && this.numDeletions == (m.numDeletions)
+                && this.committers.equals(m.committers)
+                && this.participants.equals(m.participants)
+                //&& this.notesName.equals(m.notesName)
+                //&& this.notes.equals(m.notesName)
+                && this.time == (m.time));
+
     }
 }
