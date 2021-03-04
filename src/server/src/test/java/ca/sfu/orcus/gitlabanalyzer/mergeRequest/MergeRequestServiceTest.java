@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
-import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.mocks.models.MergeRequestMock;
 import org.gitlab4j.api.*;
@@ -27,7 +27,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     @Mock
     private MergeRequestRepository mergeRequestRepository;
     @Mock
-    private AuthenticationService authenticationService;
+    private GitLabApiWrapper gitLabApiWrapper;
     @Mock
     private GitLabApi gitLabApi;
     @Mock
@@ -51,8 +51,8 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @Test
     public void gitlabAPIPrimaryNullTest() {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
-        gitLabApi = authenticationService.getGitLabApiFor(jwt);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
+        gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
 
         assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
         assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
@@ -81,7 +81,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @Test
     public void getAllMergeRequestsWithoutMemberIDTestNotNull() throws GitLabApiException {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(gitLabApi.getNotesApi()).thenReturn(notesApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
@@ -124,7 +124,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     @Test
     public void getAllCommitsFromMergeRequestTest() throws GitLabApiException {
 
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
@@ -141,7 +141,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @Test
     public void getAllCommitsFromMergeRequestTestGitLabException() throws GitLabApiException {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
@@ -151,7 +151,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @Test
     public void getAllCommitsFromMergeRequestTestDtoException() throws GitLabApiException {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
@@ -162,7 +162,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @Test
     public void getDiffFromMergeRequestTest() throws GitLabApiException {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
@@ -186,7 +186,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @Test
     public void getDiffFromMergeRequestTestGitLabException() throws GitLabApiException {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenThrow(GitLabApiException.class);
         assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA));
@@ -194,7 +194,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @Test
     public void getDiffFromMergeRequestTestGitLabCommitException() throws GitLabApiException {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenThrow(GitLabApiException.class);
@@ -203,7 +203,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @Test
     public void getDiffFromMergeRequestTestGitLabDiffException() throws GitLabApiException {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
