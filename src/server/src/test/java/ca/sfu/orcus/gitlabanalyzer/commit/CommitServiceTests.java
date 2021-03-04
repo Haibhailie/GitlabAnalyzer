@@ -32,7 +32,6 @@ import static org.mockito.Mockito.when;
 public class CommitServiceTests {
     @Mock private GitLabApiWrapper gitLabApiWrapper;
     @Mock private CommitsApi commitsApi;
-    @Mock private ProjectApi projectApi;
 
     // Class to be tested
     @InjectMocks
@@ -41,18 +40,10 @@ public class CommitServiceTests {
     private GitLabApi gitLabApi;
     private static final String jwt = UUID.randomUUID().toString();
 
-
     // Test objects
-
     private static final int projectId = ProjectMock.defaultId;
-    private static final String title = "title";
-    private static final String author = "Jimmy Jonathon Jacobs";
-    private static final String authorEmail = "jjj@verizon.net";
-    private static final String message = "";
-    private static final int count = 10;
-    private static final String sha = "abcd1234";
-    private static final Date since = new Date();
-    private static final Date until = new Date();
+    private static final Date since = CommitMock.defaultDate;
+    private static final Date until = CommitMock.defaultDate;
 
     private static final String defaultBranch = "master";
     private static Project project;
@@ -60,13 +51,15 @@ public class CommitServiceTests {
 
     @BeforeEach
     public void setup() {
-        project = getTestProject();
-
         gitLabApi = GitLabApiMock.getGitLabApiMock();
+        project = new Project();
+        project.setDefaultBranch(defaultBranch);
     }
 
+    // Testing the null checks
+
     @Test
-    void getCommitWithNullGitLabApi() {
+    void getSingleCommitWithNullGitLabApi() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
         assertNull(commitService.getSingleCommit(jwt, ProjectMock.defaultId, CommitMock.defaultSha));
     }
@@ -82,6 +75,8 @@ public class CommitServiceTests {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
         assertNull(commitService.getDiffOfCommit(jwt, projectId, CommitMock.defaultSha));
     }
+
+    // Testing the methods
 
     @Test
     public void getSingleCommit() throws GitLabApiException {
@@ -129,15 +124,16 @@ public class CommitServiceTests {
         when(gitLabApi.getCommitsApi().getDiff(projectId, CommitMock.defaultSha)).thenReturn(diffList);
 
         List<Diff> commitDiff = commitService.getDiffOfCommit(jwt, projectId, CommitMock.defaultSha);
-        List<Diff> expectedCommitDiff = new ArrayList<>();
-        expectedCommitDiff.addAll(diffList);
+        List<Diff> expectedCommitDiff = new ArrayList<>(diffList);
 
         assertNotNull(commitDiff);
         assertEquals(commitDiff, expectedCommitDiff);
     }
 
+    // Testing the exception throws
+
     @Test
-    public void testGetSingleCommitException() throws GitLabApiException {
+    public void getSingleCommitException() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
         when(commitsApi.getCommit(projectId, CommitMock.defaultSha)).thenThrow(GitLabApiException.class);
@@ -145,7 +141,7 @@ public class CommitServiceTests {
     }
 
     @Test
-    public void testGetAllCommitsException() throws GitLabApiException {
+    public void getAllCommitsException() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
         when(gitLabApi.getProjectApi().getProject(projectId)).thenReturn(project);
@@ -154,18 +150,10 @@ public class CommitServiceTests {
     }
 
     @Test
-    public void testGetSingleCommitDiffException() throws GitLabApiException {
+    public void getSingleCommitDiffException() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
         when(commitsApi.getDiff(projectId, CommitMock.defaultSha)).thenThrow(GitLabApiException.class);
         assertNull(commitService.getDiffOfCommit(jwt, projectId, CommitMock.defaultSha));
-    }
-
-    private static Project getTestProject() {
-        Project project = new Project();
-
-        project.setDefaultBranch(defaultBranch);
-
-        return project;
     }
 }
