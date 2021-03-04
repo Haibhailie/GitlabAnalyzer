@@ -26,9 +26,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/api/auth")
-    public void loginWithPat(@RequestBody AuthenticationUser user, HttpServletResponse response) {
+    public void loginWithPat(@RequestBody AuthenticationUser user,
+                             HttpServletResponse response) {
         try {
-            String jwt = authService.addNewUserFromPat(user);
+            String jwt = authService.registerNewPat(user);
             Cookie cookie = createSessionIdCookie(jwt);
             response.addCookie(cookie);
             response.setStatus(200);
@@ -40,9 +41,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/api/signin")
-    public void loginWithUserPass(@RequestBody AuthenticationUser user, HttpServletResponse response) {
+    public void loginWithUserPass(@RequestBody AuthenticationUser user,
+                                  HttpServletResponse response) {
         try {
-            String jwt = authService.addNewUserByUserPass(user);
+            String jwt = authService.registerNewUserPass(user);
             Cookie cookie = createSessionIdCookie(jwt);
             response.addCookie(cookie);
             response.setStatus(200);
@@ -54,7 +56,8 @@ public class AuthenticationController {
     }
 
     @GetMapping("/api/ping")
-    public void checkJwtIsValid(@CookieValue(value = "sessionId") String jwt, HttpServletResponse response) {
+    public void checkJwtIsValid(@CookieValue(value = "sessionId") String jwt,
+                                HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
             response.setStatus(200);
         } else {
