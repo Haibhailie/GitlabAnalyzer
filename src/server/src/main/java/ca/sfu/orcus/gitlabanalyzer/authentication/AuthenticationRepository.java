@@ -21,7 +21,7 @@ public class AuthenticationRepository {
         this.collection = database.getCollection(VariableDecoderUtil.decode("USERS_COLLECTION"));
     }
 
-    public void addNewUser(AuthenticationUser newUser) {
+    public void addNewUserByPat(AuthenticationUser newUser) {
         collection.insertOne(generateUserPatDoc(newUser));
     }
 
