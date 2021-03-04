@@ -1,0 +1,106 @@
+package ca.sfu.orcus.gitlabanalyzer.models;
+
+import org.gitlab4j.api.models.Commit;
+import org.gitlab4j.api.models.CommitStats;
+import org.gitlab4j.api.models.Diff;
+
+import java.util.*;
+
+public class CommitMock {
+    private static final Random rand = new Random();
+    private static final int upperBound = 1000;
+
+    public static final String defaultTitle = UUID.randomUUID().toString();
+    public static final String defaultAuthor = UUID.randomUUID().toString();
+    public static final String defaultEmail = UUID.randomUUID().toString();
+    public static final String defaultMessage = UUID.randomUUID().toString();
+    public static final String defaultSha = UUID.randomUUID().toString();
+
+    public static final String mockCodeDiff = "RandomChangesGoHereLol";
+
+    public static final Date defaultDate = new Date();
+
+    private static final List<Commit> commitList = new ArrayList<>();
+    private static final String defaultBranch = "master";
+
+    public static Commit createCommit(CommitStats commitStats) {
+        return createCommit(defaultTitle, defaultAuthor, defaultEmail, defaultMessage, defaultSha, defaultDate, commitStats);
+    }
+
+    public static Commit createCommit(String title,
+                                      String author,
+                                      String email,
+                                      String message,
+                                      String sha,
+                                      Date date,
+                                      CommitStats commitStats) {
+        Commit commit = new Commit();
+
+        commit.setTitle(title);
+        commit.setAuthorName(author);
+        commit.setAuthorEmail(email);
+        commit.setMessage(message);
+        commit.setId(sha);
+        commit.setCommittedDate(date);
+        commit.setStats(commitStats);
+        commit.setShortId(sha);
+
+        return commit;
+    }
+
+    public static List<Commit> createTestCommitList() {
+        Commit commitA = new Commit();
+        Commit commitB = new Commit();
+        List<Commit> commits = new ArrayList<>();
+
+        commitA.setTitle(defaultTitle);
+        commitA.setAuthorName(defaultAuthor);
+        commitA.setAuthorEmail(defaultEmail);
+        commitA.setMessage(defaultMessage);
+        commitA.setId(defaultSha);
+        commitA.setCommittedDate(defaultDate);
+        commitA.setStats(CommitStatsMock.createCommitStats());
+        commitA.setShortId(defaultSha);
+
+        commitB.setTitle(defaultTitle);
+        commitB.setAuthorName(defaultAuthor);
+        commitB.setAuthorEmail(defaultEmail);
+        commitB.setMessage(defaultMessage);
+        commitB.setId(defaultSha);
+        commitB.setCommittedDate(defaultDate);
+        commitB.setStats(CommitStatsMock.createCommitStats());
+        commitB.setShortId(defaultSha);
+
+        commits.add(commitA);
+        commits.add(commitB);
+        return commits;
+    }
+
+    public static List<Diff> createTestDiffList() {
+        List<Diff> presentTempDiff = new ArrayList<>();
+
+        Diff diffA = new Diff();
+        Diff diffB = new Diff();
+
+        diffA.setDiff(mockCodeDiff);
+        diffA.setDeletedFile(false);
+        diffA.setNewFile(false);
+        diffA.setRenamedFile(true);
+        diffA.setNewPath("Root");
+        diffA.setOldPath("Not Root");
+
+        diffB.setDiff(mockCodeDiff);
+        diffB.setDeletedFile(false);
+        diffB.setNewFile(true);
+        diffB.setRenamedFile(false);
+        diffB.setNewPath("Root");
+        diffB.setOldPath("Not Root");
+
+        presentTempDiff.add(diffA);
+        presentTempDiff.add(diffB);
+
+        return presentTempDiff;
+    }
+
+
+}
