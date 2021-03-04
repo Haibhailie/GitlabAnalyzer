@@ -42,7 +42,6 @@ public class MergeRequestMock {
         tempAuthorA.setName(author);
         tempAuthorA.setId(userId);
         tempMergeRequestA.setAuthor(tempAuthorA);
-
         tempMergeRequestA.setIid(mergeRequestIdA);
         tempMergeRequestA.setHasConflicts(hasConflicts);
         tempMergeRequestA.setState("opened");
@@ -50,7 +49,6 @@ public class MergeRequestMock {
         tempAssigneeA.setName(assignedTo);
         tempAssigneeA.setId(userId);
         tempMergeRequestA.setAssignee(tempAssigneeA);
-
         tempMergeRequestA.setDescription(description);
         tempMergeRequestA.setSourceBranch(sourceBranch);
         tempMergeRequestA.setTargetBranch(targetBranch);
@@ -58,12 +56,10 @@ public class MergeRequestMock {
         tempMergeRequestA.setHasConflicts(false);
         tempMergeRequestA.setMergedAt(dateNow);
 
-
         Author tempAuthorB = new Author();
         tempAuthorB.setName(author);
         tempAuthorB.setId(userIdB);
         tempMergeRequestB.setAuthor(tempAuthorB);
-
         tempMergeRequestB.setIid(mergeRequestIdB);
         tempMergeRequestB.setHasConflicts(hasConflicts);
         tempMergeRequestB.setState("opened");
@@ -71,7 +67,6 @@ public class MergeRequestMock {
         tempAssigneeB.setName(assignedTo);
         tempAssigneeB.setId(userId);
         tempMergeRequestB.setAssignee(tempAssigneeB);
-
         tempMergeRequestB.setDescription(description);
         tempMergeRequestB.setSourceBranch(sourceBranch);
         tempMergeRequestB.setTargetBranch(targetBranch);
@@ -139,7 +134,6 @@ public class MergeRequestMock {
         diffA.setRenamedFile(true);
         diffA.setNewPath("Root");
         diffA.setOldPath("Not Root");
-
 
         diffB.setDiff(mockCodeDiff);
         diffB.setDeletedFile(false);
