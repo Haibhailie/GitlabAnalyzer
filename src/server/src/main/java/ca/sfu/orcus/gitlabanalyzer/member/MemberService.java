@@ -48,7 +48,7 @@ public class MemberService {
                 filteredAllMembers.add(presentMember);
             }
             return filteredAllMembers;
-        } catch (GitLabApiException | NullPointerException e) {
+        } catch (GitLabApiException e) {
             return null;
         }
     }

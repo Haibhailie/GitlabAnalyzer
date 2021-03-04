@@ -106,15 +106,15 @@ public class MemberServiceTests {
     public void getAllMembersTest() throws GitLabApiException {
         when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getProjectApi()).thenReturn(projectApi);
-        when(gitLabApi.getProjectApi().getAllMembers(projectId)).thenReturn(members);
+        when(projectApi.getAllMembers(projectId)).thenReturn(members);
 
         List<MemberDto> memberDtos = memberService.getAllMembers(jwt, projectId);
-        List<MemberDto> expectedMemberDtos = new ArrayList<>();
 
         for (MemberDto m : memberDtos) {
             m.setRole("MAINTAINER");
         }
 
+        List<MemberDto> expectedMemberDtos = new ArrayList<>();
         for (Member m : members) {
             m.setAccessLevel(AccessLevel.valueOf("MAINTAINER"));
             MemberDto presentMember = new MemberDto(m);
@@ -126,7 +126,7 @@ public class MemberServiceTests {
     }
 
     @Test
-    public void getCommitsByMemberEmailTest() throws GitLabApiException {
+    public void getCommitsByMemberEmailTest(){
         when(commitService.getAllCommits(jwt, projectId, since, until)).thenReturn(commitDtos);
 
         List<CommitDto> commitsByMemberEmail = memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email);
@@ -144,7 +144,7 @@ public class MemberServiceTests {
 
 
     @Test
-    public void getMergeRequestsByMemberIDTest() throws GitLabApiException {
+    public void getMergeRequestsByMemberIDTest(){
         when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, since, until, id)).thenReturn(mergeRequestDtos);
 
@@ -158,21 +158,24 @@ public class MemberServiceTests {
 
     public static List<Member> getTestMembers() {
         List<Member> tempMembers = new ArrayList<>();
-        AbstractUser<Member> memberA = new Member();
-        AbstractUser<Member> memberB = new Member();
+        Member memberA = new Member();
+        Member memberB = new Member();
+
+
 
         memberA.setName(displayName);
         memberA.setEmail(email);
         memberA.setId(id);
         memberA.setUsername(username);
 
+
         memberB.setName(authorB);
         memberB.setEmail(authorBEmail);
         memberB.setId(userIdB);
         memberB.setUsername(usernameB);
 
-        tempMembers.add((Member) memberA);
-        tempMembers.add((Member) memberB);
+        tempMembers.add(memberA);
+        tempMembers.add(memberB);
 
         return tempMembers;
     }
