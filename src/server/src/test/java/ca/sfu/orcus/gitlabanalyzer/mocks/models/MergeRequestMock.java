@@ -53,7 +53,6 @@ public class MergeRequestMock {
         tempMergeRequestA.setSourceBranch(sourceBranch);
         tempMergeRequestA.setTargetBranch(targetBranch);
         tempMergeRequestA.setCreatedAt(dateNow);
-        tempMergeRequestA.setHasConflicts(false);
         tempMergeRequestA.setMergedAt(dateNow);
 
         Author tempAuthorB = new Author();
@@ -71,7 +70,6 @@ public class MergeRequestMock {
         tempMergeRequestB.setSourceBranch(sourceBranch);
         tempMergeRequestB.setTargetBranch(targetBranch);
         tempMergeRequestB.setCreatedAt(dateUntil);
-        tempMergeRequestB.setHasConflicts(false);
         tempMergeRequestB.setMergedAt(dateUntil);
 
         tempMergeRequestList.add(tempMergeRequestA);
