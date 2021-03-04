@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -41,7 +40,6 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     static List<MergeRequest> mergeRequests;
     static List<Commit> commits;
     static List<Diff> diffs;
-    static GitLabApiException gitLabApiException = new GitLabApiException("GitlabApiException has occurred");
 
     @BeforeAll
     public static void setup() {
