@@ -44,6 +44,8 @@ public class MemberServiceTests {
     // Test objects
     private static List<Member> members;
     private static CommitStats commitStats;
+    private static List<Commit> commits;
+    private static List<MergeRequest> mergeRequests;
 
     private static final String jwt = "";
     private static final int projectId = 5;
@@ -81,12 +83,18 @@ public class MemberServiceTests {
 
     @BeforeAll
     public static void setup() {
+        members = getTestMembers();
+        commitStats = getTestCommitStats();
+        commits = getTestCommits();
+        mergeRequests = getTestMergeRequests();
+
 
     }
 
     @Test
     public void nullGitLabApiTest() {
         when(authenticationService.getGitLabApiFor(jwt)).thenReturn(null);
+        gitLabApi = authenticationService.getGitLabApiFor(jwt);
 
         assertNull(memberService.getAllMembers(jwt, projectId));
         assertNull(memberService.getAllMembers(gitLabApi, projectId));
@@ -103,7 +111,12 @@ public class MemberServiceTests {
         List<MemberDto> memberDtos = memberService.getAllMembers(jwt, projectId);
         List<MemberDto> expectedMemberDtos = new ArrayList<>();
 
+        for (MemberDto m : memberDtos) {
+            m.setRole("MAINTAINER");
+        }
+
         for (Member m : members) {
+            m.setAccessLevel(AccessLevel.valueOf("MAINTAINER"));
             MemberDto presentMember = new MemberDto(m);
             expectedMemberDtos.add(presentMember);
         }
@@ -114,8 +127,6 @@ public class MemberServiceTests {
 
     @Test
     public void getCommitsByMemberEmailTest() throws GitLabApiException {
-        when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        when(gitLabApi.getProjectApi()).thenReturn(projectApi);
         when(commitService.getAllCommits(jwt, projectId, since, until)).thenReturn(commitDtos);
 
         List<CommitDto> commitsByMemberEmail = memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email);
@@ -135,7 +146,6 @@ public class MemberServiceTests {
     @Test
     public void getMergeRequestsByMemberIDTest() throws GitLabApiException {
         when(authenticationService.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        when(gitLabApi.getProjectApi()).thenReturn(projectApi);
         when(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, since, until, id)).thenReturn(mergeRequestDtos);
 
         List<MergeRequestDto> mergeRequestByMemberID = memberService.getMergeRequestsByMemberID(jwt, projectId, since, until, id);
@@ -212,7 +222,7 @@ public class MemberServiceTests {
         return tempMergeRequests;
     }
 
-    public static List<Commit> gentTestCommits() {
+    public static List<Commit> getTestCommits() {
 
 
         Commit commitA = new Commit();
