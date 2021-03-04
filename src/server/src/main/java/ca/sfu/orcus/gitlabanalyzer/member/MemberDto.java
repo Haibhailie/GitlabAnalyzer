@@ -60,7 +60,7 @@ public class MemberDto {
                 && this.email.equals(c.email)
                 && this.id == c.id
                 && this.username.equals(c.username)
-                && (this.role.toUpperCase()).equals(c.role.toUpperCase()));
+                && (this.role).equals(c.role));
     }
 
 }
