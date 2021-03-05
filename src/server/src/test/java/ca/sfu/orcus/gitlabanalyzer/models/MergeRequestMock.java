@@ -26,8 +26,9 @@ public class MergeRequestMock {
     public static final String targetBranch = "master";
     public static final int numAdditions = 6;
     public static final int numDeletions = 12;
-    public static final Date dateNow = new Date();
-    public static final Date dateUntil = new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000);
+    public static final Date dateNow = new Date(); //present Date
+    public static final Date dateUntil = new Date(System.currentTimeMillis() + 7L * 24 * 3600 * 1000); //present date + 7 days
+    public static final Date dateSince = new Date(System.currentTimeMillis() - 7L * 24 * 3600 * 1000); //present date - 7 days
     public static final String title = "title";
     public static final String authorEmail = "jimcarry@carryingyou.com";
     public static final String message = "";
@@ -36,7 +37,6 @@ public class MergeRequestMock {
     public static CommitStats commitStats;
 
     public static final String jwt = "";
-    public static final Date dateSince = new Date(System.currentTimeMillis() - 7L * 24 * 3600 * 1000);
     public static final List<Note> notesList = new ArrayList<>();
 
     public static List<MergeRequest> generateTestMergeRequestList() {
