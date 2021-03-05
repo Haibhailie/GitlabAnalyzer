@@ -13,7 +13,7 @@ export interface IStatSummaryProps {
 const StatSummary = ({ statData }: IStatSummaryProps) => {
   const [copied, setCopied] = useState(false)
   const csvString = [
-    ['Statistic', 'Value'],
+    ['Stat', 'Value'],
     ...statData.map(stat => [stat.name, stat.value]),
   ]
     .map(r => r.join(','))
