@@ -169,7 +169,7 @@ public class MergeRequestMock {
         return expectedCommitDtoList;
     }
 
-    public List<MergeRequestDiffDto> generateMergeRequestDiffDto(List<Diff> diffs, List<Commit> commits, GitLabApi gitLabApi) {
+    public List<MergeRequestDiffDto> generateMergeRequestDiffDto(List<Diff> diffs, List<Commit> commits) {
         List<MergeRequestDiffDto> expectedMergeRequestDiffDto = new ArrayList<>();
         int indexIterator = 0;
         for (Diff d : diffs) {

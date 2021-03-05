@@ -154,7 +154,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(List.of(commits.get(0)));
         when(commitsApi.getDiff(projectId, sha)).thenReturn(diffs);
         List<MergeRequestDiffDto> mergeRequestDiffDtoList = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA);
-        List<MergeRequestDiffDto> expectedMergeRequestDiffDto = generateMergeRequestDiffDto(diffs, commits, gitLabApi);
+        List<MergeRequestDiffDto> expectedMergeRequestDiffDto = generateMergeRequestDiffDto(diffs, commits);
         assertNotNull(mergeRequestDiffDtoList);
         assertEquals(expectedMergeRequestDiffDto.size(), mergeRequestDiffDtoList.size());
         assertEquals(expectedMergeRequestDiffDto, mergeRequestDiffDtoList);
