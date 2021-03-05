@@ -9,8 +9,8 @@ import java.util.*;
 public class CommitMock {
     private static final Random rand = new Random();
     private static final int upperBound = 1000;
-    public static final int defaultId = rand.nextInt(upperBound);
 
+    public static final int defaultId = rand.nextInt(upperBound);
     public static final String defaultTitle = UUID.randomUUID().toString();
     public static final String defaultAuthor = UUID.randomUUID().toString();
     public static final String defaultEmail = UUID.randomUUID().toString();
