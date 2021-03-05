@@ -9,50 +9,34 @@ import java.util.*;
 public class CommitMock {
     private static final Random rand = new Random();
     private static final int upperBound = 1000;
+    public static final int defaultId = rand.nextInt(upperBound);
 
     public static final String defaultTitle = UUID.randomUUID().toString();
     public static final String defaultAuthor = UUID.randomUUID().toString();
     public static final String defaultEmail = UUID.randomUUID().toString();
     public static final String defaultMessage = UUID.randomUUID().toString();
     public static final String defaultSha = UUID.randomUUID().toString();
+    public static final Date defaultDate = new Date();
 
     public static final String mockCodeDiff = "RandomChangesGoHereLol";
 
-    public static final Date defaultDate = new Date();
-
-    private static final List<Commit> commitList = new ArrayList<>();
-    private static final String defaultBranch = "master";
-
     public static Commit createCommit(CommitStats commitStats) {
-        return createCommit(defaultTitle, defaultAuthor, defaultEmail, defaultMessage, defaultSha, defaultDate, commitStats);
-    }
-
-    public static Commit createCommit(String title,
-                                      String author,
-                                      String email,
-                                      String message,
-                                      String sha,
-                                      Date date,
-                                      CommitStats commitStats) {
         Commit commit = new Commit();
 
-        commit.setTitle(title);
-        commit.setAuthorName(author);
-        commit.setAuthorEmail(email);
-        commit.setMessage(message);
-        commit.setId(sha);
-        commit.setCommittedDate(date);
+        commit.setTitle(defaultTitle);
+        commit.setAuthorName(defaultAuthor);
+        commit.setAuthorEmail(defaultEmail);
+        commit.setMessage(defaultMessage);
+        commit.setId(defaultSha);
+        commit.setCommittedDate(defaultDate);
         commit.setStats(commitStats);
-        commit.setShortId(sha);
+        commit.setShortId(defaultSha);
 
         return commit;
     }
 
     public static List<Commit> createTestCommitList() {
         Commit commitA = new Commit();
-        Commit commitB = new Commit();
-        List<Commit> commits = new ArrayList<>();
-
         commitA.setTitle(defaultTitle);
         commitA.setAuthorName(defaultAuthor);
         commitA.setAuthorEmail(defaultEmail);
@@ -62,6 +46,7 @@ public class CommitMock {
         commitA.setStats(CommitStatsMock.createCommitStats());
         commitA.setShortId(defaultSha);
 
+        Commit commitB = new Commit();
         commitB.setTitle(defaultTitle);
         commitB.setAuthorName(defaultAuthor);
         commitB.setAuthorEmail(defaultEmail);
@@ -71,17 +56,14 @@ public class CommitMock {
         commitB.setStats(CommitStatsMock.createCommitStats());
         commitB.setShortId(defaultSha);
 
+        List<Commit> commits = new ArrayList<>();
         commits.add(commitA);
         commits.add(commitB);
         return commits;
     }
 
     public static List<Diff> createTestDiffList() {
-        List<Diff> presentTempDiff = new ArrayList<>();
-
         Diff diffA = new Diff();
-        Diff diffB = new Diff();
-
         diffA.setDiff(mockCodeDiff);
         diffA.setDeletedFile(false);
         diffA.setNewFile(false);
@@ -89,6 +71,7 @@ public class CommitMock {
         diffA.setNewPath("Root");
         diffA.setOldPath("Not Root");
 
+        Diff diffB = new Diff();
         diffB.setDiff(mockCodeDiff);
         diffB.setDeletedFile(false);
         diffB.setNewFile(true);
@@ -96,11 +79,10 @@ public class CommitMock {
         diffB.setNewPath("Root");
         diffB.setOldPath("Not Root");
 
+        List<Diff> presentTempDiff = new ArrayList<>();
         presentTempDiff.add(diffA);
         presentTempDiff.add(diffB);
 
         return presentTempDiff;
     }
-
-
 }
