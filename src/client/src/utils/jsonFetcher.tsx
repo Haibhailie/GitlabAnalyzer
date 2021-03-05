@@ -16,12 +16,10 @@ const jsonFetcher = <DataType extends unknown>(
   return new Promise<DataType>((resolve, reject) => {
     fetch(`${URLBASE}${url}`, options)
       .then(res => {
-        if (res.status === 200) {
-          if (options?.responseIsEmpty) {
-            resolve(res.status as DataType)
-          } else {
-            res.json().then(resolve)
-          }
+        if (options?.responseIsEmpty) {
+          resolve(res.status as DataType)
+        } else if (res.status === 200) {
+          res.json().then(resolve)
         } else {
           reject(new Error(res.status.toString()))
         }
