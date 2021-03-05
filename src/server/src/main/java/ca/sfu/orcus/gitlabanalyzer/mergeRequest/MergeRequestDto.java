@@ -180,8 +180,6 @@ public class MergeRequestDto {
                 && this.numDeletions == (m.numDeletions)
                 && this.committers.equals(m.committers)
                 && this.participants.equals(m.participants)
-                //&& this.notesName.equals(m.notesName)
-                //&& this.notes.equals(m.notesName)
                 && this.time == (m.time));
 
     }
