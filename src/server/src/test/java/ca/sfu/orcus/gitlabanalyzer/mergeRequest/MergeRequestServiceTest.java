@@ -2,7 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
-import ca.sfu.orcus.gitlabanalyzer.mocks.models.MergeRequestMock;
+import ca.sfu.orcus.gitlabanalyzer.models.MergeRequestMock;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.*;
 import org.junit.jupiter.api.Test;

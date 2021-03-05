@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.mocks.models;
+package ca.sfu.orcus.gitlabanalyzer.models;
 
 import org.gitlab4j.api.models.Project;
 import org.gitlab4j.api.models.ProjectStatistics;
