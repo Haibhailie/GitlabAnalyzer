@@ -3,7 +3,6 @@ package ca.sfu.orcus.gitlabanalyzer.commit;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
-import ca.sfu.orcus.gitlabanalyzer.models.CommitStatsMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectStatisticsMock;
 import org.gitlab4j.api.CommitsApi;
@@ -77,8 +76,7 @@ public class CommitServiceTests {
     public void getSingleCommit() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
-        CommitStats commitStats = CommitStatsMock.createCommitStats();
-        Commit commit = CommitMock.createCommit(commitStats);
+        Commit commit = CommitMock.createCommit();
 
         when(gitLabApi.getCommitsApi().getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
 
@@ -94,8 +92,7 @@ public class CommitServiceTests {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
         List<Commit> commitList = CommitMock.createTestCommitList();
-        CommitStats commitStats = CommitStatsMock.createCommitStats();
-        Commit commit = CommitMock.createCommit(commitStats);
+        Commit commit = CommitMock.createCommit();
 
         when(gitLabApi.getCommitsApi().getCommits(projectId, ProjectMock.defaultdefaultBranch, since, until)).thenReturn(commitList);
         when(gitLabApi.getProjectApi().getProject(projectId)).thenReturn(project);

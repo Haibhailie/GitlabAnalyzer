@@ -20,7 +20,11 @@ public class CommitMock {
 
     public static final String mockCodeDiff = "RandomChangesGoHereLol";
 
-    public static Commit createCommit(CommitStats commitStats) {
+    public static final int defaultNumAdditions = rand.nextInt(upperBound);
+    public static final int defaultNumDeletions = rand.nextInt(upperBound);
+    public static final int defaultNumTotal = defaultNumAdditions + defaultNumDeletions;
+
+    public static Commit createCommit() {
         Commit commit = new Commit();
 
         commit.setTitle(defaultTitle);
@@ -29,16 +33,26 @@ public class CommitMock {
         commit.setMessage(defaultMessage);
         commit.setId(defaultSha);
         commit.setCommittedDate(defaultDate);
-        commit.setStats(commitStats);
+        commit.setStats(createCommitStats());
         commit.setShortId(defaultSha);
 
         return commit;
     }
 
+    public static CommitStats createCommitStats() {
+        CommitStats commitStats = new CommitStats();
+
+        commitStats.setAdditions(defaultNumAdditions);
+        commitStats.setDeletions(defaultNumDeletions);
+        commitStats.setTotal(defaultNumTotal);
+
+        return commitStats;
+    }
+
     public static List<Commit> createTestCommitList() {
         List<Commit> commits = new ArrayList<>();
-        Commit commitA = createCommit(CommitStatsMock.createCommitStats());
-        Commit commitB = createCommit(CommitStatsMock.createCommitStats());
+        Commit commitA = createCommit();
+        Commit commitB = createCommit();
 
         commits.add(commitA);
         commits.add(commitB);
