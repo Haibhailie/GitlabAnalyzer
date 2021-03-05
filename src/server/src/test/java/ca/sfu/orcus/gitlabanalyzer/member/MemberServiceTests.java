@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-import ca.sfu.orcus.gitlabanalyzer.Constants;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.*;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
@@ -21,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -97,7 +95,7 @@ public class MemberServiceTests {
     }
 
     @Test
-    public void getMergeRequestsByMemberIDTest() throws GitLabApiException {
+    public void getMergeRequestsByMemberIDTest() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
         List<MergeRequest> mergeRequests = MergeRequestMock.generateTestMergeRequestList();
@@ -114,7 +112,7 @@ public class MemberServiceTests {
     }
 
     @Test
-    public void getCommitsByMemberEmailTest() throws GitLabApiException {
+    public void getCommitsByMemberEmailTest() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
         List<Commit> commitList = CommitMock.createTestCommitList();
@@ -123,7 +121,7 @@ public class MemberServiceTests {
         List<CommitDto> commitDtos = new ArrayList<>();
 
         String email = MemberMock.defaultEmail;
-        when(commitService.getAllCommitDtos(gitLabApi, projectId, since, until,email)).thenReturn(commitDtos);
+        when(commitService.getAllCommitDtos(gitLabApi, projectId, since, until, email)).thenReturn(commitDtos);
 
         List<CommitDto> commitsByMemberEmail = memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email);
         List<CommitDto> expectedCommitsByMemberEmail = commitDtos;
@@ -131,23 +129,5 @@ public class MemberServiceTests {
         assertNotNull(commitsByMemberEmail);
         assertEquals(commitsByMemberEmail, expectedCommitsByMemberEmail);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
