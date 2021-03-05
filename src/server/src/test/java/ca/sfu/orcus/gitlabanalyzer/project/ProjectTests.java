@@ -101,7 +101,7 @@ public class ProjectTests {
             Project project = ProjectMock.createProject(projectStatistics);
             memberProjects.add(project);
 
-            Member member = MemberMock.createMember(user.getId(), MemberMock.defaultAccessLevel);
+            Member member = MemberMock.createMember(user.getName(),user.getEmail(),user.getId(),user.getUsername(), MemberMock.defaultAccessLevel);
             when(gitLabApi.getProjectApi().getMember(project.getId(), user.getId())).thenReturn(member);
 
             String role = MemberUtils.getMemberRoleFromAccessLevel(MemberMock.defaultAccessLevel.value);
