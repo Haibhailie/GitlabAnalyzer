@@ -15,16 +15,23 @@ public final class ProjectMock {
     public static final String defaultName = UUID.randomUUID().toString();
     public static final Date defaultCreatedAt = new Date();
     public static final Date defaultLastActivityAt = new Date();
+    public static final String defaultdefaultBranch = "master";
 
     public static Project createProject(ProjectStatistics projectStatistics) {
-        return createProject(defaultId, defaultName, projectStatistics, defaultCreatedAt, defaultLastActivityAt);
+        return createProject(defaultId,
+                defaultName,
+                projectStatistics,
+                defaultCreatedAt,
+                defaultLastActivityAt,
+                defaultdefaultBranch);
     }
 
     public static Project createProject(int id,
                                         String name,
                                         ProjectStatistics statistics,
                                         Date createdAt,
-                                        Date lastActivityAt) {
+                                        Date lastActivityAt,
+                                        String defaultBranch) {
         Project project = new Project();
 
         project.setId(id);
@@ -32,6 +39,7 @@ public final class ProjectMock {
         project.setStatistics(statistics);
         project.setCreatedAt(createdAt);
         project.setLastActivityAt(lastActivityAt);
+        project.setDefaultBranch(defaultBranch);
 
         return project;
     }
