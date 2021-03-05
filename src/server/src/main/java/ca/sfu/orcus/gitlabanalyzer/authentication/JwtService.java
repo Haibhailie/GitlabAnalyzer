@@ -17,7 +17,7 @@ import java.util.Date;
 @Service
 public class JwtService {
     enum JwtType { PAT, USER_PASS }
-    Key secretKey;
+    private final Key secretKey;
 
     @Autowired
     public JwtService() {
@@ -34,7 +34,11 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean jwtSignatureOk(String jwt) {
+    public boolean jwtIsValid(String jwt) {
+        return (hasValidSignature(jwt) && hasValidType(jwt));
+    }
+
+    private boolean hasValidSignature(String jwt) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -46,6 +50,11 @@ public class JwtService {
         }
     }
 
+    private boolean hasValidType(String jwt) {
+        JwtType type = getType(jwt);
+        return (type == JwtType.PAT || type == JwtType.USER_PASS);
+    }
+
     public JwtType getType(String jwt) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
@@ -54,7 +63,6 @@ public class JwtService {
                     .parseClaimsJws(jwt);
             String typeString = claims.getBody().get("type", String.class);
             return JwtType.valueOf(typeString);
-
         } catch (SignatureException e) {
             return null;
         }

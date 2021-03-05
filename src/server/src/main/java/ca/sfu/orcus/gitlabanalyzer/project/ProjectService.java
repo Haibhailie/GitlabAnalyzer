@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
-import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
@@ -17,18 +17,18 @@ import java.util.List;
 @Service
 public class ProjectService {
     private final ProjectRepository projectRepository;
-    private final AuthenticationService authService;
+    private final GitLabApiWrapper gitLabApiWrapper;
     private final MemberService memberService;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, AuthenticationService authService, MemberService memberService) {
+    public ProjectService(ProjectRepository projectRepository, GitLabApiWrapper gitLabApiWrapper, MemberService memberService) {
         this.projectRepository = projectRepository;
-        this.authService = authService;
+        this.gitLabApiWrapper = gitLabApiWrapper;
         this.memberService = memberService;
     }
 
     public List<ProjectDto> getAllProjects(String jwt) {
-        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
             return getAllProjects(gitLabApi);
         } else {
@@ -52,7 +52,7 @@ public class ProjectService {
     }
 
     public ProjectExtendedDto getProject(String jwt, int projectId) {
-        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
             return getProject(gitLabApi, projectId);
         } else {
