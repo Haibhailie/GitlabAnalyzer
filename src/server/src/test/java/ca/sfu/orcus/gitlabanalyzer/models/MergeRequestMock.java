@@ -1,6 +1,12 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDiffDto;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
+import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.*;
+import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -145,4 +151,33 @@ public class MergeRequestMock {
 
         return presentTempDiff;
     }
+
+    public List<MergeRequestDto> generateTestMergeRequestDto(List<MergeRequest> mergeRequests, GitLabApi gitLabApi) throws GitLabApiException {
+        List<MergeRequestDto> expectedMergeRequestDtoList = new ArrayList<>();
+        for (MergeRequest m : mergeRequests) {
+            if (m.getCreatedAt().after(dateSince) && m.getCreatedAt().before(dateUntil))
+                expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m));
+        }
+        return expectedMergeRequestDtoList;
+    }
+
+    public List<CommitDto> generateTestCommitDto(List<Commit> commits, GitLabApi gitLabApi) throws GitLabApiException {
+        List<CommitDto> expectedCommitDtoList = new ArrayList<>();
+        for (Commit c : commits) {
+            expectedCommitDtoList.add(new CommitDto(gitLabApi, projectId, c));
+        }
+        return expectedCommitDtoList;
+    }
+
+    public List<MergeRequestDiffDto> generateMergeRequestDiffDto(List<Diff> diffs, List<Commit> commits, GitLabApi gitLabApi) {
+        List<MergeRequestDiffDto> expectedMergeRequestDiffDto = new ArrayList<>();
+        int indexIterator = 0;
+        for (Diff d : diffs) {
+            expectedMergeRequestDiffDto.add(new MergeRequestDiffDto(commits.get(indexIterator), d));
+            indexIterator++;
+        }
+        return expectedMergeRequestDiffDto;
+    }
+
+
 }
