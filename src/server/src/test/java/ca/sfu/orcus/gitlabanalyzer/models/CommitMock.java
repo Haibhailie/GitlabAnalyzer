@@ -20,7 +20,6 @@ public class CommitMock {
 
     public static final String mockCodeDiff = "RandomChangesGoHereLol";
 
-
     public static Commit createCommit(CommitStats commitStats) {
         Commit commit = new Commit();
 
@@ -38,9 +37,6 @@ public class CommitMock {
 
     public static List<Commit> createTestCommitList() {
         Commit commitA = new Commit();
-        Commit commitB = new Commit();
-        List<Commit> commits = new ArrayList<>();
-
         commitA.setTitle(defaultTitle);
         commitA.setAuthorName(defaultAuthor);
         commitA.setAuthorEmail(defaultEmail);
@@ -50,6 +46,7 @@ public class CommitMock {
         commitA.setStats(CommitStatsMock.createCommitStats());
         commitA.setShortId(defaultSha);
 
+        Commit commitB = new Commit();
         commitB.setTitle(defaultTitle);
         commitB.setAuthorName(defaultAuthor);
         commitB.setAuthorEmail(defaultEmail);
@@ -59,17 +56,14 @@ public class CommitMock {
         commitB.setStats(CommitStatsMock.createCommitStats());
         commitB.setShortId(defaultSha);
 
+        List<Commit> commits = new ArrayList<>();
         commits.add(commitA);
         commits.add(commitB);
         return commits;
     }
 
     public static List<Diff> createTestDiffList() {
-        List<Diff> presentTempDiff = new ArrayList<>();
-
         Diff diffA = new Diff();
-        Diff diffB = new Diff();
-
         diffA.setDiff(mockCodeDiff);
         diffA.setDeletedFile(false);
         diffA.setNewFile(false);
@@ -77,6 +71,7 @@ public class CommitMock {
         diffA.setNewPath("Root");
         diffA.setOldPath("Not Root");
 
+        Diff diffB = new Diff();
         diffB.setDiff(mockCodeDiff);
         diffB.setDeletedFile(false);
         diffB.setNewFile(true);
@@ -84,6 +79,7 @@ public class CommitMock {
         diffB.setNewPath("Root");
         diffB.setOldPath("Not Root");
 
+        List<Diff> presentTempDiff = new ArrayList<>();
         presentTempDiff.add(diffA);
         presentTempDiff.add(diffB);
 

@@ -6,12 +6,10 @@ import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitStatsMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
+import ca.sfu.orcus.gitlabanalyzer.models.ProjectStatisticsMock;
 import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import org.gitlab4j.api.*;
-import org.gitlab4j.api.models.Commit;
-import org.gitlab4j.api.models.CommitStats;
-import org.gitlab4j.api.models.Diff;
-import org.gitlab4j.api.models.Project;
+import org.gitlab4j.api.models.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,15 +43,13 @@ public class CommitServiceTests {
     private static final Date since = CommitMock.defaultDate;
     private static final Date until = CommitMock.defaultDate;
 
-    private static final String defaultBranch = "master";
+    private static final ProjectStatistics projectStatistics = ProjectStatisticsMock.createProjectStatistics();
     private static Project project;
-
 
     @BeforeEach
     public void setup() {
         gitLabApi = GitLabApiMock.getGitLabApiMock();
-        project = new Project();
-        project.setDefaultBranch(defaultBranch);
+        project = ProjectMock.createProject(projectStatistics);
     }
 
     // Testing the null checks
@@ -102,13 +98,13 @@ public class CommitServiceTests {
         CommitStats commitStats = CommitStatsMock.createCommitStats();
         Commit commit = CommitMock.createCommit(commitStats);
 
-        when(gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until)).thenReturn(commitList);
+        when(gitLabApi.getCommitsApi().getCommits(projectId, ProjectMock.defaultdefaultBranch, since, until)).thenReturn(commitList);
         when(gitLabApi.getProjectApi().getProject(projectId)).thenReturn(project);
         when(gitLabApi.getCommitsApi().getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
 
         List<CommitDto> commitDtos = commitService.getAllCommits(jwt, projectId, since, until);
         List<CommitDto> expectedCommitDtos = new ArrayList<>();
-        for(Commit c : commitList) {
+        for (Commit c : commitList) {
             expectedCommitDtos.add(new CommitDto(gitLabApi, projectId, c));
         }
         assertNotNull(commitDtos);
@@ -145,7 +141,7 @@ public class CommitServiceTests {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
         when(gitLabApi.getProjectApi().getProject(projectId)).thenReturn(project);
-        when(commitsApi.getCommits(projectId, defaultBranch, since, until)).thenThrow(GitLabApiException.class);
+        when(commitsApi.getCommits(projectId, ProjectMock.defaultdefaultBranch, since, until)).thenThrow(GitLabApiException.class);
         assertNull(commitService.getAllCommits(jwt, projectId, since, until));
     }
 
