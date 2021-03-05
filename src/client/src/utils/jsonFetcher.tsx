@@ -1,8 +1,12 @@
 import { URLBASE } from './constants'
 
+export interface jsonFetcherOptions extends RequestInit {
+  responseIsEmpty?: boolean
+}
+
 const jsonFetcher = <DataType extends unknown>(
   url: string,
-  options?: RequestInit
+  options?: jsonFetcherOptions
 ) => {
   options = {
     credentials: 'include',
@@ -12,7 +16,9 @@ const jsonFetcher = <DataType extends unknown>(
   return new Promise<DataType>((resolve, reject) => {
     fetch(`${URLBASE}${url}`, options)
       .then(res => {
-        if (res.status === 200) {
+        if (options?.responseIsEmpty) {
+          resolve(res.status as DataType)
+        } else if (res.status === 200) {
           res.json().then(resolve)
         } else {
           reject(new Error(res.status.toString()))
