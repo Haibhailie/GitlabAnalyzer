@@ -83,6 +83,7 @@
                     <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
                     <violationSeverity>warning</violationSeverity>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
                 </configuration>
                 <dependencies>
                     <dependency>
