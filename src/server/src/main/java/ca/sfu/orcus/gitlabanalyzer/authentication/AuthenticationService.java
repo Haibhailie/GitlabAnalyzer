@@ -33,7 +33,7 @@ public class AuthenticationService {
 
     private String getUsername(AuthenticationUser newUser) throws IllegalArgumentException, BadRequestException {
         String pat = newUser.getPat();
-        if (pat == null || pat.equals("")) {
+        if (pat == null) {
             throw new BadRequestException("Pat is empty");
         }
         try {
@@ -53,7 +53,7 @@ public class AuthenticationService {
     }
 
     private String getAuthToken(String username, String password) throws IllegalArgumentException, BadRequestException {
-        if (username == null || username.equals("") || password == null || password.equals("")) {
+        if (username == null || password == null) {
             throw new BadRequestException("Username or Password are empty");
         }
         Optional<String> authToken = gitLabApiWrapper.getOAuth2AuthToken(username, password);
