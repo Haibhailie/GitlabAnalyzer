@@ -111,6 +111,22 @@ public class CommitServiceTests {
     }
 
     @Test
+    public void getCommitsEmptyList() throws GitLabApiException {
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+
+        List<Commit> commitList = new ArrayList<>();
+
+        when(gitLabApi.getCommitsApi().getCommits(projectId, ProjectMock.defaultdefaultBranch, since, until)).thenReturn(commitList);
+        when(gitLabApi.getProjectApi().getProject(projectId)).thenReturn(project);
+
+        List<CommitDto> commitDtos = commitService.getAllCommits(jwt, projectId, since, until);
+        List<CommitDto> expectedCommitDtos = new ArrayList<>();
+
+        assertNotNull(commitDtos);
+        assertEquals(commitDtos, expectedCommitDtos);
+    }
+
+    @Test
     public void testGetSingleCommitDiff() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
