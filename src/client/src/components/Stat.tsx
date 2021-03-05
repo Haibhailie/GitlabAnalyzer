@@ -1,7 +1,8 @@
 import { Tooltip } from '@material-ui/core'
-import info from '../assets/info.svg'
 
 import styles from '../css/Stat.module.css'
+
+import info from '../assets/info.svg'
 
 export interface IStatProps {
   name: string
@@ -18,11 +19,8 @@ const Stat = ({ name, value, description }: IStatProps) => {
           <Tooltip title={description} placement="right">
             <img className={styles.icon} src={info} />
           </Tooltip>
-        ) : (
-          ''
-        )}
+        ) : null}
       </p>
-
       <p className={styles.value}>{value}</p>
     </div>
   )

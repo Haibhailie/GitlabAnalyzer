@@ -1,6 +1,5 @@
 import styles from '../css/StatSummary.module.css'
-import Stat from './Stat'
-import { IStatProps } from './Stat'
+import Stat, { IStatProps } from './Stat'
 
 export interface IStatSummaryProps {
   statData: Array<IStatProps>

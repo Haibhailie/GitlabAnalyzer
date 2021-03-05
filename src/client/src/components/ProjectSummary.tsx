@@ -7,7 +7,6 @@ import ProjectStat from '../components/ProjectStat'
 import ActivityGraph from '../components/ActivityGraph'
 
 import styles from '../css/ProjectSummary.module.css'
-import StatSummary from './StatSummary'
 
 const calcAgeInDays = (birth: number) => {
   const diff = Date.now() - birth
@@ -21,26 +20,6 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
 
   const { id, members, numBranches, numCommits, createdAt, repoSize } = project
 
-  const projectStatData = [
-    {
-      name: 'Members',
-      value: members.length,
-    },
-    {
-      name: 'Total commits',
-      value: numCommits,
-    },
-    {
-      name: 'Files',
-      value: bytesConverter(repoSize),
-      description:
-        'Total size of all files this is a super long description just to test',
-    },
-    {
-      name: 'Branches',
-      value: numBranches,
-    },
-  ]
   return (
     <div className={styles.container}>
       <div className={styles.config}>
@@ -74,7 +53,6 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
             yAxisValue={yAxis}
           />
         </div>
-        <StatSummary statData={projectStatData} />
         <div className={styles.stats}>
           <ProjectStat name="Members" value={members.length} />
           <ProjectStat name="Branches" value={numBranches} />
