@@ -35,7 +35,7 @@ public class MergeRequestService {
         }
     }
 
-    public List<MergeRequestDto> getAllMergeRequests(GitLabApi gitLabApi, int projectId, Date since, Date until) {
+    private List<MergeRequestDto> getAllMergeRequests(GitLabApi gitLabApi, int projectId, Date since, Date until) {
         try {
             List<MergeRequestDto> filteredMergeRequests = new ArrayList<>();
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
@@ -73,19 +73,24 @@ public class MergeRequestService {
     public List<CommitDto> getAllCommitsFromMergeRequest(String jwt, int projectId, int mergeRequestID) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if ((gitLabApi != null)) {
-            List<CommitDto> filteredCommits = new ArrayList<>();
-            try {
-                List<Commit> allCommits = gitLabApi.getMergeRequestApi().getCommits(projectId, mergeRequestID);
-                for (Commit c : allCommits) {
-                    filteredCommits.add(new CommitDto(gitLabApi, projectId, c));
-                }
-                return filteredCommits;
-            } catch (GitLabApiException e) {
-                return null;
-            }
+            return getAllCommitsFromMergeRequest(gitLabApi, projectId, mergeRequestID);
         } else {
             return null;
         }
+    }
+
+    private List<CommitDto> getAllCommitsFromMergeRequest(GitLabApi gitLabApi, int projectId, int mergeRequestID) {
+        List<CommitDto> filteredCommits = new ArrayList<>();
+        try {
+            List<Commit> allCommits = gitLabApi.getMergeRequestApi().getCommits(projectId, mergeRequestID);
+            for (Commit c : allCommits) {
+                filteredCommits.add(new CommitDto(gitLabApi, projectId, c));
+            }
+            return filteredCommits;
+        } catch (GitLabApiException e) {
+            return null;
+        }
+
     }
 
     public List<MergeRequestDiffDto> getDiffFromMergeRequest(String jwt, int projectId, int mergeRequestID) {
