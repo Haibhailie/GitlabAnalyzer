@@ -15,11 +15,11 @@ const Stat = ({ name, value, description }: IStatProps) => {
     <div className={styles.container}>
       <p className={styles.name}>
         {name}
-        {description ? (
+        {description && (
           <Tooltip title={description} placement="right">
             <img className={styles.icon} src={info} />
           </Tooltip>
-        ) : null}
+        )}
       </p>
       <p className={styles.value}>{value}</p>
     </div>
