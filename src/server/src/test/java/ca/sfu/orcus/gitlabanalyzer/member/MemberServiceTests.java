@@ -12,7 +12,7 @@ import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.ProjectApi;
 import org.gitlab4j.api.models.*;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,25 +47,33 @@ public class MemberServiceTests {
     private static final Date since = CommitMock.defaultDate;
     private static final Date until = CommitMock.defaultDate;
 
-    private static final String defaultBranch = "master";
+    private static final ProjectStatistics projectStatistics = ProjectStatisticsMock.createProjectStatistics();
     private static Project project;
 
-    @BeforeAll
+    @BeforeEach
     public void setup() {
         gitLabApi = GitLabApiMock.getGitLabApiMock();
-        project = new Project();
-        project.setDefaultBranch(defaultBranch);
+        project = ProjectMock.createProject(projectStatistics);
 
     }
 
+    // Testing the null checks
     @Test
-    public void nullGitLabApiTest() {
+    public void getAllMembersWithNullGitLabApi() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
-        gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-
         assertNull(memberService.getAllMembers(jwt, projectId));
-        assertNull(memberService.getCommitsByMemberEmail(jwt, projectId, since, until, MemberMock.defaultEmail));
+    }
+
+    @Test
+    public void getMergeRequestsByMemberIDWithNullGitLabApi() {
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
         assertNull(memberService.getMergeRequestsByMemberID(jwt, projectId, since, until, MemberMock.defaultId));
+    }
+
+    @Test
+    public void getCommitsByMemberEmailWithNullGitLabApi() {
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
+        assertNull(memberService.getCommitsByMemberEmail(jwt, projectId, since, until, MemberMock.defaultEmail));
     }
 
     @Test
@@ -94,9 +102,6 @@ public class MemberServiceTests {
 
         List<MergeRequest> mergeRequests = MergeRequestMock.generateTestMergeRequestList();
         List<MergeRequestDto> mergeRequestDtos = new ArrayList<>();
-        for (MergeRequest mr : mergeRequests) {
-            mergeRequestDtos.add(new MergeRequestDto(gitLabApi, projectId, mr));
-        }
 
         int id = MemberMock.defaultId;
         when(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, since, until, id)).thenReturn(mergeRequestDtos);
@@ -112,11 +117,10 @@ public class MemberServiceTests {
     public void getCommitsByMemberEmailTest() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
-        List<Commit> commits = CommitMock.createTestCommitList();
+        List<Commit> commitList = CommitMock.createTestCommitList();
+        CommitStats commitStats = CommitStatsMock.createCommitStats();
+        Commit commit = CommitMock.createCommit(commitStats);
         List<CommitDto> commitDtos = new ArrayList<>();
-        for (Commit c : commits) {
-            commitDtos.add(new CommitDto(gitLabApi, projectId, c));
-        }
 
         String email = MemberMock.defaultEmail;
         when(commitService.getAllCommitDtos(gitLabApi, projectId, since, until,email)).thenReturn(commitDtos);
