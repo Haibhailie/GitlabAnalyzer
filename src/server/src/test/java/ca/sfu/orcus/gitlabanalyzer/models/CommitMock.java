@@ -36,27 +36,10 @@ public class CommitMock {
     }
 
     public static List<Commit> createTestCommitList() {
-        Commit commitA = new Commit();
-        commitA.setTitle(defaultTitle);
-        commitA.setAuthorName(defaultAuthor);
-        commitA.setAuthorEmail(defaultEmail);
-        commitA.setMessage(defaultMessage);
-        commitA.setId(defaultSha);
-        commitA.setCommittedDate(defaultDate);
-        commitA.setStats(CommitStatsMock.createCommitStats());
-        commitA.setShortId(defaultSha);
-
-        Commit commitB = new Commit();
-        commitB.setTitle(defaultTitle);
-        commitB.setAuthorName(defaultAuthor);
-        commitB.setAuthorEmail(defaultEmail);
-        commitB.setMessage(defaultMessage);
-        commitB.setId(defaultSha);
-        commitB.setCommittedDate(defaultDate);
-        commitB.setStats(CommitStatsMock.createCommitStats());
-        commitB.setShortId(defaultSha);
-
         List<Commit> commits = new ArrayList<>();
+        Commit commitA = createCommit(CommitStatsMock.createCommitStats());
+        Commit commitB = createCommit(CommitStatsMock.createCommitStats());
+
         commits.add(commitA);
         commits.add(commitB);
         return commits;
