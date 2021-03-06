@@ -18,6 +18,8 @@
   --font-header: 400 24px Poppins;
   --font-sub-header: 400 18px Poppins;
   --font-item-label: 400 16px Poppins;
+  --font-stat-label: 400 16px Mulish;
+  --font-stat-value: 600 24px Mulish;
   --font-small: 400 14px Poppins;
   --font-button: 400 26px Poppins;
   --header-height: 72px;
