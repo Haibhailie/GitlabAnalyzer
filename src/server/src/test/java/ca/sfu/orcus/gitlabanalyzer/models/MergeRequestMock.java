@@ -6,7 +6,6 @@ import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.*;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 
 import java.util.ArrayList;
 import java.util.Date;
