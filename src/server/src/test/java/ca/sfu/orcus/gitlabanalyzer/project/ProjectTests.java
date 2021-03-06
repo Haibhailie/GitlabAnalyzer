@@ -158,7 +158,7 @@ public class ProjectTests {
         String defaultRole = MemberUtils.getMemberRoleFromAccessLevel(MemberMock.defaultAccessLevel.value);
 
         List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
-        for (Project p: projects) {
+        for (Project p : projects) {
             expectedProjectDtos.add(new ProjectDto(p, defaultRole));
         }
 
