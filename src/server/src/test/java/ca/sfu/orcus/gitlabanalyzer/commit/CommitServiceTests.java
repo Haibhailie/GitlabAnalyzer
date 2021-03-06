@@ -27,7 +27,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class CommitServiceTests {
     @Mock private GitLabApiWrapper gitLabApiWrapper;
-    @Mock private CommitsApi commitsApi;
 
     // Class to be tested
     @InjectMocks
@@ -138,25 +137,22 @@ public class CommitServiceTests {
     @Test
     public void getSingleCommitException() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
-        when(commitsApi.getCommit(projectId, CommitMock.defaultSha)).thenThrow(GitLabApiException.class);
+        when(gitLabApi.getCommitsApi().getCommit(projectId, CommitMock.defaultSha)).thenThrow(GitLabApiException.class);
         assertNull(commitService.getSingleCommit(jwt, projectId, CommitMock.defaultSha));
     }
 
     @Test
     public void getAllCommitsException() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
         when(gitLabApi.getProjectApi().getProject(projectId)).thenReturn(project);
-        when(commitsApi.getCommits(projectId, ProjectMock.defaultDefaultBranch, since, until)).thenThrow(GitLabApiException.class);
+        when(gitLabApi.getCommitsApi().getCommits(projectId, ProjectMock.defaultDefaultBranch, since, until)).thenThrow(GitLabApiException.class);
         assertNull(commitService.getAllCommits(jwt, projectId, since, until));
     }
 
     @Test
     public void getSingleCommitDiffException() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
-        when(commitsApi.getDiff(projectId, CommitMock.defaultSha)).thenThrow(GitLabApiException.class);
+        when(gitLabApi.getCommitsApi().getDiff(projectId, CommitMock.defaultSha)).thenThrow(GitLabApiException.class);
         assertNull(commitService.getDiffOfCommit(jwt, projectId, CommitMock.defaultSha));
     }
 }
