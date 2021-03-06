@@ -7,11 +7,13 @@ import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.MemberMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
-import ca.sfu.orcus.gitlabanalyzer.models.ProjectStatisticsMock;
 import ca.sfu.orcus.gitlabanalyzer.models.UserMock;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.*;
+import org.gitlab4j.api.models.Branch;
+import org.gitlab4j.api.models.Member;
+import org.gitlab4j.api.models.Project;
+import org.gitlab4j.api.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,8 +62,7 @@ public class ProjectTests {
     public void getSingleProject() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
-        ProjectStatistics projectStatistics = ProjectStatisticsMock.createProjectStatistics();
-        Project project = ProjectMock.createProject(projectStatistics);
+        Project project = ProjectMock.createProject();
         when(gitLabApi.getProjectApi().getProject(ProjectMock.defaultId, true)).thenReturn(project);
 
         List<MemberDto> memberDtos = new ArrayList<>();
@@ -97,8 +98,7 @@ public class ProjectTests {
         List<Project> memberProjects = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
-            ProjectStatistics projectStatistics = ProjectStatisticsMock.createProjectStatistics();
-            Project project = ProjectMock.createProject(projectStatistics);
+            Project project = ProjectMock.createProject();
             memberProjects.add(project);
 
             Member member = MemberMock.createMember(user.getId(), MemberMock.defaultAccessLevel);
