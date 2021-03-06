@@ -66,7 +66,6 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
         List<MergeRequestDto> expectedMergeRequestDtoList = generateTestMergeRequestDto(mergeRequests, gitLabApi);
         assertNotNull(mergeRequestDtoList);
-        assertEquals(expectedMergeRequestDtoList.size(), mergeRequestDtoList.size());
         assertEquals(expectedMergeRequestDtoList, mergeRequestDtoList);
     }
 
@@ -86,7 +85,6 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId);
         List<MergeRequestDto> expectedMergeRequestDtoList = generateTestMergeRequestDto(mergeRequests, gitLabApi);
         assertNotNull(mergeRequestDtoList);
-        assertEquals(expectedMergeRequestDtoList.size(), mergeRequestDtoList.size());
         assertEquals(mergeRequestDtoList, expectedMergeRequestDtoList);
     }
 
@@ -105,7 +103,6 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(commitsApi.getCommit(projectId, sha)).thenReturn(commits.get(0));
         List<CommitDto> commitDtoList = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA);
         List<CommitDto> expectedCommitDtoList = generateTestCommitDto(commits, gitLabApi);
-        assertEquals(expectedCommitDtoList.size(), commitDtoList.size());
         assertEquals(expectedCommitDtoList, commitDtoList);
     }
 
@@ -138,7 +135,6 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         List<MergeRequestDiffDto> mergeRequestDiffDtoList = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA);
         List<MergeRequestDiffDto> expectedMergeRequestDiffDto = generateMergeRequestDiffDto(diffs, commits);
         assertNotNull(mergeRequestDiffDtoList);
-        assertEquals(expectedMergeRequestDiffDto.size(), mergeRequestDiffDtoList.size());
         assertEquals(expectedMergeRequestDiffDto, mergeRequestDiffDtoList);
     }
 

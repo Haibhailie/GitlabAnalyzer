@@ -129,7 +129,6 @@ public class MergeRequestMock {
         List<Diff> presentTempDiff = new ArrayList<>();
 
         Diff diffA = new Diff();
-        Diff diffB = new Diff();
 
         diffA.setDiff(mockCodeDiff);
         diffA.setDeletedFile(false);
@@ -138,16 +137,7 @@ public class MergeRequestMock {
         diffA.setNewPath("Root");
         diffA.setOldPath("Not Root");
 
-        diffB.setDiff(mockCodeDiff);
-        diffB.setDeletedFile(false);
-        diffB.setNewFile(true);
-        diffB.setRenamedFile(false);
-        diffB.setNewPath("Root");
-        diffB.setOldPath("Not Root");
-
         presentTempDiff.add(diffA);
-        presentTempDiff.add(diffB);
-
         return presentTempDiff;
     }
 
