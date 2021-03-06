@@ -31,11 +31,11 @@ public class MergeRequestService {
         if (gitLabApi == null) {
             return null;
         } else {
-            return getAllMergeRequests(gitLabApi, projectId, since, until);
+            return returnAllMergeRequests(gitLabApi, projectId, since, until);
         }
     }
 
-    private List<MergeRequestDto> getAllMergeRequests(GitLabApi gitLabApi, int projectId, Date since, Date until) {
+    private List<MergeRequestDto> returnAllMergeRequests(GitLabApi gitLabApi, int projectId, Date since, Date until) {
         try {
             List<MergeRequestDto> filteredMergeRequests = new ArrayList<>();
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
@@ -51,7 +51,7 @@ public class MergeRequestService {
         }
     }
 
-    public List<MergeRequestDto> getAllMergeRequests(GitLabApi gitLabApi, int projectId, Date since, Date until, int memberId) {
+    public List<MergeRequestDto> returnAllMergeRequests(GitLabApi gitLabApi, int projectId, Date since, Date until, int memberId) {
         if (gitLabApi == null) {
             return null;
         }
@@ -73,13 +73,13 @@ public class MergeRequestService {
     public List<CommitDto> getAllCommitsFromMergeRequest(String jwt, int projectId, int mergeRequestID) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if ((gitLabApi != null)) {
-            return getAllCommitsFromMergeRequest(gitLabApi, projectId, mergeRequestID);
+            return returnAllCommitsFromMergeRequest(gitLabApi, projectId, mergeRequestID);
         } else {
             return null;
         }
     }
 
-    private List<CommitDto> getAllCommitsFromMergeRequest(GitLabApi gitLabApi, int projectId, int mergeRequestID) {
+    private List<CommitDto> returnAllCommitsFromMergeRequest(GitLabApi gitLabApi, int projectId, int mergeRequestID) {
         List<CommitDto> filteredCommits = new ArrayList<>();
         try {
             List<Commit> allCommits = gitLabApi.getMergeRequestApi().getCommits(projectId, mergeRequestID);
@@ -95,13 +95,13 @@ public class MergeRequestService {
     public List<MergeRequestDiffDto> getDiffFromMergeRequest(String jwt, int projectId, int mergeRequestID) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if ((gitLabApi != null)) {
-            return getDiffFromMergeRequest(gitLabApi, projectId, mergeRequestID);
+            return returnDiffFromMergeRequest(gitLabApi, projectId, mergeRequestID);
         } else {
             return null;
         }
     }
 
-    private List<MergeRequestDiffDto> getDiffFromMergeRequest(GitLabApi gitLabApi, int projectId, int mergeRequestID) {
+    private List<MergeRequestDiffDto> returnDiffFromMergeRequest(GitLabApi gitLabApi, int projectId, int mergeRequestID) {
         List<MergeRequestDiffDto> listDiff = new ArrayList<>();
         try {
             List<MergeRequest> mergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);

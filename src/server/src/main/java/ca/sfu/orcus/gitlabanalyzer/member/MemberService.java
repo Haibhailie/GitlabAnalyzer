@@ -66,6 +66,6 @@ public class MemberService {
 
     public List<MergeRequestDto> getMergeRequestsByMemberID(String jwt, int projectId, Date since, Date until, int memberId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        return mergeRequestService.getAllMergeRequests(gitLabApi, projectId, since, until, memberId);
+        return mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId);
     }
 }

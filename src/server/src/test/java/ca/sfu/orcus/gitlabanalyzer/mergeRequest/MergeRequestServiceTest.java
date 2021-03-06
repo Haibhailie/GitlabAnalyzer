@@ -47,17 +47,15 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
         gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
-        assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
+        assertNull(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
         assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA));
         assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA));
     }
 
     @Test
     public void getAllMergeRequestWithoutMemberIDTest() throws GitLabApiException {
-
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
-        when(gitLabApi.getNotesApi()).thenReturn(notesApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
         List<MergeRequestDto> expectedMergeRequestDtoList = generateTestMergeRequestDto(mergeRequests, gitLabApi);
@@ -66,15 +64,6 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         assertEquals(expectedMergeRequestDtoList, mergeRequestDtoList);
     }
 
-    @Test
-    public void getAllMergeRequestsWithoutMemberIDTestNotNull() throws GitLabApiException {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
-        when(gitLabApi.getNotesApi()).thenReturn(notesApi);
-        when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
-        List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
-        assertNotNull(mergeRequestDtoList);
-    }
 
     @Test
     public void getAllMergeRequestsWithoutMemberIDTestException() throws GitLabApiException {
@@ -86,12 +75,11 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @Test
     public void getAllMergeRequestWithMemberIDTest() throws GitLabApiException {
-
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
         when(gitLabApi.getNotesApi()).thenReturn(notesApi);
         when(notesApi.getMergeRequestNotes(projectId, mergeRequestIdA)).thenReturn(notesList);
-        List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId);
+        List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId);
         List<MergeRequestDto> expectedMergeRequestDtoList = generateTestMergeRequestDto(mergeRequests, gitLabApi);
         assertNotNull(mergeRequestDtoList);
         assertEquals(expectedMergeRequestDtoList.size(), mergeRequestDtoList.size());
@@ -102,12 +90,11 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     public void getAllMergeRequestsWithMemberIDTestException() throws GitLabApiException {
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenThrow(GitLabApiException.class);
-        assertNull(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
+        assertNull(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
     }
 
     @Test
     public void getAllCommitsFromMergeRequestTest() throws GitLabApiException {
-
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
