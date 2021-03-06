@@ -24,13 +24,6 @@ class AuthenticationServiceTest {
     @InjectMocks
     private AuthenticationService authService;
 
-    @BeforeAll
-    static void setup() {
-        authRepository = mock(AuthenticationRepository.class);
-        jwtService = mock(JwtService.class);
-        gitLabApiWrapper = mock(GitLabApiWrapper.class);
-    }
-
     @Test
     public void failRegisterNewUserByPatForNullPat() {
         AuthenticationUser user = new AuthenticationUser(null);
