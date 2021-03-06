@@ -45,13 +45,12 @@ public class MemberServiceTests {
     private static final Date since = CommitMock.defaultDate;
     private static final Date until = CommitMock.defaultDate;
 
-    private static final ProjectStatistics projectStatistics = ProjectStatisticsMock.createProjectStatistics();
     private static Project project;
 
     @BeforeEach
     public void setup() {
         gitLabApi = GitLabApiMock.getGitLabApiMock();
-        project = ProjectMock.createProject(projectStatistics);
+        project = ProjectMock.createProject();
 
     }
 
@@ -74,6 +73,7 @@ public class MemberServiceTests {
         assertNull(memberService.getCommitsByMemberEmail(jwt, projectId, since, until, MemberMock.defaultEmail));
     }
 
+    // Testing the MemberService methods
     @Test
     public void getAllMembersTest() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
@@ -116,8 +116,6 @@ public class MemberServiceTests {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
         List<Commit> commitList = CommitMock.createTestCommitList();
-        CommitStats commitStats = CommitStatsMock.createCommitStats();
-        Commit commit = CommitMock.createCommit(commitStats);
         List<CommitDto> commitDtos = new ArrayList<>();
 
         String email = MemberMock.defaultEmail;
