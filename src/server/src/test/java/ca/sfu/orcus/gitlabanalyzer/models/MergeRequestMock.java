@@ -84,8 +84,6 @@ public class MergeRequestMock {
     }
 
     public static List<Commit> generateMRTestCommitList() {
-
-
         Commit commitA = new Commit();
         Commit commitB = new Commit();
         List<Commit> generatedCommitList = new ArrayList<>();
