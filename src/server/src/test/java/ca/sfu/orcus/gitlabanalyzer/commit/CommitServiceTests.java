@@ -82,7 +82,6 @@ public class CommitServiceTests {
         CommitDto commitDto = commitService.getSingleCommit(jwt, projectId, CommitMock.defaultSha);
         CommitDto expectedCommitDto = new CommitDto(gitLabApi, projectId, commit);
 
-        assertNotNull(commitDto);
         assertEquals(commitDto, expectedCommitDto);
     }
 
@@ -102,7 +101,6 @@ public class CommitServiceTests {
         for (Commit c : commitList) {
             expectedCommitDtos.add(new CommitDto(gitLabApi, projectId, c));
         }
-        assertNotNull(commitDtos);
         assertEquals(commitDtos, expectedCommitDtos);
     }
 
@@ -118,7 +116,6 @@ public class CommitServiceTests {
         List<CommitDto> commitDtos = commitService.getAllCommits(jwt, projectId, since, until);
         List<CommitDto> expectedCommitDtos = new ArrayList<>();
 
-        assertNotNull(commitDtos);
         assertEquals(commitDtos, expectedCommitDtos);
     }
 
@@ -133,7 +130,6 @@ public class CommitServiceTests {
         List<Diff> commitDiff = commitService.getDiffOfCommit(jwt, projectId, CommitMock.defaultSha);
         List<Diff> expectedCommitDiff = new ArrayList<>(diffList);
 
-        assertNotNull(commitDiff);
         assertEquals(commitDiff, expectedCommitDiff);
     }
 
