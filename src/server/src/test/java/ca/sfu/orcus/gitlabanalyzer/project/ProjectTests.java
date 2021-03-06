@@ -142,13 +142,13 @@ public class ProjectTests {
         for (int i = 0; i < 10; i++) {
             Project project = ProjectMock.createProject();
             manyProjects.add(project);
-            addCurrentUserToProject(project.getId(), userId);
+            addUserToProject(userId, project.getId());
         }
 
         when(gitLabApi.getProjectApi().getMemberProjects()).thenReturn(manyProjects);
     }
 
-    private void addCurrentUserToProject(int projectId, int userId) throws GitLabApiException {
+    private void addUserToProject(int userId, int projectId) throws GitLabApiException {
         Member member = MemberMock.createMember(userId, MemberMock.defaultAccessLevel);
         when(gitLabApi.getProjectApi().getMember(projectId, userId)).thenReturn(member);
     }
