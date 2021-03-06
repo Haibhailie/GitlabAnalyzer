@@ -22,22 +22,22 @@ class JwtServiceTest {
 
     @Test
     void jwtSignatureOkPat() {
-        assertTrue(jwtService.jwtSignatureOk(patJwt));
+        assertTrue(jwtService.jwtIsValid(patJwt));
     }
 
     @Test
     void jwtSignatureOkUserPass() {
-        assertTrue(jwtService.jwtSignatureOk(userPassJwt));
+        assertTrue(jwtService.jwtIsValid(userPassJwt));
     }
 
     @Test
     void jwtSignatureFailForBadSignature() {
-        assertFalse(jwtService.jwtSignatureOk(badSignatureJwt));
+        assertFalse(jwtService.jwtIsValid(badSignatureJwt));
     }
 
     @Test
     void jwtSignatureFailForMalformedJwt() {
-        assertFalse(jwtService.jwtSignatureOk("bad jwt"));
+        assertFalse(jwtService.jwtIsValid("bad jwt"));
     }
 
     @Test
