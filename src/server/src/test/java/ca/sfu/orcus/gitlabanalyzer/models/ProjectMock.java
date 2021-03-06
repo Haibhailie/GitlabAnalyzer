@@ -15,7 +15,7 @@ public final class ProjectMock {
     public static final String defaultName = UUID.randomUUID().toString();
     public static final Date defaultCreatedAt = new Date();
     public static final Date defaultLastActivityAt = new Date();
-    public static final String defaultdefaultBranch = "master";
+    public static final String defaultDefaultBranch = "master";
 
     public static Project createProject(ProjectStatistics projectStatistics) {
         return createProject(defaultId,
@@ -23,7 +23,7 @@ public final class ProjectMock {
                 projectStatistics,
                 defaultCreatedAt,
                 defaultLastActivityAt,
-                defaultdefaultBranch);
+                defaultDefaultBranch);
     }
 
     public static Project createProject(int id,
