@@ -1,7 +1,7 @@
-import { URLBASE } from '../utils/constants'
 import { useHistory } from 'react-router-dom'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
+import jsonFetcher from '../utils/jsonFetcher'
 
 import LoginFields from '../components/LoginFields'
 
@@ -12,13 +12,14 @@ import astronaut from '../assets/splash.svg'
 const Login = () => {
   const history = useHistory()
   const { Suspense, error } = useSuspense<null, Error>((setData, setError) => {
-    fetch(`${URLBASE}/api/ping`, {
+    jsonFetcher('/api/ping', {
       credentials: 'include',
+      responseIsEmpty: true,
     })
-      .then(res => {
-        if (res.status === 200) {
+      .then(resCode => {
+        if (resCode === 200) {
           history.push('/home')
-        } else if (res.status === 500) {
+        } else if (resCode === 500) {
           setError(new Error('Server error. Please try again.'))
         } else {
           setData(null)
