@@ -9,8 +9,8 @@ import java.util.*;
 public class CommitMock {
     private static final Random rand = new Random();
     private static final int upperBound = 1000;
-    public static final int defaultId = rand.nextInt(upperBound);
 
+    public static final int defaultId = rand.nextInt(upperBound);
     public static final String defaultTitle = UUID.randomUUID().toString();
     public static final String defaultAuthor = UUID.randomUUID().toString();
     public static final String defaultEmail = UUID.randomUUID().toString();
@@ -20,7 +20,11 @@ public class CommitMock {
 
     public static final String mockCodeDiff = "RandomChangesGoHereLol";
 
-    public static Commit createCommit(CommitStats commitStats) {
+    public static final int defaultNumAdditions = rand.nextInt(upperBound);
+    public static final int defaultNumDeletions = rand.nextInt(upperBound);
+    public static final int defaultNumTotal = defaultNumAdditions + defaultNumDeletions;
+
+    public static Commit createCommit() {
         Commit commit = new Commit();
 
         commit.setTitle(defaultTitle);
@@ -29,34 +33,27 @@ public class CommitMock {
         commit.setMessage(defaultMessage);
         commit.setId(defaultSha);
         commit.setCommittedDate(defaultDate);
-        commit.setStats(commitStats);
+        commit.setStats(createCommitStats());
         commit.setShortId(defaultSha);
 
         return commit;
     }
 
+    public static CommitStats createCommitStats() {
+        CommitStats commitStats = new CommitStats();
+
+        commitStats.setAdditions(defaultNumAdditions);
+        commitStats.setDeletions(defaultNumDeletions);
+        commitStats.setTotal(defaultNumTotal);
+
+        return commitStats;
+    }
+
     public static List<Commit> createTestCommitList() {
-        Commit commitA = new Commit();
-        commitA.setTitle(defaultTitle);
-        commitA.setAuthorName(defaultAuthor);
-        commitA.setAuthorEmail(defaultEmail);
-        commitA.setMessage(defaultMessage);
-        commitA.setId(defaultSha);
-        commitA.setCommittedDate(defaultDate);
-        commitA.setStats(CommitStatsMock.createCommitStats());
-        commitA.setShortId(defaultSha);
-
-        Commit commitB = new Commit();
-        commitB.setTitle(defaultTitle);
-        commitB.setAuthorName(defaultAuthor);
-        commitB.setAuthorEmail(defaultEmail);
-        commitB.setMessage(defaultMessage);
-        commitB.setId(defaultSha);
-        commitB.setCommittedDate(defaultDate);
-        commitB.setStats(CommitStatsMock.createCommitStats());
-        commitB.setShortId(defaultSha);
-
         List<Commit> commits = new ArrayList<>();
+        Commit commitA = createCommit();
+        Commit commitB = createCommit();
+
         commits.add(commitA);
         commits.add(commitB);
         return commits;
