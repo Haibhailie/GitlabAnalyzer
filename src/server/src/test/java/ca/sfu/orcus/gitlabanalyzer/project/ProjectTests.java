@@ -7,7 +7,6 @@ import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.MemberMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
-import ca.sfu.orcus.gitlabanalyzer.models.ProjectStatisticsMock;
 import ca.sfu.orcus.gitlabanalyzer.models.UserMock;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
