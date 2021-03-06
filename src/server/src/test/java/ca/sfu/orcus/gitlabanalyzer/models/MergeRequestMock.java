@@ -142,8 +142,9 @@ public class MergeRequestMock {
     public List<MergeRequestDto> generateTestMergeRequestDto(List<MergeRequest> mergeRequests, GitLabApi gitLabApi) throws GitLabApiException {
         List<MergeRequestDto> expectedMergeRequestDtoList = new ArrayList<>();
         for (MergeRequest m : mergeRequests) {
-            if (m.getCreatedAt().after(dateSince) && m.getCreatedAt().before(dateUntil))
+            if (m.getCreatedAt().after(dateSince) && m.getCreatedAt().before(dateUntil)) {
                 expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m));
+            }
         }
         return expectedMergeRequestDtoList;
     }
@@ -165,6 +166,5 @@ public class MergeRequestMock {
         }
         return expectedMergeRequestDiffDto;
     }
-
 
 }
