@@ -13,14 +13,15 @@ public final class ProjectMock {
 
     public static final int defaultId = rand.nextInt(upperBound);
     public static final String defaultName = UUID.randomUUID().toString();
+    public static final ProjectStatistics defaultProjectStatistics = ProjectStatisticsMock.createProjectStatistics();
     public static final Date defaultCreatedAt = new Date();
     public static final Date defaultLastActivityAt = new Date();
     public static final String defaultDefaultBranch = "master";
 
-    public static Project createProject(ProjectStatistics projectStatistics) {
+    public static Project createProject() {
         return createProject(defaultId,
                 defaultName,
-                projectStatistics,
+                defaultProjectStatistics,
                 defaultCreatedAt,
                 defaultLastActivityAt,
                 defaultDefaultBranch);
