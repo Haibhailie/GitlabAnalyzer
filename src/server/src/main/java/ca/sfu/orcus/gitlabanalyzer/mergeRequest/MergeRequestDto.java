@@ -151,10 +151,6 @@ public class MergeRequestDto {
         this.time = time;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {
