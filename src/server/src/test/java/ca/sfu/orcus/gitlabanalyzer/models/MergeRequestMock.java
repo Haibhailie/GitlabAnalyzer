@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static ca.sfu.orcus.gitlabanalyzer.models.AssigneeMock.generateAssignee;
+
 public class MergeRequestMock extends AuthorMock {
     public static final int projectId = 10;
     public static final int mergeRequestIdA = 9;
@@ -17,7 +19,6 @@ public class MergeRequestMock extends AuthorMock {
     public static final boolean hasConflicts = false;
     public static final int userId = 6;
     public static final int userIdB = 7;
-    public static final String assignedTo = "John";
     public static final String description = "Random Description";
     public static final String sourceBranch = "Testing";
     public static final String targetBranch = "master";
@@ -39,15 +40,8 @@ public class MergeRequestMock extends AuthorMock {
     public static List<MergeRequest> generateTestMergeRequestList() {
         List<MergeRequest> tempMergeRequestList = new ArrayList<>();
 
-        Assignee tempAssigneeA = new Assignee();
-        tempAssigneeA.setName(assignedTo);
-        tempAssigneeA.setId(userId);
-        MergeRequest tempMergeRequestA = generateMergeRequest(tempAssigneeA, mergeRequestIdA);
-
-        Assignee tempAssigneeB = new Assignee();
-        tempAssigneeB.setName(assignedTo);
-        tempAssigneeB.setId(userIdB);
-        MergeRequest tempMergeRequestB = generateMergeRequest(tempAssigneeB, mergeRequestIdB);
+        MergeRequest tempMergeRequestA = generateMergeRequest(generateAssignee(userId), mergeRequestIdA);
+        MergeRequest tempMergeRequestB = generateMergeRequest(generateAssignee(userIdB), mergeRequestIdB);
 
         tempMergeRequestList.add(tempMergeRequestA);
         tempMergeRequestList.add(tempMergeRequestB);
