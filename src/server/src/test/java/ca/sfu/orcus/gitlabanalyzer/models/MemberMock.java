@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
 import org.gitlab4j.api.models.AccessLevel;
+import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Member;
 
 import java.util.ArrayList;
@@ -36,24 +37,12 @@ public final class MemberMock {
     }
 
     public static List<Member> createTestMemberList() {
-        Member memberA = new Member();
-        Member memberB = new Member();
         List<Member> members = new ArrayList<>();
+        Member MemberA = createMember();
+        Member MemberB = createMember();
 
-        memberA.setName(defaultDisplayName);
-        memberA.setEmail(defaultEmail);
-        memberA.setId(defaultId);
-        memberA.setUsername(defaultUserName);
-        memberA.setAccessLevel(defaultAccessLevel);
-
-        memberB.setName(defaultDisplayName);
-        memberB.setEmail(defaultEmail);
-        memberB.setId(defaultId);
-        memberB.setUsername(defaultUserName);
-        memberB.setAccessLevel(defaultAccessLevel);
-
-        members.add(memberA);
-        members.add(memberB);
+        members.add(MemberA);
+        members.add(MemberB);
 
         return members;
     }

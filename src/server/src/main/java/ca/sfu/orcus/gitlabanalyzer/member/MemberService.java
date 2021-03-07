@@ -69,6 +69,6 @@ public class MemberService {
         if (gitLabApi == null) {
             return null;
         }
-        return mergeRequestService.getAllMergeRequests(gitLabApi, projectId, since, until, memberId);
+        return mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId);
     }
 }

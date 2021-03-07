@@ -1,3 +1,4 @@
+
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;

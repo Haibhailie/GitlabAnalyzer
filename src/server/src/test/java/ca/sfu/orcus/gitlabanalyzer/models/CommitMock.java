@@ -1,5 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.CommitStats;
 import org.gitlab4j.api.models.Diff;
@@ -25,18 +28,26 @@ public class CommitMock {
     public static final int defaultNumTotal = defaultNumAdditions + defaultNumDeletions;
 
     public static Commit createCommit() {
+
+        return createCommit(String.valueOf(defaultId), defaultTitle, defaultAuthor, defaultEmail, defaultMessage, defaultSha, defaultDate, createCommitStats(), defaultSha);
+
+    }
+
+    public static Commit createCommit(String projectId, String title, String authorName, String authorEmail, String message, String sha, Date date, CommitStats commitStats, String shortId) {
         Commit commit = new Commit();
 
-        commit.setTitle(defaultTitle);
-        commit.setAuthorName(defaultAuthor);
-        commit.setAuthorEmail(defaultEmail);
-        commit.setMessage(defaultMessage);
-        commit.setId(defaultSha);
-        commit.setCommittedDate(defaultDate);
-        commit.setStats(createCommitStats());
-        commit.setShortId(defaultSha);
+        commit.setId(String.valueOf(projectId));
+        commit.setTitle(title);
+        commit.setAuthorName(authorName);
+        commit.setAuthorEmail(authorEmail);
+        commit.setMessage(message);
+        commit.setId(sha);
+        commit.setCommittedDate(date);
+        commit.setStats(commitStats);
+        commit.setShortId(shortId);
 
         return commit;
+
     }
 
     public static CommitStats createCommitStats() {
@@ -60,26 +71,21 @@ public class CommitMock {
     }
 
     public static List<Diff> createTestDiffList() {
-        Diff diffA = new Diff();
-        diffA.setDiff(mockCodeDiff);
-        diffA.setDeletedFile(false);
-        diffA.setNewFile(false);
-        diffA.setRenamedFile(true);
-        diffA.setNewPath("Root");
-        diffA.setOldPath("Not Root");
-
-        Diff diffB = new Diff();
-        diffB.setDiff(mockCodeDiff);
-        diffB.setDeletedFile(false);
-        diffB.setNewFile(true);
-        diffB.setRenamedFile(false);
-        diffB.setNewPath("Root");
-        diffB.setOldPath("Not Root");
+        Diff diffA = DiffMock.createTestDiff(mockCodeDiff, false, false, true, "Root", "Not Root");
+        Diff diffB = DiffMock.createTestDiff(mockCodeDiff, false, true, false, "Root", "Not Root");
 
         List<Diff> presentTempDiff = new ArrayList<>();
         presentTempDiff.add(diffA);
         presentTempDiff.add(diffB);
 
         return presentTempDiff;
+    }
+
+    public static List<CommitDto> generateTestCommitDto(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
+        List<CommitDto> expectedCommitDtoList = new ArrayList<>();
+        for (Commit c : commits) {
+            expectedCommitDtoList.add(new CommitDto(gitLabApi, projectId, c));
+        }
+        return expectedCommitDtoList;
     }
 }

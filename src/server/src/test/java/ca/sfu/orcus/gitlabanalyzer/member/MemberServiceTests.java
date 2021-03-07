@@ -98,11 +98,11 @@ public class MemberServiceTests {
     public void getMergeRequestsByMemberIDTest() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
-        List<MergeRequest> mergeRequests = MergeRequestMock.generateTestMergeRequestList();
+        List<MergeRequest> mergeRequests = MergeRequestMock.createTestMergeRequestList();
         List<MergeRequestDto> mergeRequestDtos = new ArrayList<>();
 
         int id = MemberMock.defaultId;
-        when(mergeRequestService.getAllMergeRequests(gitLabApi, projectId, since, until, id)).thenReturn(mergeRequestDtos);
+        when(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, id)).thenReturn(mergeRequestDtos);
 
         List<MergeRequestDto> mergeRequestByMemberID = memberService.getMergeRequestsByMemberID(jwt, projectId, since, until, id);
         List<MergeRequestDto> expectedMergeRequestByMemberID = mergeRequestDtos;
