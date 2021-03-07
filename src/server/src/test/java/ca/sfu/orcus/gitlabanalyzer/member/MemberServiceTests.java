@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceTests {
@@ -36,8 +35,7 @@ public class MemberServiceTests {
     @InjectMocks
     private MemberService memberService;
 
-    private GitLabApi gitLabApi = GitLabApiMock.getGitLabApiMock();
-    private ProjectApi projectApi = GitLabApiMock.getGitLabApiMock().getProjectApi();
+    private GitLabApi gitLabApi;
     private static final String jwt = "jwt";
 
     // Test objects
@@ -73,11 +71,10 @@ public class MemberServiceTests {
     @Test
     public void getAllMembersTest() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        when(gitLabApi.getProjectApi()).thenReturn(projectApi);
 
         List<Member> memberList = MemberMock.createTestMemberList();
 
-        when(projectApi.getAllMembers(projectId)).thenReturn(memberList);
+        when(gitLabApi.getProjectApi().getAllMembers(projectId)).thenReturn(memberList);
 
         List<MemberDto> memberDtos = memberService.getAllMembers(jwt, projectId);
 
@@ -122,8 +119,7 @@ public class MemberServiceTests {
     @Test
     public void getAllMembersException() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        when(gitLabApi.getProjectApi()).thenReturn(projectApi);
-        when(projectApi.getAllMembers(projectId)).thenThrow(GitLabApiException.class);
+        when(gitLabApi.getProjectApi().getAllMembers(projectId)).thenThrow(GitLabApiException.class);
         assertNull(memberService.getAllMembers(jwt, projectId));
     }
 
