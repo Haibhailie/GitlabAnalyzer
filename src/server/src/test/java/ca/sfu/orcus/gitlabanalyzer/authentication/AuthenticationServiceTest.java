@@ -11,6 +11,7 @@ import javax.ws.rs.BadRequestException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,6 +22,8 @@ class AuthenticationServiceTest {
 
     @InjectMocks
     private AuthenticationService authService;
+
+    String sampleJwt = "sampleJwt";
 
     @Test
     public void failRegisterNewUserByPatForNullPat() {
@@ -38,7 +41,7 @@ class AuthenticationServiceTest {
     @Test
     public void successfullyRegisterUserByPat() {
         AuthenticationUser user = new AuthenticationUser("examplePat");
-        when(jwtService.createJwt(user, JwtService.JwtType.PAT)).thenReturn("sampleJwt");
+        when(jwtService.createJwt(user, JwtService.JwtType.PAT)).thenReturn(sampleJwt);
         assertNotNull(authService.registerNewPat(user));
     }
 
@@ -65,41 +68,40 @@ class AuthenticationServiceTest {
     public void successfullyRegisterUserByUsernameAndPassword() {
         AuthenticationUser user = new AuthenticationUser("user", "securePassword");
         when(gitLabApiWrapper.getOAuth2AuthToken(user.getUsername(), user.getPassword())).thenReturn(Optional.of("authToken"));
-        when(jwtService.createJwt(user, JwtService.JwtType.USER_PASS)).thenReturn("sampleJwt");
+        when(jwtService.createJwt(user, JwtService.JwtType.USER_PASS)).thenReturn(sampleJwt);
         assertNotNull(authService.registerNewUserPass(user));
     }
 
     @Test
     public void jwtInvalidBadJwt() {
-        String jwt = "sample jwt";
-        when(jwtService.jwtIsValid(jwt)).thenReturn(false);
-        assertFalse(authService.jwtIsValid(jwt));
+        setupJwtConditions(false, true, true);
+        assertFalse(authService.jwtIsValid(sampleJwt));
     }
 
     @Test
     public void jwtInvalidJwtNotInDatabase() {
-        String jwt = "sample jwt";
-        when(jwtService.jwtIsValid(jwt)).thenReturn(true);
-        when(authRepository.contains(jwt)).thenReturn(false);
-        assertFalse(authService.jwtIsValid(jwt));
+        setupJwtConditions(true, false, true);
+        assertFalse(authService.jwtIsValid(sampleJwt));
     }
 
     @Test
     public void jwtInvalidGitLabReject() {
-        String jwt = "sample jwt";
-        when(jwtService.jwtIsValid(jwt)).thenReturn(true);
-        when(authRepository.contains(jwt)).thenReturn(true);
-        when(gitLabApiWrapper.canSignIn(jwt)).thenReturn(false);
-        assertFalse(authService.jwtIsValid(jwt));
+        setupJwtConditions(true, true, false);
+        assertFalse(authService.jwtIsValid(sampleJwt));
     }
 
     @Test
     public void jwtIsValid() {
-        String jwt = "sample jwt";
-        when(jwtService.jwtIsValid(jwt)).thenReturn(true);
-        when(authRepository.contains(jwt)).thenReturn(true);
-        when(gitLabApiWrapper.canSignIn(jwt)).thenReturn(true);
-        assertTrue(authService.jwtIsValid(jwt));
+        setupJwtConditions(true, true, true);
+        assertTrue(authService.jwtIsValid(sampleJwt));
+    }
+
+    private void setupJwtConditions(boolean jwtIsValid,
+                                    boolean jwtIsInDatabase,
+                                    boolean canSignIntoGitlab) {
+        lenient().when(jwtService.jwtIsValid(sampleJwt)).thenReturn(jwtIsValid);
+        lenient().when(authRepository.contains(sampleJwt)).thenReturn(jwtIsInDatabase);
+        lenient().when(gitLabApiWrapper.canSignIn(sampleJwt)).thenReturn(canSignIntoGitlab);
     }
 
 }
