@@ -36,7 +36,7 @@ public class MemberServiceTests {
     private MemberService memberService;
 
     private GitLabApi gitLabApi;
-    private static final String jwt = "jwt";
+    private final String jwt = "jwt";
 
     // Test objects
     private static final int projectId = ProjectMock.defaultId;
@@ -87,21 +87,6 @@ public class MemberServiceTests {
     }
 
     @Test
-    public void getMergeRequestsByMemberIdTest() {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-
-        List<MergeRequestDto> mergeRequestDtos = new ArrayList<>();
-
-        int memberId = MemberMock.defaultId;
-        when(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId)).thenReturn(mergeRequestDtos);
-
-        List<MergeRequestDto> mergeRequestByMemberId = memberService.getMergeRequestsByMemberId(jwt, projectId, since, until, memberId);
-        List<MergeRequestDto> expectedMergeRequestByMemberId = mergeRequestDtos;
-
-        assertEquals(mergeRequestByMemberId, expectedMergeRequestByMemberId);
-    }
-
-    @Test
     public void getCommitsByMemberEmailTest() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
@@ -111,9 +96,22 @@ public class MemberServiceTests {
         when(commitService.returnAllCommits(gitLabApi, projectId, since, until, email)).thenReturn(commitDtos);
 
         List<CommitDto> commitsByMemberEmail = memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email);
-        List<CommitDto> expectedCommitsByMemberEmail = commitDtos;
 
-        assertEquals(commitsByMemberEmail, expectedCommitsByMemberEmail);
+        assertEquals(commitsByMemberEmail, commitDtos);
+    }
+
+    @Test
+    public void getMergeRequestsByMemberIdTest() {
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+
+        List<MergeRequestDto> mergeRequestDtos = new ArrayList<>();
+
+        int memberId = MemberMock.defaultId;
+        when(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId)).thenReturn(mergeRequestDtos);
+
+        List<MergeRequestDto> mergeRequestByMemberId = memberService.getMergeRequestsByMemberId(jwt, projectId, since, until, memberId);
+
+        assertEquals(mergeRequestByMemberId, mergeRequestDtos);
     }
 
     @Test
