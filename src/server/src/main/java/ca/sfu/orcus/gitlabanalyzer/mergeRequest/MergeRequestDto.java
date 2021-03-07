@@ -8,7 +8,9 @@ import org.gitlab4j.api.models.Note;
 import org.gitlab4j.api.models.Participant;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MergeRequestDto {
     private int mergeRequestId;
@@ -133,21 +135,12 @@ public class MergeRequestDto {
     }
 
     public void setCommitters(List<Commit> commits) {
-        committers = new ArrayList<>();
+        Set<String> commitAuthorsSet = new HashSet<>();
         for (Commit c : commits) {
-            //Checks if committer is already present in list, prevent duplicate authors
-            String commitAuthor = c.getAuthorName();
-            boolean isPresent = false;
-            for (String committer : committers) {
-                if (committer.compareTo(commitAuthor) == 0) {
-                    isPresent = true;
-                    break;
-                }
-            }
-            if (!isPresent) {
-                committers.add(commitAuthor);
-            }
+            commitAuthorsSet.add(c.getAuthorName());
         }
+
+        committers = new ArrayList<>(commitAuthorsSet);
     }
 
     public void setUserId(int userID) {
