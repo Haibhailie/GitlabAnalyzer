@@ -61,8 +61,8 @@ public class MergeRequestMock extends AuthorMock {
     }
 
     public static List<Commit> createMergeRequestTestCommitList() {
-        Commit commitA = CommitMock.createCommit(String.valueOf(projectId), title, authorName, authorEmail, message, sha, dateNow, commitStats, sha);
-        Commit commitB = CommitMock.createCommit(String.valueOf(projectId), title, authorName, authorEmail, message, sha, dateNow, commitStats, sha);
+        Commit commitA = CommitMock.createCommit(String.valueOf(projectId), title, defaultAuthorName, authorEmail, message, sha, dateNow, commitStats, sha);
+        Commit commitB = CommitMock.createCommit(String.valueOf(projectId), title, defaultAuthorName, authorEmail, message, sha, dateNow, commitStats, sha);
         List<Commit> generatedCommitList = new ArrayList<>();
 
         generatedCommitList.add(commitA);

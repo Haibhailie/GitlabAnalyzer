@@ -7,14 +7,14 @@ import java.util.List;
 
 public class DiffMock {
 
-    public static final String mockCodeDiff = "RandomChangesGoHereLol";
-    public static final String newPath = "Root";
-    public static final String oldPath = "Not Root";
+    public static final String defaultMockCodeDiff = "RandomChangesGoHereLol";
+    public static final String defaultNewPath = "Root";
+    public static final String defaultOldPath = "Not Root";
 
     public static List<Diff> createTestDiffList() {
 
         List<Diff> presentTempDiff = new ArrayList<>();
-        presentTempDiff.add(createTestDiff(mockCodeDiff, false, false, true, newPath, oldPath));
+        presentTempDiff.add(createTestDiff(defaultMockCodeDiff, false, false, true, defaultNewPath, defaultOldPath));
         return presentTempDiff;
     }
 
