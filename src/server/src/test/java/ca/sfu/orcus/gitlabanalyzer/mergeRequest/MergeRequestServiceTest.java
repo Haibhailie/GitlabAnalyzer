@@ -4,6 +4,7 @@ import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
+import ca.sfu.orcus.gitlabanalyzer.models.DiffMock;
 import ca.sfu.orcus.gitlabanalyzer.models.MergeRequestMock;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.*;
@@ -44,10 +45,10 @@ public class MergeRequestServiceTest extends MergeRequestMock {
 
     @BeforeAll
     public static void setup() {
-        mergeRequests = MergeRequestMock.generateTestMergeRequestList();
+        mergeRequests = MergeRequestMock.createTestMergeRequestList();
         commitStats = CommitMock.createCommitStats();
-        commits = MergeRequestMock.generateMergeRequestTestCommitList();
-        diffs = MergeRequestMock.generateTestDiffList();
+        commits = MergeRequestMock.createMergeRequestTestCommitList();
+        diffs = DiffMock.createTestDiffList();
     }
 
     @Test
@@ -65,7 +66,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         initialMergeRequestTestSetup();
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
-        List<MergeRequestDto> expectedMergeRequestDtoList = generateTestMergeRequestDto(mergeRequests, gitLabApi);
+        List<MergeRequestDto> expectedMergeRequestDtoList = createTestMergeRequestDto(mergeRequests, gitLabApi);
         assertNotNull(mergeRequestDtoList);
         assertEquals(expectedMergeRequestDtoList, mergeRequestDtoList);
     }
@@ -84,7 +85,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(gitLabApi.getNotesApi()).thenReturn(notesApi);
         when(notesApi.getMergeRequestNotes(projectId, mergeRequestIdA)).thenReturn(notesList);
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId);
-        List<MergeRequestDto> expectedMergeRequestDtoList = generateTestMergeRequestDto(mergeRequests, gitLabApi);
+        List<MergeRequestDto> expectedMergeRequestDtoList = createTestMergeRequestDto(mergeRequests, gitLabApi);
         assertNotNull(mergeRequestDtoList);
         assertEquals(mergeRequestDtoList, expectedMergeRequestDtoList);
     }
@@ -134,7 +135,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(List.of(commits.get(0)));
         when(commitsApi.getDiff(projectId, sha)).thenReturn(diffs);
         List<MergeRequestDiffDto> mergeRequestDiffDtoList = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA);
-        List<MergeRequestDiffDto> expectedMergeRequestDiffDto = generateMergeRequestDiffDto(diffs, commits);
+        List<MergeRequestDiffDto> expectedMergeRequestDiffDto = createMergeRequestDiffDto(diffs, commits);
         assertNotNull(mergeRequestDiffDtoList);
         assertEquals(expectedMergeRequestDiffDto, mergeRequestDiffDtoList);
     }
