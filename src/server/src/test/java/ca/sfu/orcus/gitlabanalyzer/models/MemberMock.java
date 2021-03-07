@@ -38,11 +38,11 @@ public final class MemberMock {
 
     public static List<Member> createTestMemberList() {
         List<Member> members = new ArrayList<>();
-        Member MemberA = createMember();
-        Member MemberB = createMember();
+        Member memberA = createMember();
+        Member memberB = createMember();
 
-        members.add(MemberA);
-        members.add(MemberB);
+        members.add(memberA);
+        members.add(memberB);
 
         return members;
     }

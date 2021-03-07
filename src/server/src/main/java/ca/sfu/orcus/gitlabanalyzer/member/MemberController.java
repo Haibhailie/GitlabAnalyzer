@@ -56,7 +56,7 @@ public class MemberController {
                                              @PathVariable int memberId) {
         Date dateSince = DateUtils.getDateSinceOrEarliest(since);
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
-        List<MergeRequestDto> allMergeRequestsByMemberId = memberService.getMergeRequestsByMemberID(jwt, projectId, dateSince, dateUntil, memberId);
+        List<MergeRequestDto> allMergeRequestsByMemberId = memberService.getMergeRequestsByMemberId(jwt, projectId, dateSince, dateUntil, memberId);
         response.setStatus(allMergeRequestsByMemberId == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(allMergeRequestsByMemberId);

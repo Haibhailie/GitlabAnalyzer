@@ -2,7 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.member;
 
 import java.util.Map;
 
-public class MemberUtils {
+public final class MemberUtils {
     private MemberUtils() {
         throw new AssertionError();
     }

@@ -54,13 +54,13 @@ public class MemberDto {
             return false;
         }
 
-        MemberDto c = (MemberDto) o;
+        MemberDto m = (MemberDto) o;
 
-        return (this.displayName.equals(c.displayName)
-                && this.email.equals(c.email)
-                && this.id == c.id
-                && this.username.equals(c.username)
-                && (this.role).equals(c.role));
+        return (this.displayName.equals(m.displayName)
+                && this.email.equals(m.email)
+                && this.id == m.id
+                && this.username.equals(m.username)
+                && this.role.equals(m.role));
     }
 
 }

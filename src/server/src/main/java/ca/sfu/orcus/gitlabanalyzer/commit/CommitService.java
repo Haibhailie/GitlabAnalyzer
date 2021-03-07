@@ -46,7 +46,7 @@ public class CommitService {
         }
     }
 
-    public List<CommitDto> getAllCommitDtos(GitLabApi gitLabApi, int projectId, Date since, Date until, String emial) {
+    public List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String emial) {
         if (gitLabApi == null) {
             return null;
         }

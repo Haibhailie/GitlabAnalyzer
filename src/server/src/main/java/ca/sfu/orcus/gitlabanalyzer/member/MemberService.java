@@ -40,35 +40,38 @@ public class MemberService {
     }
 
     public List<MemberDto> getAllMembers(GitLabApi gitLabApi, int projectId) {
-        if (gitLabApi == null) {
-            return null;
-        }
-        try {
-            List<MemberDto> filteredAllMembers = new ArrayList<>();
-            List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectId);
-            for (Member m : allMembers) {
-                MemberDto presentMember = new MemberDto(m);
-                filteredAllMembers.add(presentMember);
+        if (gitLabApi != null) {
+            try {
+                List<MemberDto> filteredAllMembers = new ArrayList<>();
+                List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectId);
+                for (Member m : allMembers) {
+                    MemberDto presentMember = new MemberDto(m);
+                    filteredAllMembers.add(presentMember);
+                }
+                return filteredAllMembers;
+            } catch (GitLabApiException e) {
+                return null;
             }
-            return filteredAllMembers;
-        } catch (GitLabApiException e) {
+        } else {
             return null;
         }
     }
 
     public List<CommitDto> getCommitsByMemberEmail(String jwt, int projectId, Date since, Date until, String memberEmail) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
+        if (gitLabApi != null) {
+            return commitService.returnAllCommits(gitLabApi, projectId, since, until, memberEmail);
+        } else {
             return null;
         }
-        return commitService.getAllCommitDtos(gitLabApi, projectId, since, until, memberEmail);
     }
 
-    public List<MergeRequestDto> getMergeRequestsByMemberID(String jwt, int projectId, Date since, Date until, int memberId) {
+    public List<MergeRequestDto> getMergeRequestsByMemberId(String jwt, int projectId, Date since, Date until, int memberId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
+        if (gitLabApi != null) {
+            return mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId);
+        } else {
             return null;
         }
-        return mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId);
     }
 }

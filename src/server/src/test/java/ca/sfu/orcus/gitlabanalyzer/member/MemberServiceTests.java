@@ -31,27 +31,23 @@ public class MemberServiceTests {
     @Mock private GitLabApiWrapper gitLabApiWrapper;
     @Mock private MergeRequestService mergeRequestService;
     @Mock private CommitService commitService;
-    @Mock private ProjectApi projectApi;
 
     // Class to be tested
     @InjectMocks
     private MemberService memberService;
 
-    private GitLabApi gitLabApi;
-    private static final String jwt = UUID.randomUUID().toString();
+    private GitLabApi gitLabApi = GitLabApiMock.getGitLabApiMock();
+    private ProjectApi projectApi = GitLabApiMock.getGitLabApiMock().getProjectApi();
+    private static final String jwt = "jwt";
 
     // Test objects
     private static final int projectId = ProjectMock.defaultId;
     private static final Date since = CommitMock.defaultDate;
     private static final Date until = CommitMock.defaultDate;
 
-    private static Project project;
-
     @BeforeEach
     public void setup() {
         gitLabApi = GitLabApiMock.getGitLabApiMock();
-        project = ProjectMock.createProject();
-
     }
 
     // Testing the null checks
@@ -64,7 +60,7 @@ public class MemberServiceTests {
     @Test
     public void getMergeRequestsByMemberIDWithNullGitLabApi() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
-        assertNull(memberService.getMergeRequestsByMemberID(jwt, projectId, since, until, MemberMock.defaultId));
+        assertNull(memberService.getMergeRequestsByMemberId(jwt, projectId, since, until, MemberMock.defaultId));
     }
 
     @Test
@@ -90,42 +86,45 @@ public class MemberServiceTests {
             expectedMemberDtos.add(new MemberDto(m));
         }
 
-        assertNotNull(memberDtos);
         assertEquals(memberDtos, expectedMemberDtos);
     }
 
     @Test
-    public void getMergeRequestsByMemberIDTest() {
+    public void getMergeRequestsByMemberIdTest() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
-        List<MergeRequest> mergeRequests = MergeRequestMock.createTestMergeRequestList();
         List<MergeRequestDto> mergeRequestDtos = new ArrayList<>();
 
-        int id = MemberMock.defaultId;
-        when(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, id)).thenReturn(mergeRequestDtos);
+        int memberId = MemberMock.defaultId;
+        when(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId)).thenReturn(mergeRequestDtos);
 
-        List<MergeRequestDto> mergeRequestByMemberID = memberService.getMergeRequestsByMemberID(jwt, projectId, since, until, id);
-        List<MergeRequestDto> expectedMergeRequestByMemberID = mergeRequestDtos;
+        List<MergeRequestDto> mergeRequestByMemberId = memberService.getMergeRequestsByMemberId(jwt, projectId, since, until, memberId);
+        List<MergeRequestDto> expectedMergeRequestByMemberId = mergeRequestDtos;
 
-        assertNotNull(mergeRequestByMemberID);
-        assertEquals(mergeRequestByMemberID, expectedMergeRequestByMemberID);
+        assertEquals(mergeRequestByMemberId, expectedMergeRequestByMemberId);
     }
 
     @Test
     public void getCommitsByMemberEmailTest() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
-        List<Commit> commitList = CommitMock.createTestCommitList();
         List<CommitDto> commitDtos = new ArrayList<>();
 
         String email = MemberMock.defaultEmail;
-        when(commitService.getAllCommitDtos(gitLabApi, projectId, since, until, email)).thenReturn(commitDtos);
+        when(commitService.returnAllCommits(gitLabApi, projectId, since, until, email)).thenReturn(commitDtos);
 
         List<CommitDto> commitsByMemberEmail = memberService.getCommitsByMemberEmail(jwt, projectId, since, until, email);
         List<CommitDto> expectedCommitsByMemberEmail = commitDtos;
 
-        assertNotNull(commitsByMemberEmail);
         assertEquals(commitsByMemberEmail, expectedCommitsByMemberEmail);
+    }
+
+    @Test
+    public void getAllMembersException() throws GitLabApiException {
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        when(gitLabApi.getProjectApi()).thenReturn(projectApi);
+        when(projectApi.getAllMembers(projectId)).thenThrow(GitLabApiException.class);
+        assertNull(memberService.getAllMembers(jwt, projectId));
     }
 
 }
