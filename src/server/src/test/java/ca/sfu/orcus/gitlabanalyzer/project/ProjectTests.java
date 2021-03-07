@@ -149,7 +149,7 @@ public class ProjectTests {
     }
 
     private void addUserToProject(int userId, int projectId) throws GitLabApiException {
-        Member member = MemberMock.createMember(userId, MemberMock.defaultAccessLevel);
+        Member member = MemberMock.createMember(MemberMock.defaultDisplayName, MemberMock.defaultEmail, userId, MemberMock.defaultUserName, MemberMock.defaultAccessLevel);
         when(gitLabApi.getProjectApi().getMember(projectId, userId)).thenReturn(member);
     }
 
