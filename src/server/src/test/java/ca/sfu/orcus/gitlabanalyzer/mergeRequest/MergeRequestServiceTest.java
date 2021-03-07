@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
+import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import ca.sfu.orcus.gitlabanalyzer.models.MergeRequestMock;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.*;
@@ -44,8 +45,8 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     @BeforeAll
     public static void setup() {
         mergeRequests = MergeRequestMock.generateTestMergeRequestList();
-        commitStats = MergeRequestMock.getTestCommitStats();
-        commits = MergeRequestMock.generateMRTestCommitList();
+        commitStats = CommitMock.createCommitStats();
+        commits = MergeRequestMock.generateMergeRequestTestCommitList();
         diffs = MergeRequestMock.generateTestDiffList();
     }
 
@@ -102,7 +103,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
         when(commitsApi.getCommit(projectId, sha)).thenReturn(commits.get(0));
         List<CommitDto> commitDtoList = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA);
-        List<CommitDto> expectedCommitDtoList = generateTestCommitDto(commits, gitLabApi);
+        List<CommitDto> expectedCommitDtoList = CommitMock.generateTestCommitDto(commits, gitLabApi, projectId);
         assertEquals(expectedCommitDtoList, commitDtoList);
     }
 

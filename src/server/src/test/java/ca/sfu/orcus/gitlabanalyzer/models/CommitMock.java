@@ -1,5 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.CommitStats;
 import org.gitlab4j.api.models.Diff;
@@ -81,5 +84,13 @@ public class CommitMock {
         presentTempDiff.add(diffB);
 
         return presentTempDiff;
+    }
+
+    public static List<CommitDto> generateTestCommitDto(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
+        List<CommitDto> expectedCommitDtoList = new ArrayList<>();
+        for (Commit c : commits) {
+            expectedCommitDtoList.add(new CommitDto(gitLabApi, projectId, c));
+        }
+        return expectedCommitDtoList;
     }
 }
