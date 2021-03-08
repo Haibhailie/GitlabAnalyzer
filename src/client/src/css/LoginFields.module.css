@@ -4,15 +4,15 @@
 }
 
 .title {
-  font: var(--font-sub-title);
+  font: var(--font-title-poppins);
   text-align: center;
   margin: 0px 0px 20px 0px;
 }
 
 .button {
-  font: var(--font-button);
-  color: var(--color-text-header);
-  background-color: var(--color-header);
+  font: var(--font-header-medium-poppins);
+  color: #ffffff;
+  background-color: var(--color-primary);
   margin-top: 15px;
   padding: 5px 0px;
   border-radius: 10px;
@@ -27,7 +27,7 @@
 }
 
 .fieldHeader {
-  font: var(--font-item-label);
+  font: var(--font-body-large-poppins);
   width: 300px;
 }
 
@@ -43,15 +43,15 @@
   height: 40px;
   padding: 1px 15px;
   border: 0px;
-  background-color: var(--color-input-background);
+  background-color: var(--color-background-gray);
   margin-bottom: 10px;
-  font: var(--font-small);
+  font: var(--font-body-medium-poppins);
 }
 
 .error {
   border-radius: 5px;
-  background-color: #ffc9c9;
-  color: #c21c1c;
+  background-color: var(--color-background-red);
+  color: var(--color-text-red);
   width: 300px;
   text-align: center;
   margin: 0px 0px 10px 0px;

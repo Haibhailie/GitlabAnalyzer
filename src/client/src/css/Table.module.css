@@ -4,12 +4,8 @@
 }
 
 .sortBtn {
-  background: none;
-  border: none;
-  padding: 0;
   text-align: left;
   width: 100%;
   height: 100%;
-  font: var(--font-small);
-  color: inherit;
+  font: var(--font-body-medium-poppins);
 }
