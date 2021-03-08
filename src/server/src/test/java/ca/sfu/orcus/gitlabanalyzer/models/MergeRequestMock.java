@@ -57,6 +57,7 @@ public class MergeRequestMock extends AuthorMock {
         tempMergeRequest.setTargetBranch(targetBranch);
         tempMergeRequest.setCreatedAt(dateNow);
         tempMergeRequest.setMergedAt(dateNow);
+        tempMergeRequest.setTitle(title);
         return tempMergeRequest;
     }
 
