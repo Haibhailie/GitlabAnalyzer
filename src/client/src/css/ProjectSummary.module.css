@@ -10,7 +10,7 @@
   align-items: flex-start;
   width: calc(14% - 10px);
   min-width: 140px;
-  background-color: var(--color-table-header-background);
+  background-color: var(--color-background-gray);
 }
 
 .configHeader {
@@ -19,7 +19,7 @@
   width: calc(100% - 20px);
   margin: 0;
   padding: 5px 10px;
-  font: var(--font-item-label);
+  font: var(--font-body-large-poppins);
 }
 
 .category {
@@ -29,13 +29,13 @@
 .option {
   margin-bottom: 5px;
   margin-left: 10px;
-  font: var(--font-item-label);
+  font: var(--font-body-large-poppins);
 }
 
 .statsContainer {
   display: flex;
   width: 82%;
-  border: 1px solid var(--color-lightgray);
+  border: 1px solid var(--color-light-gray);
   border-radius: 5px;
   height: auto;
 }

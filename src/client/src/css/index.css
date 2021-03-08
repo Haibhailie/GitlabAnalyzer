@@ -1,41 +1,37 @@
 :root {
-  --color-main: #000000;
-  --color-header: #364fc7;
-  --color-text-header: #e9ecef;
-  --color-text-body: #000000;
-  --color-button-hover: #4263eb;
-  --color-input-background: #dfdfdf;
-  --color-primary: #074ee8;
+  --color-primary: #364fc7;
   --color-secondary: #ffa94d;
-  --color-table-header-background: #eeeeee;
-  --color-table-border: #aaaaaa;
-  --color-darkgray: #c4c4c4;
-  --color-lightgray: #d6d5d5;
-  --color-lightblue: #dbe4ff;
-  --color-text-lightgray: #9fa2b4;
-  --font-title: 500 72px Poppins;
-  --font-sub-title: 400 58px Poppins;
-  --font-header: 400 24px Poppins;
-  --font-sub-header: 400 18px Poppins;
-  --font-item-label: 400 16px Poppins;
-  --font-small: 400 14px Poppins;
-  --font-button: 400 26px Poppins;
-  --header-height: 72px;
-  --sidenav-width: 230px;
+  --color-hover: #e0eaff;
+  --color-button-hover: #4263eb;
+  --color-gray: #999cae;
+  --color-light-gray: #d6d5d5;
+  --color-background-gray: #eeeeee;
+  --color-background-green: #ecfdf0;
+  --color-background-red: #ffc9c9;
+  --color-text-red: #c21c1c;
+  --color-text-green: #279456;
+
+  --font-title-poppins: 400 58px Poppins;
+  --font-header-large-poppins: 400 32px Poppins;
+  --font-header-medium-poppins: 400 24px Poppins;
+  --font-header-small-poppins: 400 18px Poppins;
+  --font-body-large-poppins: 400 16px Poppins;
+  --font-body-medium-poppins: 400 14px Poppins;
+  --font-body-small-poppins: 400 12px Poppins;
+
+  --font-header-medium-mulish: 600 24px Mulish;
+  --font-body-large-mulish: 400 16px Mulish;
+  --font-body-small-mulish: 400 12px Mulish;
+
+  --height-header: 72px;
+  --width-sideNav: 230px;
 }
 
 body {
   width: 100vw;
   height: 100vh;
   margin: 0;
-  width: 100vw;
-  height: 100vh;
   font-family: Poppins;
-}
-
-#root {
-  width: 100%;
-  height: 100%;
 }
 
 #root {
@@ -48,6 +44,21 @@ code {
     monospace;
 }
 
-button {
+button,
+input {
   font: inherit;
+  outline: none;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button:hover,
+a:hover {
+  cursor: pointer;
 }

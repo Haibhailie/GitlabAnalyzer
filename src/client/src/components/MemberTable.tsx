@@ -1,12 +1,12 @@
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
+import { useHistory } from 'react-router-dom'
 
 import Table from '../components/Table'
+import AnalyzeButton from './AnalyzeButton'
 
 import styles from '../css/MemberTable.module.css'
-import AnalyzeButton from './AnalyzeButton'
-import { useHistory } from 'react-router-dom'
 
 export interface IActivityGraphProps {
   projectId: string
