@@ -40,10 +40,10 @@ public class MergeRequestController {
                                               HttpServletResponse response,
                                               @PathVariable int mergerequestId,
                                               @PathVariable int projectId) {
-        List<CommitDto> commitDTOS = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
-        response.setStatus(commitDTOS == null ? 401 : 200);
+        List<CommitDto> commitDtos = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
+        response.setStatus(commitDtos == null ? 401 : 200);
         Gson gson = new Gson();
-        return gson.toJson(commitDTOS);
+        return gson.toJson(commitDtos);
     }
 
     @GetMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/diff")
