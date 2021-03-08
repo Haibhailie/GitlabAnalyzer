@@ -7,9 +7,11 @@ import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import ca.sfu.orcus.gitlabanalyzer.models.DiffMock;
 import ca.sfu.orcus.gitlabanalyzer.models.MergeRequestMock;
 import org.gitlab4j.api.*;
-import org.gitlab4j.api.models.*;
-import org.junit.jupiter.api.Test;
+import org.gitlab4j.api.models.Commit;
+import org.gitlab4j.api.models.Diff;
+import org.gitlab4j.api.models.MergeRequest;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,8 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MergeRequestServiceTest extends MergeRequestMock {
