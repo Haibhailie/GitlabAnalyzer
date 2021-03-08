@@ -38,8 +38,8 @@ public class MergeRequestController {
     @GetMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commits")
     public String getCommitsFromMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                               HttpServletResponse response,
-                                              @PathVariable int mergerequestId,
-                                              @PathVariable int projectId) {
+                                              @PathVariable int projectId,
+                                              @PathVariable int mergerequestId) {
         List<CommitDto> commitDtos = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(commitDtos == null ? 401 : 200);
         Gson gson = new Gson();
@@ -49,8 +49,8 @@ public class MergeRequestController {
     @GetMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/diff")
     public String getDiffsFromMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                             HttpServletResponse response,
-                                            @PathVariable int mergerequestId,
-                                            @PathVariable int projectId) {
+                                            @PathVariable int projectId,
+                                            @PathVariable int mergerequestId) {
         List<MergeRequestDiffDto> mergeRequestDiffDtos = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(mergeRequestDiffDtos == null ? 401 : 200);
         Gson gson = new Gson();
