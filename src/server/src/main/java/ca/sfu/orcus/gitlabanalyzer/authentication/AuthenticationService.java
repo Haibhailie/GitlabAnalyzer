@@ -22,7 +22,7 @@ public class AuthenticationService {
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
-    public String registerNewPat(AuthenticationUser newUser) throws IllegalArgumentException, BadRequestException {
+    public String registerNewPat(AuthenticationUser newUser) throws BadRequestException, IllegalArgumentException {
         String username = getUsername(newUser);
         newUser.setUsername(username);
         String jwt = jwtService.createJwt(newUser, JwtType.PAT);
@@ -31,9 +31,9 @@ public class AuthenticationService {
         return jwt;
     }
 
-    private String getUsername(AuthenticationUser newUser) throws IllegalArgumentException, BadRequestException {
+    private String getUsername(AuthenticationUser newUser) throws BadRequestException, IllegalArgumentException {
         String pat = newUser.getPat();
-        if (pat == null || pat.equals("")) {
+        if (pat == null) {
             throw new BadRequestException("Pat is empty");
         }
         try {
@@ -43,7 +43,7 @@ public class AuthenticationService {
         }
     }
 
-    public String registerNewUserPass(AuthenticationUser newUser) throws IllegalArgumentException, BadRequestException {
+    public String registerNewUserPass(AuthenticationUser newUser) throws BadRequestException, IllegalArgumentException {
         String authToken = getAuthToken(newUser.getUsername(), newUser.getPassword());
         newUser.setAuthToken(authToken);
         String jwt = jwtService.createJwt(newUser, JwtType.USER_PASS);
@@ -52,8 +52,8 @@ public class AuthenticationService {
         return jwt;
     }
 
-    private String getAuthToken(String username, String password) throws IllegalArgumentException, BadRequestException {
-        if (username == null || username.equals("") || password == null || password.equals("")) {
+    private String getAuthToken(String username, String password) throws BadRequestException, IllegalArgumentException {
+        if (username == null || password == null) {
             throw new BadRequestException("Username or Password are empty");
         }
         Optional<String> authToken = gitLabApiWrapper.getOAuth2AuthToken(username, password);

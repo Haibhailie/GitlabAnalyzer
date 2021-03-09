@@ -3,28 +3,22 @@
   align-items: center;
   padding: 1px 20px;
   transition: border 120ms ease-out, background-color 230ms ease-out;
-  text-decoration: none;
+  font: var(--font-body-large-poppins);
 }
 
 .item:hover {
-  background-color: var(--color-lightblue);
-  border-left: 4px solid var(--color-header);
-}
-
-.item:hover .label {
-  color: var(--color-header);
+  background-color: var(--color-hover);
+  border-left: 4px solid var(--color-primary);
 }
 
 .icon {
   margin-right: 15px;
 }
 
-.link {
-  font: var(--font-item-label);
-  color: var(--color-main);
-  text-decoration: none;
+.item:hover .icon {
+  stroke: var(--color-primary);
 }
 
-.link:visited {
-  color: var(--color-main);
+.item:hover .label {
+  color: var(--color-primary);
 }

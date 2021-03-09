@@ -3,21 +3,17 @@ import { Link } from 'react-router-dom'
 import styles from '../css/SideNavItem.module.css'
 
 export interface ISideNavItemProps {
-  icon: string
+  Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
   label: string
   destPath: string
 }
 
-const SideNavItem = ({ icon, label, destPath }: ISideNavItemProps) => {
+const SideNavItem = ({ Icon, label, destPath }: ISideNavItemProps) => {
   return (
-    <>
-      <Link to={destPath} className={styles.link}>
-        <div className={styles.item}>
-          <img src={icon} className={styles.icon} />
-          <p className={styles.label}>{label}</p>
-        </div>
-      </Link>
-    </>
+    <Link to={destPath} className={styles.item}>
+      <Icon className={styles.icon} />
+      <p className={styles.label}>{label}</p>
+    </Link>
   )
 }
 
