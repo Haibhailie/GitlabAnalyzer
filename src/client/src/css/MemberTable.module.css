@@ -1,7 +1,7 @@
 .header {
   width: calc(100% - 20px);
   height: 42px;
-  background-color: var(--color-header);
+  background-color: var(--color-primary);
   color: #ffffff;
   text-align: left;
   display: flex;
@@ -10,8 +10,8 @@
 }
 
 .table {
-  border-left: 1px solid var(--color-table-border);
-  border-right: 1px solid var(--color-table-border);
+  border-left: 1px solid var(--color-light-gray);
+  border-right: 1px solid var(--color-light-gray);
   width: calc(100% - 2px);
 }
 
@@ -21,12 +21,13 @@
   align-items: center;
   padding: 0 10px;
   height: 56px;
-  font: var(--font-small);
-  border-bottom: 1px solid var(--color-table-border);
+  font: var(--font-body-medium-poppins);
+  border-bottom: 1px solid var(--color-light-gray);
+  text-align: left;
 }
 
 .theader {
-  background-color: var(--color-table-header-background);
+  background-color: var(--color-background-gray);
 }
 
 .analyze {
@@ -34,4 +35,5 @@
   max-width: 200px;
   height: fit-content;
   padding: 5px 12px;
+  text-align: left;
 }

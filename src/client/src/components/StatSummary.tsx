@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import Stat, { IStatProps } from './Stat'
 import { Tooltip } from '@material-ui/core'
+import Stat, { IStatProps } from './Stat'
 
 import styles from '../css/StatSummary.module.css'
 
@@ -38,7 +38,7 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
       ))}
       <div className={styles.copyStats}>
         <Tooltip title={copied ? 'Copied!' : 'Copy stats'}>
-          <button className={styles.copyButton} onClick={copyToClipboard}>
+          <button onClick={copyToClipboard}>
             <img src={clipboard} className={styles.copyIcon} />
           </button>
         </Tooltip>

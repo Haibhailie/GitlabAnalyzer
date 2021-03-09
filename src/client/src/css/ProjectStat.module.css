@@ -5,8 +5,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid var(--color-lightgray);
-  border-top: 1px solid var(--color-lightgray);
+  border-left: 1px solid var(--color-light-gray);
+  border-top: 1px solid var(--color-gray);
 }
 
 .container:first-child {
@@ -14,13 +14,13 @@
 }
 
 .name {
-  color: var(--color-text-lightgray);
-  font: 400 16px Mulish;
+  color: var(--color-gray);
+  font: var(--font-body-large-mulish);
   margin: 0;
 }
 
 .value {
   margin-top: 6px;
-  font: 600 24px Mulish;
+  font: var(--font-header-medium-mulish);
   margin: 0;
 }

@@ -4,23 +4,9 @@
   align-items: flex-start;
 }
 
-.activeTabHeader:hover,
-.inactiveTabHeader:hover {
-  cursor: pointer;
-}
-
-.activeTabHeader:focus,
-.inactiveTabHeader:focus {
-  outline: none;
-}
-
 .activeTabHeader,
 .inactiveTabHeader {
-  background: none;
-  font: var(--font-item-label);
-  border-left: none;
-  border-right: none;
-  border-top: none;
+  font: var(--font-body-large-poppins);
   width: 250px;
 }
 
@@ -31,6 +17,6 @@
 }
 
 .inactiveTabHeader {
-  border-bottom: 2px solid var(--color-darkgray);
+  border-bottom: 2px solid var(--color-light-gray);
   padding: 15px 0 16px;
 }

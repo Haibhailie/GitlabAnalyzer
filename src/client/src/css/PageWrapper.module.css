@@ -1,18 +1,35 @@
-.container {
-  height: calc(100% - var(--header-height));
-  position: absolute;
-  bottom: 0;
+.wrapper {
   width: 100%;
-  overflow-x: hidden;
+  height: 100%;
+  overflow: hidden;
+}
+
+.header {
+  height: var(--height-header);
+}
+
+.sideNav {
+  position: fixed;
+  transition: left 0.4s ease-in-out;
+  left: 0;
+  width: var(--width-sideNav);
+  height: calc(100% - var(--height-header));
+}
+
+.closedSideNav .sideNav {
+  left: calc(-1 * var(--width-sideNav));
 }
 
 .main {
-  margin-left: 0px;
-  transition: margin-left 0.4s ease-in-out;
-  height: 100%;
-  width: auto;
+  overflow-y: auto;
+  transition: all 0.4s ease-in-out;
+  margin-left: var(--width-sideNav);
+  height: calc(100% - var(--height-header));
+  width: calc(100% - var(--width-sideNav));
+  margin-bottom: 200px;
 }
 
-.mainPushed {
-  margin-left: var(--sidenav-width);
+.closedSideNav .main {
+  width: 100%;
+  margin-left: 0;
 }

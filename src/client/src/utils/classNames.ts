@@ -1,7 +1,7 @@
-type classes = Array<string | number | undefined | null>
+type classes = Array<string | number | boolean | undefined | null>
 
 const classNames = (...classes: classes) => {
-  return classes.filter(cls => cls !== undefined && cls !== null).join(' ')
+  return classes.filter(cls => cls).join(' ')
 }
 
 export default classNames

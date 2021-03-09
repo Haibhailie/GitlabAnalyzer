@@ -189,7 +189,7 @@ const ActivityGraph = ({
           <Bar
             name="Commits"
             dataKey={yAxisValue === 'number' ? 'commits' : 'commitScore'}
-            fill="var(--color-header)"
+            fill="var(--color-primary)"
           />
         </BarChart>
       </ResponsiveContainer>

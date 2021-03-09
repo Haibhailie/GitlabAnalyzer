@@ -2,8 +2,9 @@ import { useHistory } from 'react-router-dom'
 import { useState } from 'react'
 import jsonFetcher from '../utils/jsonFetcher'
 
-import styles from '../css/LoginFields.module.css'
 import Selector from './Selector'
+
+import styles from '../css/LoginFields.module.css'
 
 const LoginFields = () => {
   const history = useHistory()
