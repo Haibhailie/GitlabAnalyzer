@@ -11,7 +11,22 @@ import MemberSummary from '../components/MemberSummary'
 import styles from '../css/Member.module.css'
 
 const Member = () => {
-  return <div></div>
+  return (
+    <div className={styles.container}>
+      <h1>Member name</h1>
+      <Selector tabHeaders={['Summary', 'Merge Requests', 'Comments']}>
+        <div className={styles.summaryContainer}>
+          <MemberSummary />
+        </div>
+        <div className={styles.mergeRequestsContainer}>
+          <h1>Merge requests</h1>
+        </div>
+        <div className={styles.commentsContainer}>
+          <h1>Comments Table</h1>
+        </div>
+      </Selector>
+    </div>
+  )
 }
 
 export default Member
