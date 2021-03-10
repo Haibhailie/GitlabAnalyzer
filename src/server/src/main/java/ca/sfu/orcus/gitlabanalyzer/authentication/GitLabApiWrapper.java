@@ -32,10 +32,8 @@ public class GitLabApiWrapper {
     private GitLabApi getGitLabApiForType(String jwt, JwtService.JwtType type) {
         if (type == JwtService.JwtType.PAT) {
             return getGitLabApiForPat(jwt);
-        } else if (type == JwtService.JwtType.USER_PASS) {
-            return getGitLabApiForUserPass(jwt);
         } else {
-            return null;
+            return getGitLabApiForUserPass(jwt);
         }
     }
 
