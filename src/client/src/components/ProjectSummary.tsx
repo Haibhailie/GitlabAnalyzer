@@ -7,6 +7,7 @@ import ProjectStat from '../components/ProjectStat'
 import ActivityGraph from '../components/ActivityGraph'
 
 import styles from '../css/ProjectSummary.module.css'
+import StatSummary from './StatSummary'
 
 const calcAgeInDays = (birth: number) => {
   const diff = Date.now() - birth
@@ -19,6 +20,27 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
   if (!project) return null
 
   const { id, members, numBranches, numCommits, createdAt, repoSize } = project
+
+  const projectStatData = [
+    {
+      name: 'Members',
+      value: members.length,
+    },
+    {
+      name: 'Total commits',
+      value: numCommits,
+    },
+    {
+      name: 'Files',
+      rawValue: bytesConverter(repoSize).split(' ')[0],
+      value: bytesConverter(repoSize),
+      description: 'Total size of all files',
+    },
+    {
+      name: 'Branches',
+      value: numBranches,
+    },
+  ]
 
   return (
     <div className={styles.container}>
@@ -53,16 +75,7 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
             yAxisValue={yAxis}
           />
         </div>
-        <div className={styles.stats}>
-          <ProjectStat name="Members" value={members.length} />
-          <ProjectStat name="Branches" value={numBranches} />
-          <ProjectStat name="Commits" value={numCommits} />
-          <ProjectStat
-            name="Average commits per day"
-            value={round(numCommits / calcAgeInDays(createdAt), 2)}
-          />
-          <ProjectStat name="Files" value={bytesConverter(repoSize)} />
-        </div>
+        <StatSummary statData={projectStatData} />
       </div>
     </div>
   )

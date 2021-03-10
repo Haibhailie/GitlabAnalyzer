@@ -6,6 +6,7 @@ import info from '../assets/info.svg'
 
 export interface IStatProps {
   name: string
+  rawValue?: string | number
   value: string | number
   description?: string
 }

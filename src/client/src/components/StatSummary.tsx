@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Tooltip } from '@material-ui/core'
 import Stat, { IStatProps } from './Stat'
 
@@ -7,38 +7,48 @@ import styles from '../css/StatSummary.module.css'
 import clipboard from '../assets/clipboard.svg'
 
 export interface IStatSummaryProps {
-  statData: Array<IStatProps>
+  statData: IStatProps[]
 }
 
 const StatSummary = ({ statData }: IStatSummaryProps) => {
   const [copied, setCopied] = useState(false)
-  const csvString = [
-    ['Stat', 'Value'],
-    ...statData.map(stat => [stat.name, stat.value]),
-  ]
-    .map(r => r.join(','))
-    .join('\n')
+  const [csvString, setCsvString] = useState('')
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>()
+
+  useEffect(() => {
+    setCsvString(
+      [
+        ['Stat', 'Value'],
+        ...statData.map(stat => [stat.name, stat.rawValue ?? stat.value]),
+      ]
+        .map(r => r.join('\t'))
+        .join('\n')
+    )
+  }, [statData])
 
   const copyToClipboard = () => {
-    const dummyText = document.createElement('textarea')
-    dummyText.value = csvString
-    console.log(dummyText.value)
-    document.body.appendChild(dummyText)
-    dummyText.select()
-    document.execCommand('copy')
-    document.body.removeChild(dummyText)
+    //TO-DO: Implement navigator.permissions query for clipboard-read/write
+    navigator.clipboard.writeText(csvString)
     setCopied(true)
-    setTimeout(() => setCopied(false), 5000)
+    timeoutRef.current = setTimeout(() => setCopied(false), 5000)
   }
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div className={styles.container}>
       {statData?.map(stat => (
         <Stat key={stat.name} {...stat} />
       ))}
-      <div className={styles.copyStats}>
+      <div className={styles.statTools}>
         <Tooltip title={copied ? 'Copied!' : 'Copy stats'}>
-          <button onClick={copyToClipboard}>
+          <button onClick={copyToClipboard} className={styles.copyButton}>
             <img src={clipboard} className={styles.copyIcon} />
           </button>
         </Tooltip>
