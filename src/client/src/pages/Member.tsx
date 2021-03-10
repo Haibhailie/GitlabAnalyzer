@@ -1,7 +1,14 @@
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
-import { useParams } from 'react-router-dom'
+import {
+  useHistory,
+  useParams,
+  RouteComponentProps,
+  useLocation,
+} from 'react-router-dom'
+import { Location } from 'history'
 import { onError } from '../utils/suspenseDefaults'
+import IMember from '../pages/Project'
 
 import Loading from '../components/Loading'
 import ErrorComp from '../components/ErrorComp'
@@ -10,7 +17,17 @@ import MemberSummary from '../components/MemberSummary'
 
 import styles from '../css/Member.module.css'
 
+export interface IMemberProps {
+  username: string
+  displayName: string
+  role: string
+}
+
 const Member = () => {
+  const { id, memberId } = useParams<{ id: string; memberId: string }>()
+  const location = useLocation()
+  console.log(location.state)
+
   return (
     <div className={styles.container}>
       <h1>Member name</h1>

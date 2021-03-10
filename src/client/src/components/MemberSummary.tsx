@@ -27,6 +27,12 @@ const MemberSummary = () => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.graph}>
+        <ActivityGraph
+          mergeUrl={`/api/project/5/mergerequests`}
+          commitUrl={`/api/project/5/commits`}
+        />
+      </div>
       <StatSummary statData={memberData} />
     </div>
   )

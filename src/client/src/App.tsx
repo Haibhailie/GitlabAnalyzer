@@ -17,7 +17,7 @@ const App = () => {
               <Home />
             </PageWrapper>
           </Route>
-          <Route path="/project/:id/member/:id">
+          <Route path="/project/:id/member/:memberId">
             <PageWrapper>
               <Member />
             </PageWrapper>
