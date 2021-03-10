@@ -1,0 +1,37 @@
+.header {
+  background-color: #eeeeee;
+  padding: 0px 10px;
+  margin: 8px 0px;
+  height: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header:hover {
+  cursor: pointer;
+}
+
+.subHeader {
+  border-bottom: 1.5px solid gray;
+  padding: 0px 5px;
+  border-spacing: -1px;
+  margin: 0px 0px 5px 0px;
+}
+
+.inputField {
+  margin-top: 2px;
+  margin-bottom: 8px;
+}
+
+.dateContainer {
+  margin-bottom: 10px;
+}
+
+.label {
+  padding-left: 5px;
+}
+
+.dateInput {
+  width: 170px;
+}
