@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import styles from '../css/SideNavItem.module.css'
+import styles from '../css/SideNavDropDown.module.css'
 
 export interface ISideNavDropDown {
   children: JSX.Element
@@ -23,7 +23,7 @@ const SideNavDropDown = ({ children, icon, label }: ISideNavDropDown) => {
         {open && <span>V</span>}
         {!open && <span>{'>'}</span>}
       </div>
-      <div>{open && children}</div>
+      <div className={styles.container}>{open && children}</div>
     </div>
   )
 }
