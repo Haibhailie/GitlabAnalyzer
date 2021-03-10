@@ -38,10 +38,10 @@ public class MemberController {
                                           @PathVariable int projectId,
                                           @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
                                           @RequestParam(required = false, defaultValue = Constants.DEFAULT_UNTIL) long until,
-                                          @PathVariable String memberEmail) {
+                                          @PathVariable String memberName) {
         Date dateSince = DateUtils.getDateSinceOrEarliest(since);
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
-        List<CommitDto> allCommitsByMemberEmail = memberService.getCommitsByMemberEmail(jwt, projectId, dateSince, dateUntil, memberEmail);
+        List<CommitDto> allCommitsByMemberEmail = memberService.getCommitsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
         response.setStatus(allCommitsByMemberEmail == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(allCommitsByMemberEmail);
