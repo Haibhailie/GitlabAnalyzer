@@ -21,7 +21,7 @@ public class CommitScore {
     private final double blankLOCFactor = 0;
     private final double spacingChangeFactor = 0;
 
-    private static final List<String> commentDoubleSlash = Arrays.asList(".java", ".cpp");
+    private static final List<String> commentDoubleSlash = Arrays.asList(".java", ".cpp", ".txt"); // added .txt for test purposes
     private static final List<String> commentSlashStar = Arrays.asList(".js", ".css");
 
     public double getCommitScore(GitLabApi gitLabApi, int projectId, String sha) throws GitLabApiException {
@@ -30,9 +30,10 @@ public class CommitScore {
         List<Diff> diffs = gitLabApi.getCommitsApi().getDiff(projectId, sha);
         for (Diff d : diffs) {
             score += getAddLOCScore(d);
-            score += getSyntaxChangeScore(d);
+            score += getSyntaxChangeScore(d); // currently 0
             score += getBlankLOCScore(commit, d);
             score += getSpacingChangeScore(d);
+
         }
         score += getDeleteLOCScore(commit);
         return score;
@@ -65,8 +66,17 @@ public class CommitScore {
 
     long getLinesOfActualCode(Diff diff) {
         // Remove blank lines
-        String s = diff.getDiff().replace("+\n", "");
-        return s.chars().filter(ch -> ch == '\n').count() - 1; // -1 due to a header line in each diff
+        String str = diff.getDiff().replace("+\n", "");
+
+        String strFind = "\n+";
+        int count = 0;
+        int fromIndex = 0;
+
+        while ((fromIndex = str.indexOf(strFind, fromIndex)) != -1 ) {
+            count++;
+            fromIndex++;
+        }
+        return count;
     }
 
     // https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string
