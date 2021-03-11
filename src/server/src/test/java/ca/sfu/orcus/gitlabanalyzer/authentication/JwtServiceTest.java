@@ -6,18 +6,19 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.MockedStatic;
 
 import javax.crypto.SecretKey;
-
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mockStatic;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JwtServiceTest {
     private JwtService jwtService;
     private SecretKey secretKey;
@@ -25,7 +26,7 @@ public class JwtServiceTest {
     private final AuthenticationUser userWithUserPass = new AuthenticationUser("username", "password");
     private final AuthenticationUser userWithPat = new AuthenticationUser("pat");
 
-    @BeforeEach
+    @BeforeAll
     public void setup() {
         String encodedSecretKey = generateBase64EncodedSecretKey();
         jwtService = createJwtServiceWithSecretKey(encodedSecretKey);
