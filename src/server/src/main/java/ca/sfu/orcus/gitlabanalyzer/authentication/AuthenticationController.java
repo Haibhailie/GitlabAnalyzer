@@ -55,6 +55,12 @@ public class AuthenticationController {
         }
     }
 
+    @PostMapping("/api/signout")
+    public void logoutWithUserPass(@RequestBody AuthenticationUser user,
+                                  HttpServletResponse response) {
+    }
+
+
     @GetMapping("/api/ping")
     public void checkJwtIsValid(@CookieValue(value = "sessionId") String jwt,
                                 HttpServletResponse response) {
