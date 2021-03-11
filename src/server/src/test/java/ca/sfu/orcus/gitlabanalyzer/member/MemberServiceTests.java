@@ -62,9 +62,9 @@ public class MemberServiceTests {
     }
 
     @Test
-    public void getCommitsByMemberEmailWithNullGitLabApi() {
+    public void getCommitsByMemberNameWithNullGitLabApi() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
-        assertNull(memberService.getCommitsByMemberName(jwt, projectId, since, until, MemberMock.defaultEmail));
+        assertNull(memberService.getCommitsByMemberName(jwt, projectId, since, until, MemberMock.defaultDisplayName));
     }
 
     // Testing the MemberService methods
@@ -87,17 +87,17 @@ public class MemberServiceTests {
     }
 
     @Test
-    public void getCommitsByMemberEmailTest() {
+    public void getCommitsByMemberNameTest() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
         List<CommitDto> commitDtos = new ArrayList<>();
 
-        String email = MemberMock.defaultEmail;
-        when(commitService.returnAllCommits(gitLabApi, projectId, since, until, email)).thenReturn(commitDtos);
+        String displayName = MemberMock.defaultDisplayName;
+        when(commitService.returnAllCommits(gitLabApi, projectId, since, until, displayName)).thenReturn(commitDtos);
 
-        List<CommitDto> commitsByMemberEmail = memberService.getCommitsByMemberName(jwt, projectId, since, until, email);
+        List<CommitDto> commitsByMemberName = memberService.getCommitsByMemberName(jwt, projectId, since, until, displayName);
 
-        assertEquals(commitsByMemberEmail, commitDtos);
+        assertEquals(commitsByMemberName, commitDtos);
     }
 
     @Test
