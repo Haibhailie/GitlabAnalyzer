@@ -51,7 +51,7 @@ public class CommitController {
                                        @PathVariable int projectId,
                                        @PathVariable String sha,
                                        HttpServletResponse response) {
-        List<Diff> diffs = commitService.getDiffOfCommit(jwt, projectId, sha);
+        List<String> diffs = commitService.getDiffOfCommit(jwt, projectId, sha);
         response.setStatus(diffs == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(diffs);
