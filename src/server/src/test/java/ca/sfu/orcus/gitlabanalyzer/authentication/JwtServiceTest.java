@@ -100,7 +100,7 @@ public class JwtServiceTest {
         String foreignEncodedSecretKey;
         SecretKey foreignSecretKey;
 
-        // Make sure the foreign key isn't the same as ours
+        // Make sure the foreign key isn't the same as ours, just in case
         do {
             foreignEncodedSecretKey = generateBase64EncodedSecretKey();
             foreignSecretKey = getSecretKeyFromBase64EncodedString(foreignEncodedSecretKey);
