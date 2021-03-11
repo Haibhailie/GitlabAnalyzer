@@ -1,4 +1,6 @@
 import SideNavItem from './SideNavItem'
+import SideNavDropDown from './SideNavDropDown'
+import UserConfig from './UserConfig'
 
 import styles from '../css/SideNav.module.css'
 
@@ -14,7 +16,6 @@ export interface ISideNavProps {
 const items = [
   { icon: repoIcon, label: 'Projects', dest: '/home' },
   { icon: reportIcon, label: 'Reports', dest: '/reports' },
-  { icon: settingsIcon, label: 'Settings', dest: '/settings' },
 ]
 
 const SideNav = ({ isOpen, sideNavToggler }: ISideNavProps) => {
@@ -42,6 +43,9 @@ const SideNav = ({ isOpen, sideNavToggler }: ISideNavProps) => {
             />
           )
         })}
+        <SideNavDropDown key="Settings" label="Settings" icon={settingsIcon}>
+          <UserConfig />
+        </SideNavDropDown>
       </ul>
     </aside>
   )
