@@ -32,8 +32,8 @@ public class MemberController {
         return gson.toJson(members);
     }
 
-    @GetMapping("/api/project/{projectId}/members/{memberEmail}/commits")
-    public String getCommitsByMemberEmail(@CookieValue(value = "sessionId") String jwt,
+    @GetMapping("/api/project/{projectId}/members/{memberName}/commits")
+    public String getCommitsByMemberName(@CookieValue(value = "sessionId") String jwt,
                                           HttpServletResponse response,
                                           @PathVariable int projectId,
                                           @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
@@ -41,10 +41,10 @@ public class MemberController {
                                           @PathVariable String memberName) {
         Date dateSince = DateUtils.getDateSinceOrEarliest(since);
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
-        List<CommitDto> allCommitsByMemberEmail = memberService.getCommitsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
-        response.setStatus(allCommitsByMemberEmail == null ? 401 : 200);
+        List<CommitDto> allCommitsByMemberName = memberService.getCommitsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
+        response.setStatus(allCommitsByMemberName == null ? 401 : 200);
         Gson gson = new Gson();
-        return gson.toJson(allCommitsByMemberEmail);
+        return gson.toJson(allCommitsByMemberName);
     }
 
     @GetMapping("/api/project/{projectId}/members/{memberId}/mergerequests")
