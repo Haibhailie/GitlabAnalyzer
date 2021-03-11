@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { Tooltip } from '@material-ui/core'
+import { ThemeProvider, Tooltip } from '@material-ui/core'
 import Stat, { IStatProps } from './Stat'
+import tooltipTheme from '../themes/tooltipTheme'
 
 import styles from '../css/StatSummary.module.css'
 
@@ -42,18 +43,20 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
   }, [])
 
   return (
-    <div className={styles.container}>
-      {statData?.map(stat => (
-        <Stat key={stat.name} {...stat} />
-      ))}
-      <div className={styles.statTools}>
-        <Tooltip title={copied ? 'Copied!' : 'Copy stats'}>
-          <button onClick={copyToClipboard} className={styles.copyButton}>
-            <img src={clipboard} className={styles.copyIcon} />
-          </button>
-        </Tooltip>
+    <ThemeProvider theme={tooltipTheme}>
+      <div className={styles.container}>
+        {statData?.map(stat => (
+          <Stat key={stat.name} {...stat} />
+        ))}
+        <div className={styles.statTools}>
+          <Tooltip title={copied ? 'Copied!' : 'Copy stats'} arrow>
+            <button onClick={copyToClipboard} className={styles.copyButton}>
+              <img src={clipboard} className={styles.copyIcon} />
+            </button>
+          </Tooltip>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   )
 }
 

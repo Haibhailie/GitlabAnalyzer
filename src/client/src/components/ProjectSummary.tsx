@@ -1,9 +1,7 @@
-import { round } from 'lodash'
 import { useState } from 'react'
 import { IProjectData } from '../pages/Project'
 import bytesConverter from '../utils/bytesConverter'
 
-import ProjectStat from '../components/ProjectStat'
 import ActivityGraph from '../components/ActivityGraph'
 
 import styles from '../css/ProjectSummary.module.css'
@@ -27,6 +25,10 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
       value: members.length,
     },
     {
+      name: 'Branches',
+      value: numBranches,
+    },
+    {
       name: 'Total commits',
       value: numCommits,
     },
@@ -36,37 +38,10 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
       value: bytesConverter(repoSize),
       description: 'Total size of all files',
     },
-    {
-      name: 'Branches',
-      value: numBranches,
-    },
   ]
 
   return (
     <div className={styles.container}>
-      <div className={styles.config}>
-        <p className={styles.configHeader}>CONFIGURE</p>
-        <p className={styles.category}>Y-Axis:</p>
-        <div className={styles.option}>
-          <input
-            type="radio"
-            value="number"
-            name="yaxis"
-            onChange={() => setYAxis('number')}
-            defaultChecked
-          />
-          Number
-        </div>
-        <div className={styles.option}>
-          <input
-            type="radio"
-            value="score"
-            name="yaxis"
-            onChange={() => setYAxis('score')}
-          />
-          Points
-        </div>
-      </div>
       <div className={styles.statsContainer}>
         <div className={styles.graph}>
           <ActivityGraph

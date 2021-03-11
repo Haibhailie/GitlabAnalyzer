@@ -17,7 +17,7 @@ const Stat = ({ name, value, description }: IStatProps) => {
       <p className={styles.name}>
         {name}
         {description && (
-          <Tooltip title={description} placement="right">
+          <Tooltip title={description} placement="right" arrow>
             <img className={styles.icon} src={info} />
           </Tooltip>
         )}
