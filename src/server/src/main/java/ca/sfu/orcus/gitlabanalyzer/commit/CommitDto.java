@@ -86,10 +86,6 @@ public class CommitDto {
         this.diffs = diffs;
     }
 
-    public String getAuthorEmail() {
-        return authorEmail;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {
