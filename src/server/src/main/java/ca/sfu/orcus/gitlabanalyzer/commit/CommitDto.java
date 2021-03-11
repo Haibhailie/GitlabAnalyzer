@@ -21,7 +21,7 @@ public class CommitDto {
     private int numAdditions;
     private int numDeletions;
     private int total;
-    private List<Diff> diffs;
+    private List<String> diffs;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
@@ -38,7 +38,10 @@ public class CommitDto {
         this.setTotal(presentCommit.getStats().getTotal());
 
         List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
-        List<Diff> allDiffs = new ArrayList<>(gitDiffs);
+        List<String> allDiffs = new ArrayList<>();
+        for (Diff d : gitDiffs) {
+            allDiffs.add(d.getDiff());
+        }
         this.setDiffs(allDiffs);
     }
 
@@ -82,8 +85,12 @@ public class CommitDto {
         this.total = total;
     }
 
-    public void setDiffs(List<Diff> diffs) {
+    public void setDiffs(List<String> diffs) {
         this.diffs = diffs;
+    }
+
+    public List<String> getDiffs() {
+        return diffs;
     }
 
     @Override

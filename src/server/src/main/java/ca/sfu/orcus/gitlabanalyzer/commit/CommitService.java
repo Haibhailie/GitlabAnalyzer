@@ -80,15 +80,12 @@ public class CommitService {
         }
     }
 
-    public List<Diff> getDiffOfCommit(String jwt, int projectId, String sha) {
+    public List<String> getDiffOfCommit(String jwt, int projectId, String sha) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        try {
-            return gitLabApi.getCommitsApi().getDiff(projectId, sha);
-        } catch (GitLabApiException e) {
-            return null;
-        }
+        CommitDto commitDto = getSingleCommit(jwt, projectId, sha);
+        return commitDto.getDiffs();
     }
 }
