@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { IProjectData } from '../pages/Project'
 import bytesConverter from '../utils/bytesConverter'
+import { round } from 'lodash'
 
 import ActivityGraph from '../components/ActivityGraph'
 
@@ -33,10 +34,13 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
       value: numCommits,
     },
     {
+      name: 'Average commits per day',
+      value: round(numCommits / calcAgeInDays(createdAt), 2),
+    },
+    {
       name: 'Files',
       rawValue: bytesConverter(repoSize).split(' ')[0],
       value: bytesConverter(repoSize),
-      description: 'Total size of all files',
     },
   ]
 
