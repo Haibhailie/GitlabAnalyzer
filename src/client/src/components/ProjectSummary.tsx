@@ -48,7 +48,6 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
           <ActivityGraph
             mergeUrl={`/api/project/${id}/mergerequests`}
             commitUrl={`/api/project/${id}/commits`}
-            yAxisValue={yAxis}
           />
         </div>
         <StatSummary statData={projectStatData} />
