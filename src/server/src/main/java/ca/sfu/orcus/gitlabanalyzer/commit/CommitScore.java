@@ -8,12 +8,6 @@ import org.gitlab4j.api.models.Diff;
 import java.util.Arrays;
 import java.util.List;
 
-//Adding a LOC: +1
-//Comments/blank lines: +0
-//Deleting a LOC: +0.2
-//Spacing change: +0
-//Syntax change: +0.2
-
 public class CommitScore {
     private final double addLOCFactor = 1;
     private final double deleteLOCFactor = 0.2;
@@ -40,7 +34,7 @@ public class CommitScore {
     }
 
     double getAddLOCScore(Diff diff) {
-        long actualLOCCount = getLinesOfActualCode(diff);
+        long actualLOCCount = getLinesOfAddedCode(diff);
         return actualLOCCount * addLOCFactor;
     }
 
@@ -53,7 +47,7 @@ public class CommitScore {
     }
 
     double getBlankLOCScore(Commit commit, Diff diff) {
-        long actualLOCCount = getLinesOfActualCode(diff);
+        long actualLOCCount = getLinesOfAddedCode(diff);
         long blankLOCCount = commit.getStats().getAdditions() - actualLOCCount;
         long commentsCount = getNumComments(diff);
 
@@ -64,7 +58,7 @@ public class CommitScore {
         return 0 * spacingChangeFactor;
     }
 
-    long getLinesOfActualCode(Diff diff) {
+    long getLinesOfAddedCode(Diff diff) {
         // Remove blank lines
         String str = diff.getDiff().replace("+\n", "");
 
@@ -72,7 +66,7 @@ public class CommitScore {
         int count = 0;
         int fromIndex = 0;
 
-        while ((fromIndex = str.indexOf(strFind, fromIndex)) != -1 ) {
+        while ((fromIndex = str.indexOf(strFind, fromIndex)) != -1) {
             count++;
             fromIndex++;
         }
