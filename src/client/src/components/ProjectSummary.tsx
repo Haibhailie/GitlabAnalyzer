@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { IProjectData } from '../pages/Project'
 import bytesConverter from '../utils/bytesConverter'
 import { round } from 'lodash'
@@ -14,8 +13,6 @@ const calcAgeInDays = (birth: number) => {
 }
 
 const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
-  const [yAxis, setYAxis] = useState<'number' | 'score'>('number')
-
   if (!project) return null
 
   const { id, members, numBranches, numCommits, createdAt, repoSize } = project
