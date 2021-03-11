@@ -89,10 +89,6 @@ public class CommitDto {
         this.diffs = diffs;
     }
 
-    public String getAuthorEmail() {
-        return authorEmail;
-    }
-
     public List<String> getDiffs() {
         return diffs;
     }

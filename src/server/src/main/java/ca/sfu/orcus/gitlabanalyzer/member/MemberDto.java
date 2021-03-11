@@ -7,14 +7,12 @@ import java.util.Locale;
 
 public class MemberDto {
     private String displayName;
-    private String email;
     private int id;
     private String username;
     private String role;
 
     public MemberDto(Member presentMember) {
         setDisplayName(presentMember.getName());
-        setEmail(presentMember.getEmail());
         setId(presentMember.getId());
         setUsername(presentMember.getUsername());
         try {
@@ -26,10 +24,6 @@ public class MemberDto {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public void setId(int id) {
@@ -57,7 +51,6 @@ public class MemberDto {
         MemberDto m = (MemberDto) o;
 
         return (this.displayName.equals(m.displayName)
-                && this.email.equals(m.email)
                 && this.id == m.id
                 && this.username.equals(m.username)
                 && this.role.equals(m.role));
