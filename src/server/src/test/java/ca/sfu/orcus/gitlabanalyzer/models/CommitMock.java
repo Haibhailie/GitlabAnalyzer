@@ -77,12 +77,8 @@ public class CommitMock {
 
     public static List<Diff> createTestDiffList() {
         Diff diffA = DiffMock.createTestDiff(mockCodeDiff, false, false, true, "Root", "Not Root");
-
-
         List<Diff> presentDiffList = new ArrayList<>();
         presentDiffList.add(diffA);
-
-
         return presentDiffList;
     }
 

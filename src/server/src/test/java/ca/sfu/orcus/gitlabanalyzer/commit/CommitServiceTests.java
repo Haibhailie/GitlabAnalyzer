@@ -28,8 +28,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CommitServiceTests {
-    @Mock private GitLabApiWrapper gitLabApiWrapper;
-    @Mock private Commit commit;
+    @Mock
+    private GitLabApiWrapper gitLabApiWrapper;
+    @Mock
+    private Commit commit;
 
     // Class to be tested
     @InjectMocks
@@ -52,7 +54,7 @@ public class CommitServiceTests {
         project = ProjectMock.createProject();
     }
 
-    void initialTestSetup(){
+    void initialTestSetup() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
         commit = CommitMock.createCommit();
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
@@ -129,7 +131,7 @@ public class CommitServiceTests {
         when(commitsApi.getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
         when(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())).thenReturn(CommitMock.createTestDiffList());
         String diffList = commitService.getDiffOfCommit(jwt, projectId, CommitMock.defaultSha);
-        assertEquals( expectedDiffList, diffList);
+        assertEquals(expectedDiffList, diffList);
     }
 
     // Testing the exception throws

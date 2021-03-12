@@ -151,5 +151,4 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA));
     }
 
-
 }
