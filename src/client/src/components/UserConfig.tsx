@@ -6,6 +6,7 @@ import styles from '../css/UserConfig.module.css'
 import SideNavSubDropDown from './SideNavSubDropDown'
 import SideNavDropDown from './SideNavDropDown'
 import UserConfigPopup from './UserConfigPopup'
+import SaveUserConfig from './SaveUserConfig'
 
 const UserConfig = () => {
   const { userConfig, dispatch } = useContext(UserConfigContext)
@@ -100,8 +101,17 @@ const UserConfig = () => {
     setPopUpOpen(!popUpOpen)
   }
 
+  const setCurrentConfig = (newUserConfig: IUserConfig) => {
+    setFileScores(newUserConfig.fileScores)
+    setGeneralScores(newUserConfig.generalScores)
+    dispatch({
+      type: 'SET_USER_CONFIG',
+      userConfig: newUserConfig,
+    })
+  }
+
   return (
-    <div>
+    <div className={styles.container}>
       <SideNavSubDropDown initial={true} label="Date Range">
         <>
           <div className={styles.dateContainer}>
@@ -231,6 +241,7 @@ const UserConfig = () => {
           togglePopup={togglePopup}
         />
       )}
+      <SaveUserConfig setCurrentConfig={setCurrentConfig} />
     </div>
   )
 }
