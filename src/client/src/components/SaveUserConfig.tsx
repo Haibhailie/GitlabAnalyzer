@@ -99,7 +99,7 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
         X Save Config
       </div>
       <SideNavSubDropDown initial={true} label="Load Configuration">
-        <div>
+        <>
           <ul className={styles.list}>
             {savedConfigs.map((config, index) => (
               <li key={index} className={styles.item}>
@@ -118,7 +118,7 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
               </li>
             ))}
           </ul>
-        </div>
+        </>
       </SideNavSubDropDown>
     </div>
   )

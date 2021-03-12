@@ -174,7 +174,7 @@ const UserConfig = () => {
         </>
       </SideNavSubDropDown>
       <SideNavSubDropDown initial={true} label="Graph Settings">
-        <div>
+        <>
           <p className={styles.subHeader}>Graph Y-Axis</p>
           <div className={styles.inputField}>
             <input
@@ -213,7 +213,7 @@ const UserConfig = () => {
             />
             <label className={styles.label}>Split By Member</label>
           </div>
-        </div>
+        </>
       </SideNavSubDropDown>
       <div className={styles.header} onClick={togglePopup}>
         {/* TODO: ADD ICON */}

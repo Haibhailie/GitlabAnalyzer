@@ -16,7 +16,7 @@ const SideNavDropDown = ({ children, Icon, label }: ISideNavDropDown) => {
   }
 
   return (
-    <div>
+    <>
       <div className={styles.item} onClick={toggleTab}>
         <Icon className={styles.icon} />
         <p className={styles.label}>{label}</p>
@@ -24,7 +24,7 @@ const SideNavDropDown = ({ children, Icon, label }: ISideNavDropDown) => {
         {!open && <span>{'>'}</span>}
       </div>
       <div className={styles.container}>{open && children}</div>
-    </div>
+    </>
   )
 }
 
