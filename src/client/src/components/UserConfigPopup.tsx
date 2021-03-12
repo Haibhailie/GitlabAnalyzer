@@ -113,7 +113,7 @@ const UserConfigPopup = ({
                         value={generalScore.value}
                         className={styles.generalInput}
                         onChange={event => generalScoresChange(event, index)}
-                      />{' '}
+                      />
                       pts
                     </td>
                   </tr>
@@ -145,7 +145,7 @@ const UserConfigPopup = ({
                           value={fileScore.scoreMultiplier}
                           className={styles.multiplierInput}
                           onChange={event => fileScoresChange(event, index)}
-                        />{' '}
+                        />
                         <div
                           className={styles.deleteButton}
                           onClick={() => deleteFileType(index)}
