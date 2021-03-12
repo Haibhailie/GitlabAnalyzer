@@ -102,7 +102,7 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
         <>
           <ul className={styles.list}>
             {savedConfigs.map((config, index) => (
-              <li key={index} className={styles.item}>
+              <li key={config.name} className={styles.item}>
                 <div
                   className={styles.label}
                   onClick={() => loadConfig(config)}

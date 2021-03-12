@@ -98,7 +98,7 @@ const UserConfigPopup = ({
               </colgroup>
               <tbody>
                 {generalScores.map((generalScore, index) => (
-                  <tr key={index}>
+                  <tr key={generalScore.type}>
                     <td>
                       <p>{generalScore.type}</p>
                     </td>
@@ -128,7 +128,7 @@ const UserConfigPopup = ({
 
                 <tbody>
                   {fileScores.map((fileScore, index) => (
-                    <tr key={index}>
+                    <tr key={fileScore.fileExtension}>
                       <td>
                         <div className={styles.fileLabel}>
                           {fileScore.fileExtension}
