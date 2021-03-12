@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.project.ProjectExtendedDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.DiffParser;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -21,7 +22,7 @@ public class CommitDto {
     private int numAdditions;
     private int numDeletions;
     private int total;
-    private List<String> diffs;
+    private String diffs;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
@@ -38,11 +39,7 @@ public class CommitDto {
         this.setTotal(presentCommit.getStats().getTotal());
 
         List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
-        List<String> allDiffs = new ArrayList<>();
-        for (Diff d : gitDiffs) {
-            allDiffs.add(d.getDiff());
-        }
-        this.setDiffs(allDiffs);
+        this.setDiffs((DiffParser.parseDiff(gitDiffs)));
     }
 
     public void setTitle(String title) {
@@ -85,11 +82,11 @@ public class CommitDto {
         this.total = total;
     }
 
-    public void setDiffs(List<String> diffs) {
+    public void setDiffs(String diffs) {
         this.diffs = diffs;
     }
 
-    public List<String> getDiffs() {
+    public String getDiffs() {
         return diffs;
     }
 

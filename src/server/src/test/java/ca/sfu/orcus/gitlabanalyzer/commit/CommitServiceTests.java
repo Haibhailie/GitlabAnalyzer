@@ -120,7 +120,7 @@ public class CommitServiceTests {
         assertEquals(commitDtos, expectedCommitDtos);
     }
 
-    @Test
+    /*@Test
     public void testGetSingleCommitDiff() throws GitLabApiException {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
 
@@ -137,7 +137,7 @@ public class CommitServiceTests {
         }
 
         assertEquals(commitDiff, expectedCommitDiff);
-    }
+    }*/
 
     // Testing the exception throws
 

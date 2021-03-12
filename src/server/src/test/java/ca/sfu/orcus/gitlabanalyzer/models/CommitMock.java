@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.DiffParser;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -70,15 +71,15 @@ public class CommitMock {
         return commits;
     }
 
-    public static List<Diff> createTestDiffList() {
+    public static String createTestDiffList() {
         Diff diffA = DiffMock.createTestDiff(mockCodeDiff, false, false, true, "Root", "Not Root");
         Diff diffB = DiffMock.createTestDiff(mockCodeDiff, false, true, false, "Root", "Not Root");
 
-        List<Diff> presentTempDiff = new ArrayList<>();
-        presentTempDiff.add(diffA);
-        presentTempDiff.add(diffB);
+        List<Diff> presentDiffList = new ArrayList<>();
+        presentDiffList.add(diffA);
+        presentDiffList.add(diffB);
 
-        return presentTempDiff;
+        return DiffParser.parseDiff(presentDiffList);
     }
 
     public static List<CommitDto> generateTestCommitDto(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {

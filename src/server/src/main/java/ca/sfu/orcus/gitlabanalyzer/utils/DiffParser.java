@@ -4,17 +4,35 @@ import org.gitlab4j.api.models.Diff;
 
 import java.util.List;
 
-public class DiffParser {
+public final class DiffParser {
+
+    private static String oldPath;
+    private static String newPath;
 
     public static String parseDiff(List<Diff> diffsList){
         StringBuilder convertedDiff = new StringBuilder();
         for(Diff presentDiff:diffsList){
-            String headerA = "diff --git a/"+presentDiff.getOldPath()+" b/"+presentDiff.getNewPath()+"\n";
-            String headerB = "--- a/"+presentDiff.getOldPath()+"\n+++ b/"+presentDiff.getOldPath()+"\n";
+            setDiffPaths(presentDiff);
+            String headerA = "diff --git a/"+oldPath+" b/"+newPath+"\n";
+            String headerB = "--- a/"+oldPath+"\n+++ b/"+newPath+"\n";
             String diffBody = presentDiff.getDiff();
             convertedDiff.append(headerA).append(headerB).append(diffBody);
         }
         return convertedDiff.toString();
     }
 
+    private static void setDiffPaths(Diff diff){
+        if(diff.getNewFile()){
+            oldPath="/dev/null";
+            newPath=diff.getNewPath();
+        }
+        else if(diff.getDeletedFile()) {
+            oldPath=diff.getOldPath();
+            newPath="/dev/null";
+        }
+        else{
+            oldPath=diff.getOldPath();
+            newPath=diff.getNewPath();
+        }
+    }
 }

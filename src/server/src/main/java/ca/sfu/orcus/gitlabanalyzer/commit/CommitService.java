@@ -79,7 +79,7 @@ public class CommitService {
         }
     }
 
-    public List<String> getDiffOfCommit(String jwt, int projectId, String sha) {
+    public String getDiffOfCommit(String jwt, int projectId, String sha) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
