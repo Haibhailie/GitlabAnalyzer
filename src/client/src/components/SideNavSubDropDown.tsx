@@ -3,7 +3,7 @@ import { useState } from 'react'
 import styles from '../css/SideNavSubDropDown.module.css'
 
 export interface ISideNavSubDropDown {
-  children: JSX.Element
+  children: unknown
   startOpened: boolean
   label: string
 }
