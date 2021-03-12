@@ -12,10 +12,10 @@ const SideNavSubDropDown = ({
   startOpened,
   label,
 }: ISideNavSubDropDown) => {
-  const [open, setOpen] = useState(startOpened)
+  const [isOpen, setIsOpen] = useState(startOpened)
 
   const toggleTab = () => {
-    setOpen(!open)
+    setIsOpen(!isOpen)
   }
 
   return (
@@ -23,11 +23,11 @@ const SideNavSubDropDown = ({
       <div className={styles.header} onClick={toggleTab}>
         <p className={styles.label}>
           {/* TODO: ADD drop down icon */}
-          {label} {open && <span>V</span>}
+          {label} {isOpen && <span>V</span>}
           {!open && <span>{'>'}</span>}
         </p>
       </div>
-      <div className={styles.subContainer}>{open && children}</div>
+      {isOpen && <div className={styles.subContainer}> {children}</div>}
     </div>
   )
 }
