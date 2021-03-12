@@ -99,9 +99,7 @@ const UserConfigPopup = ({
               <tbody>
                 {generalScores.map((generalScore, index) => (
                   <tr key={generalScore.type}>
-                    <td>
-                      <p>{generalScore.type}</p>
-                    </td>
+                    <td>{generalScore.type}</td>
                     <td>
                       <input
                         type="number"

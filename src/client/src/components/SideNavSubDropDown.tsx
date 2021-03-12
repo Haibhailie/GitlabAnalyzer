@@ -21,11 +21,9 @@ const SideNavSubDropDown = ({
   return (
     <div>
       <div className={styles.header} onClick={toggleTab}>
-        <p className={styles.label}>
-          {/* TODO: ADD drop down icon */}
-          {label} {isOpen && <span>V</span>}
-          {!open && <span>{'>'}</span>}
-        </p>
+        {/* TODO: ADD drop down icon */}
+        {label} {isOpen && <span>V</span>}
+        {!open && <span>{'>'}</span>}
       </div>
       {isOpen && <div className={styles.subContainer}> {children}</div>}
     </div>
