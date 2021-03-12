@@ -1,0 +1,142 @@
+.container {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  margin-top: -350px;
+  margin-left: -250px;
+  background-color: white;
+  height: 550px;
+  width: 450px;
+  border: 2px black solid;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(8px 8px 5px #999cae);
+}
+
+.scoreContainer {
+  width: 350px;
+}
+
+.generalContainer {
+  margin-top: 15px;
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fileContainer {
+  margin-top: 5px;
+  max-height: 205px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  padding: 0px 20px;
+}
+
+.closeButton {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+}
+
+.closeButton:hover {
+  cursor: pointer;
+}
+
+.header {
+  font: 400 24px Poppins;
+  margin-top: 30px;
+}
+
+.table {
+  border: '0';
+  border-spacing: '0px';
+}
+
+.labelColumn {
+  width: 200px;
+}
+
+.fileLabel {
+  padding-left: 20px;
+}
+
+.inputColumn {
+  width: 140px;
+}
+.generalInput {
+  width: 100px;
+  height: 25px;
+}
+
+.fileButton {
+  border: 1px solid blue;
+  border-radius: 5px;
+  text-align: center;
+  color: blue;
+  margin-top: 10px;
+}
+
+.fileButton:hover {
+  cursor: pointer;
+}
+
+.fileButtonDisabled {
+  border: 1px solid #999cae;
+  border-radius: 5px;
+  text-align: center;
+  color: #999cae;
+  background-color: #eeeeee;
+  margin-top: 10px;
+}
+
+.fileButtonDisabled:hover {
+  cursor: pointer;
+}
+
+.fileExtentionInput {
+  width: 150px;
+  height: 20px;
+  margin-top: 20px;
+}
+.multiplierInput {
+  width: 100px;
+  height: 18px;
+}
+
+.saveButton {
+  position: absolute;
+  bottom: 50px;
+  border: 1px solid blue;
+  border-radius: 5px;
+  text-align: center;
+  color: blue;
+  padding: 5px;
+}
+
+.saveButton:hover {
+  cursor: pointer;
+}
+
+.fileTypeContainer {
+  position: absolute;
+  bottom: 100px;
+}
+
+.deleteButton {
+  display: inline-block;
+  border: 1px solid blue;
+  color: blue;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+}
+
+.deleteButton:hover {
+  cursor: pointer;
+}
