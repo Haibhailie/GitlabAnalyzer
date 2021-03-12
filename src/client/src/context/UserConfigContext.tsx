@@ -47,6 +47,7 @@ export type IUserConfigReducerAction =
   // | { type: 'SET_SPACING_SCORE'; spacingScore: number }
   // | { type: 'SET_SYNTAX_SCORE'; syntaxScore: number }
   | { type: 'SET_SCORES'; scores: IScores }
+  | { type: 'SET_USER_CONFIG'; userConfig: IUserConfig }
 // | { type: 'SET_FILE_SCORES'; fileScores: Array<IFileTypeScoring> }
 
 export type IUserConfigReducer = (
@@ -157,6 +158,10 @@ const reducer: IUserConfigReducer = (
     //     ...state,
     //     fileScores: action.fileScores,
     //   }
+    case 'SET_USER_CONFIG':
+      return {
+        ...action.userConfig,
+      }
     default:
       return state
   }
