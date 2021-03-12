@@ -36,4 +36,23 @@ public class ProjectDto {
     public void setAnalyzed(boolean analyzed) {
         this.analyzed = analyzed;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof ProjectDto)) {
+            return false;
+        }
+
+        ProjectDto p = (ProjectDto) o;
+
+        return (this.id == p.id
+                && this.name.equals(p.name)
+                && this.role.equals(p.role)
+                && this.lastActivityAt == p.lastActivityAt
+                && this.analyzed == p.analyzed);
+    }
 }

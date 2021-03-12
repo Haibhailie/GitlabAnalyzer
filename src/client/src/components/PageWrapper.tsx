@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import classNames from '../utils/classNames'
 
 import Header from './Header'
 import SideNav from './SideNav'
@@ -10,24 +11,27 @@ export interface IPageWrapperProps {
 }
 
 const PageWrapper = ({ children }: IPageWrapperProps) => {
-  const [sideNavOpen, setSideNavOpen] = useState(true)
+  const [isSideNavOpen, setSideNavOpen] = useState(true)
 
   const toggleSideNav = () => {
-    setSideNavOpen(!sideNavOpen)
+    setSideNavOpen(!isSideNavOpen)
   }
 
   return (
-    <>
-      <Header isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
-      <div className={styles.container}>
-        <SideNav isOpen={sideNavOpen} sideNavToggler={toggleSideNav} />
-        <main
-          className={`${styles.main} ${sideNavOpen ? styles.mainPushed : ''}`}
-        >
-          {children}
-        </main>
-      </div>
-    </>
+    <div
+      className={classNames(
+        styles.wrapper,
+        !isSideNavOpen && styles.closedSideNav
+      )}
+    >
+      <Header sideNavToggler={toggleSideNav} className={styles.header} />
+      <SideNav
+        isOpen={isSideNavOpen}
+        sideNavToggler={toggleSideNav}
+        className={styles.sideNav}
+      />
+      <main className={styles.main}>{children}</main>
+    </div>
   )
 }
 

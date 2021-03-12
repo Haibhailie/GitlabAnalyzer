@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, DependencyList } from 'react'
 
 import DefaultLoader from '../components/Loading'
-import DefaultError from '../components/Error'
+import DefaultError from '../components/ErrorComp'
 
 export interface ISuspenseProps {
   children: JSX.Element
@@ -11,11 +11,20 @@ export interface ISuspenseProps {
 
 export type TSuspenseFunction = (props: ISuspenseProps) => JSX.Element
 
-const useSuspense = <DataType, ErrorType>(
+interface ISuspenseRef {
+  status: 'PENDING' | 'SUCCESS' | 'ERROR'
+  Suspense?: TSuspenseFunction
+  firstPass: boolean
+  setData?: (data: any) => void
+  setError?: (error: any) => void
+}
+
+const useSuspense = <DataType, ErrorType = Error>(
   hookFunctionHandler: (
     setData: (data: DataType) => void,
     setError: (error: ErrorType) => void
-  ) => void
+  ) => void,
+  dependencies?: DependencyList
 ): {
   Suspense: TSuspenseFunction
   data: DataType | undefined
@@ -23,35 +32,48 @@ const useSuspense = <DataType, ErrorType>(
 } => {
   const [data, setPromiseData] = useState<DataType>()
   const [error, setPromiseError] = useState<ErrorType>()
-  const suspenseRef = useRef<TSuspenseFunction | null>(null)
-  const status = useRef('PENDING')
+  const [refresh, setRefresh] = useState(false)
+  const { current: suspenseRef } = useRef<ISuspenseRef>({
+    status: 'PENDING',
+    firstPass: true,
+  })
 
-  if (suspenseRef.current !== null) {
+  useEffect(() => {
+    if (suspenseRef.firstPass) {
+      suspenseRef.firstPass = false
+    } else if (suspenseRef.setData && suspenseRef.setError) {
+      suspenseRef.status = 'PENDING'
+      setRefresh(!refresh)
+      hookFunctionHandler(suspenseRef.setData, suspenseRef.setError)
+    }
+  }, dependencies ?? [])
+
+  if (suspenseRef.Suspense) {
     return {
-      Suspense: suspenseRef.current,
+      Suspense: suspenseRef.Suspense,
       data,
       error,
     }
   }
 
-  const setData = (newData: DataType) => {
-    status.current = 'SUCCESS'
+  suspenseRef.setData = (newData: DataType) => {
+    suspenseRef.status = 'SUCCESS'
     setPromiseData(newData)
   }
 
-  const setError = (newError: ErrorType) => {
-    status.current = 'ERROR'
+  suspenseRef.setError = (newError: ErrorType) => {
+    suspenseRef.status = 'ERROR'
     setPromiseError(newError)
   }
 
-  hookFunctionHandler(setData, setError)
+  hookFunctionHandler(suspenseRef.setData, suspenseRef.setError)
 
   const Suspense: TSuspenseFunction = ({
     children: LoadedComp,
     fallback: Fallback,
     error: Error,
   }) => {
-    if (status.current === 'PENDING') {
+    if (suspenseRef.status === 'PENDING') {
       if (typeof Fallback === 'string') {
         Fallback = <DefaultLoader message={Fallback} />
       }
@@ -63,7 +85,7 @@ const useSuspense = <DataType, ErrorType>(
           </div>
         </>
       )
-    } else if (status.current === 'ERROR' && Error) {
+    } else if (suspenseRef.status === 'ERROR' && Error) {
       if (typeof Error === 'string') {
         Error = <DefaultError message={Error} />
       }
@@ -77,7 +99,7 @@ const useSuspense = <DataType, ErrorType>(
     }
   }
 
-  suspenseRef.current = Suspense
+  suspenseRef.Suspense = Suspense
 
   return { Suspense, data, error }
 }

@@ -1,9 +1,10 @@
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { useParams } from 'react-router-dom'
+import { onError } from '../utils/suspenseDefaults'
 
 import Loading from '../components/Loading'
-import ErrorComp from '../components/Error'
+import ErrorComp from '../components/ErrorComp'
 import Selector from '../components/Selector'
 import MemberTable from '../components/MemberTable'
 import ProjectSummary from '../components/ProjectSummary'
@@ -34,15 +35,7 @@ const Project = () => {
     (setData, setError) => {
       jsonFetcher<IProjectData>(`/api/project/${id}`)
         .then(data => setData(data))
-        .catch(err => {
-          if (err.message === '401') {
-            window.location.href = '/'
-          } else if (err.message === 'Failed to fetch') {
-            setError(new Error('Could not connect to server'))
-          } else {
-            setError(new Error('Server error. Please try again.'))
-          }
-        })
+        .catch(onError(setError))
     }
   )
 

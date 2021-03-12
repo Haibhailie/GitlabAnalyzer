@@ -1,9 +1,10 @@
 import { useHistory } from 'react-router-dom'
 import { useState } from 'react'
-import { URLBASE } from '../utils/constants'
+import jsonFetcher from '../utils/jsonFetcher'
+
+import Selector from './Selector'
 
 import styles from '../css/LoginFields.module.css'
-import Selector from './Selector'
 
 const LoginFields = () => {
   const history = useHistory()
@@ -21,20 +22,21 @@ const LoginFields = () => {
       return
     }
 
-    fetch(`${URLBASE}/api/signin`, {
+    jsonFetcher('/api/signin', {
+      responseIsEmpty: true,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: username, password: password }),
       credentials: 'include',
     })
-      .then(res => {
-        if (res.status === 200) {
+      .then(resCode => {
+        if (resCode === 200) {
           history.push('/home')
-        } else if (res.status === 400) {
+        } else if (resCode === 400) {
           setErrorUserPass('Please fill in both fields')
-        } else if (res.status === 401) {
+        } else if (resCode === 401) {
           setErrorUserPass('Invalid credentials')
-        } else if (res.status === 500) {
+        } else if (resCode === 500) {
           setErrorUserPass('Could not connect to server')
         }
       })
@@ -51,20 +53,21 @@ const LoginFields = () => {
       return
     }
 
-    fetch(`${URLBASE}/api/auth`, {
+    jsonFetcher('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pat: pat }),
       credentials: 'include',
+      responseIsEmpty: true,
     })
-      .then(res => {
-        if (res.status === 200) {
+      .then(resCode => {
+        if (resCode === 200) {
           history.push('/home')
-        } else if (res.status === 400) {
+        } else if (resCode === 400) {
           setErrorPat('Please fill in your token')
-        } else if (res.status === 401) {
+        } else if (resCode === 401) {
           setErrorPat('Invalid Personal Access Token')
-        } else if (res.status === 500) {
+        } else if (resCode === 500) {
           setErrorPat('Could not connect to server')
         }
       })

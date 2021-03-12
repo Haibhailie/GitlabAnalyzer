@@ -11,8 +11,7 @@
 }
 
 .header {
-  font-weight: normal;
-  font-size: 32px;
+  font: var(--font-header-large-poppins);
   margin: 50px 0 40px;
 }
 

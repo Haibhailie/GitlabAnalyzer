@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
-import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -15,16 +15,16 @@ import java.util.List;
 @Service
 public class CommitService {
     private final CommitRepository commitRepository;
-    private final AuthenticationService authService;
+    private final GitLabApiWrapper gitLabApiWrapper;
 
     @Autowired
-    public CommitService(CommitRepository commitRepository, AuthenticationService authService) {
+    public CommitService(CommitRepository commitRepository, GitLabApiWrapper gitLabApiWrapper) {
         this.commitRepository = commitRepository;
-        this.authService = authService;
+        this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
     public List<CommitDto> getAllCommits(String jwt, int projectId, Date since, Date until) {
-        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
@@ -46,8 +46,28 @@ public class CommitService {
         }
     }
 
+    public List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
+        if (gitLabApi == null) {
+            return null;
+        }
+        try {
+            String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
+            List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
+            List<CommitDto> allCommits = new ArrayList<>();
+            for (Commit commit : allGitCommits) {
+                if (commit.getAuthorName().equalsIgnoreCase(name)) {
+                    CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit);
+                    allCommits.add(presentCommit);
+                }
+            }
+            return allCommits;
+        } catch (GitLabApiException e) {
+            return null;
+        }
+    }
+
     public CommitDto getSingleCommit(String jwt, int projectId, String sha) {
-        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
@@ -59,15 +79,12 @@ public class CommitService {
         }
     }
 
-    public List<Diff> getDiffOfCommit(String jwt, int projectId, String sha) {
-        GitLabApi gitLabApi = authService.getGitLabApiFor(jwt);
+    public List<String> getDiffOfCommit(String jwt, int projectId, String sha) {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        try {
-            return gitLabApi.getCommitsApi().getDiff(projectId, sha);
-        } catch (GitLabApiException e) {
-            return null;
-        }
+        CommitDto commitDto = getSingleCommit(jwt, projectId, sha);
+        return commitDto.getDiffs();
     }
 }

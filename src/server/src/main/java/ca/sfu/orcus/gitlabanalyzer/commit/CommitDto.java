@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
+import ca.sfu.orcus.gitlabanalyzer.project.ProjectExtendedDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -20,7 +21,7 @@ public class CommitDto {
     private int numAdditions;
     private int numDeletions;
     private int total;
-    private List<Diff> diffs;
+    private List<String> diffs;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
@@ -37,7 +38,10 @@ public class CommitDto {
         this.setTotal(presentCommit.getStats().getTotal());
 
         List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
-        List<Diff> allDiffs = new ArrayList<>(gitDiffs);
+        List<String> allDiffs = new ArrayList<>();
+        for (Diff d : gitDiffs) {
+            allDiffs.add(d.getDiff());
+        }
         this.setDiffs(allDiffs);
     }
 
@@ -81,11 +85,36 @@ public class CommitDto {
         this.total = total;
     }
 
-    public void setDiffs(List<Diff> diffs) {
+    public void setDiffs(List<String> diffs) {
         this.diffs = diffs;
     }
 
-    public String getAuthorEmail() {
-        return authorEmail;
+    public List<String> getDiffs() {
+        return diffs;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof CommitDto)) {
+            return false;
+        }
+
+        CommitDto c = (CommitDto) o;
+
+        return (this.id.equals(c.id)
+                && this.title.equals(c.title)
+                && this.author.equals(c.author)
+                && this.authorEmail.equals(c.authorEmail)
+                && this.dateCommitted.equals(c.dateCommitted)
+                && this.time == c.time
+                && this.message.equals(c.message)
+                && this.numAdditions == c.numAdditions
+                && this.numDeletions == c.numDeletions
+                && this.total == c.total
+                && this.diffs.equals(c.diffs));
     }
 }

@@ -1,16 +1,19 @@
+import classNames from '../utils/classNames'
+
 import SideNavItem from './SideNavItem'
 import SideNavDropDown from './SideNavDropDown'
 import UserConfig from './UserConfig'
 
 import styles from '../css/SideNav.module.css'
 
-import repoIcon from '../assets/database.svg'
-import reportIcon from '../assets/report.svg'
-import settingsIcon from '../assets/settings.svg'
+import { ReactComponent as repoIcon } from '../assets/database.svg'
+import { ReactComponent as reportIcon } from '../assets/report.svg'
+import { ReactComponent as settingsIcon } from '../assets/settings.svg'
 
 export interface ISideNavProps {
   isOpen: boolean
-  sideNavToggler: (isOpen: boolean) => void
+  sideNavToggler: () => void
+  className?: string
 }
 
 const items = [
@@ -18,13 +21,13 @@ const items = [
   { icon: reportIcon, label: 'Reports', dest: '/reports' },
 ]
 
-const SideNav = ({ isOpen, sideNavToggler }: ISideNavProps) => {
+const SideNav = ({ isOpen, sideNavToggler, className }: ISideNavProps) => {
   const toggleSideNav = () => {
-    sideNavToggler(isOpen)
+    sideNavToggler()
   }
 
   return (
-    <aside className={`${styles.sideNav} ${isOpen ? '' : styles.hideSideNav}`}>
+    <aside className={classNames(styles.sideNav, className)}>
       <button
         type="button"
         className={styles.closeSideNavButton}
@@ -32,21 +35,17 @@ const SideNav = ({ isOpen, sideNavToggler }: ISideNavProps) => {
       >
         {isOpen ? <>&#8249;</> : <>&#8250;</>}
       </button>
-      <ul className={styles.itemList}>
-        {items.map(item => {
-          return (
-            <SideNavItem
-              key={item.label}
-              icon={item.icon}
-              label={item.label}
-              destPath={item.dest}
-            />
-          )
-        })}
-        <SideNavDropDown key="Settings" label="Settings" icon={settingsIcon}>
-          <UserConfig />
-        </SideNavDropDown>
-      </ul>
+      {items.map(item => (
+        <SideNavItem
+          key={item.label}
+          Icon={item.icon}
+          label={item.label}
+          destPath={item.dest}
+        />
+      ))}
+      <SideNavDropDown key="Settings" label="Settings" Icon={settingsIcon}>
+        <UserConfig />
+      </SideNavDropDown>
     </aside>
   )
 }

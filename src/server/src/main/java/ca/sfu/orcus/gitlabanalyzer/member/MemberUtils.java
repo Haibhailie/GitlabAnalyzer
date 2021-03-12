@@ -8,13 +8,13 @@ public final class MemberUtils {
     }
 
     private static final Map<Integer, String> AccessLevelToRoleMap = Map.of(
-            0, "No access",
-            5, "Minimal access",
-            10, "Guest",
-            20, "Reporter",
-            30, "Developer",
-            40, "Maintainer",
-            50, "Owner"
+            -1, "INVALID",
+            0, "NONE",
+            10, "GUEST",
+            20, "REPORTER",
+            30, "DEVELOPER",
+            40, "MAINTAINER",
+            50, "OWNER"
     );
 
     public static String getMemberRoleFromAccessLevel(Integer accessLevel) {

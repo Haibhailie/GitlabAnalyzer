@@ -7,13 +7,13 @@
 }
 
 .header {
-  font: var(--font-header);
+  font: var(--font-header-medium-poppins);
   margin: 22px 0 25px;
 }
 
 .table {
-  border-top: 1px solid var(--color-table-border);
-  border-left: 1px solid var(--color-table-border);
+  border-top: 1px solid var(--color-gray);
+  border-left: 1px solid var(--color-gray);
   width: 85%;
 }
 
@@ -22,11 +22,11 @@
   display: flex;
   align-items: center;
   padding: 15px 10px;
-  font: var(--font-small);
-  border-bottom: 1px solid var(--color-table-border);
-  border-right: 1px solid var(--color-table-border);
+  font: var(--font-body-medium-poppins);
+  border-bottom: 1px solid var(--color-gray);
+  border-right: 1px solid var(--color-gray);
 }
 
 .theader {
-  background-color: var(--color-table-header-background);
+  background-color: var(--color-background-gray);
 }

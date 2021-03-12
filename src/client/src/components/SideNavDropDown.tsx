@@ -4,11 +4,11 @@ import styles from '../css/SideNavDropDown.module.css'
 
 export interface ISideNavDropDown {
   children: JSX.Element
-  icon: string
+  Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
   label: string
 }
 
-const SideNavDropDown = ({ children, icon, label }: ISideNavDropDown) => {
+const SideNavDropDown = ({ children, Icon, label }: ISideNavDropDown) => {
   const [open, setOpen] = useState(false)
 
   const toggleTab = () => {
@@ -18,7 +18,7 @@ const SideNavDropDown = ({ children, icon, label }: ISideNavDropDown) => {
   return (
     <div>
       <div className={styles.item} onClick={toggleTab}>
-        <img src={icon} className={styles.icon} />
+        <Icon className={styles.icon} />
         <p className={styles.label}>{label}</p>
         {open && <span>V</span>}
         {!open && <span>{'>'}</span>}
