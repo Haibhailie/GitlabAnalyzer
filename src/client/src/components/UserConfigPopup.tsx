@@ -24,10 +24,6 @@ const UserConfigPopup = ({
   setGeneralScores,
   togglePopup,
 }: IUserConfigPopup) => {
-  const closePopup = () => {
-    togglePopup()
-  }
-
   const { dispatch } = useContext(UserConfigContext)
 
   const [newType, setNewType] = useState('')
@@ -82,13 +78,13 @@ const UserConfigPopup = ({
       scores: { generalScores: generalScores, fileScores: fileScores },
     })
 
-    closePopup()
+    togglePopup()
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>Edit Scoring</div>
-      <div onClick={closePopup} className={styles.closeButton}>
+      <div onClick={togglePopup} className={styles.closeButton}>
         x
       </div>
       <div className={styles.scoreContainer}>
