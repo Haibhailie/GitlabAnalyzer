@@ -1,0 +1,57 @@
+.container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.list {
+  padding-left: 0px;
+}
+.item {
+  list-style-type: none;
+}
+.label {
+  border: 1px solid blue;
+  margin: 2px 0px;
+  padding: 2px 5px;
+  width: 80%;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.label:hover {
+  background-color: lightBlue;
+  color: blue;
+  cursor: pointer;
+}
+
+.input {
+  background-color: #eeeeee;
+  height: 25px;
+}
+
+.saveButton {
+  margin: 10px 5px;
+  border: 1px solid blue;
+  padding: 2px 5px;
+  text-align: center;
+  color: blue;
+  width: 70%;
+}
+
+.saveButton {
+  cursor: pointer;
+}
+
+.deleteButton {
+  display: inline-block;
+  width: 10%;
+  border: 1px solid blue;
+  border-radius: 50%;
+  height: 18px;
+  width: 18px;
+}
+
+.deleteButton:hover {
+  cursor: pointer;
+}
