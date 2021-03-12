@@ -1,12 +1,13 @@
 import React, { ChangeEvent, Dispatch, useContext, useState } from 'react'
+
 import {
   IFileTypeScoring,
   IGeneralTypeScoring,
-  IScores,
   UserConfigContext,
 } from '../context/UserConfigContext'
-import styles from '../css/UserConfigPopup.module.css'
 import Selector from './Selector'
+
+import styles from '../css/UserConfigPopup.module.css'
 
 interface IUserConfigPopup {
   fileScores: IFileTypeScoring[]
@@ -27,10 +28,8 @@ const UserConfigPopup = ({
     togglePopup()
   }
 
-  const { userConfig, dispatch } = useContext(UserConfigContext)
+  const { dispatch } = useContext(UserConfigContext)
 
-  // const [fileScores, setFileScores] = useState(userConfig.fileScores)
-  // const [generalScores, setGeneralScores] = useState(userConfig.generalScores)
   const [newType, setNewType] = useState('')
 
   const setNewTypeHandler = (event: ChangeEvent<HTMLInputElement>) => {

@@ -1,23 +1,15 @@
 import React, { useContext, useState } from 'react'
-import { IUserConfig, UserConfigContext } from '../context/UserConfigContext'
 import TextField from '@material-ui/core/TextField'
 
-import styles from '../css/UserConfig.module.css'
+import { IUserConfig, UserConfigContext } from '../context/UserConfigContext'
 import SideNavSubDropDown from './SideNavSubDropDown'
-import SideNavDropDown from './SideNavDropDown'
 import UserConfigPopup from './UserConfigPopup'
 import SaveUserConfig from './SaveUserConfig'
 
+import styles from '../css/UserConfig.module.css'
+
 const UserConfig = () => {
   const { userConfig, dispatch } = useContext(UserConfigContext)
-
-  // const [startDate, setStartDate] = useState(userConfig.startDate)
-  // const [endDate, setEndDate] = useState(userConfig.endDate)
-  // const [scoreBy, setScoreBy] = useState(userConfig.scoreBy)
-  // const [graphYAxis, setgraphYAxis] = useState(userConfig.graphYAxis)
-  // const [projectGraphBy, setProjectGraphBy] = useState(
-  //   userConfig.projectGraphBy
-  // )
 
   const [fileScores, setFileScores] = useState(userConfig.fileScores)
   const [generalScores, setGeneralScores] = useState(userConfig.generalScores)
@@ -27,18 +19,17 @@ const UserConfig = () => {
 
   const startDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = new Date(event.target.value)
-    // setStartDate(newValue)
     dispatch({
       type: 'SET_START_DATE',
       startDate: newValue,
     })
+
     if (validDates(newValue, userConfig.endDate)) {
       // TODO: Add update userconfig post and get new projects by date
     }
   }
   const endDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = new Date(event.target.value)
-    // setEndDate(newValue)
     dispatch({
       type: 'SET_END_DATE',
       endDate: newValue,
@@ -49,7 +40,6 @@ const UserConfig = () => {
   }
 
   const validDates = (start?: Date, end?: Date) => {
-    console.log(start, end)
     if (start && end && start > end) {
       setDateError(true)
       return false
@@ -70,7 +60,6 @@ const UserConfig = () => {
   const memberScoreByChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // TODO: Add update userconfig post
     const newValue = event.target.value as IUserConfig['scoreBy']
-    // setScoreBy(newValue)
     dispatch({
       type: 'SET_SCORE_BY',
       scoreBy: newValue,
@@ -80,7 +69,6 @@ const UserConfig = () => {
   const graphYAxisChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // TODO: Add update userconfig post
     const newValue = event.target.value as IUserConfig['graphYAxis']
-    // setgraphYAxis(newValue)
     dispatch({
       type: 'SET_GRAPH_Y_AXIS',
       graphYAxis: newValue,
@@ -90,15 +78,10 @@ const UserConfig = () => {
   const projectGraphByChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // TODO: Add update userconfig post
     const newValue = event.target.value as IUserConfig['projectGraphBy']
-    // setProjectGraphBy(newValue)
     dispatch({
       type: 'SET_PROJECT_GRAPH_BY',
       projectGraphBy: newValue,
     })
-  }
-
-  const togglePopup = () => {
-    setPopUpOpen(!popUpOpen)
   }
 
   const setCurrentConfig = (newUserConfig: IUserConfig) => {
@@ -108,6 +91,10 @@ const UserConfig = () => {
       type: 'SET_USER_CONFIG',
       userConfig: newUserConfig,
     })
+  }
+
+  const togglePopup = () => {
+    setPopUpOpen(!popUpOpen)
   }
 
   return (
