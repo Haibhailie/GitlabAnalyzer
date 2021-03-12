@@ -1,49 +1,75 @@
-import { useState } from 'react'
-import { Tooltip } from '@material-ui/core'
+import { useState, useEffect, useRef } from 'react'
+import { ThemeProvider, Tooltip } from '@material-ui/core'
 import Stat, { IStatProps } from './Stat'
+import tooltipTheme from '../themes/tooltipTheme'
 
 import styles from '../css/StatSummary.module.css'
 
 import clipboard from '../assets/clipboard.svg'
 
 export interface IStatSummaryProps {
-  statData: Array<IStatProps>
+  statData: IStatProps[]
 }
 
 const StatSummary = ({ statData }: IStatSummaryProps) => {
-  const [copied, setCopied] = useState(false)
-  const csvString = [
-    ['Stat', 'Value'],
-    ...statData.map(stat => [stat.name, stat.value]),
-  ]
-    .map(r => r.join(','))
-    .join('\n')
+  const [copyMessage, setCopyMessage] = useState('Copy stats')
+  const [csvString, setCsvString] = useState('')
+  const timeoutRef = useRef<NodeJS.Timeout>()
+
+  useEffect(() => {
+    setCsvString(
+      [
+        ['Stat', 'Value'],
+        ...statData.map(stat => [stat.name, stat.rawValue ?? stat.value]),
+      ]
+        .map(r => r.join('\t'))
+        .join('\n')
+    )
+  }, [statData])
 
   const copyToClipboard = () => {
-    const dummyText = document.createElement('textarea')
-    dummyText.value = csvString
-    console.log(dummyText.value)
-    document.body.appendChild(dummyText)
-    dummyText.select()
-    document.execCommand('copy')
-    document.body.removeChild(dummyText)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 5000)
+    //TODO: Implement navigator.permissions query for clipboard-read/write
+    navigator.clipboard
+      .writeText(csvString)
+      .then(() => {
+        setCopyMessage('Copied!')
+        timeoutRef.current = setTimeout(
+          () => setCopyMessage('Copy stats'),
+          5000
+        )
+      })
+      .catch(() => {
+        setCopyMessage('Failed to copy')
+        timeoutRef.current = setTimeout(
+          () => setCopyMessage('Copy stats'),
+          5000
+        )
+      })
   }
 
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
   return (
-    <div className={styles.container}>
-      {statData?.map(stat => (
-        <Stat key={stat.name} {...stat} />
-      ))}
-      <div className={styles.copyStats}>
-        <Tooltip title={copied ? 'Copied!' : 'Copy stats'}>
-          <button onClick={copyToClipboard}>
-            <img src={clipboard} className={styles.copyIcon} />
-          </button>
-        </Tooltip>
+    <ThemeProvider theme={tooltipTheme}>
+      <div className={styles.container}>
+        {statData?.map(stat => (
+          <Stat key={stat.name} {...stat} />
+        ))}
+        <div className={styles.statTools}>
+          <Tooltip title={copyMessage} arrow>
+            <button onClick={copyToClipboard} className={styles.copyButton}>
+              <img src={clipboard} className={styles.copyIcon} />
+            </button>
+          </Tooltip>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   )
 }
 

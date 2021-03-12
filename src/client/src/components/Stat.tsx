@@ -6,6 +6,7 @@ import info from '../assets/info.svg'
 
 export interface IStatProps {
   name: string
+  rawValue?: string | number
   value: string | number
   description?: string
 }
@@ -16,7 +17,7 @@ const Stat = ({ name, value, description }: IStatProps) => {
       <p className={styles.name}>
         {name}
         {description && (
-          <Tooltip title={description} placement="right">
+          <Tooltip title={description} placement="right" arrow>
             <img className={styles.icon} src={info} />
           </Tooltip>
         )}

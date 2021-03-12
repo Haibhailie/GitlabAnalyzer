@@ -29,6 +29,5 @@
 
 .value {
   font: var(--font-header-medium-mulish);
-  margin: 0;
-  margin-top: 6px;
+  margin: 6px 0 0;
 }
