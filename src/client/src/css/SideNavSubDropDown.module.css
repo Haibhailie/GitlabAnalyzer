@@ -1,0 +1,26 @@
+.header {
+  background-color: #eeeeee;
+  padding: 0px 10px;
+  margin: 8px 0px;
+  height: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header:hover {
+  cursor: pointer;
+}
+
+.arrow {
+  display: flex;
+  margin-left: auto;
+}
+
+.subContainer {
+  padding: 0px 10px;
+}
+
+.label {
+  margin: 0px;
+}
