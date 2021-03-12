@@ -40,6 +40,10 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
       })
       .catch(() => {
         setCopyMessage('Failed to copy')
+        timeoutRef.current = setTimeout(
+          () => setCopyMessage('Copy stats'),
+          5000
+        )
       })
   }
 
