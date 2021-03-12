@@ -15,8 +15,10 @@ public class CommitScore {
     private final double blankLOCFactor = 0;
     private final double spacingChangeFactor = 0;
 
-    private static final List<String> commentDoubleSlash = Arrays.asList(".java", ".cpp", ".txt"); // added .txt for test purposes
+    private static final List<String> commentDoubleSlash = Arrays.asList(".java", ".cpp");
     private static final List<String> commentSlashStar = Arrays.asList(".js", ".css");
+
+    private int actualLOCCount;
 
     public double getCommitScore(GitLabApi gitLabApi, int projectId, String sha) throws GitLabApiException {
         double score = 0;
@@ -27,7 +29,6 @@ public class CommitScore {
             score += getSyntaxChangeScore(d); // currently 0
             score += getBlankLOCScore(commit, d);
             score += getSpacingChangeScore(d);
-
         }
         score += getDeleteLOCScore(commit);
         return score;
@@ -47,7 +48,6 @@ public class CommitScore {
     }
 
     double getBlankLOCScore(Commit commit, Diff diff) {
-        long actualLOCCount = getLinesOfAddedCode(diff);
         long blankLOCCount = commit.getStats().getAdditions() - actualLOCCount;
         long commentsCount = getNumComments(diff);
 
@@ -59,10 +59,9 @@ public class CommitScore {
     }
 
     long getLinesOfAddedCode(Diff diff) {
-        // Remove blank lines
-        String str = diff.getDiff().replace("+\n", "");
+        String str = diff.getDiff().replace("+\\n", ""); // Remove added blank lines
 
-        String strFind = "\n+";
+        String strFind = "\\n+";
         int count = 0;
         int fromIndex = 0;
 
@@ -70,6 +69,7 @@ public class CommitScore {
             count++;
             fromIndex++;
         }
+        actualLOCCount = count;
         return count;
     }
 
@@ -85,7 +85,7 @@ public class CommitScore {
             lastIndex = diff.getDiff().indexOf(comment, lastIndex);
             if (lastIndex != -1) {
                 count++;
-                lastIndex = diff.getDiff().substring(lastIndex).indexOf("\n", lastIndex);
+                lastIndex = diff.getDiff().substring(lastIndex).indexOf("\\n", lastIndex);
             }
         }
         return count;
