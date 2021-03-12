@@ -46,7 +46,7 @@ public class CommitService {
         }
     }
 
-    public List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String emial) {
+    public List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
         if (gitLabApi == null) {
             return null;
         }
@@ -55,7 +55,7 @@ public class CommitService {
             List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
             List<CommitDto> allCommits = new ArrayList<>();
             for (Commit commit : allGitCommits) {
-                if (commit.getAuthorEmail().equals(emial)) {
+                if (commit.getAuthorName().equalsIgnoreCase(name)) {
                     CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit);
                     allCommits.add(presentCommit);
                 }
@@ -79,15 +79,12 @@ public class CommitService {
         }
     }
 
-    public List<Diff> getDiffOfCommit(String jwt, int projectId, String sha) {
+    public List<String> getDiffOfCommit(String jwt, int projectId, String sha) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        try {
-            return gitLabApi.getCommitsApi().getDiff(projectId, sha);
-        } catch (GitLabApiException e) {
-            return null;
-        }
+        CommitDto commitDto = getSingleCommit(jwt, projectId, sha);
+        return commitDto.getDiffs();
     }
 }
