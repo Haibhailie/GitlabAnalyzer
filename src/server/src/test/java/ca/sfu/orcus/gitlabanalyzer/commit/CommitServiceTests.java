@@ -5,20 +5,16 @@ import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffParser;
 import org.gitlab4j.api.CommitsApi;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.MergeRequestApi;
 import org.gitlab4j.api.models.Commit;
-import org.gitlab4j.api.models.Diff;
 import org.gitlab4j.api.models.Project;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -28,7 +24,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

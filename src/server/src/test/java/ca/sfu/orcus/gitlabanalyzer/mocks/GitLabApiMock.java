@@ -2,7 +2,8 @@ package ca.sfu.orcus.gitlabanalyzer.mocks;
 
 import org.gitlab4j.api.*;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 
 public final class GitLabApiMock {
     private GitLabApiMock() {
