@@ -2,10 +2,10 @@ import { IProjectData } from '../pages/Project'
 import bytesConverter from '../utils/bytesConverter'
 import { round } from 'lodash'
 
-import ActivityGraph from '../components/ActivityGraph'
+import ActivityGraph from './ActivityGraph'
+import StatSummary from './StatSummary'
 
 import styles from '../css/ProjectSummary.module.css'
-import StatSummary from './StatSummary'
 
 const calcAgeInDays = (birth: number) => {
   const diff = Date.now() - birth
@@ -36,7 +36,7 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
     },
     {
       name: 'Files',
-      rawValue: bytesConverter(repoSize).split(' ')[0],
+      rawValue: round(repoSize / 1024, 2),
       value: bytesConverter(repoSize),
     },
   ]
@@ -48,6 +48,7 @@ const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
           <ActivityGraph
             mergeUrl={`/api/project/${id}/mergerequests`}
             commitUrl={`/api/project/${id}/commits`}
+            yAxisValue={'number'}
           />
         </div>
         <StatSummary statData={projectStatData} />

@@ -12,9 +12,9 @@ export interface IStatSummaryProps {
 }
 
 const StatSummary = ({ statData }: IStatSummaryProps) => {
-  const [copied, setCopied] = useState(false)
+  const [copyMessage, setCopyMessage] = useState('Copy stats')
   const [csvString, setCsvString] = useState('')
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const timeoutRef = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
     setCsvString(
@@ -28,10 +28,19 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
   }, [statData])
 
   const copyToClipboard = () => {
-    //TO-DO: Implement navigator.permissions query for clipboard-read/write
-    navigator.clipboard.writeText(csvString)
-    setCopied(true)
-    timeoutRef.current = setTimeout(() => setCopied(false), 5000)
+    //TODO: Implement navigator.permissions query for clipboard-read/write
+    navigator.clipboard
+      .writeText(csvString)
+      .then(() => {
+        setCopyMessage('Copied!')
+        timeoutRef.current = setTimeout(
+          () => setCopyMessage('Copy stats'),
+          5000
+        )
+      })
+      .catch(() => {
+        setCopyMessage('Failed to copy')
+      })
   }
 
   useEffect(() => {
@@ -49,7 +58,7 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
           <Stat key={stat.name} {...stat} />
         ))}
         <div className={styles.statTools}>
-          <Tooltip title={copied ? 'Copied!' : 'Copy stats'} arrow>
+          <Tooltip title={copyMessage} arrow>
             <button onClick={copyToClipboard} className={styles.copyButton}>
               <img src={clipboard} className={styles.copyIcon} />
             </button>
