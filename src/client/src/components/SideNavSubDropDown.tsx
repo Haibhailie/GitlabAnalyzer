@@ -4,15 +4,15 @@ import styles from '../css/SideNavSubDropDown.module.css'
 
 export interface ISideNavSubDropDown {
   children: JSX.Element
-  initial: boolean
+  startOpened: boolean
   label: string
 }
 const SideNavSubDropDown = ({
   children,
-  initial,
+  startOpened,
   label,
 }: ISideNavSubDropDown) => {
-  const [open, setOpen] = useState(initial)
+  const [open, setOpen] = useState(startOpened)
 
   const toggleTab = () => {
     setOpen(!open)

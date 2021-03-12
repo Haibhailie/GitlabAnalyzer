@@ -98,7 +98,7 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
       <div className={styles.saveButton} onClick={save}>
         X Save Config
       </div>
-      <SideNavSubDropDown initial={true} label="Load Configuration">
+      <SideNavSubDropDown startOpened={true} label="Load Configuration">
         <>
           <ul className={styles.list}>
             {savedConfigs.map((config, index) => (

@@ -99,7 +99,7 @@ const UserConfig = () => {
 
   return (
     <div className={styles.container}>
-      <SideNavSubDropDown initial={true} label="Date Range">
+      <SideNavSubDropDown startOpened={true} label="Date Range">
         <>
           <div className={styles.dateContainer}>
             <TextField
@@ -151,7 +151,7 @@ const UserConfig = () => {
           </div>
         </>
       </SideNavSubDropDown>
-      <SideNavSubDropDown initial={true} label="Member scores by">
+      <SideNavSubDropDown startOpened={true} label="Member scores by">
         <>
           <div className={styles.inputField}>
             <input
@@ -173,7 +173,7 @@ const UserConfig = () => {
           </div>
         </>
       </SideNavSubDropDown>
-      <SideNavSubDropDown initial={true} label="Graph Settings">
+      <SideNavSubDropDown startOpened={true} label="Graph Settings">
         <>
           <p className={styles.subHeader}>Graph Y-Axis</p>
           <div className={styles.inputField}>
