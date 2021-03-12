@@ -1,21 +1,36 @@
-import { ChangeEvent, useContext, useState } from 'react'
-import { UserConfigContext } from '../context/UserConfigContext'
+import React, { ChangeEvent, Dispatch, useContext, useState } from 'react'
+import {
+  IFileTypeScoring,
+  IGeneralTypeScoring,
+  IScores,
+  UserConfigContext,
+} from '../context/UserConfigContext'
 import styles from '../css/UserConfigPopup.module.css'
 import Selector from './Selector'
 
 interface IUserConfigPopup {
+  fileScores: IFileTypeScoring[]
+  setFileScores: Dispatch<React.SetStateAction<IFileTypeScoring[]>>
+  generalScores: IGeneralTypeScoring[]
+  setGeneralScores: Dispatch<React.SetStateAction<IGeneralTypeScoring[]>>
   togglePopup: () => void
 }
 
-const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
+const UserConfigPopup = ({
+  fileScores,
+  setFileScores,
+  generalScores,
+  setGeneralScores,
+  togglePopup,
+}: IUserConfigPopup) => {
   const closePopup = () => {
     togglePopup()
   }
 
   const { userConfig, dispatch } = useContext(UserConfigContext)
 
-  const [fileScores, setFileScores] = useState(userConfig.fileScores)
-  const [generalScores, setGeneralScores] = useState(userConfig.generalScores)
+  // const [fileScores, setFileScores] = useState(userConfig.fileScores)
+  // const [generalScores, setGeneralScores] = useState(userConfig.generalScores)
   const [newType, setNewType] = useState('')
 
   const setNewTypeHandler = (event: ChangeEvent<HTMLInputElement>) => {
