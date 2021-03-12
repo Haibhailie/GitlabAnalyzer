@@ -54,7 +54,7 @@ public class JwtServiceTest {
     @Test
     public void jwtIsValidFailsForTamperedJwt() {
         String jwt = jwtService.createJwt(userWithPat, JwtType.PAT);
-        String tamperedJwt = tamperJwt(jwt);
+        String tamperedJwt = corruptJwt(jwt);
         assertFalse(jwtService.jwtIsValid(tamperedJwt));
     }
 
@@ -110,7 +110,7 @@ public class JwtServiceTest {
         return jwtService.createJwt(userWithPat, JwtType.PAT);
     }
 
-    private String tamperJwt(String jwt) {
+    private String corruptJwt(String jwt) {
         Random rand = new Random();
         int idx = rand.nextInt(jwt.length());
         StringBuilder sb = new StringBuilder(jwt);
