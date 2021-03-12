@@ -88,7 +88,7 @@ const UserConfigPopup = ({
         x
       </div>
       <div className={styles.scoreContainer}>
-        <Selector tabHeaders={['General', 'File Type Multiplier']}>
+        <Selector tabHeaders={['Change Code Values', 'File Type Multiplier']}>
           <div className={styles.generalContainer}>
             <table className={styles.table}>
               <colgroup>
