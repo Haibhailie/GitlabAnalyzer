@@ -38,8 +38,8 @@ public class CommitDto {
         this.setNumDeletions(presentCommit.getStats().getDeletions());
         this.setTotal(presentCommit.getStats().getTotal());
 
-        List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
-        this.setDiffs((DiffParser.parseDiff(gitDiffs)));
+        List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
+        this.setDiffs((DiffParser.parseDiff(diffList)));
     }
 
     public void setTitle(String title) {

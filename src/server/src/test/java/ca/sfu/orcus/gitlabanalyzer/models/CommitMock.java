@@ -71,15 +71,19 @@ public class CommitMock {
         return commits;
     }
 
-    public static String createTestDiffList() {
+    public static String createTestDiffListString() {
+        return DiffParser.parseDiff(createTestDiffList());
+    }
+
+    public static List<Diff> createTestDiffList() {
         Diff diffA = DiffMock.createTestDiff(mockCodeDiff, false, false, true, "Root", "Not Root");
-        Diff diffB = DiffMock.createTestDiff(mockCodeDiff, false, true, false, "Root", "Not Root");
+
 
         List<Diff> presentDiffList = new ArrayList<>();
         presentDiffList.add(diffA);
-        presentDiffList.add(diffB);
 
-        return DiffParser.parseDiff(presentDiffList);
+
+        return presentDiffList;
     }
 
     public static List<CommitDto> generateTestCommitDto(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
