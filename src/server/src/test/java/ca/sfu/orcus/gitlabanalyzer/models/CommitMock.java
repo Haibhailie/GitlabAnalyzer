@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.DiffParser;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -21,10 +22,10 @@ public class CommitMock {
     public static final String defaultSha = UUID.randomUUID().toString();
     public static final Date defaultDate = new Date();
 
-    public static final String mockCodeDiff = "@@ -1,3 +1,4 @@\\n+//This is a test comment\\n This is a dummy text file that is meant to be editted.\\n (This is an edit)\\n \\n@@ -7,6 +8,7 @@ Ingredients:\\n 1 Egg\\n Water\\n \\n+// Another test comment\\n \\n \\n Instructions:\\n@@ -16,3 +18,6 @@ Instructions:\\n 4. Remove Egg from boiling water.\\n 4.5. This right here, is another edit.\\n 5. Peel egg, season to taste, and enjoy. \\n+/* A third\\n+/* A fourth\\n+*/\\n\",\n";
+    public static final String mockCodeDiff = "RandomChangesGoHereLol";
 
-    public static final int defaultNumAdditions = 100;
-    public static final int defaultNumDeletions = 100;
+    public static final int defaultNumAdditions = rand.nextInt(upperBound);
+    public static final int defaultNumDeletions = rand.nextInt(upperBound);
     public static final int defaultNumTotal = defaultNumAdditions + defaultNumDeletions;
 
     public static Commit createCommit() {
@@ -70,18 +71,15 @@ public class CommitMock {
         return commits;
     }
 
+    public static String createTestDiffListString() {
+        return DiffParser.parseDiff(createTestDiffList());
+    }
+
     public static List<Diff> createTestDiffList() {
         Diff diffA = DiffMock.createTestDiff(mockCodeDiff, false, false, true, "Root", "Not Root");
-        Diff diffB = DiffMock.createTestDiff(mockCodeDiff, false, true, false, "Root", "Not Root");
-
-        diffA.setNewPath("hi.java");
-        diffB.setNewPath("by.java");
-
-        List<Diff> presentTempDiff = new ArrayList<>();
-        presentTempDiff.add(diffA);
-        presentTempDiff.add(diffB);
-
-        return presentTempDiff;
+        List<Diff> presentDiffList = new ArrayList<>();
+        presentDiffList.add(diffA);
+        return presentDiffList;
     }
 
     public static List<CommitDto> generateTestCommitDto(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {

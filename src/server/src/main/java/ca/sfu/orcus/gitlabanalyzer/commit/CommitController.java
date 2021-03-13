@@ -3,7 +3,6 @@ package ca.sfu.orcus.gitlabanalyzer.commit;
 import ca.sfu.orcus.gitlabanalyzer.Constants;
 import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import com.google.gson.Gson;
-import org.gitlab4j.api.models.Diff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +50,7 @@ public class CommitController {
                                        @PathVariable int projectId,
                                        @PathVariable String sha,
                                        HttpServletResponse response) {
-        List<String> diffs = commitService.getDiffOfCommit(jwt, projectId, sha);
+        String diffs = commitService.getDiffOfCommit(jwt, projectId, sha);
         response.setStatus(diffs == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(diffs);
