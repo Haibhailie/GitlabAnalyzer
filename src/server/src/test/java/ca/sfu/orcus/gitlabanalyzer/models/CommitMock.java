@@ -1,7 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffParser;
+import ca.sfu.orcus.gitlabanalyzer.utils.DiffStringParser;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -72,7 +72,7 @@ public class CommitMock {
     }
 
     public static String createTestDiffListString() {
-        return DiffParser.parseDiff(createTestDiffList());
+        return DiffStringParser.parseDiff(createTestDiffList());
     }
 
     public static List<Diff> createTestDiffList() {

@@ -6,7 +6,7 @@ import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import ca.sfu.orcus.gitlabanalyzer.models.DiffMock;
 import ca.sfu.orcus.gitlabanalyzer.models.MergeRequestMock;
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffParser;
+import ca.sfu.orcus.gitlabanalyzer.utils.DiffStringParser;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
@@ -156,7 +156,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(mergeRequestApi.getMergeRequestChanges(projectId, mergeRequestIdA)).thenReturn(mergeRequest);
         when(mergeRequest.getChanges()).thenReturn(diffs);
         String mergeRequestDiff = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA);
-        String expectedMergeRequestDiff = DiffParser.parseDiff(diffs);
+        String expectedMergeRequestDiff = DiffStringParser.parseDiff(diffs);
         assertEquals(expectedMergeRequestDiff, mergeRequestDiff);
     }
 

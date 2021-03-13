@@ -30,6 +30,7 @@ public class MergeRequestDto {
     private List<String> committers;
     private List<Participant> participants;
     private long time;
+    private double score;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
@@ -58,6 +59,8 @@ public class MergeRequestDto {
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectId, mergeRequestId));
         setNotesNameAndNotes(gitLabApi, projectId, mergeRequestId);
         setTime(presentMergeRequest.getMergedAt().getTime());
+        MergeRequestScore scoreCalculator = new MergeRequestScore();
+        score = scoreCalculator.getMergeRequestScore(gitLabApi, projectId, mergeRequestId);
     }
 
     public void setMergeRequestId(int mergeRequestId) {
