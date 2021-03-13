@@ -9,3 +9,15 @@
   align-items: center;
   text-align: center;
 }
+
+.header {
+  font: var(--font-header-large-poppins);
+  margin: 50px 0 40px;
+}
+
+.summaryContainer {
+  display: flex;
+  width: 70%;
+  height: auto;
+  margin: auto;
+}

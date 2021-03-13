@@ -32,22 +32,14 @@ const MemberTable = ({ projectId, projectName }: IActivityGraphProps) => {
     }
   )
 
-  const getMember = (id: string) => {
-    return data?.find(member => member.id === id)
-  }
-
   const onAnalyze = (id: string) => {
     console.log(id)
-    const memberToAnalyze = getMember(id)
-    console.log(memberToAnalyze)
-    history.push(`/project/${projectId}/member/${id}`, {
-      memberData: memberToAnalyze,
-    })
+    history.push(`/project/${projectId}/member/${id}`)
   }
 
   return (
     <Suspense
-      fallback="Loading Commit Data..."
+      fallback="Loading Members..."
       error={error?.message ?? 'Unknown Error'}
     >
       <>

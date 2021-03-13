@@ -4,3 +4,19 @@
   width: 100%;
   height: 538px;
 }
+
+.statsContainer {
+  display: flex;
+  width: 100%;
+  border: 1px solid var(--color-light-gray);
+  border-radius: 5px;
+  height: auto;
+}
+
+.graph {
+  width: 70%;
+}
+
+.stats {
+  width: 30%;
+}
