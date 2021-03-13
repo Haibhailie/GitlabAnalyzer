@@ -26,11 +26,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class MergeRequestServiceTest extends MergeRequestMock {
 
-    @InjectMocks private MergeRequestService mergeRequestService;
+    @InjectMocks
+    private MergeRequestService mergeRequestService;
 
-    @Mock private GitLabApiWrapper gitLabApiWrapper;
+    @Mock
+    private GitLabApiWrapper gitLabApiWrapper;
 
-    @Mock private MergeRequest mergeRequest;
+    @Mock
+    private MergeRequest mergeRequest;
 
     private GitLabApi gitLabApi = GitLabApiMock.getGitLabApiMock();
     private final MergeRequestApi mergeRequestApi = gitLabApi.getMergeRequestApi();
@@ -46,7 +49,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
     }
 
-    public void initialNullCheckSetup(){
+    public void initialNullCheckSetup() {
         when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
         gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
     }
