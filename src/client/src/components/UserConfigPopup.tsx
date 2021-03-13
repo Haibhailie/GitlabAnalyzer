@@ -9,6 +9,8 @@ import Selector from './Selector'
 
 import styles from '../css/UserConfigPopup.module.css'
 
+import { ReactComponent as Delete } from '../assets/delete.svg'
+
 interface IUserConfigPopup {
   fileScores: IFileTypeScoring[]
   setFileScores: Dispatch<React.SetStateAction<IFileTypeScoring[]>>
@@ -132,7 +134,7 @@ const UserConfigPopup = ({
                           {fileScore.fileExtension}
                         </div>
                       </td>
-                      <td>
+                      <td className={styles.multiplier}>
                         <input
                           type="number"
                           step="0.2"
@@ -144,7 +146,7 @@ const UserConfigPopup = ({
                           className={styles.deleteButton}
                           onClick={() => deleteFileType(index)}
                         >
-                          {/* TODO: REPLACE WITH ICON */}x
+                          <Delete />
                         </div>
                       </td>
                     </tr>

@@ -8,6 +8,8 @@ import SaveUserConfig from './SaveUserConfig'
 
 import styles from '../css/UserConfig.module.css'
 
+import { ReactComponent as Edit } from '../assets/edit.svg'
+
 const UserConfig = () => {
   const { userConfig, dispatch } = useContext(UserConfigContext)
 
@@ -216,8 +218,7 @@ const UserConfig = () => {
         </>
       </SideNavSubDropDown>
       <div className={styles.header} onClick={togglePopup}>
-        {/* TODO: ADD ICON */}
-        {'x'} Edit Scoring
+        <Edit className={styles.editIcon} /> Edit Scoring
       </div>
       {popUpOpen && (
         <UserConfigPopup

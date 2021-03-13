@@ -4,17 +4,21 @@
   margin: 8px 0px;
   height: 28px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header:hover {
   cursor: pointer;
 }
 
-.arrow {
-  display: flex;
-  margin-left: auto;
+.openIcon {
+  transform: rotate(0deg);
+}
+
+.closedIcon {
+  transition: tranform 2500ms ease-in-out;
+  transform: rotate(-90deg);
 }
 
 .subContainer {

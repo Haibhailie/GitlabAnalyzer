@@ -108,8 +108,11 @@
   margin-top: 20px;
 }
 
+.multiplier {
+  display: flex;
+}
 .multiplierInput {
-  width: 90px;
+  width: 80px;
   height: 18px;
   border: 1px solid var(--color-gray);
   border-radius: 4px;
@@ -136,13 +139,7 @@
 }
 
 .deleteButton {
-  display: inline-block;
-  border: 1px solid blue;
-  color: blue;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  text-align: center;
+  margin-left: 5px;
 }
 
 .deleteButton:hover {

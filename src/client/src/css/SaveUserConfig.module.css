@@ -4,25 +4,15 @@
   flex-direction: column;
   align-items: center;
 }
-.list {
-  padding-left: 0px;
-}
-.item {
-  list-style-type: none;
-}
-.label {
-  border: 1px solid blue;
-  margin: 2px 0px;
-  padding: 2px 5px;
-  width: 80%;
-  border-radius: 2px;
-  display: inline-block;
+
+.saveIcon {
+  margin-right: 5px;
 }
 
-.label:hover {
-  background-color: lightBlue;
-  color: blue;
-  cursor: pointer;
+.saveLabel {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .input {
@@ -37,19 +27,41 @@
   text-align: center;
   color: blue;
   width: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.saveButton {
+.saveButton:hover {
   cursor: pointer;
 }
 
-.deleteButton {
-  display: inline-block;
-  width: 10%;
+.list {
+  padding-left: 0px;
+}
+
+.item {
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
   border: 1px solid blue;
-  border-radius: 50%;
-  height: 18px;
-  width: 18px;
+  margin: 2px 0px;
+  padding: 2px 5px;
+  width: 80%;
+  border-radius: 2px;
+}
+
+.label:hover {
+  background-color: lightBlue;
+  color: blue;
+  cursor: pointer;
+}
+.deleteButton {
+  margin-left: 5px;
 }
 
 .deleteButton:hover {

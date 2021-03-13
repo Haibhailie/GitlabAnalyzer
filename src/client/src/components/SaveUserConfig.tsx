@@ -5,6 +5,10 @@ import SideNavSubDropDown from './SideNavSubDropDown'
 
 import styles from '../css/SaveUserConfig.module.css'
 
+import { ReactComponent as SaveLarge } from '../assets/save-large.svg'
+import { ReactComponent as SaveSmall } from '../assets/save-small.svg'
+import { ReactComponent as Delete } from '../assets/delete.svg'
+
 interface ISaveUserConfig {
   setCurrentConfig: (newUserConfig: IUserConfig) => void
 }
@@ -88,7 +92,9 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
   return (
     // TODO: ADD ICONS
     <div className={styles.container}>
-      <div>X Save Configuration</div>
+      <div className={styles.saveLabel}>
+        <SaveLarge className={styles.saveIcon} /> Save Configuration
+      </div>
       <input
         value={name}
         onChange={nameChange}
@@ -96,7 +102,7 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
         placeholder="Name config..."
       />
       <div className={styles.saveButton} onClick={save}>
-        X Save Config
+        <SaveSmall className={styles.saveIcon} /> Save Config
       </div>
       <SideNavSubDropDown startOpened={true} label="Load Configuration">
         <>
@@ -109,12 +115,10 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
                 >
                   {config.name}
                 </div>
-                <div
+                <Delete
                   className={styles.deleteButton}
                   onClick={() => deleteConfig(index)}
-                >
-                  x
-                </div>
+                />
               </li>
             ))}
           </ul>

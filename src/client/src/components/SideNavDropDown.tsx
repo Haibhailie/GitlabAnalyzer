@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 import styles from '../css/SideNavDropDown.module.css'
 
+import { ReactComponent as Dropdown } from '../assets/dropdown-large.svg'
+
 export interface ISideNavDropDown {
   children: JSX.Element
   Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
@@ -9,10 +11,10 @@ export interface ISideNavDropDown {
 }
 
 const SideNavDropDown = ({ children, Icon, label }: ISideNavDropDown) => {
-  const [open, setOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   const toggleTab = () => {
-    setOpen(!open)
+    setIsOpen(!isOpen)
   }
 
   return (
@@ -20,10 +22,9 @@ const SideNavDropDown = ({ children, Icon, label }: ISideNavDropDown) => {
       <div className={styles.item} onClick={toggleTab}>
         <Icon className={styles.icon} />
         <p className={styles.label}>{label}</p>
-        {open && <span>V</span>}
-        {!open && <span>{'>'}</span>}
+        <Dropdown className={isOpen ? styles.openIcon : styles.closedIcon} />
       </div>
-      <div className={styles.container}>{open && children}</div>
+      <div className={styles.container}>{isOpen && children}</div>
     </>
   )
 }
