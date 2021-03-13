@@ -28,10 +28,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CommitServiceTests {
-    @Mock
-    private GitLabApiWrapper gitLabApiWrapper;
-    @Mock
-    private Commit commit;
+    @Mock private GitLabApiWrapper gitLabApiWrapper;
+    @Mock private Commit commit;
 
     // Class to be tested
     @InjectMocks
