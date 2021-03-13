@@ -63,25 +63,25 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     }
 
     @Test
-    public void gitlabAPIGetAllMergeRequestsNullTest() {
+    public void gitlabApiGetAllMergeRequestsNullTest() {
         initialNullCheckSetup();
         assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
     }
 
     @Test
-    public void gitlabAPIReturnAllMergeRequestsNullTest() {
+    public void gitlabApiReturnAllMergeRequestsNullTest() {
         initialNullCheckSetup();
         assertNull(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
     }
 
     @Test
-    public void gitlabAPIGetDiffNullTest() {
+    public void gitlabApiGetDiffNullTest() {
         initialNullCheckSetup();
         assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA));
     }
 
     @Test
-    public void gitlabAPIGetCommitsNullTest() {
+    public void gitlabApiGetCommitsNullTest() {
         initialNullCheckSetup();
         assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA));
     }
