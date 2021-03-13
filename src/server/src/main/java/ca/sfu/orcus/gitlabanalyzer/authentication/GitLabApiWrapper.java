@@ -92,8 +92,9 @@ public class GitLabApiWrapper {
 
     public Optional<String> getOAuth2AuthToken(String username, String password) {
         try {
+            // If oauth2Login fails then the username or password are invalid
             GitLabApi gitLabApi = GitLabApi.oauth2Login(VariableDecoderUtil.decode("GITLAB_URL"), username, password);
-            String authToken = gitLabApi.getAuthToken(); // If this fails then the username or password are invalid
+            String authToken = gitLabApi.getAuthToken();
             return Optional.of(authToken);
         } catch (GitLabApiException e) {
             return Optional.empty();

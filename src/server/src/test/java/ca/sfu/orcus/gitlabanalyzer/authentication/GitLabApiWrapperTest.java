@@ -9,22 +9,27 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GitLabApiWrapperTest {
     @Mock JwtService jwtService;
     @Mock AuthenticationRepository authRepository;
     @Mock UserApi userApi;
+    @Mock GitLabApi gitLabApi;
 
     @InjectMocks
     GitLabApiWrapper gitLabApiWrapper;
 
     private final String sampleJwt = "sampleJwt";
+    private final String sampleUsername = "sampleUsername";
+    private final String samplePassword = "samplePassword";
     private final User sampleUser = new User();
 
     @Test
@@ -77,6 +82,28 @@ class GitLabApiWrapperTest {
     public void successfullySignInWithUserPassJwt() throws GitLabApiException {
         setupForSignInWithUserPassJwt();
         assertTrue(tryToSignInWhenNoExceptionsAreThrown());
+    }
+
+    @Test
+    public void failGettingOAuth2TokenForBadUserPass() {
+        try (MockedStatic<GitLabApi> gitLabApiMockedStatic = mockStatic(GitLabApi.class)) {
+            gitLabApiMockedStatic.when(() ->
+                    GitLabApi.oauth2Login(anyString(), anyString(), anyString())).thenThrow(GitLabApiException.class);
+            Optional<String> authToken = gitLabApiWrapper.getOAuth2AuthToken(sampleUsername, samplePassword);
+            assertEquals(Optional.empty(), authToken);
+        }
+    }
+
+    @Test
+    public void successfullyGetOAuth2Token() {
+        final String sampleAuthToken = "sampleAuthToken";
+        try (MockedStatic<GitLabApi> gitLabApiMockedStatic = mockStatic(GitLabApi.class)) {
+            gitLabApiMockedStatic.when(() -> GitLabApi.oauth2Login(anyString(), anyString(), anyString())).thenReturn(gitLabApi);
+            when(gitLabApi.getAuthToken()).thenReturn(sampleAuthToken);
+            Optional<String> returnedAuthToken = gitLabApiWrapper.getOAuth2AuthToken(sampleUsername, samplePassword);
+            Optional<String> expectedAuthToken = Optional.of(sampleAuthToken);
+            assertEquals(expectedAuthToken, returnedAuthToken);
+        }
     }
 
     private void setupForSignInWithPatJwt() {
