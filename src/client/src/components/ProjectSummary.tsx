@@ -1,10 +1,9 @@
-import { round } from 'lodash'
-import { useState } from 'react'
 import { IProjectData } from '../pages/Project'
 import bytesConverter from '../utils/bytesConverter'
+import { round } from 'lodash'
 
-import ProjectStat from '../components/ProjectStat'
-import ActivityGraph from '../components/ActivityGraph'
+import ActivityGraph from './ActivityGraph'
+import StatSummary from './StatSummary'
 
 import styles from '../css/ProjectSummary.module.css'
 
@@ -14,55 +13,45 @@ const calcAgeInDays = (birth: number) => {
 }
 
 const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
-  const [yAxis, setYAxis] = useState<'number' | 'score'>('number')
-
   if (!project) return null
 
   const { id, members, numBranches, numCommits, createdAt, repoSize } = project
 
+  const projectStatData = [
+    {
+      name: 'Members',
+      value: members.length,
+    },
+    {
+      name: 'Branches',
+      value: numBranches,
+    },
+    {
+      name: 'Total commits',
+      value: numCommits,
+    },
+    {
+      name: 'Average commits per day',
+      value: round(numCommits / calcAgeInDays(createdAt), 2),
+    },
+    {
+      name: 'Files',
+      rawValue: round(repoSize / 1024, 2),
+      value: bytesConverter(repoSize),
+    },
+  ]
+
   return (
     <div className={styles.container}>
-      <div className={styles.config}>
-        <p className={styles.configHeader}>CONFIGURE</p>
-        <p className={styles.category}>Y-Axis:</p>
-        <div className={styles.option}>
-          <input
-            type="radio"
-            value="number"
-            name="yaxis"
-            onChange={() => setYAxis('number')}
-            defaultChecked
-          />
-          Number
-        </div>
-        <div className={styles.option}>
-          <input
-            type="radio"
-            value="score"
-            name="yaxis"
-            onChange={() => setYAxis('score')}
-          />
-          Points
-        </div>
-      </div>
       <div className={styles.statsContainer}>
         <div className={styles.graph}>
           <ActivityGraph
             mergeUrl={`/api/project/${id}/mergerequests`}
             commitUrl={`/api/project/${id}/commits`}
-            yAxisValue={yAxis}
+            yAxisValue={'number'}
           />
         </div>
-        <div className={styles.stats}>
-          <ProjectStat name="Members" value={members.length} />
-          <ProjectStat name="Branches" value={numBranches} />
-          <ProjectStat name="Commits" value={numCommits} />
-          <ProjectStat
-            name="Average commits per day"
-            value={round(numCommits / calcAgeInDays(createdAt), 2)}
-          />
-          <ProjectStat name="Files" value={bytesConverter(repoSize)} />
-        </div>
+        <StatSummary statData={projectStatData} />
       </div>
     </div>
   )

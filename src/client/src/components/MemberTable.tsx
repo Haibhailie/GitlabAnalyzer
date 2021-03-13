@@ -33,7 +33,6 @@ const MemberTable = ({ projectId, projectName }: IActivityGraphProps) => {
   )
 
   const onAnalyze = (id: string) => {
-    console.log(id)
     history.push(`/project/${projectId}/member/${id}`)
   }
 
