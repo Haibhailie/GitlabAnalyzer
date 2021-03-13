@@ -61,13 +61,13 @@ class GitLabApiWrapperTest {
     }
 
     @Test
-    public void failGitLabSignInFromBadPatJwt() throws GitLabApiException {
+    public void failGitLabSignInForBadPatJwt() throws GitLabApiException {
         setupForSignInWithPatJwt();
         assertFalse(tryToSignInWhenGitLabApiThrowsException());
     }
 
     @Test
-    public void failGitLabSignInFromBadUserPassJwt() throws GitLabApiException {
+    public void failGitLabSignInForBadUserPassJwt() throws GitLabApiException {
         setupForSignInWithUserPassJwt();
         assertFalse(tryToSignInWhenGitLabApiThrowsException());
     }
@@ -96,7 +96,7 @@ class GitLabApiWrapperTest {
 
     @Test
     public void successfullyGetOAuth2Token() {
-        final String sampleAuthToken = "sampleAuthToken";
+        String sampleAuthToken = "sampleAuthToken";
         try (MockedStatic<GitLabApi> gitLabApiMockedStatic = mockStatic(GitLabApi.class)) {
             gitLabApiMockedStatic.when(() -> GitLabApi.oauth2Login(anyString(), anyString(), anyString())).thenReturn(gitLabApi);
             when(gitLabApi.getAuthToken()).thenReturn(sampleAuthToken);
