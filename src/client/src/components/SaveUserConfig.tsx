@@ -6,7 +6,7 @@ import styles from '../css/SaveUserConfig.module.css'
 
 import { ReactComponent as Delete } from '../assets/delete.svg'
 
-interface ISaveUserConfig {
+export interface ISaveUserConfig {
   setCurrentConfig: (newUserConfig: IUserConfig) => void
   savedConfigs: IUserConfig[]
   setSavedConfigsHandler: (configs: IUserConfig[]) => void
@@ -36,20 +36,18 @@ const SaveUserConfig = ({
   }
 
   return (
-    <>
-      <div className={styles.list}>
-        {savedConfigs.map((config, index) => (
-          <div key={config.name} className={styles.item}>
-            <button className={styles.label} onClick={() => loadConfig(config)}>
-              {config.name}
-            </button>
-            <button className={styles.deleteButton}>
-              <Delete onClick={() => deleteConfig(index)} />
-            </button>
-          </div>
-        ))}
-      </div>
-    </>
+    <div className={styles.list}>
+      {savedConfigs.map((config, index) => (
+        <div key={config.name} className={styles.item}>
+          <button className={styles.label} onClick={() => loadConfig(config)}>
+            {config.name}
+          </button>
+          <button className={styles.deleteButton}>
+            <Delete onClick={() => deleteConfig(index)} />
+          </button>
+        </div>
+      ))}
+    </div>
   )
 }
 

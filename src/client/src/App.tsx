@@ -1,19 +1,18 @@
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { ThemeProvider } from '@material-ui/styles'
+import globalTheme from './themes/globalTheme'
 
-import Provider from './context/ProjectContext'
+import UserConfigProvider from './context/UserConfigContext'
+import ProjectProvider from './context/ProjectContext'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Project from './pages/Project'
 import PageWrapper from './components/PageWrapper'
 
-import UserConfigProvider from './context/UserConfigContext'
-import globalTheme from './themes/globalTheme'
-import { ThemeProvider } from '@material-ui/styles'
-
 const App = () => {
   return (
     <UserConfigProvider>
-      <Provider>
+      <ProjectProvider>
         <ThemeProvider theme={globalTheme}>
           <Router>
             <Switch>
@@ -33,7 +32,7 @@ const App = () => {
             </Switch>
           </Router>
         </ThemeProvider>
-      </Provider>
+      </ProjectProvider>
     </UserConfigProvider>
   )
 }

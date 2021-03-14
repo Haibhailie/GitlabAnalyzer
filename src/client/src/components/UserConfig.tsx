@@ -1,7 +1,13 @@
 import React, { ChangeEvent, useContext, useState } from 'react'
-import TextField from '@material-ui/core/TextField'
+import {
+  IUserConfig,
+  SET_GRAPH_BY,
+  TGraphMode,
+  TYAxis,
+  UserConfigContext,
+} from '../context/UserConfigContext'
 
-import { IUserConfig, UserConfigContext } from '../context/UserConfigContext'
+import TextField from '@material-ui/core/TextField'
 import SideNavSubDropDown from './SideNavSubDropDown'
 import UserConfigPopup from './UserConfigPopup'
 import SaveUserConfig from './SaveUserConfig'
@@ -20,9 +26,9 @@ const UserConfig = () => {
     {
       startDate: new Date('2020-10-05'),
       endDate: new Date('2020-11-10'),
-      projectGraphBy: 'Split By Member',
-      scoreBy: 'Commits',
-      graphYAxis: 'Score',
+      graphMode: 'MEMBER',
+      scoreBy: 'COMMITS',
+      yAxis: 'SCORE',
       generalScores: [
         { type: 'New line of code', value: 1 },
         { type: 'Deleting a line', value: 1 },
@@ -41,9 +47,9 @@ const UserConfig = () => {
     {
       startDate: new Date('2021-02-05'),
       endDate: new Date('2020-03-10'),
-      projectGraphBy: 'Split By Member',
-      scoreBy: 'Merge Requests',
-      graphYAxis: 'Score',
+      graphMode: 'PROJECT',
+      scoreBy: 'MRS',
+      yAxis: 'SCORE',
       generalScores: [
         { type: 'New line of code', value: 0 },
         { type: 'Deleting a line', value: 0 },
@@ -81,7 +87,7 @@ const UserConfig = () => {
     const newValue = new Date(event.target.value)
     dispatch({
       type: 'SET_START_DATE',
-      startDate: newValue,
+      date: newValue,
     })
 
     if (validDates(newValue, userConfig.endDate)) {
@@ -92,7 +98,7 @@ const UserConfig = () => {
     const newValue = new Date(event.target.value)
     dispatch({
       type: 'SET_END_DATE',
-      endDate: newValue,
+      date: newValue,
     })
     if (validDates(userConfig.startDate, newValue)) {
       // TODO: Add update userconfig post and get new projects by date
@@ -128,19 +134,19 @@ const UserConfig = () => {
 
   const graphYAxisChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // TODO: Add update userconfig post
-    const newValue = event.target.value as IUserConfig['graphYAxis']
+    const newValue = event.target.value as TYAxis
     dispatch({
       type: 'SET_GRAPH_Y_AXIS',
-      graphYAxis: newValue,
+      yAxis: newValue,
     })
   }
 
   const projectGraphByChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // TODO: Add update userconfig post
-    const newValue = event.target.value as IUserConfig['projectGraphBy']
+    const newValue = event.target.value as TGraphMode
     dispatch({
-      type: 'SET_PROJECT_GRAPH_BY',
-      projectGraphBy: newValue,
+      type: SET_GRAPH_BY,
+      graphMode: newValue,
     })
   }
 
@@ -247,7 +253,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="Merge Requests"
-                  checked={userConfig.scoreBy === 'Merge Requests'}
+                  checked={userConfig.scoreBy === 'MRS'}
                   onChange={memberScoreByChange}
                 />
                 <label className={styles.label}>Merge Requests</label>
@@ -256,7 +262,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="Commits"
-                  checked={userConfig.scoreBy === 'Commits'}
+                  checked={userConfig.scoreBy === 'COMMITS'}
                   onChange={memberScoreByChange}
                 />
                 <label className={styles.label}>Commits</label>
@@ -269,8 +275,8 @@ const UserConfig = () => {
               <div className={styles.inputField}>
                 <input
                   type="radio"
-                  value="Number"
-                  checked={userConfig.graphYAxis === 'Number'}
+                  value="NUMBER"
+                  checked={userConfig.yAxis === 'NUMBER'}
                   onChange={graphYAxisChange}
                 />
                 <label className={styles.label}>Number</label>
@@ -278,8 +284,8 @@ const UserConfig = () => {
               <div className={styles.inputField}>
                 <input
                   type="radio"
-                  value="Score"
-                  checked={userConfig.graphYAxis === 'Score'}
+                  value="SCORE"
+                  checked={userConfig.yAxis === 'SCORE'}
                   onChange={graphYAxisChange}
                 />
                 <label className={styles.label}>Score</label>
@@ -289,7 +295,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="Entire Project"
-                  checked={userConfig.projectGraphBy === 'Entire Project'}
+                  checked={userConfig.graphMode === 'PROJECT'}
                   onChange={projectGraphByChange}
                 />
                 <label className={styles.label}>Entire Project</label>
@@ -298,7 +304,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="Split By Member"
-                  checked={userConfig.projectGraphBy === 'Split By Member'}
+                  checked={userConfig.graphMode === 'MEMBER'}
                   onChange={projectGraphByChange}
                 />
                 <label className={styles.label}>Split By Member</label>
