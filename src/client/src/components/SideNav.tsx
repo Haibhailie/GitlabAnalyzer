@@ -1,7 +1,6 @@
 import classNames from '../utils/classNames'
 
 import SideNavItem from './SideNavItem'
-import SideNavDropDown from './SideNavDropDown'
 import UserConfig from './UserConfig'
 
 import styles from '../css/SideNav.module.css'

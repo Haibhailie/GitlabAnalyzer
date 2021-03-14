@@ -1,8 +1,6 @@
 import { useContext } from 'react'
 
 import { IUserConfig, UserConfigContext } from '../context/UserConfigContext'
-import SideNavSubDropDown from './SideNavSubDropDown'
-import SideNavDropDown from './SideNavDropDown'
 
 import styles from '../css/SaveUserConfig.module.css'
 
@@ -22,7 +20,7 @@ const SaveUserConfig = ({
   checkUniqueName,
 }: ISaveUserConfig) => {
   // TODO: fetch array of saved configs
-  const { userConfig, dispatch } = useContext(UserConfigContext)
+  const { userConfig } = useContext(UserConfigContext)
 
   const deleteConfig = (index: number) => {
     // TODO: POST removed list
