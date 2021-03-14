@@ -26,10 +26,10 @@ const Member = () => {
   const { state } = useLocation<IMemberData>()
 
   const {
-    Suspense: MemberSuspense,
+    Suspense,
     data: memberData,
     error: memberError,
-  } = useSuspense<IMemberData, Error>((setData, setError) => {
+  } = useSuspense<IMemberData>((setData, setError) => {
     if (state) {
       setData(state)
     } else {
@@ -46,7 +46,7 @@ const Member = () => {
   })
 
   return (
-    <MemberSuspense
+    <Suspense
       fallback="Getting member details..."
       error={memberError?.message ?? 'Unknown Error'}
     >
@@ -67,7 +67,7 @@ const Member = () => {
           </div>
         </Selector>
       </div>
-    </MemberSuspense>
+    </Suspense>
   )
 }
 

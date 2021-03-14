@@ -21,45 +21,31 @@ const computeStats = (
   return {
     commits: commitData,
     mergeRequests: mergeData,
-  } as IMemberStatData
+  }
 }
 
-const computeCommitScore = (commitData: ICommitData[] | undefined): number => {
-  if (!commitData) {
-    return 0
-  }
-  let commitScore = 0
-  for (const commit of commitData) {
-    const score = Math.floor(Math.random() * 100 + commit.author.length)
-    commitScore += score
-  }
-  return commitScore
+const computeCommitScore = (commitData: ICommitData[] = []): number => {
+  return commitData.reduce(
+    (accum, commit) =>
+      accum + Math.floor(Math.random() * 100 + commit.author.length),
+    0
+  )
 }
 
-const computeMergeScore = (
-  mergeRequestData: IMergeData[] | undefined
-): number => {
-  if (!mergeRequestData) {
-    return 0
-  }
-  let mergeScore = 0
-  for (const mergeRequest of mergeRequestData) {
-    const score = Math.floor(Math.random() * 50 + mergeRequest.author.length)
-    mergeScore += score
-  }
-  return mergeScore
+const computeMergeScore = (mergeRequestData: IMergeData[] = []): number => {
+  return mergeRequestData.reduce(
+    (accum, mergeRequest) =>
+      accum + Math.floor(Math.random() * 50 + mergeRequest.author.length),
+    0
+  )
 }
 
-const computeLinesAdded = (commitData: ICommitData[] | undefined): number => {
-  if (!commitData) {
-    return 0
-  }
-  let totalLineAdditions = 0
-  for (const commit of commitData) {
-    const lines = Math.floor(Math.random() * 100 + commit.author.length)
-    totalLineAdditions += lines
-  }
-  return totalLineAdditions
+const computeLinesAdded = (commitData: ICommitData[] = []): number => {
+  return commitData.reduce(
+    (accum, commit) =>
+      accum + Math.floor(Math.random() * 90 + commit.author.length),
+    0
+  )
 }
 
 const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
@@ -67,34 +53,33 @@ const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
 
   const { id, displayName } = memberData
 
-  const { Suspense: DataSuspense, data, error } = useSuspense<
-    IMemberStatData,
-    Error
-  >((setData, setError) => {
-    let otherData: ICommitData[] | IMergeData[] | null = null
-    jsonFetcher<IMergeData[]>(
-      `/api/project/${projectId}/members/${id}/mergerequests`
-    )
-      .then(data => {
-        if (otherData) {
-          setData(computeStats(otherData as ICommitData[], data))
-        } else {
-          otherData = data
-        }
-      })
-      .catch(onError(setError))
-    jsonFetcher<ICommitData[]>(
-      `/api/project/${projectId}/members/${displayName}/commits`
-    )
-      .then(data => {
-        if (otherData) {
-          setData(computeStats(data, otherData as IMergeData[]))
-        } else {
-          otherData = data
-        }
-      })
-      .catch(onError(setError))
-  })
+  const { Suspense, data, error } = useSuspense<IMemberStatData>(
+    (setData, setError) => {
+      let otherData: ICommitData[] | IMergeData[] | null = null
+      jsonFetcher<IMergeData[]>(
+        `/api/project/${projectId}/members/${id}/mergerequests`
+      )
+        .then(data => {
+          if (otherData) {
+            setData(computeStats(otherData as ICommitData[], data))
+          } else {
+            otherData = data
+          }
+        })
+        .catch(onError(setError))
+      jsonFetcher<ICommitData[]>(
+        `/api/project/${projectId}/members/${displayName}/commits`
+      )
+        .then(data => {
+          if (otherData) {
+            setData(computeStats(data, otherData as IMergeData[]))
+          } else {
+            otherData = data
+          }
+        })
+        .catch(onError(setError))
+    }
+  )
 
   const memberStatData = [
     {
@@ -126,21 +111,19 @@ const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.statsContainer}>
-        <div className={styles.graph}>
-          <DataSuspense
-            fallback={`Analyzing ${memberData?.displayName} . . . `}
-            error={error?.message ?? 'Unknown Error'}
-          >
-            <ActivityGraph
-              mergeUrl={`/api/project/${projectId}/members/${id}/mergerequests`}
-              commitUrl={`/api/project/${projectId}/members/${displayName}/commits`}
-              yAxisValue={'number'}
-            />
-          </DataSuspense>
-        </div>
-        <StatSummary statData={memberStatData} />
+      <div className={styles.graph}>
+        <Suspense
+          fallback={`Analyzing ${memberData?.displayName} . . . `}
+          error={error?.message ?? 'Unknown Error'}
+        >
+          <ActivityGraph
+            mergeUrl={`/api/project/${projectId}/members/${id}/mergerequests`}
+            commitUrl={`/api/project/${projectId}/members/${displayName}/commits`}
+            yAxisValue={'number'}
+          />
+        </Suspense>
       </div>
+      <StatSummary statData={memberStatData} />
     </div>
   )
 }
