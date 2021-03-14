@@ -22,6 +22,7 @@ public class CommitDto {
     private int numDeletions;
     private int total;
     private List<Diff> diffs;
+    private double score;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
@@ -40,6 +41,8 @@ public class CommitDto {
         List<Diff> gitDiffs = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
         List<Diff> allDiffs = new ArrayList<>(gitDiffs);
         this.setDiffs(allDiffs);
+        CommitScore calculator = new CommitScore();
+        this.score = calculator.getCommitScore(gitLabApi, projectId, id);
     }
 
     public void setTitle(String title) {
