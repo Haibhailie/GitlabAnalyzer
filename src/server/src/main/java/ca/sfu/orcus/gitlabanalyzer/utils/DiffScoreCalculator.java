@@ -1,49 +1,21 @@
-package ca.sfu.orcus.gitlabanalyzer.commit;
+package ca.sfu.orcus.gitlabanalyzer.utils;
 
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffStringParser;
 import org.apache.commons.lang3.StringUtils;
-import org.gitlab4j.api.GitLabApi;
-import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.Diff;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class CommitScore {
-    private final double addLOCFactor = 1;
-    private final double deleteLOCFactor = 0.2;
-    private final double syntaxChangeFactor = 0.2;
-    private final double blankLOCFactor = 0;
-    private final double spacingChangeFactor = 0;
+public class DiffScoreCalculator {
 
     int numLineAdditions = 0;
     int numLineDeletions = 0;
     int numBlankAdditions = 0;
     int numSyntaxChanges = 0;
     int numSpacingChanges = 0;
-
     List<String> generatedDiffList = new ArrayList<>();
 
-    public double getCommitScore(GitLabApi gitLabApi, int projectId, String sha) throws GitLabApiException {
-        List<Diff> commitDiffs = gitLabApi.getCommitsApi().getDiff(projectId, sha);
-
-        //regex to split lines by new line and store in generatedDiffList
-        generatedDiffList = Arrays.asList(DiffStringParser.parseDiff(commitDiffs).split("\\r?\\n"));
-
-        parseDiffList();
-
-        double totalScore = (numLineAdditions * addLOCFactor)
-                + (numLineDeletions * deleteLOCFactor)
-                + (numBlankAdditions * blankLOCFactor)
-                + (numSyntaxChanges * syntaxChangeFactor)
-                + (numSpacingChanges * spacingChangeFactor);
-
-        System.out.println(totalScore);
-        return totalScore;
-    }
-
-    private void parseDiffList() {
+    public DiffScoreDto parseDiffList(List<String> passedDiffString) {
+        generatedDiffList = passedDiffString;
         int lineNumber = -1;
         for (String line : generatedDiffList) {
             lineNumber++;
@@ -69,6 +41,7 @@ public class CommitScore {
                 }
             }
         }
+        return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges);
     }
 
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
@@ -113,4 +86,3 @@ public class CommitScore {
         return false;
     }
 }
-

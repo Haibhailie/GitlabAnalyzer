@@ -60,7 +60,7 @@ public class MergeRequestDto {
         setNotesNameAndNotes(gitLabApi, projectId, mergeRequestId);
         setTime(presentMergeRequest.getMergedAt().getTime());
         MergeRequestScore scoreCalculator = new MergeRequestScore();
-        score = scoreCalculator.getMergeRequestScore(gitLabApi, projectId, mergeRequestId);
+        score = scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId));
     }
 
     public void setMergeRequestId(int mergeRequestId) {
