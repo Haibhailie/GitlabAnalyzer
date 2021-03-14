@@ -56,12 +56,12 @@ public class MemberService {
 
     }
 
-    public List<CommitDto> getCommitsByMemberEmail(String jwt, int projectId, Date since, Date until, String memberEmail) {
+    public List<CommitDto> getCommitsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        return commitService.returnAllCommits(gitLabApi, projectId, since, until, memberEmail);
+        return commitService.returnAllCommits(gitLabApi, projectId, since, until, memberName);
     }
 
     public List<MergeRequestDto> getMergeRequestsByMemberId(String jwt, int projectId, Date since, Date until, int memberId) {
