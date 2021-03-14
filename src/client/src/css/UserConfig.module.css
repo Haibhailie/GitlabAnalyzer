@@ -29,10 +29,7 @@
   height: 28px;
   display: flex;
   align-items: center;
-}
-
-.header:hover {
-  cursor: pointer;
+  width: 100%;
 }
 
 .editIcon {

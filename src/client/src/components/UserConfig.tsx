@@ -217,9 +217,9 @@ const UserConfig = () => {
           </div>
         </>
       </SideNavSubDropDown>
-      <div className={styles.header} onClick={togglePopup}>
+      <button className={styles.header} onClick={togglePopup}>
         <Edit className={styles.editIcon} /> Edit Scoring
-      </div>
+      </button>
       {popUpOpen && (
         <UserConfigPopup
           generalScores={generalScores}

@@ -53,17 +53,15 @@
   padding: 2px 5px;
   width: 80%;
   border-radius: 2px;
+  display: flex;
 }
 
 .label:hover {
   background-color: lightBlue;
   color: blue;
-  cursor: pointer;
-}
-.deleteButton {
-  margin-left: 5px;
 }
 
-.deleteButton:hover {
-  cursor: pointer;
+.deleteButton {
+  margin-left: 5px;
+  display: flex;
 }

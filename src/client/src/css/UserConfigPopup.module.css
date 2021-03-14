@@ -15,6 +15,17 @@
   filter: drop-shadow(8px 8px 5px #999cae);
 }
 
+.header {
+  font: 400 24px Poppins;
+  margin-top: 30px;
+}
+
+.closeButton {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+}
+
 .scoreContainer {
   width: 350px;
 }
@@ -27,6 +38,28 @@
   align-items: center;
 }
 
+.table {
+  border: 0;
+  border-spacing: 0px;
+}
+
+.labelColumn {
+  width: 190px;
+}
+
+.inputColumn {
+  width: 150px;
+}
+
+.generalInput {
+  width: 85px;
+  height: 28px;
+  border: 2px solid var(--color-gray);
+  border-radius: 4px;
+  margin-right: 10px;
+  padding: 0px 10px;
+}
+
 .fileContainer {
   margin-top: 5px;
   max-height: 205px;
@@ -37,44 +70,39 @@
   padding: 0px 20px;
 }
 
-.closeButton {
-  position: absolute;
-  right: 10px;
-  top: 5px;
-}
-
-.closeButton:hover {
-  cursor: pointer;
-}
-
-.header {
-  font: 400 24px Poppins;
-  margin-top: 30px;
-}
-
-.table {
-  border: 0;
-  border-spacing: 0px;
-}
-
-.labelColumn {
-  width: 190px;
-}
-
 .fileLabel {
   padding-left: 20px;
 }
 
-.inputColumn {
-  width: 150px;
+.multiplier {
+  display: flex;
 }
-.generalInput {
-  width: 85px;
-  height: 28px;
-  border: 2px solid var(--color-gray);
+
+.multiplierInput {
+  width: 80px;
+  height: 18px;
+  border: 1px solid var(--color-gray);
   border-radius: 4px;
-  margin-right: 10px;
-  padding: 0px 10px;
+  padding: 2px 10px;
+}
+
+.deleteButton {
+  margin-left: 5px;
+  height: min-content;
+  display: flex;
+}
+
+.fileTypeContainer {
+  position: absolute;
+  bottom: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.fileExtentionInput {
+  width: 150px;
+  height: 20px;
+  margin-top: 20px;
 }
 
 .fileButton {
@@ -85,38 +113,13 @@
   margin-top: 10px;
 }
 
-.fileButton:hover {
-  cursor: pointer;
-}
-
-.fileButtonDisabled {
+.fileButton:disabled {
   border: 1px solid #999cae;
   border-radius: 5px;
   text-align: center;
   color: #999cae;
-  background-color: #eeeeee;
+  /* background-color: #eeeeee; */
   margin-top: 10px;
-}
-
-.fileButtonDisabled:hover {
-  cursor: pointer;
-}
-
-.fileExtentionInput {
-  width: 150px;
-  height: 20px;
-  margin-top: 20px;
-}
-
-.multiplier {
-  display: flex;
-}
-.multiplierInput {
-  width: 80px;
-  height: 18px;
-  border: 1px solid var(--color-gray);
-  border-radius: 4px;
-  padding: 2px 10px;
 }
 
 .saveButton {
@@ -127,21 +130,4 @@
   text-align: center;
   color: blue;
   padding: 5px;
-}
-
-.saveButton:hover {
-  cursor: pointer;
-}
-
-.fileTypeContainer {
-  position: absolute;
-  bottom: 100px;
-}
-
-.deleteButton {
-  margin-left: 5px;
-}
-
-.deleteButton:hover {
-  cursor: pointer;
 }

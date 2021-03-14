@@ -22,10 +22,10 @@ const SideNavSubDropDown = ({
 
   return (
     <div>
-      <div className={styles.header} onClick={toggleTab}>
+      <button className={styles.header} onClick={toggleTab}>
         <div>{label}</div>
         <Dropdown className={isOpen ? styles.openIcon : styles.closedIcon} />
-      </div>
+      </button>
       {isOpen && <div className={styles.subContainer}> {children}</div>}
     </div>
   )

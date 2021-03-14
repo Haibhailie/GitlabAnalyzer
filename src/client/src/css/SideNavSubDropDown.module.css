@@ -6,10 +6,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.header:hover {
-  cursor: pointer;
+  width: 100%;
 }
 
 .openIcon {

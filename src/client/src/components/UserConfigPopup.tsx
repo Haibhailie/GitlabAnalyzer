@@ -10,6 +10,7 @@ import Selector from './Selector'
 import styles from '../css/UserConfigPopup.module.css'
 
 import { ReactComponent as Delete } from '../assets/delete.svg'
+import { ReactComponent as Close } from '../assets/close.svg'
 
 interface IUserConfigPopup {
   fileScores: IFileTypeScoring[]
@@ -86,11 +87,11 @@ const UserConfigPopup = ({
   return (
     <div className={styles.container}>
       <div className={styles.header}>Edit Scoring</div>
-      <div onClick={togglePopup} className={styles.closeButton}>
-        x
-      </div>
+      <button onClick={togglePopup} className={styles.closeButton}>
+        <Close />
+      </button>
       <div className={styles.scoreContainer}>
-        <Selector tabHeaders={['Change Code Values', 'File Type Multiplier']}>
+        <Selector tabHeaders={['Change Multipliers', 'File Type Multipliers']}>
           <div className={styles.generalContainer}>
             <table className={styles.table}>
               <colgroup>
@@ -142,12 +143,12 @@ const UserConfigPopup = ({
                           className={styles.multiplierInput}
                           onChange={event => fileScoresChange(event, index)}
                         />
-                        <div
+                        <button
                           className={styles.deleteButton}
                           onClick={() => deleteFileType(index)}
                         >
                           <Delete />
-                        </div>
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -161,22 +162,21 @@ const UserConfigPopup = ({
                 onChange={setNewTypeHandler}
                 className={styles.fileExtentionInput}
               />
-              <div
+              <button
                 onClick={addFileType}
-                className={
-                  newType ? styles.fileButton : styles.fileButtonDisabled
-                }
+                className={styles.fileButton}
+                disabled={!newType}
               >
                 Add file type
-              </div>
+              </button>
             </div>
           </div>
         </Selector>
       </div>
 
-      <div onClick={save} className={styles.saveButton}>
+      <button onClick={save} className={styles.saveButton}>
         Save score settings
-      </div>
+      </button>
     </div>
   )
 }

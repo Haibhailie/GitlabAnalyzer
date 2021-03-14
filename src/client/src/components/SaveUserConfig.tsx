@@ -101,24 +101,23 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
         className={styles.input}
         placeholder="Name config..."
       />
-      <div className={styles.saveButton} onClick={save}>
+      <button className={styles.saveButton} onClick={save}>
         <SaveSmall className={styles.saveIcon} /> Save Config
-      </div>
+      </button>
       <SideNavSubDropDown startOpened={true} label="Load Configuration">
         <>
           <ul className={styles.list}>
             {savedConfigs.map((config, index) => (
               <li key={config.name} className={styles.item}>
-                <div
+                <button
                   className={styles.label}
                   onClick={() => loadConfig(config)}
                 >
                   {config.name}
-                </div>
-                <Delete
-                  className={styles.deleteButton}
-                  onClick={() => deleteConfig(index)}
-                />
+                </button>
+                <button className={styles.deleteButton}>
+                  <Delete onClick={() => deleteConfig(index)} />
+                </button>
               </li>
             ))}
           </ul>
