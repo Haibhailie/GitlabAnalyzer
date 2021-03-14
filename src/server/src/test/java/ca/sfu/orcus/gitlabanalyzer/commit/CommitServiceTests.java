@@ -5,10 +5,10 @@ import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
+import org.gitlab4j.api.CommitsApi;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
-import org.gitlab4j.api.models.Diff;
 import org.gitlab4j.api.models.Project;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,12 +29,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class CommitServiceTests {
     @Mock private GitLabApiWrapper gitLabApiWrapper;
+    @Mock private Commit commit;
 
     // Class to be tested
     @InjectMocks
     private CommitService commitService;
 
-    private GitLabApi gitLabApi;
+    private GitLabApi gitLabApi = GitLabApiMock.getGitLabApiMock();
+    private final CommitsApi commitsApi = gitLabApi.getCommitsApi();
     private static final String jwt = UUID.randomUUID().toString();
 
     // Test objects
@@ -50,6 +52,11 @@ public class CommitServiceTests {
         project = ProjectMock.createProject();
     }
 
+    void initialTestSetup() {
+        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        commit = CommitMock.createCommit();
+        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
+    }
     // Testing the null checks
 
     @Test
@@ -74,12 +81,9 @@ public class CommitServiceTests {
 
     @Test
     public void getSingleCommit() throws GitLabApiException {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        initialTestSetup();
 
-        Commit commit = CommitMock.createCommit();
-
-        when(gitLabApi.getCommitsApi().getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
-
+        when(commitsApi.getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
         CommitDto commitDto = commitService.getSingleCommit(jwt, projectId, CommitMock.defaultSha);
         CommitDto expectedCommitDto = new CommitDto(gitLabApi, projectId, commit);
 
@@ -88,14 +92,12 @@ public class CommitServiceTests {
 
     @Test
     public void getCommits() throws GitLabApiException {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-
+        initialTestSetup();
         List<Commit> commitList = CommitMock.createTestCommitList();
-        Commit commit = CommitMock.createCommit();
 
-        when(gitLabApi.getCommitsApi().getCommits(projectId, ProjectMock.defaultDefaultBranch, since, until)).thenReturn(commitList);
+        when(commitsApi.getCommits(projectId, ProjectMock.defaultDefaultBranch, since, until)).thenReturn(commitList);
         when(gitLabApi.getProjectApi().getProject(projectId)).thenReturn(project);
-        when(gitLabApi.getCommitsApi().getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
+        when(commitsApi.getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
 
         List<CommitDto> commitDtos = commitService.getAllCommits(jwt, projectId, since, until);
         List<CommitDto> expectedCommitDtos = new ArrayList<>();
@@ -107,11 +109,10 @@ public class CommitServiceTests {
 
     @Test
     public void getCommitsEmptyList() throws GitLabApiException {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-
+        initialTestSetup();
         List<Commit> commitList = new ArrayList<>();
 
-        when(gitLabApi.getCommitsApi().getCommits(projectId, ProjectMock.defaultDefaultBranch, since, until)).thenReturn(commitList);
+        when(commitsApi.getCommits(projectId, ProjectMock.defaultDefaultBranch, since, until)).thenReturn(commitList);
         when(gitLabApi.getProjectApi().getProject(projectId)).thenReturn(project);
 
         List<CommitDto> commitDtos = commitService.getAllCommits(jwt, projectId, since, until);
@@ -122,37 +123,29 @@ public class CommitServiceTests {
 
     @Test
     public void testGetSingleCommitDiff() throws GitLabApiException {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        initialTestSetup();
 
-        List<Diff> diffList = CommitMock.createTestDiffList();
-        Commit commit = CommitMock.createCommit();
-
-        when(gitLabApi.getCommitsApi().getDiff(projectId, CommitMock.defaultSha)).thenReturn(diffList);
-        when(gitLabApi.getCommitsApi().getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
-
-        List<String> commitDiff = commitService.getDiffOfCommit(jwt, projectId, CommitMock.defaultSha);
-        List<String> expectedCommitDiff = new ArrayList<>();
-        for (Diff d : diffList) {
-            expectedCommitDiff.add(d.getDiff());
-        }
-
-        assertEquals(commitDiff, expectedCommitDiff);
+        String expectedDiffList = CommitMock.createTestDiffListString();
+        when(commitsApi.getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
+        when(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())).thenReturn(CommitMock.createTestDiffList());
+        String diffList = commitService.getDiffOfCommit(jwt, projectId, CommitMock.defaultSha);
+        assertEquals(expectedDiffList, diffList);
     }
 
     // Testing the exception throws
 
     @Test
     public void getSingleCommitException() throws GitLabApiException {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-        when(gitLabApi.getCommitsApi().getCommit(projectId, CommitMock.defaultSha)).thenThrow(GitLabApiException.class);
+        initialTestSetup();
+        when(commitsApi.getCommit(projectId, CommitMock.defaultSha)).thenThrow(GitLabApiException.class);
         assertNull(commitService.getSingleCommit(jwt, projectId, CommitMock.defaultSha));
     }
 
     @Test
     public void getAllCommitsException() throws GitLabApiException {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
+        initialTestSetup();
         when(gitLabApi.getProjectApi().getProject(projectId)).thenReturn(project);
-        when(gitLabApi.getCommitsApi().getCommits(projectId, ProjectMock.defaultDefaultBranch, since, until)).thenThrow(GitLabApiException.class);
+        when(commitsApi.getCommits(projectId, ProjectMock.defaultDefaultBranch, since, until)).thenThrow(GitLabApiException.class);
         assertNull(commitService.getAllCommits(jwt, projectId, since, until));
     }
 }

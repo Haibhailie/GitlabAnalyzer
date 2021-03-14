@@ -30,6 +30,7 @@ public class MergeRequestDto {
     private List<String> committers;
     private List<Participant> participants;
     private long time;
+    private double score;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
