@@ -1,5 +1,5 @@
 .subHeader {
-  border-bottom: 1.5px solid gray;
+  border-bottom: 1.5px solid var(--color-gray);
   padding: 0px 5px;
   border-spacing: -1px;
   margin: 0px 0px 5px 0px;
@@ -23,7 +23,7 @@
 }
 
 .header {
-  background-color: #eeeeee;
+  background-color: var(--color-background-gray);
   padding: 0px 10px;
   margin: 8px 0px;
   height: 28px;

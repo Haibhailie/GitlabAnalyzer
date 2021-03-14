@@ -17,7 +17,11 @@
 }
 
 .item:hover .label {
-  color: var(--color-header);
+  color: var(--color-primary);
+}
+
+.item:hover .icon {
+  stroke: var(--color-primary);
 }
 
 .icon {

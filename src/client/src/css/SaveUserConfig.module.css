@@ -16,20 +16,21 @@
 }
 
 .input {
-  background-color: #eeeeee;
+  background-color: var(--color-background-gray);
   height: 25px;
 }
 
 .saveButton {
   margin: 10px 5px;
-  border: 1px solid blue;
+  border: 1px solid var(--color-primary);
   padding: 2px 5px;
   text-align: center;
-  color: blue;
+  color: var(--color-primary);
   width: 70%;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 4px;
 }
 
 .saveButton:hover {
@@ -45,20 +46,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 8px;
 }
 
 .label {
-  border: 1px solid blue;
-  margin: 2px 0px;
-  padding: 2px 5px;
+  border: 1px solid black;
+  padding: 2px 8px;
   width: 80%;
-  border-radius: 2px;
+  height: 25px;
+  border-radius: 4px;
   display: flex;
+  align-items: center;
 }
 
 .label:hover {
-  background-color: lightBlue;
-  color: blue;
+  border: 2px solid var(--color-primary);
+  background-color: var(--color-hover);
+  color: var(--color-primary);
 }
 
 .deleteButton {

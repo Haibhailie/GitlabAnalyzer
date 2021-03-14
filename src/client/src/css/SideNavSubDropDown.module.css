@@ -1,5 +1,5 @@
 .header {
-  background-color: #eeeeee;
+  background-color: var(--color-background-gray);
   padding: 0px 10px;
   margin: 8px 0px;
   height: 28px;
