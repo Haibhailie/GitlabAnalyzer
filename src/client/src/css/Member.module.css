@@ -12,7 +12,13 @@
 
 .header {
   font: var(--font-header-large-poppins);
-  margin: 50px 0 40px;
+  margin: 50px 0px 0px;
+}
+
+.subheader {
+  font: var(--font-header-small-poppins);
+  color: var(--color-gray);
+  margin: 10px 0px;
 }
 
 .summaryContainer {
