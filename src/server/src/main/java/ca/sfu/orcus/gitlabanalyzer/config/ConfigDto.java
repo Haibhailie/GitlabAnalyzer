@@ -1,14 +1,66 @@
 package ca.sfu.orcus.gitlabanalyzer.config;
 
-import java.util.Map;
+import java.util.List;
 
-public class ConfigDto {
+final class ConfigDto {
+    private int id;
 
-    private double diffAdditionMultiplier;
-    private double diffDeletionMultiplier;
-    private double diffCommentMultiplier;
-    private double diffSpacingMultiplier;
-    private double diffSyntaxChangeMultiplier;
+    private String name;
+    private long startDate;
+    private long endDate;
+    private String scoreBy;
+    private String yAxis;
+    private String graphMode;
+    private List<GeneralTypeScoreDto> generalScores;
+    private List<FileTypeScoreDto> fileScores;
 
-    private static final Map<Integer, String> languageScores = Map.of();
+    public ConfigDto(String name,
+                     long startDate,
+                     long endDate,
+                     String scoreBy,
+                     String yAxis,
+                     String graphMode,
+                     List<GeneralTypeScoreDto> generalScores,
+                     List<FileTypeScoreDto> fileScores) {
+        setName(name);
+        setStartDate(startDate);
+        setEndDate(endDate);
+        setScoreBy(scoreBy);
+        setYAxis(yAxis);
+        setGraphMode(graphMode);
+        setGeneralScores(generalScores);
+        setFileScores(fileScores);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStartDate(long startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(long endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setScoreBy(String scoreBy) {
+        this.scoreBy = scoreBy;
+    }
+
+    public void setYAxis(String yAxis) {
+        this.yAxis = yAxis;
+    }
+
+    public void setGraphMode(String graphMode) {
+        this.graphMode = graphMode;
+    }
+
+    public void setGeneralScores(List<GeneralTypeScoreDto> generalScores) {
+        this.generalScores = generalScores;
+    }
+
+    public void setFileScores(List<FileTypeScoreDto> fileScores) {
+        this.fileScores = fileScores;
+    }
 }
