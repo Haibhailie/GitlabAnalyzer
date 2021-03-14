@@ -91,6 +91,10 @@ public class CommitDto {
         return diffs;
     }
 
+    public double getScore() {
+        return score;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {

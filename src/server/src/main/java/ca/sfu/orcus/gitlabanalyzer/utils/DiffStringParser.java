@@ -22,7 +22,7 @@ public final class DiffStringParser {
         return convertedDiff.toString();
     }
 
-    public static List<String> parseDiffList(List<Diff> diffsList){
+    public static List<String> parseDiffList(List<Diff> diffsList) {
         List<String> diffListString = new ArrayList<>();
         for (Diff presentDiff : diffsList) {
             StringBuilder presentDiffString = new StringBuilder();

@@ -35,11 +35,11 @@ public class MergeRequestScore {
 
         parseDiffList();
 
-        totalScore += (numLineAdditions * addLOCFactor) +
-                (numLineDeletions * deleteLOCFactor) +
-                (numBlankAdditions * blankLOCFactor) +
-                (numSyntaxChanges * syntaxChangeFactor) +
-                (numSpacingChanges * spacingChangeFactor);
+        totalScore += (numLineAdditions * addLOCFactor)
+                + (numLineDeletions * deleteLOCFactor)
+                + (numBlankAdditions * blankLOCFactor)
+                + (numSyntaxChanges * syntaxChangeFactor)
+                + (numSpacingChanges * spacingChangeFactor);
 
         System.out.println(totalScore);
         return totalScore;
@@ -50,9 +50,9 @@ public class MergeRequestScore {
         for (String line : generatedDiffList) {
             lineNumber++;
             if (line.startsWith("---")) {
-                System.out.println("Skipped line: "+lineNumber);
+                System.out.println("Skipped line: " + lineNumber);
             } else if (line.startsWith("+++")) {
-                System.out.println("Skipped line "+lineNumber);
+                System.out.println("Skipped line " + lineNumber);
             } else if (line.startsWith("+")) {
 
                 if (line.substring(1).length() > 0) {
@@ -74,9 +74,7 @@ public class MergeRequestScore {
             if (presentLine < lineNumber) {
                 continue;
             }
-            if (line.startsWith("-")) {
-                continue;
-            } else {
+            if (!line.startsWith("-")) {
                 if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) / 2) {
                     numSyntaxChanges++;
                     generatedDiffList.set(presentLine, "+++");
@@ -84,7 +82,6 @@ public class MergeRequestScore {
                 }
             }
         }
-
     }
 
 }
