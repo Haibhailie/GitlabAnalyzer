@@ -39,8 +39,6 @@ public class CommitDto {
 
         List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
         this.setDiffs((DiffStringParser.parseDiff(diffList)));
-        CommitScore calculator = new CommitScore();
-        this.score = calculator.getCommitScore(gitLabApi, projectId, id);
     }
 
     public void setTitle(String title) {
