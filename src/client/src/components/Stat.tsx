@@ -6,8 +6,8 @@ import info from '../assets/info.svg'
 
 export interface IStatProps {
   name: string
-  rawValue?: string | number
-  value: string | number
+  rawValue?: string | number | undefined
+  value: string | number | undefined
   description?: string
 }
 

@@ -1,10 +1,13 @@
-import { useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
-
 import { onError } from '../utils/suspenseDefaults'
-import { TMemberData } from '../components/MemberTable'
+
+import {
+  ICommitData,
+  IMergeData,
+  IActivityData,
+} from '../components/ActivityGraph'
 
 import Selector from '../components/Selector'
 import MemberSummary from '../components/MemberSummary'
@@ -18,44 +21,99 @@ export interface IMemberData {
   role: string
 }
 
+export interface IMemberStatData {
+  numCommits: number | undefined
+  commitScore: number
+  numMergeRequests: number
+  mergeRequestScore: number
+}
+
+// const computeStats = (
+//   commitData: ICommitData[],
+//   mergeData: IMergeData[]
+// ): IMemberStatData => {
+//   const graphObj: Record<
+//     string,
+//     {
+//       commits: number
+//       commitScore: number
+//       merges: number
+//       mergeScore: number
+//     }
+//   > = {}
+
 const Member = () => {
   const { id, memberId } = useParams<{ id: string; memberId: string }>()
-  const { state } = useLocation<IMemberData[]>()
+  const { state } = useLocation<IMemberData>()
 
-  const { Suspense, data, error } = useSuspense<IMemberData[], Error>(
-    (setData, setError) => {
-      if (state) {
-        setData(state)
-      } else {
-        jsonFetcher<IMemberData[]>(`/api/project/${id}/members`)
-          .then(members => {
-            for (member of members) {
-              if (member.id === memberId) return setData(member)
+  const {
+    Suspense: MemberSuspense,
+    data: memberData,
+    error: memberError,
+  } = useSuspense<IMemberData, Error>((setData, setError) => {
+    if (state) {
+      setData(state)
+    } else {
+      jsonFetcher<IMemberData[]>(`/api/project/${id}/members`)
+        .then(memberData => {
+          for (const member of memberData) {
+            if (member.id == memberId) {
+              return setData(member)
             }
-          })
-          .catch(onError(setError))
-      }
+          }
+        })
+        .catch(onError(setError))
     }
-  )
+  })
 
-  const testMember: IMemberData = {
-    displayName: 'Dummy User',
-    id: 14,
-    role: 'MAINTAINER',
-    username: 'dummyUsername',
+  const { Suspense: DataSuspense, data, error } = useSuspense<
+    ICommitData[],
+    Error
+  >((setData, setError) => {
+    // jsonFetcher<IMergeData[]>(
+    //   `/api/project/${id}/members/${memberId}/mergerequests`
+    // )
+    //   .then(data => {
+    //     console.log(data)
+    //   })
+    //   .catch(onError(setError))
+    jsonFetcher<ICommitData[]>(
+      `/api/project/${id}/members/${memberData?.displayName}/commits`
+    )
+      .then(data => {
+        setData(data)
+        console.log(data)
+      })
+      .catch(onError(setError))
+  })
+
+  const memberStats: IMemberStatData = {
+    numCommits: data?.length,
+    commitScore: 255,
+    numMergeRequests: 2,
+    mergeRequestScore: 543,
   }
 
   return (
-    <Suspense
-      fallback="Analyzing member..."
-      error={error?.message ?? 'Unknown Error'}
+    <MemberSuspense
+      fallback="Getting member details..."
+      error={memberError?.message ?? 'Unknown Error'}
     >
       <div className={styles.container}>
-        <h1>{data?.displayName}</h1>
+        <h1 className={styles.header}>{memberData?.displayName}</h1>
         <Selector tabHeaders={['Summary', 'Merge Requests', 'Comments']}>
-          <div className={styles.summaryContainer}>
-            <MemberSummary projectId={id} member={testMember} />
-          </div>
+          <DataSuspense
+            fallback={`Analyzing ${memberData?.displayName} . . `}
+            error={error?.message ?? 'Unknown Error'}
+          >
+            <div className={styles.summaryContainer}>
+              <MemberSummary
+                projectId={id}
+                memberData={memberData}
+                memberStats={memberStats}
+              />
+            </div>
+          </DataSuspense>
           <div className={styles.mergeRequestsContainer}>
             <h1>Merge requests</h1>
           </div>
@@ -64,7 +122,7 @@ const Member = () => {
           </div>
         </Selector>
       </div>
-    </Suspense>
+    </MemberSuspense>
   )
 }
 
