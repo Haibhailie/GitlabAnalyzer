@@ -65,6 +65,11 @@ export interface IGeneralTypeScoring {
   value: number
 }
 
+export interface IScores {
+  generalScores: IGeneralTypeScoring[]
+  fileScores: IFileTypeScoring[]
+}
+
 export interface IUserConfig {
   startDate?: Date
   endDate?: Date
@@ -76,17 +81,17 @@ export interface IUserConfig {
   fileScores: IFileTypeScoring[]
 }
 
-export interface IScores {
-  generalScores: IGeneralTypeScoring[]
-  fileScores: IFileTypeScoring[]
+export interface IUserConfigs {
+  configs: Record<string, IUserConfig>
+  selected: IUserConfig
 }
 
 export type TUserConfigReducer = (
-  state: IUserConfig,
+  state: IUserConfigs,
   action: TUserConfigActions
-) => IUserConfig
+) => Promise<IUserConfigs>
 
 export interface IUserConfigContext {
-  userConfig: IUserConfig
+  userConfigs: IUserConfigs
   dispatch: React.Dispatch<TUserConfigActions>
 }

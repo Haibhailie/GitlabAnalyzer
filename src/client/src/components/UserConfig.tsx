@@ -10,7 +10,7 @@ import {
 import TextField from '@material-ui/core/TextField'
 import SideNavSubDropDown from './SideNavSubDropDown'
 import UserConfigPopup from './UserConfigPopup'
-import SaveUserConfig from './SaveUserConfig'
+import SavedConfigs from './SavedConfigs'
 import SideNavDropDown from './SideNavDropDown'
 
 import styles from '../css/UserConfig.module.css'
@@ -67,15 +67,17 @@ const UserConfig = () => {
     },
   ]
 
-  const { userConfig, dispatch } = useContext(UserConfigContext)
+  const { userConfigs, dispatch } = useContext(UserConfigContext)
 
-  const [fileScores, setFileScores] = useState(userConfig.fileScores)
-  const [generalScores, setGeneralScores] = useState(userConfig.generalScores)
+  const [fileScores, setFileScores] = useState(userConfigs.selected.fileScores)
+  const [generalScores, setGeneralScores] = useState(
+    userConfigs.selected.generalScores
+  )
 
   const [popUpOpen, setPopUpOpen] = useState(false)
   const [dateError, setDateError] = useState(false)
 
-  const [name, setName] = useState(userConfig.name)
+  const [name, setName] = useState(userConfigs.selected.name)
   const [isUniqueName, setIsUniqueName] = useState(true)
   const [savedConfigs, setSavedConfigs] = useState(dummySavedConfigs)
 
@@ -90,7 +92,7 @@ const UserConfig = () => {
       date: newValue,
     })
 
-    if (validDates(newValue, userConfig.endDate)) {
+    if (validDates(newValue, userConfigs.selected.endDate)) {
       // TODO: Add update userconfig post and get new projects by date
     }
   }
@@ -100,7 +102,7 @@ const UserConfig = () => {
       type: 'SET_END_DATE',
       date: newValue,
     })
-    if (validDates(userConfig.startDate, newValue)) {
+    if (validDates(userConfigs.selected.startDate, newValue)) {
       // TODO: Add update userconfig post and get new projects by date
     }
   }
@@ -171,7 +173,7 @@ const UserConfig = () => {
 
   const save = () => {
     const newSavedConfigs = savedConfigs
-    newSavedConfigs.push(userConfig)
+    newSavedConfigs.push(userConfigs.selected)
     setSavedConfigs([...newSavedConfigs])
     setName('')
   }
@@ -213,7 +215,9 @@ const UserConfig = () => {
                   className={styles.dateInput}
                   onChange={startDateChange}
                   value={
-                    userConfig.startDate ? formatDate(userConfig.startDate) : ''
+                    userConfigs.selected.startDate
+                      ? formatDate(userConfigs.selected.startDate)
+                      : ''
                   }
                 />
               </div>
@@ -235,7 +239,9 @@ const UserConfig = () => {
                   className={styles.dateInput}
                   onChange={endDateChange}
                   value={
-                    userConfig.endDate ? formatDate(userConfig.endDate) : ''
+                    userConfigs.selected.endDate
+                      ? formatDate(userConfigs.selected.endDate)
+                      : ''
                   }
                   error={dateError}
                   helperText={
@@ -253,7 +259,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="Merge Requests"
-                  checked={userConfig.scoreBy === 'MRS'}
+                  checked={userConfigs.selected.scoreBy === 'MRS'}
                   onChange={memberScoreByChange}
                 />
                 <label className={styles.label}>Merge Requests</label>
@@ -262,7 +268,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="Commits"
-                  checked={userConfig.scoreBy === 'COMMITS'}
+                  checked={userConfigs.selected.scoreBy === 'COMMITS'}
                   onChange={memberScoreByChange}
                 />
                 <label className={styles.label}>Commits</label>
@@ -276,7 +282,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="NUMBER"
-                  checked={userConfig.yAxis === 'NUMBER'}
+                  checked={userConfigs.selected.yAxis === 'NUMBER'}
                   onChange={graphYAxisChange}
                 />
                 <label className={styles.label}>Number</label>
@@ -285,7 +291,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="SCORE"
-                  checked={userConfig.yAxis === 'SCORE'}
+                  checked={userConfigs.selected.yAxis === 'SCORE'}
                   onChange={graphYAxisChange}
                 />
                 <label className={styles.label}>Score</label>
@@ -295,7 +301,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="Entire Project"
-                  checked={userConfig.graphMode === 'PROJECT'}
+                  checked={userConfigs.selected.graphMode === 'PROJECT'}
                   onChange={projectGraphByChange}
                 />
                 <label className={styles.label}>Entire Project</label>
@@ -304,7 +310,7 @@ const UserConfig = () => {
                 <input
                   type="radio"
                   value="Split By Member"
-                  checked={userConfig.graphMode === 'MEMBER'}
+                  checked={userConfigs.selected.graphMode === 'MEMBER'}
                   onChange={projectGraphByChange}
                 />
                 <label className={styles.label}>Split By Member</label>
@@ -347,7 +353,7 @@ const UserConfig = () => {
         </>
       </SideNavDropDown>
       <SideNavDropDown Icon={toolIcon} label="Saved Configs">
-        <SaveUserConfig
+        <SavedConfigs
           setCurrentConfig={setCurrentConfig}
           savedConfigs={savedConfigs}
           setSavedConfigsHandler={setSavedConfigsHandler}

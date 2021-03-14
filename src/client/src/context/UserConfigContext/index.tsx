@@ -1,11 +1,17 @@
 import { noop } from 'lodash'
-import { createContext, useReducer, ReactNode } from 'react'
-import { IUserConfigContext, TUserConfigActions, IUserConfig } from './types'
+import { createContext, ReactNode } from 'react'
+import {
+  IUserConfigContext,
+  TUserConfigActions,
+  IUserConfigs,
+  IUserConfig,
+} from './types'
 import reducer from './reducer'
+import useAsyncReducer from '../../utils/useAsyncReducer'
 
 export * from './types'
 
-const initialState: IUserConfig = {
+const defaultConfig: IUserConfig = {
   scoreBy: 'MRS',
   yAxis: 'NUMBER',
   graphMode: 'PROJECT',
@@ -24,9 +30,16 @@ const initialState: IUserConfig = {
   ],
 }
 
+const initialState: IUserConfigs = {
+  configs: {
+    default: defaultConfig,
+  },
+  selected: defaultConfig,
+}
+
 export const UserConfigContext = createContext<IUserConfigContext>({
-  userConfig: initialState,
-  dispatch: (value: TUserConfigActions) => noop(value),
+  userConfigs: initialState,
+  dispatch: async (value: TUserConfigActions) => noop(value),
 })
 
 export type TUserConfigProvider = (props: {
@@ -34,9 +47,9 @@ export type TUserConfigProvider = (props: {
 }) => JSX.Element
 
 const UserConfigProvider: TUserConfigProvider = ({ children }) => {
-  const [userConfig, dispatch] = useReducer(reducer, initialState)
+  const [userConfigs, dispatch] = useAsyncReducer(reducer, initialState)
   return (
-    <UserConfigContext.Provider value={{ userConfig, dispatch }}>
+    <UserConfigContext.Provider value={{ userConfigs, dispatch }}>
       {children}
     </UserConfigContext.Provider>
   )

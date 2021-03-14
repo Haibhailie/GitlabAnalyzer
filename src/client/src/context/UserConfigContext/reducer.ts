@@ -10,47 +10,69 @@ import {
   TUserConfigReducer,
 } from './types'
 
-const reducer: TUserConfigReducer = (state, action) => {
+const reducer: TUserConfigReducer = async (state, action) => {
   switch (action.type) {
     case SET_START_DATE:
       return {
         ...state,
-        startDate: action.date,
+        selected: {
+          ...state.selected,
+          startdate: action.date,
+        },
       }
     case SET_END_DATE:
       return {
         ...state,
-        endDate: action.date,
+        selected: {
+          ...state.selected,
+          endDate: action.date,
+        },
       }
     case SET_SCORE_BY:
       return {
         ...state,
-        scoreBy: action.scoreBy,
+        selected: {
+          ...state.selected,
+          scoreBy: action.scoreBy,
+        },
       }
     case SET_GRAPH_Y_AXIS:
       return {
         ...state,
-        graphYAxis: action.yAxis,
+        selected: {
+          ...state.selected,
+          yAxis: action.yAxis,
+        },
       }
     case SET_GRAPH_BY:
       return {
         ...state,
-        projectGraphBy: action.graphMode,
+        selected: {
+          ...state.selected,
+          graphMode: action.graphMode,
+        },
       }
     case SET_CONFIG_NAME:
       return {
         ...state,
-        name: action.name,
+        selected: {
+          ...state.selected,
+          name: action.name,
+        },
       }
     case SET_SCORES:
       return {
         ...state,
-        generalScores: action.scores.generalScores,
-        fileScores: action.scores.fileScores,
+        selected: {
+          ...state.selected,
+          fileScores: action.scores.fileScores,
+          generalScores: action.scores.generalScores,
+        },
       }
     case SET_USER_CONFIG:
       return {
-        ...action.userConfig,
+        ...state,
+        selected: action.userConfig,
       }
     default:
       return state

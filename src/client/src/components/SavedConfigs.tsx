@@ -6,28 +6,28 @@ import styles from '../css/SaveUserConfig.module.css'
 
 import { ReactComponent as Delete } from '../assets/delete.svg'
 
-export interface ISaveUserConfig {
+export interface ISavedConfigsProps {
   setCurrentConfig: (newUserConfig: IUserConfig) => void
   savedConfigs: IUserConfig[]
   setSavedConfigsHandler: (configs: IUserConfig[]) => void
   checkUniqueName: (name: string) => boolean
 }
 
-const SaveUserConfig = ({
+const SavedConfigs = ({
   setCurrentConfig,
   savedConfigs,
   setSavedConfigsHandler,
   checkUniqueName,
-}: ISaveUserConfig) => {
+}: ISavedConfigsProps) => {
   // TODO: fetch array of saved configs
-  const { userConfig } = useContext(UserConfigContext)
+  const { userConfigs, dispatch } = useContext(UserConfigContext)
 
   const deleteConfig = (index: number) => {
     // TODO: POST removed list
     const configs = savedConfigs
     configs.splice(index, 1)
     setSavedConfigsHandler([...configs])
-    checkUniqueName(userConfig.name)
+    checkUniqueName(userConfigs.selected.name)
   }
 
   const loadConfig = (config: IUserConfig) => {
@@ -51,4 +51,4 @@ const SaveUserConfig = ({
   )
 }
 
-export default SaveUserConfig
+export default SavedConfigs
