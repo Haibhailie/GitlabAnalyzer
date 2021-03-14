@@ -30,9 +30,23 @@ const UserConfigPopup = ({
   const { dispatch } = useContext(UserConfigContext)
 
   const [newType, setNewType] = useState('')
+  const [isUniqueType, setIsUniqueType] = useState(true)
 
   const setNewTypeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewType(event.target.value)
+    const input = event.target.value
+    setNewType(input)
+    checkUniqueType(input)
+  }
+
+  const checkUniqueType = (newType: string) => {
+    const currentTypes = fileScores.map(fileScore => fileScore.fileExtension)
+    if (!(currentTypes.indexOf(newType) > -1)) {
+      setIsUniqueType(true)
+      return true
+    } else {
+      setIsUniqueType(false)
+      return false
+    }
   }
 
   const addFileType = () => {
@@ -47,6 +61,7 @@ const UserConfigPopup = ({
   const deleteFileType = (index: number) => {
     fileScores.splice(index, 1)
     setFileScores([...fileScores])
+    checkUniqueType(newType)
   }
 
   const generalScoresChange = (
@@ -102,8 +117,8 @@ const UserConfigPopup = ({
               <tbody>
                 {generalScores.map((generalScore, index) => (
                   <tr key={generalScore.type}>
-                    <td>{generalScore.type}</td>
-                    <td>
+                    <td className={styles.row}>{generalScore.type}</td>
+                    <td className={styles.row}>
                       <input
                         type="number"
                         step="0.2"
@@ -162,10 +177,13 @@ const UserConfigPopup = ({
                 onChange={setNewTypeHandler}
                 className={styles.fileExtentionInput}
               />
+              {!isUniqueType && (
+                <div className={styles.error}>Type already exists</div>
+              )}
               <button
                 onClick={addFileType}
                 className={styles.fileButton}
-                disabled={!newType}
+                disabled={!newType || !isUniqueType}
               >
                 Add file type
               </button>

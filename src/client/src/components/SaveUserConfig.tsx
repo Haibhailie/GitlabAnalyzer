@@ -118,7 +118,11 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
         placeholder="Name config..."
       />
       {!isUniqueName && <div className={styles.error}>Name already exists</div>}
-      <button className={styles.saveButton} onClick={save}>
+      <button
+        className={styles.saveButton}
+        onClick={save}
+        disabled={!isUniqueName || !name}
+      >
         <SaveSmall className={styles.saveIcon} /> Save Config
       </button>
       <SideNavSubDropDown startOpened={true} label="Load Configuration">

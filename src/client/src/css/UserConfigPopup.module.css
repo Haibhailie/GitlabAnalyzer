@@ -51,6 +51,11 @@
   width: 150px;
 }
 
+.row {
+  border-spacing: 10px;
+  padding-bottom: 25px;
+}
+
 .generalInput {
   width: 85px;
   height: 28px;
@@ -106,6 +111,17 @@
   margin-top: 20px;
   background-color: var(--color-background-gray);
   padding: 4px 10px;
+}
+
+.error {
+  background-color: var(--color-background-red);
+  color: var(--color-text-red);
+  font: var(--font-body-small-poppins);
+  margin: 5px 0px;
+  width: 90%;
+  text-align: center;
+  border: 1px solid var(--color-text-red);
+  border-radius: 2px;
 }
 
 .fileButton {
