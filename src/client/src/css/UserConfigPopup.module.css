@@ -16,7 +16,7 @@
 }
 
 .header {
-  font: 400 24px Poppins;
+  font: var(--font-header-medium-poppins);
   margin-top: 30px;
 }
 
@@ -62,7 +62,7 @@
 
 .fileContainer {
   margin-top: 5px;
-  max-height: 205px;
+  max-height: 215px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -97,15 +97,19 @@
   bottom: 100px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .fileExtentionInput {
-  width: 150px;
+  width: 80%;
   height: 20px;
   margin-top: 20px;
+  background-color: var(--color-background-gray);
+  padding: 4px 10px;
 }
 
 .fileButton {
+  width: 70%;
   border: 1px solid var(--color-primary);
   border-radius: 5px;
   text-align: center;

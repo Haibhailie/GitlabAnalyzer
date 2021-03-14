@@ -3,23 +3,28 @@
   padding: 0px 5px;
   border-spacing: -1px;
   margin: 0px 0px 5px 0px;
+  font: var(--font-body-medium-poppins);
 }
 
 .inputField {
-  margin-top: 2px;
-  margin-bottom: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .dateContainer {
   margin-bottom: 10px;
 }
 
-.label {
-  padding-left: 5px;
-}
-
 .dateInput {
   width: 170px;
+  font: var(--font-body-medium-poppins);
+}
+
+.label {
+  padding-left: 5px;
+  font: var(--font-body-medium-poppins);
 }
 
 .header {
@@ -30,6 +35,7 @@
   display: flex;
   align-items: center;
   width: 100%;
+  font: var(--font-body-medium-poppins);
 }
 
 .editIcon {

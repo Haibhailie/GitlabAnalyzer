@@ -18,6 +18,9 @@
 .input {
   background-color: var(--color-background-gray);
   height: 25px;
+  width: clamp(70%, 170px, 170px);
+  padding: 0px 10px;
+  font: var(--font-body-small-poppins);
 }
 
 .saveButton {
@@ -26,11 +29,13 @@
   padding: 2px 5px;
   text-align: center;
   color: var(--color-primary);
-  width: 70%;
+  width: 90%;
+  height: 23px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
+  font: var(--font-body-small-poppins);
 }
 
 .saveButton:hover {
