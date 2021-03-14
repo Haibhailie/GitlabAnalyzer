@@ -50,9 +50,9 @@ public class MergeRequestScore {
         for (String line : generatedDiffList) {
             lineNumber++;
             if (line.startsWith("---")) {
-                System.out.println("Skipped line: " + lineNumber);
+                //Log line skipped
             } else if (line.startsWith("+++")) {
-                System.out.println("Skipped line " + lineNumber);
+                //Log line skipped
             } else if (line.startsWith("+")) {
 
                 if (line.substring(1).length() > 0) {
@@ -61,27 +61,57 @@ public class MergeRequestScore {
                     numBlankAdditions++;
                 }
             } else if (line.startsWith("-")) {
-                numLineDeletions++;
-                checkSyntaxChanges(lineNumber, line);
+                if (checkSyntaxChanges(lineNumber, line)) {
+                    break;
+                }
+                if (checkAddedBlankSpaces(lineNumber, line)) {
+                    break;
+                } else {
+                    numLineDeletions++;
+                }
             }
         }
     }
 
-    private void checkSyntaxChanges(int lineNumber, String testingLine) {
+    private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
         int presentLine = -1;
         for (String line : generatedDiffList) {
             presentLine++;
             if (presentLine < lineNumber) {
                 continue;
             }
-            if (!line.startsWith("-")) {
+            if (line.startsWith("-")) {
+                continue;
+            } else {
+                //Checking the level of similarity between the two lines (if difference > half the original line, then it's considered a new addition, else a syntax change)
                 if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) / 2) {
                     numSyntaxChanges++;
-                    generatedDiffList.set(presentLine, "+++");
-                    break;
+                    generatedDiffList.set(presentLine, "---");
+                    return true;
                 }
             }
         }
+        return false;
     }
 
+    private boolean checkAddedBlankSpaces(int lineNumber, String testingLine) {
+        int presentLine = -1;
+        for (String line : generatedDiffList) {
+            presentLine++;
+            if (presentLine < lineNumber) {
+                continue;
+            }
+            if (line.startsWith("-")) {
+                continue;
+            } else {
+                //Checking whether all the differences between two lines are just blank spaces
+                if (StringUtils.difference(testingLine, line).isBlank()) {
+                    numBlankAdditions++;
+                    generatedDiffList.set(presentLine, "---");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
