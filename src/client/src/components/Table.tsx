@@ -1,15 +1,32 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import classNames from '../utils/classNames'
 
 import styles from '../css/Table.module.css'
 
+import { ReactComponent as Gt } from '../assets/greater-than.svg'
+
 export interface ITableProps {
-  classes?: { table?: string; header?: string; data?: string }
+  classes?: {
+    container?: string
+    table?: string
+    header?: string
+    data?: string
+    title?: string
+    row?: string
+  }
   columnWidths?: string[]
   data: Record<string, any>[]
   headers?: string[]
   excludeHeaders?: boolean
   sortable?: boolean
+  title?: string
+  collapsible?: boolean
+  isOpen?: boolean
+  maxHeight?: number
+  onClick?: (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    index: number
+  ) => void
 }
 
 const Table = ({
@@ -19,8 +36,24 @@ const Table = ({
   headers,
   columnWidths,
   excludeHeaders,
+  title,
+  collapsible,
+  isOpen,
+  maxHeight,
+  onClick,
 }: ITableProps) => {
   const [sortConfig, setSortConfig] = useState({ by: '', asc: true })
+  const [isCollapsed, setCollapsed] = useState(false)
+  const [tableHeight, setTableHeight] = useState(Number.MAX_SAFE_INTEGER)
+
+  useEffect(() => {
+    const heuristicHeight = 100 * data.length
+    setTableHeight(maxHeight ?? heuristicHeight)
+  }, [data])
+
+  useEffect(() => {
+    if (typeof isOpen === 'boolean') setCollapsed(!isOpen)
+  }, [isOpen])
 
   if (typeof data !== 'object') return null
 
@@ -45,7 +78,11 @@ const Table = ({
     })
   }
 
-  const dataHeaders = excludeHeaders ? [] : headers ?? sortKeys
+  const toggleCollapse = () => {
+    setCollapsed(!isCollapsed)
+  }
+
+  const dataHeaders = headers ?? sortKeys
   const numColumns = dataHeaders.length
   const gridTemplateColumns = columnWidths
     ? columnWidths.join(' ')
@@ -53,30 +90,67 @@ const Table = ({
 
   return (
     <div
-      style={{ gridTemplateColumns }}
-      className={classNames(styles.table, classes?.table)}
+      className={classNames(
+        styles.container,
+        classes?.container,
+        isCollapsed && styles.collapsed
+      )}
     >
-      {dataHeaders.map((header, i) => (
-        <div
-          key={header}
-          className={classNames(styles.header, classes?.header)}
-        >
-          {sortable ? (
-            <button className={styles.sortBtn} onClick={() => sortDataBy(i)}>
-              {header}
+      {title && (
+        <div className={classNames(styles.title, classes?.title)}>
+          {title}
+          {collapsible && (
+            <button className={styles.collapseBtn} onClick={toggleCollapse}>
+              <Gt className={styles.collapseImg} />
             </button>
-          ) : (
-            header
           )}
         </div>
-      ))}
-      {data.map(row =>
-        Object.entries(row).map(([heading, cell]) => (
-          <div key={heading} className={classNames(styles.data, classes?.data)}>
-            {cell}
-          </div>
-        ))
       )}
+      <div
+        style={{
+          gridTemplateColumns,
+          maxHeight: isCollapsed ? 0 : `${tableHeight}px`,
+        }}
+        className={classNames(styles.table, classes?.table)}
+      >
+        {!excludeHeaders && (
+          <div className={styles.row}>
+            {dataHeaders.map((header, i) => (
+              <div
+                key={header}
+                className={classNames(styles.header, classes?.header)}
+              >
+                {sortable ? (
+                  <button
+                    className={styles.sortBtn}
+                    onClick={() => sortDataBy(i)}
+                  >
+                    {header}
+                  </button>
+                ) : (
+                  header
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {data.map((row, index) => (
+          <div
+            key={index}
+            className={classNames(styles.row, classes?.row)}
+            onClick={e => onClick?.(e, index)}
+          >
+            {Object.entries(row).map(([heading, cell]) => (
+              <div
+                key={heading}
+                className={classNames(styles.data, classes?.data)}
+              >
+                {cell}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

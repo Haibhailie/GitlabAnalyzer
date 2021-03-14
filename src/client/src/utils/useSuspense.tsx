@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect, DependencyList } from 'react'
+import { useState, useRef, useEffect, DependencyList, ReactNode } from 'react'
 
 import DefaultLoader from '../components/Loading'
 import DefaultError from '../components/ErrorComp'
 
 export interface ISuspenseProps {
-  children: JSX.Element
+  children: ReactNode
   fallback: JSX.Element | string
   error?: JSX.Element | string
 }
