@@ -11,13 +11,13 @@ import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
 import { TCommitData, TMergeData } from '../types'
 import dateConverter from '../utils/dateConverter'
+import { noop } from 'lodash'
+import classNames from '../utils/classNames'
 
 import Table from '../components/Table'
+import Diff from './Diff'
 
 import styles from '../css/MergeRequests.module.css'
-import classNames from '../utils/classNames'
-import Diff from './Diff'
-import { noop } from 'lodash'
 
 export interface IMergeRequestsProps {
   projectId: string
