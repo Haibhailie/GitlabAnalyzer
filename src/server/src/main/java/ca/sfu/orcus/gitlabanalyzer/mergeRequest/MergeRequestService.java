@@ -2,11 +2,11 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.DiffParser;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
-import org.gitlab4j.api.models.Diff;
 import org.gitlab4j.api.models.MergeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,7 +92,7 @@ public class MergeRequestService {
         }
     }
 
-    public List<MergeRequestDiffDto> getDiffFromMergeRequest(String jwt, int projectId, int mergeRequestId) {
+    public String getDiffFromMergeRequest(String jwt, int projectId, int mergeRequestId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
             return returnDiffFromMergeRequest(gitLabApi, projectId, mergeRequestId);
@@ -101,18 +101,10 @@ public class MergeRequestService {
         }
     }
 
-    private List<MergeRequestDiffDto> returnDiffFromMergeRequest(GitLabApi gitLabApi, int projectId, int mergeRequestId) {
+    private String returnDiffFromMergeRequest(GitLabApi gitLabApi, int projectId, int mergeRequestId) {
         try {
-            List<MergeRequestDiffDto> mergeRequestDiff = new ArrayList<>();
-            MergeRequest mr = gitLabApi.getMergeRequestApi().getMergeRequest(projectId, mergeRequestId);
-            List<Commit> commits = gitLabApi.getMergeRequestApi().getCommits(projectId, mr.getIid());
-            for (Commit c : commits) {
-                List<Diff> commitDiffs = gitLabApi.getCommitsApi().getDiff(projectId, c.getShortId());
-                for (Diff d : commitDiffs) {
-                    mergeRequestDiff.add(new MergeRequestDiffDto(c, d));
-                }
-            }
-            return mergeRequestDiff;
+            MergeRequest mr = gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId);
+            return DiffParser.parseDiff(mr.getChanges());
         } catch (GitLabApiException e) {
             return null;
         }

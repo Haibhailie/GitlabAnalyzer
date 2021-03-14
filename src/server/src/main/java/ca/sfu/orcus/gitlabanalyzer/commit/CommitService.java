@@ -4,7 +4,6 @@ import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
-import org.gitlab4j.api.models.Diff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,7 +78,7 @@ public class CommitService {
         }
     }
 
-    public List<String> getDiffOfCommit(String jwt, int projectId, String sha) {
+    public String getDiffOfCommit(String jwt, int projectId, String sha) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
