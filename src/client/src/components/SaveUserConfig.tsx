@@ -37,18 +37,18 @@ const SaveUserConfig = ({
 
   return (
     <>
-      <ul className={styles.list}>
+      <div className={styles.list}>
         {savedConfigs.map((config, index) => (
-          <li key={config.name} className={styles.item}>
+          <div key={config.name} className={styles.item}>
             <button className={styles.label} onClick={() => loadConfig(config)}>
               {config.name}
             </button>
             <button className={styles.deleteButton}>
               <Delete onClick={() => deleteConfig(index)} />
             </button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </>
   )
 }
