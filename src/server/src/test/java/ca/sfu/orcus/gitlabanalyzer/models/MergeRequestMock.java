@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDiffDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
@@ -79,16 +78,6 @@ public class MergeRequestMock extends AuthorMock {
             }
         }
         return expectedMergeRequestDtoList;
-    }
-
-    public List<MergeRequestDiffDto> createMergeRequestDiffDto(List<Diff> diffs, List<Commit> commits) {
-        List<MergeRequestDiffDto> expectedMergeRequestDiffDto = new ArrayList<>();
-        int indexIterator = 0;
-        for (Diff d : diffs) {
-            expectedMergeRequestDiffDto.add(new MergeRequestDiffDto(commits.get(indexIterator), d));
-            indexIterator++;
-        }
-        return expectedMergeRequestDiffDto;
     }
 
 }

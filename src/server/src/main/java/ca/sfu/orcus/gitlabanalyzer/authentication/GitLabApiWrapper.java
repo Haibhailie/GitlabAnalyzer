@@ -32,10 +32,8 @@ public class GitLabApiWrapper {
     private GitLabApi getGitLabApiForType(String jwt, JwtService.JwtType type) {
         if (type == JwtService.JwtType.PAT) {
             return getGitLabApiForPat(jwt);
-        } else if (type == JwtService.JwtType.USER_PASS) {
-            return getGitLabApiForUserPass(jwt);
         } else {
-            return null;
+            return getGitLabApiForUserPass(jwt);
         }
     }
 
@@ -94,8 +92,9 @@ public class GitLabApiWrapper {
 
     public Optional<String> getOAuth2AuthToken(String username, String password) {
         try {
+            // If oauth2Login fails then the username or password are invalid
             GitLabApi gitLabApi = GitLabApi.oauth2Login(VariableDecoderUtil.decode("GITLAB_URL"), username, password);
-            String authToken = gitLabApi.getAuthToken(); // If this fails then the username or password are invalid
+            String authToken = gitLabApi.getAuthToken();
             return Optional.of(authToken);
         } catch (GitLabApiException e) {
             return Optional.empty();

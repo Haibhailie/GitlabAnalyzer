@@ -51,9 +51,9 @@ public class MergeRequestController {
                                             HttpServletResponse response,
                                             @PathVariable int projectId,
                                             @PathVariable int mergerequestId) {
-        List<MergeRequestDiffDto> mergeRequestDiffDtos = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
-        response.setStatus(mergeRequestDiffDtos == null ? 401 : 200);
+        String mergeRequestDiff = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
+        response.setStatus(mergeRequestDiff == null ? 401 : 200);
         Gson gson = new Gson();
-        return gson.toJson(mergeRequestDiffDtos);
+        return gson.toJson(mergeRequestDiff);
     }
 }

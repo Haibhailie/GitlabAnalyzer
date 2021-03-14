@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ProjectTests {
+public class ProjectServiceTests {
     @Mock private ProjectRepository projectRepository;
     @Mock private GitLabApiWrapper gitLabApiWrapper;
     @Mock private MemberService memberService;
