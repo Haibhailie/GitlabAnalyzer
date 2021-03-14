@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.config;
 
-import java.util.List;
 import java.util.Map;
 
 public class ConfigDto {
@@ -12,7 +11,4 @@ public class ConfigDto {
     private double diffSyntaxChangeMultiplier;
 
     private static final Map<Integer, String> languageScores = Map.of();
-
-
-
 }
