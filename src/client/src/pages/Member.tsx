@@ -28,19 +28,17 @@ export interface IMemberStatData {
   mergeRequestScore: number
 }
 
-// const computeStats = (
-//   commitData: ICommitData[],
-//   mergeData: IMergeData[]
-// ): IMemberStatData => {
-//   const graphObj: Record<
-//     string,
-//     {
-//       commits: number
-//       commitScore: number
-//       merges: number
-//       mergeScore: number
-//     }
-//   > = {}
+const computeStats = (
+  commitData: ICommitData[],
+  mergeData: IMergeData[]
+): IMemberStatData => {
+  return {
+    numCommits: commitData.length,
+    numMergeRequests: mergeData.length,
+    commitScore: 242,
+    mergeRequestScore: 166,
+  } as IMemberStatData
+}
 
 const Member = () => {
   const { id, memberId } = useParams<{ id: string; memberId: string }>()
@@ -67,32 +65,35 @@ const Member = () => {
   })
 
   const { Suspense: DataSuspense, data, error } = useSuspense<
-    ICommitData[],
+    IMemberStatData,
     Error
   >((setData, setError) => {
-    // jsonFetcher<IMergeData[]>(
-    //   `/api/project/${id}/members/${memberId}/mergerequests`
-    // )
-    //   .then(data => {
-    //     console.log(data)
-    //   })
-    //   .catch(onError(setError))
+    let otherData: ICommitData[] | IMergeData[] | null = null
+    jsonFetcher<IMergeData[]>(
+      `/api/project/${id}/members/${memberId}/mergerequests`
+    )
+      .then(data => {
+        console.log(data)
+        if (otherData) {
+          setData(computeStats(otherData as ICommitData[], data))
+        } else {
+          otherData = data
+        }
+      })
+      .catch(onError(setError))
     jsonFetcher<ICommitData[]>(
       `/api/project/${id}/members/${memberData?.displayName}/commits`
     )
       .then(data => {
-        setData(data)
         console.log(data)
+        if (otherData) {
+          setData(computeStats(data, otherData as IMergeData[]))
+        } else {
+          otherData = data
+        }
       })
       .catch(onError(setError))
   })
-
-  const memberStats: IMemberStatData = {
-    numCommits: data?.length,
-    commitScore: 255,
-    numMergeRequests: 2,
-    mergeRequestScore: 543,
-  }
 
   return (
     <MemberSuspense
@@ -110,7 +111,7 @@ const Member = () => {
               <MemberSummary
                 projectId={id}
                 memberData={memberData}
-                memberStats={memberStats}
+                memberStats={data}
               />
             </div>
           </DataSuspense>

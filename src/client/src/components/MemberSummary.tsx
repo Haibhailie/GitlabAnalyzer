@@ -9,7 +9,7 @@ import styles from '../css/MemberSummary.module.css'
 export interface IMemberSummaryProps {
   projectId: string
   memberData: IMemberData | undefined
-  memberStats: IMemberStatData
+  memberStats: IMemberStatData | undefined
 }
 
 const MemberSummary = ({
@@ -17,7 +17,7 @@ const MemberSummary = ({
   memberData,
   memberStats,
 }: IMemberSummaryProps) => {
-  if (!memberData || !projectId) return null
+  if (!memberData || !projectId || !memberStats) return null
 
   const { id, username, displayName, role } = memberData
   const {
