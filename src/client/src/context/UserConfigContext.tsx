@@ -17,13 +17,13 @@ export interface IUserConfig {
   graphYAxis: 'Number' | 'Score'
   projectGraphBy: 'Entire Project' | 'Split By Member'
   name: string
-  generalScores: Array<IGeneralTypeScoring>
-  fileScores: Array<IFileTypeScoring>
+  generalScores: IGeneralTypeScoring[]
+  fileScores: IFileTypeScoring[]
 }
 
 export interface IScores {
-  generalScores: Array<IGeneralTypeScoring>
-  fileScores: Array<IFileTypeScoring>
+  generalScores: IGeneralTypeScoring[]
+  fileScores: IFileTypeScoring[]
 }
 
 export type IUserConfigReducerAction =

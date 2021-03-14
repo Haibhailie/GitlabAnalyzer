@@ -15,7 +15,7 @@ interface ISaveUserConfig {
 
 const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
   // TODO: fetch array of saved configs
-  const dummySavedConfigs: Array<IUserConfig> = [
+  const dummySavedConfigs: IUserConfig[] = [
     {
       startDate: new Date('2020-10-05'),
       endDate: new Date('2020-11-10'),
