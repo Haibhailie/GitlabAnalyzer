@@ -35,7 +35,7 @@ export type IUserConfigReducerAction =
       type: 'SET_PROJECT_GRAPH_BY'
       projectGraphBy: 'Entire Project' | 'Split By Member'
     }
-  | { type: 'SET_NAME'; name: string }
+  | { type: 'SET_CONFIG_NAME'; name: string }
   | { type: 'SET_SCORES'; scores: IScores }
   | { type: 'SET_USER_CONFIG'; userConfig: IUserConfig }
 
@@ -101,7 +101,7 @@ const reducer: IUserConfigReducer = (
         ...state,
         projectGraphBy: action.projectGraphBy,
       }
-    case 'SET_NAME':
+    case 'SET_CONFIG_NAME':
       return {
         ...state,
         name: action.name,

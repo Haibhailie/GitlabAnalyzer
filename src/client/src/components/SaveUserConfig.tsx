@@ -81,7 +81,7 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
     const newName = event.target.value
     setName(newName)
     if (checkUniqueName(newName)) {
-      dispatch({ type: 'SET_NAME', name: newName })
+      dispatch({ type: 'SET_CONFIG_NAME', name: newName })
     }
   }
 
