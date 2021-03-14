@@ -56,10 +56,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/api/signout")
-    public void logoutWithUserPass(@RequestBody AuthenticationUser user,
+    public void logoutWithCookie(@CookieValue(value = "sessionId") String jwt,
                                   HttpServletResponse response) {
         try {
-            String jwt = authService.registerNewUserPass(user);
             Cookie cookie = deleteCookie(jwt);
             response.addCookie(cookie);
             response.setStatus(200);
