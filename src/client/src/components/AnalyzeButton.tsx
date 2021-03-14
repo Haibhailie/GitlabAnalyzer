@@ -1,7 +1,8 @@
-import gt from '../assets/greater-than.svg'
+import classNames from '../utils/classNames'
 
 import styles from '../css/AnalyzeButton.module.css'
-import classNames from '../utils/classNames'
+
+import gt from '../assets/greater-than.svg'
 
 export interface IAnalyzeButtonProps {
   id: string

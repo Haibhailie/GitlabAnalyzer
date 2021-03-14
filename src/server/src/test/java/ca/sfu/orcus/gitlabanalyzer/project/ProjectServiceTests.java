@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ProjectTests {
+public class ProjectServiceTests {
     @Mock private ProjectRepository projectRepository;
     @Mock private GitLabApiWrapper gitLabApiWrapper;
     @Mock private MemberService memberService;
@@ -149,7 +149,7 @@ public class ProjectTests {
     }
 
     private void addUserToProject(int userId, int projectId) throws GitLabApiException {
-        Member member = MemberMock.createMember(userId, MemberMock.defaultAccessLevel);
+        Member member = MemberMock.createMember(MemberMock.defaultDisplayName, MemberMock.defaultEmail, userId, MemberMock.defaultUserName, MemberMock.defaultAccessLevel);
         when(gitLabApi.getProjectApi().getMember(projectId, userId)).thenReturn(member);
     }
 

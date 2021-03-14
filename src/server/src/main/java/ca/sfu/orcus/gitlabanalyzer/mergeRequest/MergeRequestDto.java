@@ -8,10 +8,13 @@ import org.gitlab4j.api.models.Note;
 import org.gitlab4j.api.models.Participant;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MergeRequestDto {
     private int mergeRequestId;
+    private String title;
     private boolean hasConflicts;
     private boolean isOpen;
     private int userId;
@@ -22,48 +25,47 @@ public class MergeRequestDto {
     private String targetBranch;
     private int numAdditions;
     private int numDeletions;
-    private ArrayList<String> notesName;
-    private ArrayList<String> notes;
-    private ArrayList<String> committers;
+    private List<String> notesName;
+    private List<String> notes;
+    private List<String> committers;
     private List<Participant> participants;
     private long time;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
-        setMergeRequestId(presentMergeRequest.getIid());
-        setOpen(presentMergeRequest.getState().compareTo("opened") == 0);
-        setAuthor(presentMergeRequest.getAuthor().getName());
+        int mergeRequestId = presentMergeRequest.getIid();
+
+        setMergeRequestId(mergeRequestId);
+        setMergeRequestTitle(presentMergeRequest.getTitle());
+        setHasConflicts(presentMergeRequest.getHasConflicts());
+        setOpen(presentMergeRequest.getState().toLowerCase().compareTo("opened") == 0);
         setUserId(presentMergeRequest.getAuthor().getId());
-        setSourceBranch(presentMergeRequest.getSourceBranch());
-        setTargetBranch(presentMergeRequest.getTargetBranch());
+
         if (presentMergeRequest.getAssignee() == null) {
             setAssignedTo("Unassigned");
         } else {
             setAssignedTo(presentMergeRequest.getAssignee().getName());
         }
+
+        setAuthor(presentMergeRequest.getAuthor().getName());
         setDescription(presentMergeRequest.getDescription());
-        setHasConflicts(presentMergeRequest.getHasConflicts());
+        setSourceBranch(presentMergeRequest.getSourceBranch());
+        setTargetBranch(presentMergeRequest.getTargetBranch());
+
+        List<Commit> commits = gitLabApi.getMergeRequestApi().getCommits(projectId, mergeRequestId);
+        setCommitters(commits);
+        setNumAdditionsAndDeletions(commits, gitLabApi, projectId);
+
+        setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectId, mergeRequestId));
+        setNotesNameAndNotes(gitLabApi, projectId, mergeRequestId);
         setTime(presentMergeRequest.getMergedAt().getTime());
-
-        setCommitters(gitLabApi.getMergeRequestApi().getCommits(projectId, presentMergeRequest.getIid()));
-        setNumAdditions(gitLabApi.getMergeRequestApi().getCommits(projectId, presentMergeRequest.getIid()), gitLabApi, projectId);
-        setNumDeletions(gitLabApi.getMergeRequestApi().getCommits(projectId, presentMergeRequest.getIid()), gitLabApi, projectId);
-        setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectId, presentMergeRequest.getIid()));
-
-        ArrayList<String> notesName = new ArrayList<>();
-        ArrayList<String> notes = new ArrayList<>();
-        List<Note> mrNotes = gitLabApi.getNotesApi().getMergeRequestNotes(projectId, presentMergeRequest.getIid());
-        if (!mrNotes.isEmpty()) {
-            for (Note note : mrNotes) {
-                notesName.add(note.getAuthor().getName());
-                notes.add(note.getBody());
-            }
-            setNotes(notes);
-            setNotesName(notesName);
-        }
     }
 
-    public void setMergeRequestId(int mergeRequestID) {
-        this.mergeRequestId = mergeRequestID;
+    public void setMergeRequestId(int mergeRequestId) {
+        this.mergeRequestId = mergeRequestId;
+    }
+
+    public void setMergeRequestTitle(String title) {
+        this.title = title;
     }
 
     public void setHasConflicts(boolean hasConflicts) {
@@ -72,6 +74,10 @@ public class MergeRequestDto {
 
     public void setOpen(boolean open) {
         isOpen = open;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void setAssignedTo(String assignedTo) {
@@ -94,66 +100,48 @@ public class MergeRequestDto {
         this.targetBranch = targetBranch;
     }
 
-    public void setNotesName(ArrayList<String> notesName) {
-        this.notesName = notesName;
-    }
+    public void setNumAdditionsAndDeletions(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
+        numAdditions = 0;
+        numDeletions = 0;
 
-    public void setNotes(ArrayList<String> notes) {
-        this.notes = notes;
+        for (Commit c : commits) {
+            Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
+            if (presentCommit.getStats() != null) {
+                numAdditions += presentCommit.getStats().getAdditions();
+                numDeletions += presentCommit.getStats().getDeletions();
+            }
+        }
     }
 
     public void setParticipants(List<Participant> participants) {
         this.participants = participants;
     }
 
-    public void setNumAdditions(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
-        numAdditions = 0;
-        for (Commit c : commits) {
-            Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
-            if (presentCommit.getStats() != null) {
-                numAdditions += presentCommit.getStats().getAdditions();
-            }
-        }
-    }
-
-    public void setNumDeletions(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
-        numDeletions = 0;
-        for (Commit c : commits) {
-            Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
-            if (presentCommit.getStats() != null) {
-                numDeletions += presentCommit.getStats().getDeletions();
-            }
-        }
-    }
-
     public void setCommitters(List<Commit> commits) {
-        committers = new ArrayList<>();
+        Set<String> commitAuthorsSet = new HashSet<>();
         for (Commit c : commits) {
-            //Checks if committer is already present in list, prevent duplicate authors
-            String commitAuthor = c.getAuthorName();
-            boolean isPresent = false;
-            for (String committer : committers) {
-                if (committer.compareTo(commitAuthor) == 0) {
-                    isPresent = true;
-                    break;
-                }
-            }
-            if (!isPresent) {
-                committers.add(commitAuthor);
-            }
+            commitAuthorsSet.add(c.getAuthorName());
         }
+
+        committers = new ArrayList<>(commitAuthorsSet);
     }
 
-    public void setUserId(int userID) {
-        this.userId = userID;
+    public void setNotesNameAndNotes(GitLabApi gitLabApi, int projectId, int mergeRequestId) throws GitLabApiException {
+        List<String> notesName = new ArrayList<>();
+        List<String> notes = new ArrayList<>();
+
+        List<Note> mrNotes = gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mergeRequestId);
+        for (Note n : mrNotes) {
+            notesName.add(n.getAuthor().getName());
+            notes.add(n.getBody());
+        }
+
+        this.notesName = notesName;
+        this.notes = notes;
     }
 
     public void setTime(long time) {
         this.time = time;
-    }
-
-    public int getUserId() {
-        return userId;
     }
 
     @Override
@@ -169,8 +157,10 @@ public class MergeRequestDto {
         MergeRequestDto m = (MergeRequestDto) o;
 
         return (this.mergeRequestId == (m.mergeRequestId)
+                && this.title.equals(m.title)
                 && this.hasConflicts == (m.hasConflicts)
                 && this.isOpen == (m.isOpen)
+                && this.userId == (m.userId)
                 && this.assignedTo.equals(m.assignedTo)
                 && this.author.equals(m.author)
                 && this.description.equals(m.description)
@@ -178,6 +168,8 @@ public class MergeRequestDto {
                 && this.targetBranch.equals(m.targetBranch)
                 && this.numAdditions == (m.numAdditions)
                 && this.numDeletions == (m.numDeletions)
+                && this.notesName.equals(m.notesName)
+                && this.notes.equals(m.notes)
                 && this.committers.equals(m.committers)
                 && this.participants.equals(m.participants)
                 && this.time == (m.time));

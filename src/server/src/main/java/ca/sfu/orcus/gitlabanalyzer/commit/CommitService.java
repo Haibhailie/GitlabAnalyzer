@@ -46,6 +46,26 @@ public class CommitService {
         }
     }
 
+    public List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
+        if (gitLabApi == null) {
+            return null;
+        }
+        try {
+            String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
+            List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
+            List<CommitDto> allCommits = new ArrayList<>();
+            for (Commit commit : allGitCommits) {
+                if (commit.getAuthorName().equalsIgnoreCase(name)) {
+                    CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit);
+                    allCommits.add(presentCommit);
+                }
+            }
+            return allCommits;
+        } catch (GitLabApiException e) {
+            return null;
+        }
+    }
+
     public CommitDto getSingleCommit(String jwt, int projectId, String sha) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
@@ -59,15 +79,12 @@ public class CommitService {
         }
     }
 
-    public List<Diff> getDiffOfCommit(String jwt, int projectId, String sha) {
+    public List<String> getDiffOfCommit(String jwt, int projectId, String sha) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        try {
-            return gitLabApi.getCommitsApi().getDiff(projectId, sha);
-        } catch (GitLabApiException e) {
-            return null;
-        }
+        CommitDto commitDto = getSingleCommit(jwt, projectId, sha);
+        return commitDto.getDiffs();
     }
 }
