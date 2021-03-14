@@ -37,13 +37,11 @@ public class CommitScoreTests {
     // Testing CommitScore
 
     @Test
-    public void getScore() throws GitLabApiException {
+    public void getScore() {
         List<Diff> diffList = CommitMock.createTestDiffList();
 
-        when(gitLabApi.getCommitsApi().getDiff(projectId, CommitMock.defaultSha)).thenReturn(diffList);
-
-        double expectedScore = commitScore.getCommitScore(gitLabApi, projectId, CommitMock.defaultSha);
-        double actualScore = 1.6;
+        double expectedScore = commitScore.getCommitScore(diffList);
+        double actualScore = 0.2;
 
         assertEquals(expectedScore, actualScore);
     }

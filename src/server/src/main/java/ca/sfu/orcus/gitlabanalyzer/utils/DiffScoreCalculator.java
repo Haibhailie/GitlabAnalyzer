@@ -20,9 +20,9 @@ public class DiffScoreCalculator {
         for (String line : generatedDiffList) {
             lineNumber++;
             if (line.startsWith("---")) {
-                //Log line skipped
+                // Log line skipped
             } else if (line.startsWith("+++")) {
-                //Log line skipped
+                // Log line skipped
             } else if (line.startsWith("+")) {
 
                 if (line.substring(1).length() > 0) {
@@ -54,7 +54,7 @@ public class DiffScoreCalculator {
             if (line.startsWith("-")) {
                 continue;
             } else {
-                //Checking the level of similarity between the two lines (if difference > half the original line, then it's considered a new addition, else a syntax change)
+                // Checking the level of similarity between the two lines (if difference > half the original line, then it's considered a new addition, else a syntax change)
                 if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) / 2) {
                     numSyntaxChanges++;
                     generatedDiffList.set(presentLine, "---");
@@ -75,7 +75,7 @@ public class DiffScoreCalculator {
             if (line.startsWith("-")) {
                 continue;
             } else {
-                //Checking whether all the differences between two lines are just blank spaces
+                // Checking whether all the differences between two lines are just blank spaces
                 if (StringUtils.difference(testingLine, line).isBlank()) {
                     numBlankAdditions++;
                     generatedDiffList.set(presentLine, "---");
