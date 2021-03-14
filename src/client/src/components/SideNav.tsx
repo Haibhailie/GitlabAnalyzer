@@ -8,7 +8,6 @@ import styles from '../css/SideNav.module.css'
 
 import { ReactComponent as repoIcon } from '../assets/database.svg'
 import { ReactComponent as reportIcon } from '../assets/report.svg'
-import { ReactComponent as settingsIcon } from '../assets/settings.svg'
 
 export interface ISideNavProps {
   isOpen: boolean
@@ -43,9 +42,8 @@ const SideNav = ({ isOpen, sideNavToggler, className }: ISideNavProps) => {
           destPath={item.dest}
         />
       ))}
-      <SideNavDropDown key="Settings" label="Settings" Icon={settingsIcon}>
-        <UserConfig />
-      </SideNavDropDown>
+
+      <UserConfig />
     </aside>
   )
 }
