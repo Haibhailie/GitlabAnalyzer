@@ -31,6 +31,10 @@ const UserConfigPopup = ({
 
   const [newType, setNewType] = useState('')
   const [isUniqueType, setIsUniqueType] = useState(true)
+  const [currentFileScores, setCurrentFileScores] = useState(fileScores)
+  const [currentGeneralScores, setCurrentGeneralScores] = useState(
+    generalScores
+  )
 
   const setNewTypeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value
@@ -51,7 +55,7 @@ const UserConfigPopup = ({
 
   const addFileType = () => {
     if (newType) {
-      const types = fileScores
+      const types = [...fileScores]
       types.push({ fileExtension: newType, scoreMultiplier: 1 })
       setFileScores([...types])
       setNewType('')
@@ -59,8 +63,9 @@ const UserConfigPopup = ({
   }
 
   const deleteFileType = (index: number) => {
-    fileScores.splice(index, 1)
-    setFileScores([...fileScores])
+    const types = [...fileScores]
+    types.splice(index, 1)
+    setFileScores([...types])
     checkUniqueType(newType)
   }
 
@@ -68,11 +73,12 @@ const UserConfigPopup = ({
     event: ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
-    const newScores = generalScores
+    const newScores = [...generalScores]
     newScores[index] = {
       type: generalScores[index].type,
       value: +event.target.value,
     }
+
     setGeneralScores([...newScores])
   }
 
@@ -80,13 +86,13 @@ const UserConfigPopup = ({
     event: ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
-    const newScores = fileScores
+    const newScores = [...fileScores]
     newScores[index] = {
       fileExtension: fileScores[index].fileExtension,
       scoreMultiplier: +event.target.value,
     }
 
-    setFileScores([...fileScores])
+    setFileScores([...newScores])
   }
 
   const save = () => {
@@ -96,13 +102,22 @@ const UserConfigPopup = ({
       scores: { generalScores: generalScores, fileScores: fileScores },
     })
 
+    setCurrentGeneralScores([...generalScores])
+    setCurrentFileScores([...fileScores])
+
+    togglePopup()
+  }
+
+  const close = () => {
+    setFileScores([...currentFileScores])
+    setGeneralScores([...currentGeneralScores])
     togglePopup()
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>Edit Scoring</div>
-      <button onClick={togglePopup} className={styles.closeButton}>
+      <button onClick={close} className={styles.closeButton}>
         <Close />
       </button>
       <div className={styles.scoreContainer}>
