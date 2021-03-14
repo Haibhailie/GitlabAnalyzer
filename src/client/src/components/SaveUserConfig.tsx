@@ -12,6 +12,7 @@ import { ReactComponent as Delete } from '../assets/delete.svg'
 interface ISaveUserConfig {
   setCurrentConfig: (newUserConfig: IUserConfig) => void
 }
+
 const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
   // TODO: fetch array of saved configs
   const dummySavedConfigs: Array<IUserConfig> = [
@@ -62,18 +63,33 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
   const { userConfig, dispatch } = useContext(UserConfigContext)
 
   const [name, setName] = useState(userConfig.name)
+  const [isUniqueName, setIsUniqueName] = useState(true)
   const [savedConfigs, setSavedConfigs] = useState(dummySavedConfigs)
+
+  const checkUniqueName = (newName: string) => {
+    const currentNames = savedConfigs.map(config => config.name)
+    if (!(currentNames.indexOf(newName) > -1)) {
+      setIsUniqueName(true)
+      return true
+    } else {
+      setIsUniqueName(false)
+      return false
+    }
+  }
 
   const nameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newName = event.target.value
     setName(newName)
-    dispatch({ type: 'SET_NAME', name: newName })
+    if (checkUniqueName(newName)) {
+      dispatch({ type: 'SET_NAME', name: newName })
+    }
   }
 
   const save = () => {
     const newSavedConfigs = savedConfigs
     newSavedConfigs.push(userConfig)
     setSavedConfigs([...newSavedConfigs])
+    setName('')
   }
 
   const deleteConfig = (index: number) => {
@@ -81,11 +97,11 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
     const configs = savedConfigs
     configs.splice(index, 1)
     setSavedConfigs([...configs])
+    checkUniqueName(name)
   }
 
   const loadConfig = (config: IUserConfig) => {
     setCurrentConfig(config)
-    setName(config.name)
     // TODO: POST new list
   }
 
@@ -101,6 +117,7 @@ const SaveUserConfig = ({ setCurrentConfig }: ISaveUserConfig) => {
         className={styles.input}
         placeholder="Name config..."
       />
+      {!isUniqueName && <div className={styles.error}>Name already exists</div>}
       <button className={styles.saveButton} onClick={save}>
         <SaveSmall className={styles.saveIcon} /> Save Config
       </button>

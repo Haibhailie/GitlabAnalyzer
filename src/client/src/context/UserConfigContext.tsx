@@ -16,7 +16,7 @@ export interface IUserConfig {
   scoreBy: 'Merge Requests' | 'Commits'
   graphYAxis: 'Number' | 'Score'
   projectGraphBy: 'Entire Project' | 'Split By Member'
-  name?: string
+  name: string
   generalScores: Array<IGeneralTypeScoring>
   fileScores: Array<IFileTypeScoring>
 }

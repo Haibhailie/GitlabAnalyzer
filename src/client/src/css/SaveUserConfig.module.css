@@ -23,6 +23,17 @@
   font: var(--font-body-small-poppins);
 }
 
+.error {
+  background-color: var(--color-background-red);
+  color: var(--color-text-red);
+  font: var(--font-body-small-poppins);
+  margin: 5px 0px;
+  width: 90%;
+  text-align: center;
+  border: 1px solid var(--color-text-red);
+  border-radius: 2px;
+}
+
 .saveButton {
   margin: 10px 5px;
   border: 1px solid var(--color-primary);
