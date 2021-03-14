@@ -35,7 +35,6 @@ type TTableData = {
 const sharedTableProps = {
   sortable: true,
   collapsible: true,
-  maxHeight: 300,
   classes: {
     container: styles.tableContainer,
     table: styles.table,
@@ -166,6 +165,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
         <div className={styles.tables}>
           <Table
             {...sharedTableProps}
+            maxHeight={selectedMr === undefined ? 400 : 200}
             title="Merge Requests"
             headers={['Date', 'Title', '', 'Score', 'Ignore?']}
             columnWidths={['3fr', '6fr', '3fr', '1fr', '1fr']}
@@ -177,6 +177,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
           <Table
             {...sharedTableProps}
             isOpen={commits !== undefined}
+            maxHeight={400}
             title={`Commits for MR ${selectedMr ?? ''}`}
             headers={['Date', 'Title', 'Score', 'Ignore?']}
             columnWidths={['3fr', '9fr', '1fr', '1fr']}

@@ -49,7 +49,7 @@ const Table = ({
   useEffect(() => {
     const heuristicHeight = 100 * data.length
     setTableHeight(maxHeight ?? heuristicHeight)
-  }, [data])
+  }, [data, maxHeight])
 
   useEffect(() => {
     if (typeof isOpen === 'boolean') setCollapsed(!isOpen)
