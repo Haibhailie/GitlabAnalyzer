@@ -6,6 +6,11 @@
   padding: 0 12px;
 }
 
+.viewBtn:hover {
+  background-color: var(--color-button-hover);
+  color: #ffffff;
+}
+
 .ignore {
   appearance: none;
   margin: auto;
@@ -24,6 +29,7 @@
 
 .ignore:checked {
   background: center url('../assets/check.svg');
+  background-color: var(--color-primary);
   border: none;
   padding: 12px;
 }

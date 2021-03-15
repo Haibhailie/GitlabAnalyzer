@@ -15,7 +15,7 @@ import { noop } from 'lodash'
 import classNames from '../utils/classNames'
 
 import Table from '../components/Table'
-import Diff from './Diff'
+import Diff from '../components/Diff'
 
 import styles from '../css/MergeRequests.module.css'
 
@@ -146,7 +146,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
 
   return (
     <Suspense
-      fallback="Loading Commit Data..."
+      fallback="Loading Merge Requests..."
       error={error?.message ?? 'Unknown Error'}
     >
       <div
