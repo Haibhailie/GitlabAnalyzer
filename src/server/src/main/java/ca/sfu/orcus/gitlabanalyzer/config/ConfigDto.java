@@ -51,7 +51,6 @@ final class ConfigDto {
         this.yAxis = yAxis;
     }
 
-
     // Nested class types
 
     private static final class FileTypeScoreDto {
