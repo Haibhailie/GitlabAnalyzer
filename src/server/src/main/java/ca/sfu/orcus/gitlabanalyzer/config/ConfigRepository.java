@@ -39,11 +39,6 @@ public class ConfigRepository {
                 .append("config", configJson);
     }
 
-    private boolean contains(String jwt) {
-        Document config = collection.find(eq("jwt", jwt)).first();
-        return (config != null);
-    }
-
     public Optional<String> getConfigJsonById(String configId) {
         Document configDoc = collection.find(eq("_id", configId)).first();
 
