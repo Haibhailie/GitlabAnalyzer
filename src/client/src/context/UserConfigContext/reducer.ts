@@ -12,6 +12,8 @@ import {
   SET_START_DATE,
   SET_CONFIG,
   TUserConfigReducer,
+  FLUSH_CONFIGS,
+  IUserConfig,
 } from './types'
 
 const dateZero = new Date(0)
@@ -102,9 +104,13 @@ const reducer: TUserConfigReducer = async (state, action) => {
       try {
         const newConfig = { ...state.selected }
         newConfig.name = action.name
-        const { id } = await jsonFetcher<{ id: string }>(`/config`, {
+        const { id } = await jsonFetcher<{ id: string }>(`/api/config`, {
           method: 'POST',
-          body: JSON.stringify(newConfig),
+          body: JSON.stringify({
+            ...newConfig,
+            startDate: newConfig.startDate?.getTime(),
+            endDate: newConfig.endDate?.getTime(),
+          }),
         })
         newConfig.id = id
         state.configs[id] = newConfig
@@ -121,7 +127,7 @@ const reducer: TUserConfigReducer = async (state, action) => {
         return state
 
       try {
-        await jsonFetcher(`/config/${action.id}`, {
+        await jsonFetcher(`/api/config/${action.id}`, {
           method: 'DELETE',
           responseIsEmpty: true,
         })
@@ -131,6 +137,27 @@ const reducer: TUserConfigReducer = async (state, action) => {
         return state
       }
       break
+    case FLUSH_CONFIGS:
+      try {
+        const configArr = await jsonFetcher<IUserConfig[]>('/api/configs')
+        console.log(configArr)
+        const configs: Record<string, IUserConfig> = {}
+        configArr.forEach(config => {
+          if (config.id) {
+            configs[config.id] = {
+              ...config,
+              startDate: config.startDate && new Date(config.startDate),
+              endDate: config.endDate && new Date(config.endDate),
+            }
+          }
+        })
+        return {
+          ...state,
+          configs: { ...configs },
+        }
+      } catch {
+        return state
+      }
     default:
       return state
   }

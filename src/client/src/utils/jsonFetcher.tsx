@@ -10,6 +10,7 @@ const jsonFetcher = <DataType extends unknown>(
 ) => {
   options = {
     credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
     ...options,
   }
 
