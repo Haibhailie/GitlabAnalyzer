@@ -9,6 +9,7 @@ export const SET_CONFIG = 'SET_CONFIG'
 export const UPDATE_CONFIG = 'UPDATE_CONFIG'
 export const ADD_CONFIG = 'ADD_CONFIG'
 export const DELETE_CONFIG = 'DELETE_CONFIG'
+export const FLUSH_CONFIGS = 'FLUSH_CONFIGS'
 
 export type TScoreBy = 'MRS' | 'COMMITS'
 export type TYAxis = 'NUMBER' | 'SCORE'
@@ -64,6 +65,10 @@ interface deleteUserConfig {
   id: string
 }
 
+interface flushUserConfigs {
+  type: typeof FLUSH_CONFIGS
+}
+
 export type TUserConfigActions =
   | setDateAction
   | setScoreByAction
@@ -75,6 +80,7 @@ export type TUserConfigActions =
   | updateUserConfig
   | addUserConfig
   | deleteUserConfig
+  | flushUserConfigs
 
 export interface IFileTypeScoring {
   fileExtension: string

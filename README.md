@@ -52,6 +52,13 @@ Dev environment setup guide and build directions can be found [here](Wikidocs/De
 - React Scripts: (`4.0.1`) - https://www.npmjs.com/package/react-scripts
 - Recharts: (`2.0.7`) - https://recharts.org/en-US/
 - Typescript: (`4.1.3`) - https://www.typescriptlang.org/
+- MaterialUI
+   - Core : (`5.0.0-alpha.27`) - https://www.npmjs.com/package/@material-ui/core
+   - Lab: (`5.0.0-alpha.27`) - https://www.npmjs.com/package/@material-ui/lab
+   - Pickers: (`3.3.10`) - https://www.npmjs.com/package/@material-ui/pickers
+- date-fns (`2.19.0`) - https://www.npmjs.com/package/date-fns
+- Emotion (`11.1.5`) - https://www.npmjs.com/package/emotion
+- parse-diff (`0.8.1`) - https://www.npmjs.com/package/parse-diff
 
 ### Back-end dependencies
 
@@ -59,3 +66,9 @@ Dev environment setup guide and build directions can be found [here](Wikidocs/De
 - GitLab4J™ API (`4.15.7`) - https://github.com/gitlab4j/gitlab4j-api
 - Google GSON (`2.8.6`) - https://github.com/google/gson
 - Java JWT: JSON Web Token for Java and Android (`0.11.2`) - https://github.com/jwtk/jjwt
+- Apache Commons Lang (`3.11`) - https://commons.apache.org/proper/commons-lang/
+
+### Testing dependencies
+
+- Mockito (Core) (`3.8.0`) - (https://github.com/mockito/mockito)
+- Mockito (Inline) (`3.8.0`) - (https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#mockito-inline)

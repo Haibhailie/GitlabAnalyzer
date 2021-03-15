@@ -12,6 +12,8 @@ import {
   SET_START_DATE,
   SET_CONFIG,
   TUserConfigReducer,
+  FLUSH_CONFIGS,
+  IUserConfig,
 } from './types'
 
 const dateZero = new Date(0)
@@ -102,9 +104,14 @@ const reducer: TUserConfigReducer = async (state, action) => {
       try {
         const newConfig = { ...state.selected }
         newConfig.name = action.name
-        const { id } = await jsonFetcher<{ id: string }>(`/config`, {
+        const { id } = await jsonFetcher<{ id: string }>(`/api/config`, {
           method: 'POST',
-          body: JSON.stringify(newConfig),
+          body: JSON.stringify({
+            ...newConfig,
+            startDate: newConfig.startDate?.getTime(),
+            // TODO: remove ?? edge case after BE fix.
+            endDate: newConfig.endDate?.getTime() ?? Date.now(),
+          }),
         })
         newConfig.id = id
         state.configs[id] = newConfig
@@ -121,7 +128,7 @@ const reducer: TUserConfigReducer = async (state, action) => {
         return state
 
       try {
-        await jsonFetcher(`/config/${action.id}`, {
+        await jsonFetcher(`/api/config/${action.id}`, {
           method: 'DELETE',
           responseIsEmpty: true,
         })
@@ -131,6 +138,32 @@ const reducer: TUserConfigReducer = async (state, action) => {
         return state
       }
       break
+    case FLUSH_CONFIGS:
+      try {
+        const configArr = await jsonFetcher<IUserConfig[]>('/api/configs')
+        const configs: Record<string, IUserConfig> = {}
+        configArr.forEach(config => {
+          if (config.id) {
+            configs[config.id] = {
+              ...config,
+              startDate:
+                config.startDate !== undefined
+                  ? new Date(config.startDate)
+                  : new Date(0),
+              endDate:
+                config.endDate !== undefined
+                  ? new Date(config.endDate)
+                  : new Date(),
+            }
+          }
+        })
+        return {
+          ...state,
+          configs: { ...configs },
+        }
+      } catch {
+        return state
+      }
     default:
       return state
   }
