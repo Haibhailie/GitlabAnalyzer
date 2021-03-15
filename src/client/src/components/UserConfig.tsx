@@ -1,10 +1,17 @@
-import { ChangeEvent, InputHTMLAttributes, useContext, useState } from 'react'
 import {
+  FormEventHandler,
+  InputHTMLAttributes,
+  useContext,
+  useState,
+} from 'react'
+import {
+  ADD_CONFIG,
   SET_END_DATE,
   SET_GRAPH_BY,
   SET_GRAPH_Y_AXIS,
   SET_SCORE_BY,
   SET_START_DATE,
+  UPDATE_CONFIG,
   UserConfigContext,
 } from '../context/UserConfigContext'
 
@@ -55,28 +62,19 @@ const RadioInput = ({ label, value, ...props }: IRadioInputProps) => (
 
 const UserConfig = () => {
   const { userConfigs, dispatch } = useContext(UserConfigContext)
-
-  const [fileScores, setFileScores] = useState(userConfigs.selected.fileScores)
-  const [generalScores, setGeneralScores] = useState(
-    userConfigs.selected.generalScores
-  )
-
   const [popUpOpen, setPopUpOpen] = useState(false)
-
   const [name, setName] = useState(userConfigs.selected.name)
 
-  const nameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newName = event.target.value
-    setName(newName)
-    // if (checkUniqueName(newName)) {
-    //   dispatch({ type: 'SET_CONFIG_NAME', name: newName })
-    // }
-  }
-
-  const save = () => {
-    // const newSavedConfigs = savedConfigs
-    // newSavedConfigs.push(userConfigs.selected)
-    // setSavedConfigs([...newSavedConfigs])
+  const save: FormEventHandler = event => {
+    event.preventDefault()
+    const [foundConfig] = Object.values(userConfigs.configs).filter(
+      c => c.name === name
+    )
+    if (foundConfig?.id) {
+      dispatch({ type: UPDATE_CONFIG, id: foundConfig.id })
+    } else {
+      dispatch({ type: ADD_CONFIG, name })
+    }
     setName('')
   }
 
@@ -156,29 +154,21 @@ const UserConfig = () => {
           label="Edit Scoring"
           Icon={Edit}
         />
-        {popUpOpen && (
-          <UserConfigPopup
-            generalScores={generalScores}
-            setGeneralScores={setGeneralScores}
-            fileScores={fileScores}
-            setFileScores={setFileScores}
-            togglePopup={togglePopup}
-          />
-        )}
-        <div className={styles.saveContainer}>
+        {popUpOpen && <UserConfigPopup togglePopup={togglePopup} />}
+        <form className={styles.saveContainer} onSubmit={save}>
           <div className={styles.saveLabel}>
             <SaveLarge className={styles.saveIcon} /> Save Configuration
           </div>
           <input
             value={name}
-            onChange={nameChange}
+            onChange={e => setName(e.target.value)}
             className={styles.nameInput}
             placeholder="Name config..."
           />
-          <button className={styles.saveButton} onClick={save} disabled={!name}>
+          <button type="submit" className={styles.saveButton} disabled={!name}>
             <SaveSmall className={styles.saveIcon} /> Save Config
           </button>
-        </div>
+        </form>
       </SideNavItem>
       <SideNavItem Icon={toolIcon} label="Saved Configs">
         <SavedConfigs />

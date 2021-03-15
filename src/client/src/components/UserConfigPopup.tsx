@@ -1,10 +1,6 @@
-import React, { ChangeEvent, Dispatch, useContext, useState } from 'react'
+import { ChangeEvent, useContext, useState } from 'react'
 
-import {
-  IFileTypeScoring,
-  IGeneralTypeScoring,
-  UserConfigContext,
-} from '../context/UserConfigContext'
+import { UserConfigContext } from '../context/UserConfigContext'
 import Selector from './Selector'
 import Modal from './Modal'
 import Table from './Table'
@@ -12,10 +8,6 @@ import Table from './Table'
 import styles from '../css/UserConfigPopup.module.css'
 
 interface IUserConfigPopup {
-  fileScores: IFileTypeScoring[]
-  setFileScores: Dispatch<React.SetStateAction<IFileTypeScoring[]>>
-  generalScores: IGeneralTypeScoring[]
-  setGeneralScores: Dispatch<React.SetStateAction<IGeneralTypeScoring[]>>
   togglePopup: () => void
 }
 

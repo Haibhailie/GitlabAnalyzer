@@ -10,7 +10,6 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Project from './pages/Project'
 import PageWrapper from './components/PageWrapper'
-import Modal from './components/Modal'
 
 const App = () => {
   return (

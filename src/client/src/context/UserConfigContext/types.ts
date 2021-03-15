@@ -6,6 +6,7 @@ export const SET_GRAPH_BY = 'SET_GRAPH_BY'
 export const SET_CONFIG_NAME = 'SET_CONFIG_NAME'
 export const SET_SCORES = 'SET_SCORES'
 export const SET_CONFIG = 'SET_CONFIG'
+export const UPDATE_CONFIG = 'UPDATE_CONFIG'
 export const ADD_CONFIG = 'ADD_CONFIG'
 export const DELETE_CONFIG = 'DELETE_CONFIG'
 
@@ -48,9 +49,14 @@ interface setUserConfig {
   id: string
 }
 
+interface updateUserConfig {
+  type: typeof UPDATE_CONFIG
+  id: string
+}
+
 interface addUserConfig {
   type: typeof ADD_CONFIG
-  config: IUserConfig
+  name: string
 }
 
 interface deleteUserConfig {
@@ -66,6 +72,7 @@ export type TUserConfigActions =
   | setConfigNameAction
   | setScores
   | setUserConfig
+  | updateUserConfig
   | addUserConfig
   | deleteUserConfig
 

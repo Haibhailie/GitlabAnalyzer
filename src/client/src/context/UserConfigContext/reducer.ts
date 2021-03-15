@@ -2,6 +2,7 @@ import jsonFetcher from '../../utils/jsonFetcher'
 import {
   ADD_CONFIG,
   DELETE_CONFIG,
+  UPDATE_CONFIG,
   SET_CONFIG_NAME,
   SET_END_DATE,
   SET_GRAPH_BY,
@@ -83,17 +84,33 @@ const reducer: TUserConfigReducer = async (state, action) => {
         ...state,
         selected: state.configs[action.id],
       }
+    case UPDATE_CONFIG:
+      if (!state.configs[action.id]) return state
+
+      return {
+        configs: {
+          ...state.configs,
+          [action.id]: {
+            ...state.selected,
+          },
+        },
+        selected: {
+          ...state.selected,
+        },
+      }
     case ADD_CONFIG:
       try {
+        const newConfig = { ...state.selected }
+        newConfig.name = action.name
         const { id } = await jsonFetcher<{ id: string }>(`/config`, {
           method: 'POST',
-          body: JSON.stringify(action.config),
+          body: JSON.stringify(newConfig),
         })
-        action.config.id = id
-        state.configs[id] = action.config
+        newConfig.id = id
+        state.configs[id] = newConfig
         return {
           ...state,
-          selected: action.config,
+          selected: { ...newConfig },
         }
       } catch {
         return state
