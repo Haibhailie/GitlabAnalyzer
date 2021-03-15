@@ -15,6 +15,21 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
   const [copyMessage, setCopyMessage] = useState('Copy stats')
   const [csvString, setCsvString] = useState('')
   const timeoutRef = useRef<NodeJS.Timeout>()
+  const copyNodeRef = useRef<HTMLTextAreaElement>(null)
+
+  const clipboardCopyFallback = () => {
+    if (!copyNodeRef.current) {
+      setCopyMessage('Failed to copy')
+      timeoutRef.current = setTimeout(() => setCopyMessage('Copy stats'), 5000)
+      return
+    }
+
+    copyNodeRef.current.value = csvString
+    copyNodeRef.current.select()
+    document.execCommand('copy')
+    setCopyMessage('Copied!')
+    timeoutRef.current = setTimeout(() => setCopyMessage('Copy stats'), 5000)
+  }
 
   useEffect(() => {
     if (statData !== undefined) {
@@ -32,7 +47,7 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
   const copyToClipboard = () => {
     //TODO: Implement navigator.permissions query for clipboard-read/write
     navigator.clipboard
-      .writeText(csvString)
+      ?.writeText(csvString)
       .then(() => {
         setCopyMessage('Copied!')
         timeoutRef.current = setTimeout(
@@ -41,12 +56,8 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
         )
       })
       .catch(() => {
-        setCopyMessage('Failed to copy')
-        timeoutRef.current = setTimeout(
-          () => setCopyMessage('Copy stats'),
-          5000
-        )
-      })
+        clipboardCopyFallback()
+      }) ?? clipboardCopyFallback()
   }
 
   useEffect(() => {
@@ -70,6 +81,10 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
             </button>
           </Tooltip>
         </div>
+        <textarea
+          style={{ position: 'fixed', left: '-10000000px' }}
+          ref={copyNodeRef}
+        ></textarea>
       </div>
     </ThemeProvider>
   )
