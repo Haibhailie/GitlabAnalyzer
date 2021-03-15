@@ -24,11 +24,9 @@ public class ConfigController {
     @PostMapping(value = "/api/config", produces = MediaType.APPLICATION_JSON_VALUE)
     public void addConfig(@CookieValue(value = "sessionId") String jwt,
                           @RequestBody ConfigDto configDto,
-                          HttpServletResponse response) throws IOException {
+                          HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            String configId = configService.addNewConfigByJwt(jwt, configDto);
-            response.setStatus(200);
-            addConfigIdToResponse(response, configId);
+            tryAddingNewConfigByJwt(jwt, configDto, response);
         } else {
             response.setStatus(401);
         }
@@ -68,6 +66,16 @@ public class ConfigController {
         } else {
             response.setStatus(401);
             return "";
+        }
+    }
+
+    private void tryAddingNewConfigByJwt(String jwt, ConfigDto configDto, HttpServletResponse response) {
+        try {
+            String configId = configService.addNewConfigByJwt(jwt, configDto);
+            response.setStatus(200);
+            addConfigIdToResponse(response, configId);
+        } catch (IOException e) {
+            response.setStatus(500);
         }
     }
 
