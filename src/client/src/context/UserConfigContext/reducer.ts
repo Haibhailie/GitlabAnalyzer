@@ -106,7 +106,11 @@ const reducer: TUserConfigReducer = async (state, action) => {
         newConfig.name = action.name
         const { id } = await jsonFetcher<{ id: string }>(`/api/config`, {
           method: 'POST',
-          body: JSON.stringify(newConfig),
+          body: JSON.stringify({
+            ...newConfig,
+            startDate: newConfig.startDate?.getTime(),
+            endDate: newConfig.endDate?.getTime(),
+          }),
         })
         newConfig.id = id
         state.configs[id] = newConfig
@@ -135,12 +139,16 @@ const reducer: TUserConfigReducer = async (state, action) => {
       break
     case FLUSH_CONFIGS:
       try {
-        const configStrs = await jsonFetcher<string[]>('/api/configs')
+        const configArr = await jsonFetcher<IUserConfig[]>('/api/configs')
+        console.log(configArr)
         const configs: Record<string, IUserConfig> = {}
-        configStrs.forEach(configStr => {
-          const config: IUserConfig = JSON.parse(configStr)
+        configArr.forEach(config => {
           if (config.id) {
-            configs[config.id] = config
+            configs[config.id] = {
+              ...config,
+              startDate: config.startDate && new Date(config.startDate),
+              endDate: config.endDate && new Date(config.endDate),
+            }
           }
         })
         return {
