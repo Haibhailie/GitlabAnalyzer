@@ -15,7 +15,8 @@ const defaultConfig: IUserConfig = {
   scoreBy: 'MRS',
   yAxis: 'NUMBER',
   graphMode: 'PROJECT',
-  name: '',
+  name: 'default',
+  id: 'default',
   generalScores: [
     { type: 'New line of code', value: 1 },
     { type: 'Deleting a line', value: 0.2 },

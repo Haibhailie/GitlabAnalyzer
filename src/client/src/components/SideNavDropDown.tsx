@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, ReactNode } from 'react'
 
 import styles from '../css/SideNavDropDown.module.css'
 
 import { ReactComponent as Dropdown } from '../assets/dropdown-large.svg'
 
 export interface ISideNavDropDown {
-  children: JSX.Element
+  children: ReactNode
   Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
   label: string
 }

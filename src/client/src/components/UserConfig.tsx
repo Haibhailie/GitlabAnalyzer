@@ -356,12 +356,7 @@ const UserConfig = () => {
         </>
       </SideNavDropDown>
       <SideNavDropDown Icon={toolIcon} label="Saved Configs">
-        <SavedConfigs
-          setCurrentConfig={setCurrentConfig}
-          savedConfigs={savedConfigs}
-          setSavedConfigsHandler={setSavedConfigsHandler}
-          checkUniqueName={checkUniqueName}
-        />
+        <SavedConfigs />
       </SideNavDropDown>
     </>
   )

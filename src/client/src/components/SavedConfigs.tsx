@@ -1,49 +1,40 @@
 import { useContext } from 'react'
 
-import { IUserConfig, UserConfigContext } from '../context/UserConfigContext'
+import {
+  DELETE_CONFIG,
+  IUserConfig,
+  SET_CONFIG,
+  UserConfigContext,
+} from '../context/UserConfigContext'
 
 import styles from '../css/SaveUserConfig.module.css'
 
 import { ReactComponent as Delete } from '../assets/delete.svg'
 
-export interface ISavedConfigsProps {
-  setCurrentConfig: (newUserConfig: IUserConfig) => void
-  savedConfigs: IUserConfig[]
-  setSavedConfigsHandler: (configs: IUserConfig[]) => void
-  checkUniqueName: (name: string) => boolean
-}
-
-const SavedConfigs = ({
-  setCurrentConfig,
-  savedConfigs,
-  setSavedConfigsHandler,
-  checkUniqueName,
-}: ISavedConfigsProps) => {
-  // TODO: fetch array of saved configs
+const SavedConfigs = () => {
   const { userConfigs, dispatch } = useContext(UserConfigContext)
 
-  const deleteConfig = (index: number) => {
-    // TODO: POST removed list
-    const configs = savedConfigs
-    configs.splice(index, 1)
-    setSavedConfigsHandler([...configs])
-    checkUniqueName(userConfigs.selected.name)
-  }
+  const deleteConfig = (id?: string) =>
+    id && dispatch({ type: DELETE_CONFIG, id })
 
   const loadConfig = (config: IUserConfig) => {
-    setCurrentConfig(config)
-    // TODO: POST new list
+    if (config.id) {
+      dispatch({ type: SET_CONFIG, id: config.id })
+    }
   }
 
   return (
     <div className={styles.list}>
-      {savedConfigs.map((config, index) => (
+      {Object.values(userConfigs.configs).map(config => (
         <div key={config.name} className={styles.item}>
           <button className={styles.label} onClick={() => loadConfig(config)}>
             {config.name}
           </button>
-          <button className={styles.deleteButton}>
-            <Delete onClick={() => deleteConfig(index)} />
+          <button
+            className={styles.deleteButton}
+            onClick={() => deleteConfig(config.id)}
+          >
+            <Delete />
           </button>
         </div>
       ))}
