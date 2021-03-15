@@ -122,7 +122,7 @@ class AuthenticationServiceTest {
                                     boolean jwtIsInDatabase,
                                     boolean canSignIntoGitlab) {
         lenient().when(jwtService.jwtIsValid(sampleJwt)).thenReturn(jwtIsValid);
-        lenient().when(authRepository.contains(sampleJwt)).thenReturn(jwtIsInDatabase);
+        lenient().when(authRepository.containsJwt(sampleJwt)).thenReturn(jwtIsInDatabase);
         lenient().when(gitLabApiWrapper.canSignIn(sampleJwt)).thenReturn(canSignIntoGitlab);
     }
 

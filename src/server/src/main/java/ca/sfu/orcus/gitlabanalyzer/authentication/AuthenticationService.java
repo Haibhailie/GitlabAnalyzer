@@ -70,7 +70,7 @@ public class AuthenticationService {
     }
 
     public boolean jwtIsValid(String jwt) {
-        return (jwtService.jwtIsValid(jwt) && authRepository.contains(jwt) && gitLabApiWrapper.canSignIn(jwt));
+        return (jwtService.jwtIsValid(jwt) && authRepository.containsJwt(jwt) && gitLabApiWrapper.canSignIn(jwt));
     }
 
 }

@@ -43,7 +43,7 @@ public class AuthenticationRepository {
                 .append("jwt", newUser.getJwt());
     }
 
-    public boolean contains(String jwt) {
+    public boolean containsJwt(String jwt) {
         Document user = collection.find(eq("jwt", jwt)).first();
         return (user != null);
     }
