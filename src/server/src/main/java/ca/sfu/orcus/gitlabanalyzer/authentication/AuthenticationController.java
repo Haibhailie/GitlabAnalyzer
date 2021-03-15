@@ -58,15 +58,9 @@ public class AuthenticationController {
     @PostMapping("/api/signout")
     public void logoutWithCookie(@CookieValue(value = "sessionId") String jwt,
                                   HttpServletResponse response) {
-        try {
-            Cookie cookie = deleteCookie(jwt);
-            response.addCookie(cookie);
+            Cookie cookie = new Cookie("sessionId", jwt);
+            cookie.setMaxAge(0); // Set cookie age as 0 to delete an existing cookie.
             response.setStatus(200);
-        } catch (IllegalArgumentException e) {
-            response.setStatus(401);
-        } catch (BadRequestException e) {
-            response.setStatus(400);
-        }
     }
 
     @GetMapping("/api/ping")
@@ -82,12 +76,6 @@ public class AuthenticationController {
     private Cookie createSessionIdCookie(String jwt) {
         Cookie cookie = new Cookie("sessionId", jwt);
         cookie.setMaxAge(60 * 60 * 24 * 30); // sets cookie expiry to 1 month
-        return cookie;
-    }
-
-    private Cookie deleteCookie(String jwt) {
-        Cookie cookie = new Cookie("sessionId", jwt);
-        cookie.setMaxAge(0); // Set cookie age as 0 to delete an existing cookie.
         return cookie;
     }
 }

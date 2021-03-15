@@ -1,25 +1,7 @@
-post:
-  description: 'Sign out with a username and password'
+get:
+  description: 'logout with deleting an existing cookie'
   responses:
     '200':
-      $ref: './components/signout200.yml'
-    '400':
-      description: Bad request.
-    '401':
-      description: Username and password do not match.
-    '500':
-      description: An error un-related to this request occurred.
-  requestBody:
-    content:
-      'application/json':
-        schema:
-          type: object
-          required:
-            - username
-            - password
-          properties:
-            username:
-              type: string
-            password:
-              type: string
-              format: password
+      description: deleted an existing cookie successfully.
+  parameters:
+    - $ref: './components/jwtcookie.yml'

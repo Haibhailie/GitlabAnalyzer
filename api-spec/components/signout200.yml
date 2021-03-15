@@ -1,8 +1,0 @@
-description: OK
-headers:
-  'Set-Cookie':
-    description: 'Set cookie age as 0 using setMaxAge() method to delete an existing cookie.'
-    required: true
-    schema:
-      type: string
-      pattern: 'sessionId=[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.[A-Za-z0-9-_.+/=]+;'
