@@ -13,15 +13,6 @@
   align-items: center;
 }
 
-.dateContainer {
-  margin-bottom: 10px;
-}
-
-.dateInput {
-  width: 170px;
-  font: var(--font-body-medium-poppins);
-}
-
 .label {
   padding-left: 5px;
   font: var(--font-body-medium-poppins);

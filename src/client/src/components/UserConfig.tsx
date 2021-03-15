@@ -1,4 +1,9 @@
-import React, { ChangeEvent, useContext, useState } from 'react'
+import React, {
+  ChangeEvent,
+  InputHTMLAttributes,
+  useContext,
+  useState,
+} from 'react'
 import {
   IUserConfig,
   SET_CONFIG,
@@ -41,6 +46,18 @@ const DatePicker = (props: {
     )}
   />
 )
+
+interface IRadioInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label: string
+}
+
+const RadioInput = ({ label, value, ...props }: IRadioInputProps) => (
+  <div className={styles.inputField}>
+    <input {...props} type="radio" defaultValue={value ?? ''} />
+    <label className={styles.label}>{label}</label>
+  </div>
+)
+
 const UserConfig = () => {
   const { userConfigs, dispatch } = useContext(UserConfigContext)
 
@@ -52,14 +69,6 @@ const UserConfig = () => {
   const [popUpOpen, setPopUpOpen] = useState(false)
 
   const [name, setName] = useState(userConfigs.selected.name)
-
-  const formatDate = (date: Date) => {
-    if (date) {
-      return date.toISOString().split('T')[0]
-    } else {
-      return
-    }
-  }
 
   const memberScoreByChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // TODO: Add update user config post
@@ -103,17 +112,6 @@ const UserConfig = () => {
     setName('')
   }
 
-  const setCurrentConfig = (newUserConfig: IUserConfig) => {
-    setFileScores(newUserConfig.fileScores)
-    setGeneralScores(newUserConfig.generalScores)
-    if (newUserConfig.id) {
-      dispatch({
-        type: SET_CONFIG,
-        id: newUserConfig.id,
-      })
-    }
-  }
-
   const togglePopup = () => {
     setPopUpOpen(!popUpOpen)
   }
@@ -134,68 +132,56 @@ const UserConfig = () => {
           />
         </SideNavSubItem>
         <SideNavSubItem startOpened={true} label="Member scores by">
-          <>
-            <div className={styles.inputField}>
-              <input
-                type="radio"
-                value="Merge Requests"
-                checked={userConfigs.selected.scoreBy === 'MRS'}
-                onChange={memberScoreByChange}
-              />
-              <label className={styles.label}>Merge Requests</label>
-            </div>
-            <div className={styles.inputField}>
-              <input
-                type="radio"
-                value="Commits"
-                checked={userConfigs.selected.scoreBy === 'COMMITS'}
-                onChange={memberScoreByChange}
-              />
-              <label className={styles.label}>Commits</label>
-            </div>
-          </>
+          <RadioInput
+            label="Merge Requests"
+            name="SCORE"
+            checked={userConfigs.selected.scoreBy === 'MRS'}
+            onChange={() => dispatch({ type: 'SET_SCORE_BY', scoreBy: 'MRS' })}
+          />
+          <RadioInput
+            label="Commits"
+            name="SCORE"
+            checked={userConfigs.selected.scoreBy === 'COMMITS'}
+            onChange={() =>
+              dispatch({ type: 'SET_SCORE_BY', scoreBy: 'COMMITS' })
+            }
+          />
         </SideNavSubItem>
         <SideNavSubItem startOpened={true} label="Graph Settings">
-          <>
-            <p className={styles.subHeader}>Graph Y-Axis</p>
-            <div className={styles.inputField}>
-              <input
-                type="radio"
-                value="NUMBER"
-                checked={userConfigs.selected.yAxis === 'NUMBER'}
-                onChange={graphYAxisChange}
-              />
-              <label className={styles.label}>Number</label>
-            </div>
-            <div className={styles.inputField}>
-              <input
-                type="radio"
-                value="SCORE"
-                checked={userConfigs.selected.yAxis === 'SCORE'}
-                onChange={graphYAxisChange}
-              />
-              <label className={styles.label}>Score</label>
-            </div>
-            <p className={styles.subHeader}>Project Graph</p>
-            <div className={styles.inputField}>
-              <input
-                type="radio"
-                value="Entire Project"
-                checked={userConfigs.selected.graphMode === 'PROJECT'}
-                onChange={projectGraphByChange}
-              />
-              <label className={styles.label}>Entire Project</label>
-            </div>
-            <div className={styles.inputField}>
-              <input
-                type="radio"
-                value="Split By Member"
-                checked={userConfigs.selected.graphMode === 'MEMBER'}
-                onChange={projectGraphByChange}
-              />
-              <label className={styles.label}>Split By Member</label>
-            </div>
-          </>
+          <p className={styles.subHeader}>Graph Y-Axis</p>
+          <RadioInput
+            label="Number"
+            name="yAxis"
+            checked={userConfigs.selected.yAxis === 'NUMBER'}
+            onChange={() =>
+              dispatch({ type: 'SET_GRAPH_Y_AXIS', yAxis: 'NUMBER' })
+            }
+          />
+          <RadioInput
+            label="Score"
+            name="yAxis"
+            checked={userConfigs.selected.yAxis === 'SCORE'}
+            onChange={() =>
+              dispatch({ type: 'SET_GRAPH_Y_AXIS', yAxis: 'SCORE' })
+            }
+          />
+          <p className={styles.subHeader}>Project Graph</p>
+          <RadioInput
+            label="Entire Project"
+            name="Graph"
+            checked={userConfigs.selected.graphMode === 'PROJECT'}
+            onChange={() =>
+              dispatch({ type: 'SET_GRAPH_BY', graphMode: 'PROJECT' })
+            }
+          />
+          <RadioInput
+            label="Split By Member"
+            name="Graph"
+            checked={userConfigs.selected.graphMode === 'MEMBER'}
+            onChange={() =>
+              dispatch({ type: 'SET_GRAPH_BY', graphMode: 'MEMBER' })
+            }
+          />
         </SideNavSubItem>
         <button className={styles.header} onClick={togglePopup}>
           <Edit className={styles.editIcon} /> Edit Scoring
