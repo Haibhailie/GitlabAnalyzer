@@ -1,5 +1,5 @@
 get:
-  description: 'logout with deleting an existing cookie'
+  description: 'Logout by deleting an existing cookie'
   responses:
     '200':
       description: deleted an existing cookie successfully.
