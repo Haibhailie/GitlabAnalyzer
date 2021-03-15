@@ -2,7 +2,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
-import { ICommitData, IMergeData } from '../components/ActivityGraph'
+import { ICommitData, IMergeData } from '../types'
 
 import Selector from '../components/Selector'
 import MemberSummary from '../components/MemberSummary'

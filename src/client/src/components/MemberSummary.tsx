@@ -2,7 +2,7 @@ import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
 import { IMemberData, IMemberStatData } from '../pages/Member'
-import { ICommitData, IMergeData } from '../components/ActivityGraph'
+import { ICommitData, IMergeData } from '../types'
 
 import StatSummary from '../components/StatSummary'
 import ActivityGraph from '../components/ActivityGraph'
