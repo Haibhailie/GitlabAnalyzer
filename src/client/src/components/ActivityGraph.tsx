@@ -12,6 +12,8 @@ import {
 } from 'recharts'
 
 import { onError } from '../utils/suspenseDefaults'
+import { useContext, useEffect, useState } from 'react'
+import { UserConfigContext } from '../context/UserConfigContext'
 
 export interface ICommitData {
   sha: string
@@ -41,6 +43,7 @@ export interface IActivityGraphProps {
 
 export type TGraphData = {
   date: string
+  time: number
   commits: number
   commitScore: number
   merges: number
@@ -63,6 +66,7 @@ const computeGraphData = (
       commitScore: number
       merges: number
       mergeScore: number
+      time: number
     }
   > = {}
 
@@ -75,6 +79,7 @@ const computeGraphData = (
         commitScore: 0,
         mergeScore: 0,
         merges: 0,
+        time: 0,
       }
     }
   }
@@ -88,7 +93,7 @@ const computeGraphData = (
       oldestCommit = Math.min(oldestCommit, time)
       const date = epochToDate(time)
       fillIfMissing(date)
-
+      graphObj[date].time = time
       graphObj[date][fieldScore] += score
       graphObj[date][field] += 1
     })
@@ -109,6 +114,7 @@ const computeGraphData = (
     const date = epochToDate(oldestCommit)
 
     fillIfMissing(date)
+    graphObj[date].time = oldestCommit
 
     oldestCommit += 24 * 60 * 60 * 1000
   }
@@ -154,7 +160,21 @@ const ActivityGraph = ({
     }
   )
 
-  const selectedRange = data?.slice(-7)
+  const { userConfigs } = useContext(UserConfigContext)
+  const [selectedRange, setSelectedRange] = useState(data?.slice(-7))
+
+  useEffect(() => {
+    const {
+      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      endDate = new Date(),
+    } = userConfigs.selected
+
+    const range = data?.filter(
+      date => date.time >= startDate.getTime() && date.time <= endDate.getTime()
+    )
+
+    setSelectedRange(range?.length !== 0 ? range : data?.slice(-1))
+  }, [userConfigs.selected.startDate, userConfigs.selected.endDate, data])
 
   return (
     <Suspense
