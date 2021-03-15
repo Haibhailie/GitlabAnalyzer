@@ -58,9 +58,9 @@ public class AuthenticationController {
     @PostMapping("/api/signout")
     public void logoutWithCookie(@CookieValue(value = "sessionId") String jwt,
                                   HttpServletResponse response) {
-            Cookie cookie = new Cookie("sessionId", jwt);
-            cookie.setMaxAge(0); // Set cookie age as 0 to delete an existing cookie.
-            response.setStatus(200);
+        Cookie cookie = new Cookie("sessionId", jwt);
+        cookie.setMaxAge(0); // Set cookie age as 0 to delete an existing cookie.
+        response.setStatus(200);
     }
 
     @GetMapping("/api/ping")
