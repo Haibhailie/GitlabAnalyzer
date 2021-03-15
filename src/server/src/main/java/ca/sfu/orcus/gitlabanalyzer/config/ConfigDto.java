@@ -1,7 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.config;
 
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 final class ConfigDto {
