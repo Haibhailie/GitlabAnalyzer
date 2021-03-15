@@ -33,7 +33,7 @@ public class MergeRequestScore {
         return totalScore;
     }
 
-    private DiffScoreDto calculateScore(List<String> diffList){
+    private DiffScoreDto calculateScore(List<String> diffList) {
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
         DiffScoreDto mergeRequestScoreDto = diffScoreCalculator.parseDiffList(diffList);
         return mergeRequestScoreDto;
