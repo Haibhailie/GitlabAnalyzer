@@ -30,7 +30,6 @@ const reducer: TUserConfigReducer = async (state, action) => {
           }
         : state
     case SET_END_DATE:
-      console.log(action.date)
       return action.date > (state.selected.startDate ?? dateZero)
         ? {
             ...state,
@@ -142,7 +141,6 @@ const reducer: TUserConfigReducer = async (state, action) => {
     case FLUSH_CONFIGS:
       try {
         const configArr = await jsonFetcher<IUserConfig[]>('/api/configs')
-        console.log(configArr)
         const configs: Record<string, IUserConfig> = {}
         configArr.forEach(config => {
           if (config.id) {

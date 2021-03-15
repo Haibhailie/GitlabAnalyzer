@@ -52,6 +52,13 @@ Dev environment setup guide and build directions can be found [here](Wikidocs/De
 - React Scripts: (`4.0.1`) - https://www.npmjs.com/package/react-scripts
 - Recharts: (`2.0.7`) - https://recharts.org/en-US/
 - Typescript: (`4.1.3`) - https://www.typescriptlang.org/
+- MaterialUI
+   - Core : (`5.0.0-alpha.27`) - https://www.npmjs.com/package/@material-ui/core
+   - Lab: (`5.0.0-alpha.27`) - https://www.npmjs.com/package/@material-ui/lab
+   - Pickers: (`3.3.10`) - https://www.npmjs.com/package/@material-ui/pickers
+- date-fns (`2.19.0`) - https://www.npmjs.com/package/date-fns
+- Emotion (`11.1.5`) - https://www.npmjs.com/package/emotion
+- parse-diff (`0.8.1`) - https://www.npmjs.com/package/parse-diff
 
 ### Back-end dependencies
 
