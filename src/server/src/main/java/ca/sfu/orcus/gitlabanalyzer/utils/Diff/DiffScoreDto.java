@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.utils.diff;
+package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
 public class DiffScoreDto {
     int numLineAdditions;

@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.utils.diff;
+package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
 import org.apache.commons.lang3.StringUtils;
 

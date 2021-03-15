@@ -1,8 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
-import ca.sfu.orcus.gitlabanalyzer.utils.diff.DiffScoreCalculator;
-import ca.sfu.orcus.gitlabanalyzer.utils.diff.DiffScoreDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.diff.DiffStringParser;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreCalculator;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
 import org.gitlab4j.api.models.Diff;
 
 import java.util.Arrays;
