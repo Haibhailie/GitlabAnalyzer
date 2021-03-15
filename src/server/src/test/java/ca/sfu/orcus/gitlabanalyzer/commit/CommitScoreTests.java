@@ -3,19 +3,14 @@ package ca.sfu.orcus.gitlabanalyzer.commit;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import org.gitlab4j.api.models.Diff;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(MockitoExtension.class)
 public class CommitScoreTests {
     // Class to be tested
-    @InjectMocks
-    private CommitScoreCalculator commitScore;
+    private CommitScoreCalculator commitScore = new CommitScoreCalculator();
 
     // Testing CommitScore
 
