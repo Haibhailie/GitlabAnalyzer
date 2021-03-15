@@ -19,13 +19,20 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CommitScoreTests {
+    // Class to be tested
+    @InjectMocks
+    private CommitScoreCalculator commitScore;
+
+    // Testing CommitScore
+
     @Test
     public void getScore() {
         List<Diff> diffList = CommitMock.createTestDiffList();
 
-        double expectedScore = CommitScoreCalculator.getCommitScore(diffList);
+        double expectedScore = commitScore.getCommitScore(diffList);
         double actualScore = 0.2;
 
         assertEquals(expectedScore, actualScore);
     }
+
 }

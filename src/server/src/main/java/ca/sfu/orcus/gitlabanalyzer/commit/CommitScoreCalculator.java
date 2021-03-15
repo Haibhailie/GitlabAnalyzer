@@ -16,7 +16,7 @@ public class CommitScoreCalculator {
     private static final double blankLocFactor = 0;
     private static final double spacingChangeFactor = 0;
 
-    public static double getCommitScore(List<Diff> diffs) {
+    public double getCommitScore(List<Diff> diffs) {
         // regex to split lines by new line and store in generatedDiffList
         String[] diffArray = DiffStringParser.parseDiff(diffs).split("\\r?\\n");
         List<String> diffList = Arrays.asList(diffArray);
@@ -31,7 +31,7 @@ public class CommitScoreCalculator {
         return totalScore;
     }
 
-    private static DiffScoreDto generateDiffScoreDto(List<String> diffList) {
+    private DiffScoreDto generateDiffScoreDto(List<String> diffList) {
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
         return diffScoreCalculator.parseDiffList(diffList);
     }
