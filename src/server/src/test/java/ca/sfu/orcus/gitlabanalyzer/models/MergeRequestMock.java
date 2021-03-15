@@ -57,6 +57,7 @@ public class MergeRequestMock extends AuthorMock {
         tempMergeRequest.setCreatedAt(dateNow);
         tempMergeRequest.setMergedAt(dateNow);
         tempMergeRequest.setTitle(title);
+        tempMergeRequest.setChanges(DiffMock.createTestDiffList());
         return tempMergeRequest;
     }
 

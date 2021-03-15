@@ -43,7 +43,7 @@ public class AuthenticationRepository {
                 .append("jwt", newUser.getJwt());
     }
 
-    public boolean contains(String jwt) {
+    public boolean containsJwt(String jwt) {
         Document user = collection.find(eq("jwt", jwt)).first();
         return (user != null);
     }
@@ -56,5 +56,25 @@ public class AuthenticationRepository {
     public String getAuthTokenFor(String jwt) {
         Document user = collection.find(eq("jwt", jwt)).first();
         return user.getString("authToken");
+    }
+
+    public boolean containsPat(String pat) {
+        Document user = collection.find(eq("pat", pat)).first();
+        return (user != null);
+    }
+
+    public String getJwtForPat(String pat) {
+        Document user = collection.find(eq("pat", pat)).first();
+        return user.getString("jwt");
+    }
+
+    public boolean containsAuthToken(String authToken) {
+        Document user = collection.find(eq("authToken", authToken)).first();
+        return (user != null);
+    }
+
+    public String getJwtForAuthToken(String authToken) {
+        Document user = collection.find(eq("authToken", authToken)).first();
+        return user.getString("jwt");
     }
 }
