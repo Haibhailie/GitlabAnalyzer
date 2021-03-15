@@ -12,6 +12,8 @@ import {
   SET_START_DATE,
   SET_CONFIG,
   TUserConfigReducer,
+  FLUSH_CONFIGS,
+  IUserConfig,
 } from './types'
 
 const dateZero = new Date(0)
@@ -102,7 +104,7 @@ const reducer: TUserConfigReducer = async (state, action) => {
       try {
         const newConfig = { ...state.selected }
         newConfig.name = action.name
-        const { id } = await jsonFetcher<{ id: string }>(`/config`, {
+        const { id } = await jsonFetcher<{ id: string }>(`/api/config`, {
           method: 'POST',
           body: JSON.stringify(newConfig),
         })
@@ -121,7 +123,7 @@ const reducer: TUserConfigReducer = async (state, action) => {
         return state
 
       try {
-        await jsonFetcher(`/config/${action.id}`, {
+        await jsonFetcher(`/api/config/${action.id}`, {
           method: 'DELETE',
           responseIsEmpty: true,
         })
@@ -131,6 +133,23 @@ const reducer: TUserConfigReducer = async (state, action) => {
         return state
       }
       break
+    case FLUSH_CONFIGS:
+      try {
+        const configStrs = await jsonFetcher<string[]>('/api/configs')
+        const configs: Record<string, IUserConfig> = {}
+        configStrs.forEach(configStr => {
+          const config: IUserConfig = JSON.parse(configStr)
+          if (config.id) {
+            configs[config.id] = config
+          }
+        })
+        return {
+          ...state,
+          configs: { ...configs },
+        }
+      } catch {
+        return state
+      }
     default:
       return state
   }

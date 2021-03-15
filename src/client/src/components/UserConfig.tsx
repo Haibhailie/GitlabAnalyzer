@@ -2,10 +2,12 @@ import {
   FormEventHandler,
   InputHTMLAttributes,
   useContext,
+  useEffect,
   useState,
 } from 'react'
 import {
   ADD_CONFIG,
+  FLUSH_CONFIGS,
   SET_END_DATE,
   SET_GRAPH_BY,
   SET_GRAPH_Y_AXIS,
@@ -81,6 +83,10 @@ const UserConfig = () => {
   const togglePopup = () => {
     setPopUpOpen(!popUpOpen)
   }
+
+  useEffect(() => {
+    dispatch({ type: FLUSH_CONFIGS })
+  }, [])
 
   return (
     <>
