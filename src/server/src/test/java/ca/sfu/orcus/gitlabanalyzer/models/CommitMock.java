@@ -1,7 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffParser;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -22,7 +22,24 @@ public class CommitMock {
     public static final String defaultSha = UUID.randomUUID().toString();
     public static final Date defaultDate = new Date();
 
-    public static final String mockCodeDiff = "RandomChangesGoHereLol";
+    public static final String mockCodeDiff = "Commit changes:\n"
+            + "diff --git a/cinnamon-buns.txt b/cinnamon-buns.txt\n"
+            + "--- a/cinnamon-buns.txt\n"
+            + "+++ b/cinnamon-buns.txt\n"
+            + "@@ -1,9 +1,9 @@\n"
+            + " Homemade Cinnamon Rolls {Cinnabon Copycat}\n"
+            + " The best homemade cinnamon rolls ever! If you love gooey cinnamon buns, here's the secret ingredient. Everyone raves about these homemade yeast rolls.\n"
+            + "-Prep Time\n"
+            + "-30 mins\n"
+            + "-Cook Time\n"
+            + "-22 mins\n"
+            + "+Prep Time RANDOMLY ADDING SOMETHING HERE DW\n"
+            + "+RANDOMLY REPLACING TEXT\n"
+            + "+\n"
+            + "+22 mins DELETED THE LINE ABOVE ME\n"
+            + " Rise Time\n"
+            + " 1 hr 10 mins\n"
+            + " Total Time";
 
     public static final int defaultNumAdditions = rand.nextInt(upperBound);
     public static final int defaultNumDeletions = rand.nextInt(upperBound);
@@ -72,7 +89,7 @@ public class CommitMock {
     }
 
     public static String createTestDiffListString() {
-        return DiffParser.parseDiff(createTestDiffList());
+        return DiffStringParser.parseDiff(createTestDiffList());
     }
 
     public static List<Diff> createTestDiffList() {
