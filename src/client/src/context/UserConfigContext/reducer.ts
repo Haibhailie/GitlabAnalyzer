@@ -1,4 +1,7 @@
+import jsonFetcher from '../../utils/jsonFetcher'
 import {
+  ADD_CONFIG,
+  DELETE_CONFIG,
   SET_CONFIG_NAME,
   SET_END_DATE,
   SET_GRAPH_BY,
@@ -6,7 +9,7 @@ import {
   SET_SCORES,
   SET_SCORE_BY,
   SET_START_DATE,
-  SET_USER_CONFIG,
+  SET_CONFIG,
   TUserConfigReducer,
 } from './types'
 
@@ -69,11 +72,43 @@ const reducer: TUserConfigReducer = async (state, action) => {
           generalScores: action.scores.generalScores,
         },
       }
-    case SET_USER_CONFIG:
+    case SET_CONFIG:
+      if (!state.configs[action.id]) return state
       return {
         ...state,
-        selected: action.userConfig,
+        selected: state.configs[action.id],
       }
+    case ADD_CONFIG:
+      try {
+        const { id } = await jsonFetcher<{ id: string }>(`/config`, {
+          method: 'POST',
+          body: JSON.stringify(action.config),
+        })
+        action.config.id = id
+        state.configs[id] = action.config
+        return {
+          ...state,
+          selected: action.config,
+        }
+      } catch {
+        return state
+      }
+      break
+    case DELETE_CONFIG:
+      if (!action.id || !state.configs[action.id] || action.id === 'selected')
+        return state
+
+      try {
+        await jsonFetcher(`/config/${action.id}`, {
+          method: 'DELETE',
+          responseIsEmpty: true,
+        })
+        delete state.configs[action.id]
+        return { ...state }
+      } catch {
+        return state
+      }
+      break
     default:
       return state
   }

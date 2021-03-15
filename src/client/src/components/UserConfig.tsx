@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useContext, useState } from 'react'
 import {
   IUserConfig,
+  SET_CONFIG,
   SET_GRAPH_BY,
   TGraphMode,
   TYAxis,
@@ -181,10 +182,12 @@ const UserConfig = () => {
   const setCurrentConfig = (newUserConfig: IUserConfig) => {
     setFileScores(newUserConfig.fileScores)
     setGeneralScores(newUserConfig.generalScores)
-    dispatch({
-      type: 'SET_USER_CONFIG',
-      userConfig: newUserConfig,
-    })
+    if (newUserConfig.id) {
+      dispatch({
+        type: SET_CONFIG,
+        id: newUserConfig.id,
+      })
+    }
   }
 
   const togglePopup = () => {

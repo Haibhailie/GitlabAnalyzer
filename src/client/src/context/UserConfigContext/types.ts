@@ -5,7 +5,9 @@ export const SET_GRAPH_Y_AXIS = 'SET_GRAPH_Y_AXIS'
 export const SET_GRAPH_BY = 'SET_GRAPH_BY'
 export const SET_CONFIG_NAME = 'SET_CONFIG_NAME'
 export const SET_SCORES = 'SET_SCORES'
-export const SET_USER_CONFIG = 'SET_USER_CONFIG'
+export const SET_CONFIG = 'SET_CONFIG'
+export const ADD_CONFIG = 'ADD_CONFIG'
+export const DELETE_CONFIG = 'DELETE_CONFIG'
 
 export type TScoreBy = 'MRS' | 'COMMITS'
 export type TYAxis = 'NUMBER' | 'SCORE'
@@ -42,8 +44,18 @@ interface setScores {
 }
 
 interface setUserConfig {
-  type: typeof SET_USER_CONFIG
-  userConfig: IUserConfig
+  type: typeof SET_CONFIG
+  id: string
+}
+
+interface addUserConfig {
+  type: typeof ADD_CONFIG
+  config: IUserConfig
+}
+
+interface deleteUserConfig {
+  type: typeof DELETE_CONFIG
+  id: string
 }
 
 export type TUserConfigActions =
@@ -54,6 +66,8 @@ export type TUserConfigActions =
   | setConfigNameAction
   | setScores
   | setUserConfig
+  | addUserConfig
+  | deleteUserConfig
 
 export interface IFileTypeScoring {
   fileExtension: string
@@ -73,6 +87,7 @@ export interface IScores {
 export interface IUserConfig {
   startDate?: Date
   endDate?: Date
+  id?: string
   scoreBy: TScoreBy
   yAxis: TYAxis
   graphMode: TGraphMode
