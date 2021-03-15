@@ -21,8 +21,12 @@ public class ConfigService {
         return configRepository.addNewConfigByJwt(jwt, configDto);
     }
 
-    String getConfigJsonById(String id) {
-        Optional<String> configJson = configRepository.getConfigJsonById(id);
+    void removeConfig(String configId) {
+        
+    }
+
+    String getConfigJsonById(String configId) {
+        Optional<String> configJson = configRepository.getConfigJsonById(configId);
         return configJson.orElse("");
     }
 
