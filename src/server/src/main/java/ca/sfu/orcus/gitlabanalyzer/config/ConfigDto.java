@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 final class ConfigDto {
     private String id;
     private String name;
