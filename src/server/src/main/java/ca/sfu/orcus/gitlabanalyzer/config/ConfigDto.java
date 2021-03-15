@@ -19,6 +19,39 @@ final class ConfigDto {
         this.id = id;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStartDate(long startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(long endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setScoreBy(String scoreBy) {
+        this.scoreBy = scoreBy;
+    }
+
+    public void setGraphMode(String graphMode) {
+        this.graphMode = graphMode;
+    }
+
+    public void setGeneralScores(List<GeneralTypeScoreDto> generalScores) {
+        this.generalScores = generalScores;
+    }
+
+    public void setFileScores(List<FileTypeScoreDto> fileScores) {
+        this.fileScores = fileScores;
+    }
+
+    public void setyAxis(String yAxis) {
+        this.yAxis = yAxis;
+    }
+
+
     // Nested class types
 
     private static final class FileTypeScoreDto {
@@ -26,6 +59,14 @@ final class ConfigDto {
         private int scoreMultiplier;
 
         private FileTypeScoreDto() {}
+
+        public void setFileExtension(String fileExtension) {
+            this.fileExtension = fileExtension;
+        }
+
+        public void setScoreMultiplier(int scoreMultiplier) {
+            this.scoreMultiplier = scoreMultiplier;
+        }
     }
 
     private static final class GeneralTypeScoreDto {
@@ -33,5 +74,13 @@ final class ConfigDto {
         private int value;
 
         private GeneralTypeScoreDto() {}
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
     }
 }
