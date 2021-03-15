@@ -9,7 +9,7 @@ import {
 
 import styles from '../css/SaveUserConfig.module.css'
 
-import { ReactComponent as Delete } from '../assets/delete.svg'
+import { ReactComponent as DeleteIcon } from '../assets/delete.svg'
 
 const SavedConfigs = () => {
   const { userConfigs, dispatch } = useContext(UserConfigContext)
@@ -34,7 +34,7 @@ const SavedConfigs = () => {
             className={styles.deleteButton}
             onClick={() => deleteConfig(config.id)}
           >
-            <Delete />
+            <DeleteIcon />
           </button>
         </div>
       ))}

@@ -12,7 +12,6 @@ import TextField from '@material-ui/core/TextField'
 import SideNavSubDropDown from './SideNavSubDropDown'
 import UserConfigPopup from './UserConfigPopup'
 import SavedConfigs from './SavedConfigs'
-import SideNavDropDown from './SideNavDropDown'
 
 import styles from '../css/UserConfig.module.css'
 
@@ -21,6 +20,7 @@ import { ReactComponent as SaveSmall } from '../assets/save-small.svg'
 import { ReactComponent as Edit } from '../assets/edit.svg'
 import { ReactComponent as toolIcon } from '../assets/tool.svg'
 import { ReactComponent as settingsIcon } from '../assets/settings.svg'
+import SideNavItem from './SideNavItem'
 
 const UserConfig = () => {
   const dummySavedConfigs: IUserConfig[] = [
@@ -196,168 +196,166 @@ const UserConfig = () => {
 
   return (
     <>
-      <SideNavDropDown label="Settings" Icon={settingsIcon}>
-        <>
-          <SideNavSubDropDown startOpened={true} label="Date Range">
-            <>
-              <div className={styles.dateContainer}>
-                <TextField
-                  type="date"
-                  name="startDate"
-                  label="Start date"
-                  variant="outlined"
-                  size="small"
-                  margin="dense"
-                  InputProps={{
-                    inputProps: { min: '2005-01-01' },
-                    style: { height: '32px' },
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  className={styles.dateInput}
-                  onChange={startDateChange}
-                  value={
-                    userConfigs.selected.startDate
-                      ? formatDate(userConfigs.selected.startDate)
-                      : ''
-                  }
-                />
-              </div>
-              <div className={styles.dateContainer}>
-                <TextField
-                  type="date"
-                  name="endDate"
-                  label="End Date"
-                  variant="outlined"
-                  size="small"
-                  InputProps={{
-                    inputProps: { min: '2005-01-01' },
-                    style: { height: '32px' },
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  FormHelperTextProps={{ style: { margin: '2px 4px 0px 4px' } }}
-                  className={styles.dateInput}
-                  onChange={endDateChange}
-                  value={
-                    userConfigs.selected.endDate
-                      ? formatDate(userConfigs.selected.endDate)
-                      : ''
-                  }
-                  error={dateError}
-                  helperText={
-                    dateError
-                      ? 'Must come after start date'
-                      : 'To filter, fill in both fields'
-                  }
-                />
-              </div>
-            </>
-          </SideNavSubDropDown>
-          <SideNavSubDropDown startOpened={true} label="Member scores by">
-            <>
-              <div className={styles.inputField}>
-                <input
-                  type="radio"
-                  value="Merge Requests"
-                  checked={userConfigs.selected.scoreBy === 'MRS'}
-                  onChange={memberScoreByChange}
-                />
-                <label className={styles.label}>Merge Requests</label>
-              </div>
-              <div className={styles.inputField}>
-                <input
-                  type="radio"
-                  value="Commits"
-                  checked={userConfigs.selected.scoreBy === 'COMMITS'}
-                  onChange={memberScoreByChange}
-                />
-                <label className={styles.label}>Commits</label>
-              </div>
-            </>
-          </SideNavSubDropDown>
-          <SideNavSubDropDown startOpened={true} label="Graph Settings">
-            <>
-              <p className={styles.subHeader}>Graph Y-Axis</p>
-              <div className={styles.inputField}>
-                <input
-                  type="radio"
-                  value="NUMBER"
-                  checked={userConfigs.selected.yAxis === 'NUMBER'}
-                  onChange={graphYAxisChange}
-                />
-                <label className={styles.label}>Number</label>
-              </div>
-              <div className={styles.inputField}>
-                <input
-                  type="radio"
-                  value="SCORE"
-                  checked={userConfigs.selected.yAxis === 'SCORE'}
-                  onChange={graphYAxisChange}
-                />
-                <label className={styles.label}>Score</label>
-              </div>
-              <p className={styles.subHeader}>Project Graph</p>
-              <div className={styles.inputField}>
-                <input
-                  type="radio"
-                  value="Entire Project"
-                  checked={userConfigs.selected.graphMode === 'PROJECT'}
-                  onChange={projectGraphByChange}
-                />
-                <label className={styles.label}>Entire Project</label>
-              </div>
-              <div className={styles.inputField}>
-                <input
-                  type="radio"
-                  value="Split By Member"
-                  checked={userConfigs.selected.graphMode === 'MEMBER'}
-                  onChange={projectGraphByChange}
-                />
-                <label className={styles.label}>Split By Member</label>
-              </div>
-            </>
-          </SideNavSubDropDown>
-          <button className={styles.header} onClick={togglePopup}>
-            <Edit className={styles.editIcon} /> Edit Scoring
-          </button>
-          {popUpOpen && (
-            <UserConfigPopup
-              generalScores={generalScores}
-              setGeneralScores={setGeneralScores}
-              fileScores={fileScores}
-              setFileScores={setFileScores}
-              togglePopup={togglePopup}
-            />
-          )}
-          <div className={styles.saveContainer}>
-            <div className={styles.saveLabel}>
-              <SaveLarge className={styles.saveIcon} /> Save Configuration
+      <SideNavItem label="Settings" Icon={settingsIcon}>
+        <SideNavSubDropDown startOpened={true} label="Date Range">
+          <>
+            <div className={styles.dateContainer}>
+              <TextField
+                type="date"
+                name="startDate"
+                label="Start date"
+                variant="outlined"
+                size="small"
+                margin="dense"
+                InputProps={{
+                  inputProps: { min: '2005-01-01' },
+                  style: { height: '32px' },
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                className={styles.dateInput}
+                onChange={startDateChange}
+                value={
+                  userConfigs.selected.startDate
+                    ? formatDate(userConfigs.selected.startDate)
+                    : ''
+                }
+              />
             </div>
-            <input
-              value={name}
-              onChange={nameChange}
-              className={styles.nameInput}
-              placeholder="Name config..."
-            />
-            {!isUniqueName && (
-              <div className={styles.error}>Name already exists</div>
-            )}
-            <button
-              className={styles.saveButton}
-              onClick={save}
-              disabled={!isUniqueName || !name}
-            >
-              <SaveSmall className={styles.saveIcon} /> Save Config
-            </button>
+            <div className={styles.dateContainer}>
+              <TextField
+                type="date"
+                name="endDate"
+                label="End Date"
+                variant="outlined"
+                size="small"
+                InputProps={{
+                  inputProps: { min: '2005-01-01' },
+                  style: { height: '32px' },
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                FormHelperTextProps={{ style: { margin: '2px 4px 0px 4px' } }}
+                className={styles.dateInput}
+                onChange={endDateChange}
+                value={
+                  userConfigs.selected.endDate
+                    ? formatDate(userConfigs.selected.endDate)
+                    : ''
+                }
+                error={dateError}
+                helperText={
+                  dateError
+                    ? 'Must come after start date'
+                    : 'To filter, fill in both fields'
+                }
+              />
+            </div>
+          </>
+        </SideNavSubDropDown>
+        <SideNavSubDropDown startOpened={true} label="Member scores by">
+          <>
+            <div className={styles.inputField}>
+              <input
+                type="radio"
+                value="Merge Requests"
+                checked={userConfigs.selected.scoreBy === 'MRS'}
+                onChange={memberScoreByChange}
+              />
+              <label className={styles.label}>Merge Requests</label>
+            </div>
+            <div className={styles.inputField}>
+              <input
+                type="radio"
+                value="Commits"
+                checked={userConfigs.selected.scoreBy === 'COMMITS'}
+                onChange={memberScoreByChange}
+              />
+              <label className={styles.label}>Commits</label>
+            </div>
+          </>
+        </SideNavSubDropDown>
+        <SideNavSubDropDown startOpened={true} label="Graph Settings">
+          <>
+            <p className={styles.subHeader}>Graph Y-Axis</p>
+            <div className={styles.inputField}>
+              <input
+                type="radio"
+                value="NUMBER"
+                checked={userConfigs.selected.yAxis === 'NUMBER'}
+                onChange={graphYAxisChange}
+              />
+              <label className={styles.label}>Number</label>
+            </div>
+            <div className={styles.inputField}>
+              <input
+                type="radio"
+                value="SCORE"
+                checked={userConfigs.selected.yAxis === 'SCORE'}
+                onChange={graphYAxisChange}
+              />
+              <label className={styles.label}>Score</label>
+            </div>
+            <p className={styles.subHeader}>Project Graph</p>
+            <div className={styles.inputField}>
+              <input
+                type="radio"
+                value="Entire Project"
+                checked={userConfigs.selected.graphMode === 'PROJECT'}
+                onChange={projectGraphByChange}
+              />
+              <label className={styles.label}>Entire Project</label>
+            </div>
+            <div className={styles.inputField}>
+              <input
+                type="radio"
+                value="Split By Member"
+                checked={userConfigs.selected.graphMode === 'MEMBER'}
+                onChange={projectGraphByChange}
+              />
+              <label className={styles.label}>Split By Member</label>
+            </div>
+          </>
+        </SideNavSubDropDown>
+        <button className={styles.header} onClick={togglePopup}>
+          <Edit className={styles.editIcon} /> Edit Scoring
+        </button>
+        {popUpOpen && (
+          <UserConfigPopup
+            generalScores={generalScores}
+            setGeneralScores={setGeneralScores}
+            fileScores={fileScores}
+            setFileScores={setFileScores}
+            togglePopup={togglePopup}
+          />
+        )}
+        <div className={styles.saveContainer}>
+          <div className={styles.saveLabel}>
+            <SaveLarge className={styles.saveIcon} /> Save Configuration
           </div>
-        </>
-      </SideNavDropDown>
-      <SideNavDropDown Icon={toolIcon} label="Saved Configs">
+          <input
+            value={name}
+            onChange={nameChange}
+            className={styles.nameInput}
+            placeholder="Name config..."
+          />
+          {!isUniqueName && (
+            <div className={styles.error}>Name already exists</div>
+          )}
+          <button
+            className={styles.saveButton}
+            onClick={save}
+            disabled={!isUniqueName || !name}
+          >
+            <SaveSmall className={styles.saveIcon} /> Save Config
+          </button>
+        </div>
+      </SideNavItem>
+      <SideNavItem Icon={toolIcon} label="Saved Configs">
         <SavedConfigs />
-      </SideNavDropDown>
+      </SideNavItem>
     </>
   )
 }

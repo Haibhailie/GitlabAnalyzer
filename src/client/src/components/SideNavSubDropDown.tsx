@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, ReactNode } from 'react'
 
 import styles from '../css/SideNavSubDropDown.module.css'
 
 import { ReactComponent as Dropdown } from '../assets/dropdown-small.svg'
 
 export interface ISideNavSubDropDown {
-  children: unknown
+  children: ReactNode
   startOpened: boolean
   label: string
 }
@@ -26,7 +26,7 @@ const SideNavSubDropDown = ({
         {label}
         <Dropdown className={isOpen ? styles.openIcon : styles.closedIcon} />
       </button>
-      {isOpen && <div className={styles.subContainer}> {children}</div>}
+      {isOpen && <div className={styles.subContainer}>{children}</div>}
     </div>
   )
 }
