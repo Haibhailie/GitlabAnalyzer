@@ -1,6 +1,43 @@
-.table {
+.container {
   width: 100%;
+}
+
+.title {
+  width: calc(100% - 40px);
+  font: var(--font-header-small-poppins);
+  color: #ffffff;
+  background-color: var(--color-primary);
+  padding: 11px 20px;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+}
+
+.collapseBtn {
+  width: 24px;
+  height: 24px;
+}
+
+.collapseImg {
+  width: 12px;
+  height: 14px;
+  stroke: #ffffff;
+  transform: rotate(90deg);
+  transition: transform ease-in-out 300ms;
+}
+
+.collapsed .collapseImg {
+  transform: rotate(0deg);
+}
+
+.table {
   display: grid;
+  overflow: hidden;
+  transition: max-height ease-in-out 300ms;
+}
+
+.row {
+  display: contents;
 }
 
 .sortBtn {

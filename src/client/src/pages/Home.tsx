@@ -73,6 +73,7 @@ const Home = () => {
             })}
             headers={['Project Name', 'Role', 'Last Updated', 'Analyzed?', '']}
             classes={{
+              container: styles.tableContainer,
               table: styles.table,
               header: styles.theader,
               data: styles.data,

@@ -10,25 +10,11 @@ import {
   Bar,
   ResponsiveContainer,
 } from 'recharts'
+import { ICommitData, IMergeData } from '../types'
 
 import { onError } from '../utils/suspenseDefaults'
 import { useContext, useEffect, useState } from 'react'
 import { UserConfigContext } from '../context/UserConfigContext'
-
-export interface ICommitData {
-  sha: string
-  author: string
-  time: number
-  score: number
-}
-
-export interface IMergeData {
-  id: string
-  author: string
-  time: number
-  title: string
-  score: number
-}
 
 export interface IActivityData {
   commits: ICommitData[]

@@ -25,6 +25,7 @@
     "@types/material-ui": "^0.21.8",
     "date-fns": "^2.19.0",
     "lodash": "^4.17.20",
+    "parse-diff": "^0.8.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
