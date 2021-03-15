@@ -1,0 +1,32 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 9999;
+  top: 0;
+  left: 0;
+}
+
+.modal {
+  position: relative;
+  min-width: 100px;
+  min-height: 100px;
+  background-color: #ffffff;
+  border-radius: 2px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.close {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  padding: 5px;
+  width: 24px;
+  height: 24px;
+}
