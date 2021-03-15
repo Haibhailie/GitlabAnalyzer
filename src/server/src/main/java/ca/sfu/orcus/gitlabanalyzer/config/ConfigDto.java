@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.config;
 
-import com.google.gson.annotations.SerializedName;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,8 +14,7 @@ final class ConfigDto {
     private String graphMode;
     private List<GeneralTypeScoreDto> generalScores;
     private List<FileTypeScoreDto> fileScores;
-    @SerializedName(value = "yAxis")
-    private String verticalAxis;
+    private String yAxis;
 
     private ConfigDto() {}
 
