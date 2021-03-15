@@ -7,7 +7,6 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +21,12 @@ public class ConfigRepository {
     public ConfigRepository() {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
-        this.collection = database.getCollection(VariableDecoderUtil.decode("CONFIGS_COLLECTION"));
+        this.collection = database.getCollection("GA-Configs");
     }
 
     public String addNewConfigByJwt(String jwt, ConfigDto configDto) {
         String configId = new ObjectId().toString();
+        configDto.setId(configId);
         collection.insertOne(generateNewConfigDoc(jwt, configId, configDto));
         return configId;
     }
@@ -44,30 +44,29 @@ public class ConfigRepository {
         return (config != null);
     }
 
-    public Optional<ConfigDto> getConfigById(String configId) {
+    public Optional<String> getConfigJsonById(String configId) {
         Document configDoc = collection.find(eq("_id", configId)).first();
 
         if (configDoc == null) {
             return Optional.empty();
         }
 
-        ConfigDto configDto = getConfigDtoFromConfigDocument(configDoc);
-        return Optional.of(configDto);
+        String configJson = getConfigJsonFromConfigDocument(configDoc);
+        return Optional.of(configJson);
     }
 
-    public List<ConfigDto> getConfigsByJwt(String jwt) {
-        List<ConfigDto> configDtos = new ArrayList<>();
+    public List<String> getConfigJsonsByJwt(String jwt) {
+        List<String> configJsons = new ArrayList<>();
         FindIterable<Document> configDocs = collection.find(eq("jwt", jwt));
 
         for (Document configDoc : configDocs) {
-            configDtos.add(getConfigDtoFromConfigDocument(configDoc));
+            configJsons.add(getConfigJsonFromConfigDocument(configDoc));
         }
 
-        return configDtos;
+        return configJsons;
     }
 
-    private ConfigDto getConfigDtoFromConfigDocument(Document configDoc) {
-        String configJson = configDoc.getString("config");
-        return gson.fromJson(configJson, ConfigDto.class);
+    private String getConfigJsonFromConfigDocument(Document configDoc) {
+        return configDoc.getString("config");
     }
 }

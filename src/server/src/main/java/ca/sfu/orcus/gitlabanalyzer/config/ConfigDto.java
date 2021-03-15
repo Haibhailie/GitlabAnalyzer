@@ -3,8 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 import java.util.List;
 
 final class ConfigDto {
-    private int id;
-
+    private String id;
     private String name;
     private long startDate;
     private long endDate;
@@ -14,7 +13,8 @@ final class ConfigDto {
     private List<GeneralTypeScoreDto> generalScores;
     private List<FileTypeScoreDto> fileScores;
 
-    public ConfigDto(String name,
+    public ConfigDto(String id,
+                     String name,
                      long startDate,
                      long endDate,
                      String scoreBy,
@@ -22,6 +22,7 @@ final class ConfigDto {
                      String graphMode,
                      List<GeneralTypeScoreDto> generalScores,
                      List<FileTypeScoreDto> fileScores) {
+        setId(id);
         setName(name);
         setStartDate(startDate);
         setEndDate(endDate);
@@ -30,6 +31,10 @@ final class ConfigDto {
         setGraphMode(graphMode);
         setGeneralScores(generalScores);
         setFileScores(fileScores);
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setName(String name) {
@@ -62,5 +67,41 @@ final class ConfigDto {
 
     public void setFileScores(List<FileTypeScoreDto> fileScores) {
         this.fileScores = fileScores;
+    }
+
+    private static final class FileTypeScoreDto {
+        private String fileExtension;
+        private int scoreMultiplier;
+
+        FileTypeScoreDto(String fileExtension, int scoreMultiplier) {
+            setFileExtension(fileExtension);
+            setScoreMultiplier(scoreMultiplier);
+        }
+
+        public void setFileExtension(String fileExtension) {
+            this.fileExtension = fileExtension;
+        }
+
+        public void setScoreMultiplier(int scoreMultiplier) {
+            this.scoreMultiplier = scoreMultiplier;
+        }
+    }
+
+    private static final class GeneralTypeScoreDto {
+        private String type;
+        private int value;
+
+        public GeneralTypeScoreDto(String type, int value) {
+            setType(type);
+            setValue(value);
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
     }
 }
