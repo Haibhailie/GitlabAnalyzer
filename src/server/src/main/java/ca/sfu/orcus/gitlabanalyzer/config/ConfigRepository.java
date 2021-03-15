@@ -54,18 +54,23 @@ public class ConfigRepository {
         return Optional.of(configJson);
     }
 
-    public List<String> getConfigJsonsByJwt(String jwt) {
-        List<String> configJsons = new ArrayList<>();
+    public List<ConfigDto> getAllConfigDtosByJwt(String jwt) {
+        List<ConfigDto> configDtos = new ArrayList<>();
         FindIterable<Document> configDocs = collection.find(eq("jwt", jwt));
 
         for (Document configDoc : configDocs) {
-            configJsons.add(getConfigJsonFromConfigDocument(configDoc));
+            configDtos.add(getConfigDtoFromConfigDocument(configDoc));
         }
 
-        return configJsons;
+        return configDtos;
     }
 
     private String getConfigJsonFromConfigDocument(Document configDoc) {
         return configDoc.getString("config");
+    }
+
+    private ConfigDto getConfigDtoFromConfigDocument(Document configDoc) {
+        String configJson = getConfigJsonFromConfigDocument(configDoc);
+        return gson.fromJson(configJson, ConfigDto.class);
     }
 }

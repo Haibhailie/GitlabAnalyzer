@@ -30,9 +30,9 @@ public class ConfigService {
     }
 
     String getAllConfigJsonsByJwt(String jwt) {
-        List<String> configJsons = configRepository.getConfigJsonsByJwt(jwt);
+        List<ConfigDto> configDtos = configRepository.getAllConfigDtosByJwt(jwt);
         Gson gson = new Gson();
-        return gson.toJson(configJsons);
+        return gson.toJson(configDtos);
     }
 
 }
