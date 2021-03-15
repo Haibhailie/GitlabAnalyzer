@@ -23,8 +23,8 @@ public class ConfigController {
 
     @PostMapping(value = "/api/config", produces = MediaType.APPLICATION_JSON_VALUE)
     public void addConfig(@CookieValue(value = "sessionId") String jwt,
-                              @RequestBody ConfigDto configDto,
-                              HttpServletResponse response) throws IOException {
+                          @RequestBody ConfigDto configDto,
+                          HttpServletResponse response) throws IOException {
         if (authService.jwtIsValid(jwt)) {
             String configId = configService.addNewConfigByJwt(jwt, configDto);
             response.setStatus(200);
