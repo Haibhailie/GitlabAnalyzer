@@ -12,6 +12,7 @@ public class DiffScoreCalculator {
     private int numBlankAdditions = 0;
     private int numSyntaxChanges = 0;
     private int numSpacingChanges = 0;
+    private final double lineLengthFactor = 0.5;
     private List<String> generatedDiffList = new ArrayList<>();
 
     public DiffScoreDto parseDiffList(List<String> passedDiffString) {
@@ -55,7 +56,7 @@ public class DiffScoreCalculator {
                 continue;
             } else {
                 // Checking the level of similarity between the two lines (if difference > half the original line, then it's considered a new addition, else a syntax change)
-                if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) / 2) {
+                if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) * lineLengthFactor) {
                     numSyntaxChanges++;
                     generatedDiffList.set(presentLine, "---");
                     return true;
