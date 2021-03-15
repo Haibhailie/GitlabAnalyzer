@@ -29,7 +29,7 @@ public class ConfigService {
         return configJson.orElse("");
     }
 
-    String getConfigJsonsByJwt(String jwt) {
+    String getAllConfigJsonsByJwt(String jwt) {
         List<String> configJsons = configRepository.getConfigJsonsByJwt(jwt);
         Gson gson = new Gson();
         return gson.toJson(configJsons);

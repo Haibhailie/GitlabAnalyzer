@@ -64,7 +64,7 @@ public class ConfigController {
                                      HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
             response.setStatus(200);
-            return configService.getConfigJsonsByJwt(jwt);
+            return configService.getAllConfigJsonsByJwt(jwt);
         } else {
             response.setStatus(401);
             return "";
