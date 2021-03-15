@@ -9,6 +9,7 @@ import ProjectProvider from './context/ProjectContext'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Project from './pages/Project'
+import Member from './pages/Member'
 import PageWrapper from './components/PageWrapper'
 
 const App = () => {
@@ -22,6 +23,11 @@ const App = () => {
                 <Route path="/home">
                   <PageWrapper>
                     <Home />
+                  </PageWrapper>
+                </Route>
+                <Route path="/project/:id/member/:memberId">
+                  <PageWrapper>
+                    <Member />
                   </PageWrapper>
                 </Route>
                 <Route path="/project/:id">

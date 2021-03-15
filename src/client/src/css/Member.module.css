@@ -1,0 +1,37 @@
+.container {
+  min-height: calc(100% - 100px);
+  overflow-x: hidden;
+  width: 100%;
+  padding-bottom: 100px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.header {
+  font: var(--font-header-large-poppins);
+  margin: 50px 0px 0px;
+}
+
+.subheader {
+  font: var(--font-header-small-poppins);
+  color: var(--color-gray);
+  margin: 10px 0px;
+}
+
+.summaryContainer {
+  display: flex;
+  width: 70%;
+  height: auto;
+  margin: auto;
+}
+
+.mergeRequestsContainer {
+  display: flex;
+  width: 85%;
+  height: 1000px;
+  margin: auto;
+  padding: 0px 20px;
+}

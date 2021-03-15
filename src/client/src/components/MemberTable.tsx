@@ -32,7 +32,7 @@ const MemberTable = ({ projectId, projectName }: IActivityGraphProps) => {
 
   return (
     <Suspense
-      fallback="Loading Commit Data..."
+      fallback="Loading Members..."
       error={error?.message ?? 'Unknown Error'}
     >
       <Table

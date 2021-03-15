@@ -8,7 +8,7 @@ import styles from '../css/StatSummary.module.css'
 import clipboard from '../assets/clipboard.svg'
 
 export interface IStatSummaryProps {
-  statData: IStatProps[]
+  statData?: IStatProps[]
 }
 
 const StatSummary = ({ statData }: IStatSummaryProps) => {
@@ -17,14 +17,16 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
   const timeoutRef = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
-    setCsvString(
-      [
-        ['Stat', 'Value'],
-        ...statData.map(stat => [stat.name, stat.rawValue ?? stat.value]),
-      ]
-        .map(r => r.join('\t'))
-        .join('\n')
-    )
+    if (statData !== undefined) {
+      setCsvString(
+        [
+          ['Stat', 'Value'],
+          ...statData.map(stat => [stat.name, stat.rawValue ?? stat.value]),
+        ]
+          .map(r => r.join('\t'))
+          .join('\n')
+      )
+    }
   }, [statData])
 
   const copyToClipboard = () => {

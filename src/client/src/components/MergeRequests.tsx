@@ -21,7 +21,7 @@ import styles from '../css/MergeRequests.module.css'
 
 export interface IMergeRequestsProps {
   projectId: string
-  memberId: string
+  memberId?: string
 }
 
 type TTableData = {
