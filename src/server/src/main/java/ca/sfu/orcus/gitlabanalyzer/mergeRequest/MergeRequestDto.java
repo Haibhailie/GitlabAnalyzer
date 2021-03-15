@@ -59,6 +59,8 @@ public class MergeRequestDto {
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectId, mergeRequestId));
         setNotesNameAndNotes(gitLabApi, projectId, mergeRequestId);
         setTime(presentMergeRequest.getMergedAt().getTime());
+        MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
+        setScore(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
     }
 
     public void setMergeRequestId(int mergeRequestId) {
@@ -145,6 +147,10 @@ public class MergeRequestDto {
         this.time = time;
     }
 
+    public void setScore(double score) {
+        this.score = score;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -173,7 +179,7 @@ public class MergeRequestDto {
                 && this.notes.equals(m.notes)
                 && this.committers.equals(m.committers)
                 && this.participants.equals(m.participants)
-                && this.time == (m.time));
-
+                && this.time == (m.time)
+                && this.score == (m.score));
     }
 }

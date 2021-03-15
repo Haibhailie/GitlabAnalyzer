@@ -1,0 +1,7 @@
+get:
+  description: 'Logout by deleting an existing cookie'
+  responses:
+    '200':
+      description: deleted an existing cookie successfully.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
