@@ -7,11 +7,13 @@ import styles from '../css/SideNavSubItem.module.css'
 import { ReactComponent as DropdownIcon } from '../assets/dropdown-small.svg'
 
 interface ISideNavLinkProps {
+  Icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
   label: string
   destPath: string
 }
 
 interface ISideNavButtonProps {
+  Icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
   label: string
   onClick: (event: unknown) => void
 }
@@ -27,18 +29,20 @@ export type ISideNavSubItemProps =
   | ISideNavButtonProps
   | ISideNavDropdownProps
 
-const SideNavLink = ({ label, destPath }: ISideNavLinkProps) => {
+const SideNavLink = ({ label, destPath, Icon }: ISideNavLinkProps) => {
   return (
     <Link to={destPath} className={styles.item}>
+      {Icon && <Icon className={styles.icon} />}
       <p className={styles.label}>{label}</p>
     </Link>
   )
 }
 
-const SideNavButton = ({ label, onClick }: ISideNavButtonProps) => {
+const SideNavButton = ({ label, onClick, Icon }: ISideNavButtonProps) => {
   return (
     <button onClick={onClick} className={styles.btn}>
       <span className={styles.item}>
+        {Icon && <Icon className={styles.icon} />}
         <p className={styles.label}>{label}</p>
       </span>
     </button>

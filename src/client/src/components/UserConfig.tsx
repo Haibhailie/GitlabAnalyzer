@@ -1,15 +1,10 @@
-import React, {
-  ChangeEvent,
-  InputHTMLAttributes,
-  useContext,
-  useState,
-} from 'react'
+import { ChangeEvent, InputHTMLAttributes, useContext, useState } from 'react'
 import {
-  IUserConfig,
-  SET_CONFIG,
+  SET_END_DATE,
   SET_GRAPH_BY,
-  TGraphMode,
-  TYAxis,
+  SET_GRAPH_Y_AXIS,
+  SET_SCORE_BY,
+  SET_START_DATE,
   UserConfigContext,
 } from '../context/UserConfigContext'
 
@@ -70,33 +65,6 @@ const UserConfig = () => {
 
   const [name, setName] = useState(userConfigs.selected.name)
 
-  const memberScoreByChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: Add update user config post
-    const newValue = event.target.value as IUserConfig['scoreBy']
-    dispatch({
-      type: 'SET_SCORE_BY',
-      scoreBy: newValue,
-    })
-  }
-
-  const graphYAxisChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: Add update user config post
-    const newValue = event.target.value as TYAxis
-    dispatch({
-      type: 'SET_GRAPH_Y_AXIS',
-      yAxis: newValue,
-    })
-  }
-
-  const projectGraphByChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: Add update user config post
-    const newValue = event.target.value as TGraphMode
-    dispatch({
-      type: SET_GRAPH_BY,
-      graphMode: newValue,
-    })
-  }
-
   const nameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newName = event.target.value
     setName(newName)
@@ -122,12 +90,12 @@ const UserConfig = () => {
         <SideNavSubItem startOpened={true} label="Date Range">
           <DatePicker
             label="Start date"
-            onChange={d => d && dispatch({ type: 'SET_START_DATE', date: d })}
+            onChange={d => d && dispatch({ type: SET_START_DATE, date: d })}
             value={userConfigs.selected.startDate ?? null}
           />
           <DatePicker
             label="End date"
-            onChange={date => date && dispatch({ type: 'SET_END_DATE', date })}
+            onChange={date => date && dispatch({ type: SET_END_DATE, date })}
             value={userConfigs.selected.endDate ?? null}
           />
         </SideNavSubItem>
@@ -136,14 +104,14 @@ const UserConfig = () => {
             label="Merge Requests"
             name="SCORE"
             checked={userConfigs.selected.scoreBy === 'MRS'}
-            onChange={() => dispatch({ type: 'SET_SCORE_BY', scoreBy: 'MRS' })}
+            onChange={() => dispatch({ type: SET_SCORE_BY, scoreBy: 'MRS' })}
           />
           <RadioInput
             label="Commits"
             name="SCORE"
             checked={userConfigs.selected.scoreBy === 'COMMITS'}
             onChange={() =>
-              dispatch({ type: 'SET_SCORE_BY', scoreBy: 'COMMITS' })
+              dispatch({ type: SET_SCORE_BY, scoreBy: 'COMMITS' })
             }
           />
         </SideNavSubItem>
@@ -154,7 +122,7 @@ const UserConfig = () => {
             name="yAxis"
             checked={userConfigs.selected.yAxis === 'NUMBER'}
             onChange={() =>
-              dispatch({ type: 'SET_GRAPH_Y_AXIS', yAxis: 'NUMBER' })
+              dispatch({ type: SET_GRAPH_Y_AXIS, yAxis: 'NUMBER' })
             }
           />
           <RadioInput
@@ -162,7 +130,7 @@ const UserConfig = () => {
             name="yAxis"
             checked={userConfigs.selected.yAxis === 'SCORE'}
             onChange={() =>
-              dispatch({ type: 'SET_GRAPH_Y_AXIS', yAxis: 'SCORE' })
+              dispatch({ type: SET_GRAPH_Y_AXIS, yAxis: 'SCORE' })
             }
           />
           <p className={styles.subHeader}>Project Graph</p>
@@ -171,7 +139,7 @@ const UserConfig = () => {
             name="Graph"
             checked={userConfigs.selected.graphMode === 'PROJECT'}
             onChange={() =>
-              dispatch({ type: 'SET_GRAPH_BY', graphMode: 'PROJECT' })
+              dispatch({ type: SET_GRAPH_BY, graphMode: 'PROJECT' })
             }
           />
           <RadioInput
@@ -179,13 +147,15 @@ const UserConfig = () => {
             name="Graph"
             checked={userConfigs.selected.graphMode === 'MEMBER'}
             onChange={() =>
-              dispatch({ type: 'SET_GRAPH_BY', graphMode: 'MEMBER' })
+              dispatch({ type: SET_GRAPH_BY, graphMode: 'MEMBER' })
             }
           />
         </SideNavSubItem>
-        <button className={styles.header} onClick={togglePopup}>
-          <Edit className={styles.editIcon} /> Edit Scoring
-        </button>
+        <SideNavSubItem
+          onClick={togglePopup}
+          label="Edit Scoring"
+          Icon={Edit}
+        />
         {popUpOpen && (
           <UserConfigPopup
             generalScores={generalScores}
