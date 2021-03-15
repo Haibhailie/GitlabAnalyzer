@@ -25,20 +25,16 @@ public class MergeRequestScoreCalculator {
         List<String> diffsList = Arrays.asList(diffString);
         DiffScoreDto mergeRequestScoreDto = calculateScore(diffsList);
 
-        double totalScore = (mergeRequestScoreDto.getNumLineAdditions() * addLOCFactor)
+        return (mergeRequestScoreDto.getNumLineAdditions() * addLOCFactor)
                 + (mergeRequestScoreDto.getNumLineDeletions() * deleteLOCFactor)
                 + (mergeRequestScoreDto.getNumBlankAdditions() * blankLOCFactor)
                 + (mergeRequestScoreDto.getNumSyntaxChanges() * syntaxChangeFactor)
                 + (mergeRequestScoreDto.getNumSpacingChanges() * spacingChangeFactor);
-
-        System.out.println(totalScore);
-        return totalScore;
     }
 
     private DiffScoreDto calculateScore(List<String> diffList) {
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
-        DiffScoreDto mergeRequestScoreDto = diffScoreCalculator.parseDiffList(diffList);
-        return mergeRequestScoreDto;
+        return diffScoreCalculator.parseDiffList(diffList);
     }
 
 }

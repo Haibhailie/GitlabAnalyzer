@@ -7,13 +7,13 @@ import java.util.List;
 
 public class DiffScoreCalculator {
 
-    int numLineAdditions = 0;
-    int numLineDeletions = 0;
-    int numBlankAdditions = 0;
-    int numSyntaxChanges = 0;
-    int numSpacingChanges = 0;
-    final double lineLengthFactor = 0.5;
-    List<String> generatedDiffList = new ArrayList<>();
+    private int numLineAdditions = 0;
+    private int numLineDeletions = 0;
+    private int numBlankAdditions = 0;
+    private int numSyntaxChanges = 0;
+    private int numSpacingChanges = 0;
+    private final double lineLengthFactor = 0.5;
+    private List<String> generatedDiffList = new ArrayList<>();
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
         generatedDiffList = diffStrings;
@@ -25,7 +25,6 @@ public class DiffScoreCalculator {
             } else if (line.startsWith("+++")) {
                 //Log line skipped
             } else if (line.startsWith("+")) {
-
                 if (line.substring(1).length() > 0) {
                     numLineAdditions++;
                 } else {
