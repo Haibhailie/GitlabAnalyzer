@@ -21,6 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -90,6 +92,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     public void getAllMergeRequestWithoutMemberIDTest() throws GitLabApiException {
         initialMergeRequestTestSetup();
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
+        when(mergeRequestApi.getMergeRequestChanges(anyInt(), anyInt())).thenReturn(mergeRequests.get(0));
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
         List<MergeRequestDto> expectedMergeRequestDtoList = createTestMergeRequestDto(mergeRequests, gitLabApi);
         assertEquals(expectedMergeRequestDtoList, mergeRequestDtoList);
@@ -106,6 +109,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     public void getAllMergeRequestWithMemberIDTest() throws GitLabApiException {
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
+        when(mergeRequestApi.getMergeRequestChanges(anyInt(), anyInt())).thenReturn(mergeRequests.get(0));
         when(gitLabApi.getNotesApi()).thenReturn(notesApi);
         when(notesApi.getMergeRequestNotes(projectId, mergeRequestIdA)).thenReturn(notesList);
         List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId);
