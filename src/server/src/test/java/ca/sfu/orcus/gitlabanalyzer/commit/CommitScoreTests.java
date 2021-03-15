@@ -12,8 +12,6 @@ public class CommitScoreTests {
     // Class to be tested
     private CommitScoreCalculator commitScore = new CommitScoreCalculator();
 
-    // Testing CommitScore
-
     @Test
     public void getScore() {
         List<Diff> diffList = CommitMock.createTestDiffList();
