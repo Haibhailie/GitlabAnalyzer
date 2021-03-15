@@ -13,24 +13,29 @@ import {
   TUserConfigReducer,
 } from './types'
 
+const dateZero = new Date(0)
 const reducer: TUserConfigReducer = async (state, action) => {
   switch (action.type) {
     case SET_START_DATE:
-      return {
-        ...state,
-        selected: {
-          ...state.selected,
-          startdate: action.date,
-        },
-      }
+      return action.date < (state.selected.endDate ?? new Date())
+        ? {
+            ...state,
+            selected: {
+              ...state.selected,
+              startDate: action.date,
+            },
+          }
+        : state
     case SET_END_DATE:
-      return {
-        ...state,
-        selected: {
-          ...state.selected,
-          endDate: action.date,
-        },
-      }
+      return action.date > (state.selected.startDate ?? dateZero)
+        ? {
+            ...state,
+            selected: {
+              ...state.selected,
+              endDate: action.date,
+            },
+          }
+        : state
     case SET_SCORE_BY:
       return {
         ...state,
