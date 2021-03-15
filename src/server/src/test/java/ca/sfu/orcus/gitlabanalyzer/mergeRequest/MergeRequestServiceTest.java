@@ -6,7 +6,7 @@ import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import ca.sfu.orcus.gitlabanalyzer.models.DiffMock;
 import ca.sfu.orcus.gitlabanalyzer.models.MergeRequestMock;
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffStringParser;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
@@ -22,7 +22,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

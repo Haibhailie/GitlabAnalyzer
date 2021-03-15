@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.utils;
+package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,10 +12,11 @@ public class DiffScoreCalculator {
     int numBlankAdditions = 0;
     int numSyntaxChanges = 0;
     int numSpacingChanges = 0;
+    final double lineLengthFactor = 0.5;
     List<String> generatedDiffList = new ArrayList<>();
 
-    public DiffScoreDto parseDiffList(List<String> passedDiffString) {
-        generatedDiffList = passedDiffString;
+    public DiffScoreDto parseDiffList(List<String> diffStrings) {
+        generatedDiffList = diffStrings;
         int lineNumber = -1;
         for (String line : generatedDiffList) {
             lineNumber++;
@@ -45,9 +46,8 @@ public class DiffScoreCalculator {
     }
 
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
-        int presentLine = -1;
+        int presentLine = 0;
         for (String line : generatedDiffList) {
-            presentLine++;
             if (presentLine < lineNumber) {
                 continue;
             }
@@ -55,12 +55,13 @@ public class DiffScoreCalculator {
                 continue;
             } else {
                 //Checking the level of similarity between the two lines (if difference > half the original line, then it's considered a new addition, else a syntax change)
-                if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) / 2) {
+                if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) * lineLengthFactor) {
                     numSyntaxChanges++;
                     generatedDiffList.set(presentLine, "---");
                     return true;
                 }
             }
+            presentLine++;
         }
         return false;
     }

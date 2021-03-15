@@ -1,16 +1,17 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffScoreCalculator;
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffScoreDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffStringParser;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreCalculator;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
 import org.gitlab4j.api.models.MergeRequest;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MergeRequestScore {
+public class MergeRequestScoreCalculator {
 
-    //Should be getting these from config
+    //TODO: Get these from config
+
     double addLOCFactor = 1;
     double deleteLOCFactor = 0.2;
     double syntaxChangeFactor = 0.2;
@@ -20,7 +21,8 @@ public class MergeRequestScore {
     public double getMergeRequestScore(MergeRequest mergeRequestChanges) {
 
         //regex to split lines by new line and store in generatedDiffList
-        List<String> diffsList = Arrays.asList(DiffStringParser.parseDiff(mergeRequestChanges.getChanges()).split("\\r?\\n"));
+        String[] diffString = DiffStringParser.parseDiff(mergeRequestChanges.getChanges()).split("\\r?\\n");
+        List<String> diffsList = Arrays.asList(diffString);
         DiffScoreDto mergeRequestScoreDto = calculateScore(diffsList);
 
         double totalScore = (mergeRequestScoreDto.getNumLineAdditions() * addLOCFactor)
