@@ -17,7 +17,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping(path = "api/projects")
+    @GetMapping(path = "/api/projects")
     public String getAllProjects(@CookieValue(value = "sessionId") String jwt,
                                  HttpServletResponse response) {
         List<ProjectDto> projects = projectService.getAllProjects(jwt);
@@ -26,7 +26,7 @@ public class ProjectController {
         return gson.toJson(projects);
     }
 
-    @GetMapping(path = "api/project/{projectId}")
+    @GetMapping(path = "/api/project/{projectId}")
     public String getProject(@CookieValue(value = "sessionId") String jwt,
                              @PathVariable("projectId") int projectId,
                              HttpServletResponse response) {

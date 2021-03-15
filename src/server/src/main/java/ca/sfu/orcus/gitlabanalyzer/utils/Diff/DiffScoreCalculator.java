@@ -21,9 +21,9 @@ public class DiffScoreCalculator {
         for (String line : generatedDiffList) {
             lineNumber++;
             if (line.startsWith("---")) {
-                // Log line skipped
+                //Log line skipped
             } else if (line.startsWith("+++")) {
-                // Log line skipped
+                //Log line skipped
             } else if (line.startsWith("+")) {
                 if (line.substring(1).length() > 0) {
                     numLineAdditions++;
@@ -74,7 +74,7 @@ public class DiffScoreCalculator {
             if (line.startsWith("-")) {
                 continue;
             } else {
-                // Checking whether all the differences between two lines are just blank spaces
+                //Checking whether all the differences between two lines are just blank spaces
                 if (StringUtils.difference(testingLine, line).isBlank()) {
                     numBlankAdditions++;
                     generatedDiffList.set(presentLine, "---");
