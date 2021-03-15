@@ -21,7 +21,7 @@ public class ConfigRepository {
     public ConfigRepository() {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
-        this.collection = database.getCollection("GA-Configs");
+        this.collection = database.getCollection("GA-Configs"); // TODO: Create an env var for this
     }
 
     public String addNewConfigByJwt(String jwt, ConfigDto configDto) {
