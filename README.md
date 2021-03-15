@@ -59,3 +59,9 @@ Dev environment setup guide and build directions can be found [here](Wikidocs/De
 - GitLab4J™ API (`4.15.7`) - https://github.com/gitlab4j/gitlab4j-api
 - Google GSON (`2.8.6`) - https://github.com/google/gson
 - Java JWT: JSON Web Token for Java and Android (`0.11.2`) - https://github.com/jwtk/jjwt
+- Apache Commons Lang (`3.11`) - https://commons.apache.org/proper/commons-lang/
+
+### Testing dependencies
+
+- Mockito (Core) (`3.8.0`) - (https://github.com/mockito/mockito)
+- Mockito (Inline) (`3.8.0`) - (https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#mockito-inline)
