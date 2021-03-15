@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -83,7 +84,16 @@ public class ConfigController {
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        out.print(configId);
+        Gson gson = new Gson();
+        out.print(gson.toJson(new ConfigIdDto(configId)));
         out.flush();
+    }
+
+    private static final class ConfigIdDto {
+        private String id;
+
+        public ConfigIdDto(String id) {
+            this.id = id;
+        }
     }
 }
