@@ -30,7 +30,7 @@ public class CommitScoreTests {
         List<Diff> diffList = CommitMock.createTestDiffList();
 
         double expectedScore = commitScore.getCommitScore(diffList);
-        double actualScore = 0.2;
+        double actualScore = 3.8;
 
         assertEquals(expectedScore, actualScore);
     }
