@@ -25,17 +25,12 @@ const computeStats = (
 }
 
 const computeCommitScore = (commitData: ICommitData[] = []): number => {
-  return commitData.reduce(
-    (accum, commit) =>
-      accum + Math.floor(Math.random() * 100 + commit.author.length),
-    0
-  )
+  return commitData.reduce((accum, commit) => accum + commit.score, 0)
 }
 
 const computeMergeScore = (mergeRequestData: IMergeData[] = []): number => {
   return mergeRequestData.reduce(
-    (accum, mergeRequest) =>
-      accum + Math.floor(Math.random() * 50 + mergeRequest.author.length),
+    (accum, mergeRequest) => accum + mergeRequest.score,
     0
   )
 }
@@ -43,7 +38,7 @@ const computeMergeScore = (mergeRequestData: IMergeData[] = []): number => {
 const computeLinesAdded = (commitData: ICommitData[] = []): number => {
   return commitData.reduce(
     (accum, commit) =>
-      accum + Math.floor(Math.random() * 90 + commit.author.length),
+      accum + Math.floor(Math.random() * 80 + commit.author.length),
     0
   )
 }
