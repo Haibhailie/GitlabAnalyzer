@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffStringParser;
+import ca.sfu.orcus.gitlabanalyzer.utils.diff.DiffStringParser;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -39,8 +39,7 @@ public class CommitDto {
 
         List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
         this.setDiffs((DiffStringParser.parseDiff(diffList)));
-        CommitScore scoreCalculator = new CommitScore();
-        this.score = scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId()));
+        this.setScore(CommitScoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
     }
 
     public void setTitle(String title) {
@@ -121,6 +120,7 @@ public class CommitDto {
                 && this.numAdditions == c.numAdditions
                 && this.numDeletions == c.numDeletions
                 && this.total == c.total
-                && this.diffs.equals(c.diffs));
+                && this.diffs.equals(c.diffs)
+                && this.score == c.score);
     }
 }

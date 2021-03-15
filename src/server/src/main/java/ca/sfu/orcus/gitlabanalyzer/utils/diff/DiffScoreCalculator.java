@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.utils;
+package ca.sfu.orcus.gitlabanalyzer.utils.diff;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -7,12 +7,12 @@ import java.util.List;
 
 public class DiffScoreCalculator {
 
-    int numLineAdditions = 0;
-    int numLineDeletions = 0;
-    int numBlankAdditions = 0;
-    int numSyntaxChanges = 0;
-    int numSpacingChanges = 0;
-    List<String> generatedDiffList = new ArrayList<>();
+    private int numLineAdditions = 0;
+    private int numLineDeletions = 0;
+    private int numBlankAdditions = 0;
+    private int numSyntaxChanges = 0;
+    private int numSpacingChanges = 0;
+    private List<String> generatedDiffList = new ArrayList<>();
 
     public DiffScoreDto parseDiffList(List<String> passedDiffString) {
         generatedDiffList = passedDiffString;
@@ -66,9 +66,8 @@ public class DiffScoreCalculator {
     }
 
     private boolean checkAddedBlankSpaces(int lineNumber, String testingLine) {
-        int presentLine = -1;
+        int presentLine = 0;
         for (String line : generatedDiffList) {
-            presentLine++;
             if (presentLine < lineNumber) {
                 continue;
             }
@@ -82,6 +81,7 @@ public class DiffScoreCalculator {
                     return true;
                 }
             }
+            presentLine++;
         }
         return false;
     }

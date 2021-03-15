@@ -19,28 +19,11 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CommitScoreTests {
-
-    // Class to be tested
-    @InjectMocks
-    private CommitScore commitScore;
-
-    private GitLabApi gitLabApi;
-
-    // Test objects
-    private static final int projectId = CommitMock.defaultId;
-
-    @BeforeEach
-    public void setup() {
-        gitLabApi = GitLabApiMock.getGitLabApiMock();
-    }
-
-    // Testing CommitScore
-
     @Test
     public void getScore() {
         List<Diff> diffList = CommitMock.createTestDiffList();
 
-        double expectedScore = commitScore.getCommitScore(diffList);
+        double expectedScore = CommitScoreCalculator.getCommitScore(diffList);
         double actualScore = 0.2;
 
         assertEquals(expectedScore, actualScore);

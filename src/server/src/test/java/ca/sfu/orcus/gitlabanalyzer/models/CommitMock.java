@@ -1,7 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffStringParser;
+import ca.sfu.orcus.gitlabanalyzer.utils.diff.DiffStringParser;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;

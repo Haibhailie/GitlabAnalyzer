@@ -6,7 +6,7 @@ import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import ca.sfu.orcus.gitlabanalyzer.models.DiffMock;
 import ca.sfu.orcus.gitlabanalyzer.models.MergeRequestMock;
-import ca.sfu.orcus.gitlabanalyzer.utils.DiffStringParser;
+import ca.sfu.orcus.gitlabanalyzer.utils.diff.DiffStringParser;
 import org.gitlab4j.api.*;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;

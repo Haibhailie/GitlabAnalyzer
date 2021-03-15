@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.utils;
+package ca.sfu.orcus.gitlabanalyzer.utils.diff;
 
 import org.gitlab4j.api.models.Diff;
 
