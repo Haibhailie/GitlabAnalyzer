@@ -22,8 +22,11 @@ public class AuthenticationService {
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
-    public String registerNewPat(AuthenticationUser newUser) throws BadRequestException, IllegalArgumentException {
+    public String signInWithPat(AuthenticationUser newUser) throws BadRequestException, IllegalArgumentException {
         String username = getUsername(newUser);
+        if (authRepository.containsPat(newUser.getPat())) {
+            return authRepository.getJwtForPat(newUser.getPat());
+        }
         newUser.setUsername(username);
         String jwt = jwtService.createJwt(newUser, JwtType.PAT);
         newUser.setJwt(jwt);
@@ -43,8 +46,11 @@ public class AuthenticationService {
         }
     }
 
-    public String registerNewUserPass(AuthenticationUser newUser) throws BadRequestException, IllegalArgumentException {
+    public String signInWithUserPass(AuthenticationUser newUser) throws BadRequestException, IllegalArgumentException {
         String authToken = getAuthToken(newUser.getUsername(), newUser.getPassword());
+        if (authRepository.containsAuthToken(authToken)) {
+            return authRepository.getJwtForAuthToken(authToken);
+        }
         newUser.setAuthToken(authToken);
         String jwt = jwtService.createJwt(newUser, JwtType.USER_PASS);
         newUser.setJwt(jwt);
@@ -64,7 +70,7 @@ public class AuthenticationService {
     }
 
     public boolean jwtIsValid(String jwt) {
-        return (jwtService.jwtIsValid(jwt) && authRepository.contains(jwt) && gitLabApiWrapper.canSignIn(jwt));
+        return (jwtService.jwtIsValid(jwt) && authRepository.containsJwt(jwt) && gitLabApiWrapper.canSignIn(jwt));
     }
 
 }

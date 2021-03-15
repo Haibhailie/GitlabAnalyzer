@@ -66,9 +66,8 @@ public class DiffScoreCalculator {
     }
 
     private boolean checkAddedBlankSpaces(int lineNumber, String testingLine) {
-        int presentLine = -1;
+        int presentLine = 0;
         for (String line : generatedDiffList) {
-            presentLine++;
             if (presentLine < lineNumber) {
                 continue;
             }
@@ -82,6 +81,7 @@ public class DiffScoreCalculator {
                     return true;
                 }
             }
+            presentLine++;
         }
         return false;
     }

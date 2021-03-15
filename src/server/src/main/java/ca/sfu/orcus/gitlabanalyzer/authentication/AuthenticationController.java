@@ -29,7 +29,7 @@ public class AuthenticationController {
     public void loginWithPat(@RequestBody AuthenticationUser user,
                              HttpServletResponse response) {
         try {
-            String jwt = authService.registerNewPat(user);
+            String jwt = authService.signInWithPat(user);
             Cookie cookie = createSessionIdCookie(jwt);
             response.addCookie(cookie);
             response.setStatus(200);
@@ -44,7 +44,7 @@ public class AuthenticationController {
     public void loginWithUserPass(@RequestBody AuthenticationUser user,
                                   HttpServletResponse response) {
         try {
-            String jwt = authService.registerNewUserPass(user);
+            String jwt = authService.signInWithUserPass(user);
             Cookie cookie = createSessionIdCookie(jwt);
             response.addCookie(cookie);
             response.setStatus(200);
