@@ -26,6 +26,17 @@ const SideNav = ({ isOpen, sideNavToggler, className }: ISideNavProps) => {
 
   return (
     <aside className={classNames(styles.sideNav, className)}>
+      <div className={styles.scrollContainer}>
+        {items.map(item => (
+          <SideNavItem
+            key={item.label}
+            Icon={item.icon}
+            label={item.label}
+            destPath={item.dest}
+          />
+        ))}
+        <UserConfig />
+      </div>
       <button
         type="button"
         className={styles.closeSideNavButton}
@@ -33,16 +44,6 @@ const SideNav = ({ isOpen, sideNavToggler, className }: ISideNavProps) => {
       >
         {isOpen ? <>&#8249;</> : <>&#8250;</>}
       </button>
-      {items.map(item => (
-        <SideNavItem
-          key={item.label}
-          Icon={item.icon}
-          label={item.label}
-          destPath={item.dest}
-        />
-      ))}
-
-      <UserConfig />
     </aside>
   )
 }
