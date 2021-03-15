@@ -1,5 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.config;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 final class ConfigDto {
@@ -8,7 +10,10 @@ final class ConfigDto {
     private long startDate;
     private long endDate;
     private String scoreBy;
-    private String yAxis;
+
+    @SerializedName(value = "yAxis")
+    private String verticalAxis;
+
     private String graphMode;
     private List<GeneralTypeScoreDto> generalScores;
     private List<FileTypeScoreDto> fileScores;
@@ -18,7 +23,7 @@ final class ConfigDto {
                      long startDate,
                      long endDate,
                      String scoreBy,
-                     String yAxis,
+                     String verticalAxis,
                      String graphMode,
                      List<GeneralTypeScoreDto> generalScores,
                      List<FileTypeScoreDto> fileScores) {
@@ -27,7 +32,7 @@ final class ConfigDto {
         setStartDate(startDate);
         setEndDate(endDate);
         setScoreBy(scoreBy);
-        setYAxis(yAxis);
+        setVerticalAxis(verticalAxis);
         setGraphMode(graphMode);
         setGeneralScores(generalScores);
         setFileScores(fileScores);
@@ -53,8 +58,8 @@ final class ConfigDto {
         this.scoreBy = scoreBy;
     }
 
-    public void setYAxis(String yAxis) {
-        this.yAxis = yAxis;
+    public void setVerticalAxis(String verticalAxis) {
+        this.verticalAxis = verticalAxis;
     }
 
     public void setGraphMode(String graphMode) {
