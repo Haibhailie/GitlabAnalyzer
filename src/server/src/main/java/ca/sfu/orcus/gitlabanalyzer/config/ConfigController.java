@@ -26,7 +26,7 @@ public class ConfigController {
                               @RequestBody ConfigDto configDto,
                               HttpServletResponse response) throws IOException {
         if (authService.jwtIsValid(jwt)) {
-            String configId = configService.addConfig(jwt, configDto);
+            String configId = configService.addNewConfigByJwt(jwt, configDto);
             response.setStatus(200);
             addConfigIdToResponse(response, configId);
         } else {
@@ -36,7 +36,14 @@ public class ConfigController {
 
     @DeleteMapping("/api/config/{configId}")
     public void deleteConfig(@CookieValue(value = "sessionId") String jwt,
-                             @PathVariable("configId") String configId) {
+                             @PathVariable("configId") String configId,
+                             HttpServletResponse response) {
+        if (authService.jwtIsValid(jwt)) {
+            configService.removeConfigById(configId);
+            response.setStatus(200);
+        } else {
+            response.setStatus(401);
+        }
     }
 
     @GetMapping("/api/config/{configId}")

@@ -1,7 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.config;
 
 import com.google.gson.Gson;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +16,12 @@ public class ConfigService {
         this.configRepository = configRepository;
     }
 
-    String addConfig(String jwt, ConfigDto configDto) {
+    String addNewConfigByJwt(String jwt, ConfigDto configDto) {
         return configRepository.addNewConfigByJwt(jwt, configDto);
     }
 
-    void removeConfig(String configId) {
-        
+    void removeConfigById(String configId) {
+        configRepository.removeConfigById(configId);
     }
 
     String getConfigJsonById(String configId) {

@@ -31,6 +31,10 @@ public class ConfigRepository {
         return configId;
     }
 
+    public void removeConfigById(String configId) {
+        collection.deleteOne(eq("_id", configId));
+    }
+
     private Document generateNewConfigDoc(String jwt, String configId, ConfigDto configDto) {
         String configJson = gson.toJson(configDto);
 
