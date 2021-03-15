@@ -1,0 +1,33 @@
+.list {
+  padding-left: 0px;
+  margin-top: 10px;
+}
+
+.item {
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.label {
+  border: 1px solid black;
+  padding: 2px 8px;
+  width: 80%;
+  height: 25px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.label:hover {
+  border: 2px solid var(--color-primary);
+  background-color: var(--color-hover);
+  color: var(--color-primary);
+}
+
+.deleteButton {
+  margin-left: 5px;
+  display: flex;
+}

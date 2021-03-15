@@ -1,0 +1,100 @@
+.viewBtn {
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: 5px;
+  background-color: #ffffff;
+  padding: 0 12px;
+}
+
+.viewBtn:hover {
+  background-color: var(--color-button-hover);
+  color: #ffffff;
+}
+
+.ignore {
+  appearance: none;
+  margin: auto;
+  background-color: #ffffff;
+  border: 2px solid var(--color-gray);
+  padding: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.ignore:hover {
+  background-color: var(--color-background-gray);
+}
+
+.ignore:checked {
+  background: center url('../assets/check.svg');
+  background-color: var(--color-primary);
+  border: none;
+  padding: 12px;
+}
+
+.container {
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  height: 750px;
+}
+
+.diff {
+  position: absolute;
+  width: 500px;
+  height: 700px;
+  transition: all ease-in-out 400ms;
+  right: -500px;
+}
+
+.showDiff .diff {
+  right: 0;
+}
+
+.tables {
+  margin-right: 0;
+  transition: all ease-in-out 400ms;
+  width: 100%;
+}
+
+.showDiff .tables {
+  margin-right: 550px;
+  width: calc(100% - 550px);
+}
+
+.tableContainer:last-child {
+  margin-top: 43px;
+}
+
+.table {
+  align-content: start;
+  overflow-y: scroll;
+  border-bottom: 1px solid var(--color-light-gray);
+}
+
+.tdata,
+.row {
+  text-align: left;
+}
+
+.theader,
+.row:nth-child(2n + 1) .tdata {
+  background-color: var(--color-background-gray);
+}
+
+.row:hover .tdata {
+  background-color: var(--color-primary-hover);
+}
+
+.row:hover {
+  cursor: pointer;
+}
+
+.tdata,
+.theader {
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
+}

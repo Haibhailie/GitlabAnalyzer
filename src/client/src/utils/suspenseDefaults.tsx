@@ -4,6 +4,7 @@ import { NETWORK_ERROR, SERVER_ERROR, UNKNOWN_ERROR } from './constants'
 
 const onError = (setError: (error: Error) => void) => {
   return (error: Error) => {
+    console.error(error)
     if (error.message === '401') {
       window.location.href = '/'
     } else if (error.message === 'Failed to fetch') {

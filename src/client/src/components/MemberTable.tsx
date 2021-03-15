@@ -2,6 +2,7 @@ import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
 import { useHistory } from 'react-router-dom'
+import { TMemberData } from '../types'
 
 import Table from '../components/Table'
 import AnalyzeButton from './AnalyzeButton'
@@ -12,13 +13,6 @@ export interface IActivityGraphProps {
   projectId: string
   projectName?: string
 }
-
-export type TMemberData = {
-  id: string
-  username: string
-  displayName: string
-  role: string
-}[]
 
 const MemberTable = ({ projectId, projectName }: IActivityGraphProps) => {
   const history = useHistory()
@@ -41,36 +35,35 @@ const MemberTable = ({ projectId, projectName }: IActivityGraphProps) => {
       fallback="Loading Members..."
       error={error?.message ?? 'Unknown Error'}
     >
-      <>
-        <div className={styles.header}>Members of {projectName}</div>
-        <Table
-          sortable
-          headers={['Member', 'Username', 'Role', '']}
-          columnWidths={['2fr', '2fr', '2fr', '3fr']}
-          classes={{
-            table: styles.table,
-            header: styles.theader,
-            data: styles.tdata,
-          }}
-          data={
-            data?.map(({ displayName, id, role, username }) => {
-              return {
-                displayName,
-                username,
-                role,
-                analyze: (
-                  <AnalyzeButton
-                    message={`Analyze ${`${displayName} `.split(' ')[0]}`}
-                    id={id}
-                    onClick={onAnalyze}
-                    className={styles.analyze}
-                  />
-                ),
-              }
-            }) ?? [{}]
-          }
-        />
-      </>
+      <Table
+        sortable
+        headers={['Member', 'Username', 'Role', '']}
+        columnWidths={['2fr', '2fr', '2fr', '3fr']}
+        classes={{
+          container: styles.tableContainer,
+          table: styles.table,
+          header: styles.theader,
+          data: styles.tdata,
+        }}
+        title={`Members of ${projectName}`}
+        data={
+          data?.map(({ displayName, id, role, username }) => {
+            return {
+              displayName,
+              username,
+              role,
+              analyze: (
+                <AnalyzeButton
+                  message={`Analyze ${`${displayName} `.split(' ')[0]}`}
+                  id={id}
+                  onClick={onAnalyze}
+                  className={styles.analyze}
+                />
+              ),
+            }
+          }) ?? [{}]
+        }
+      />
     </Suspense>
   )
 }

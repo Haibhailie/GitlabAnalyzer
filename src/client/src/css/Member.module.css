@@ -27,3 +27,11 @@
   height: auto;
   margin: auto;
 }
+
+.mergeRequestsContainer {
+  display: flex;
+  width: 85%;
+  height: 1000px;
+  margin: auto;
+  padding: 0px 20px;
+}

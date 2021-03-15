@@ -1,8 +1,8 @@
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
-import { IMemberData, IMemberStatData } from '../pages/Member'
-import { ICommitData, IMergeData } from '../types'
+import { IMemberStatData } from '../pages/Member'
+import { IMemberData, ICommitData, IMergeData } from '../types'
 
 import StatSummary from '../components/StatSummary'
 import ActivityGraph from '../components/ActivityGraph'
@@ -11,7 +11,7 @@ import styles from '../css/MemberSummary.module.css'
 
 export interface IMemberSummaryProps {
   projectId: string
-  memberData: IMemberData | undefined
+  memberData?: IMemberData
 }
 
 const computeStats = (
@@ -29,6 +29,7 @@ const computeCommitScore = (commitData: ICommitData[] = []): number => {
 }
 
 const computeMergeScore = (mergeRequestData: IMergeData[] = []): number => {
+  console.log(mergeRequestData)
   return mergeRequestData.reduce(
     (accum, mergeRequest) => accum + mergeRequest.score,
     0
@@ -44,36 +45,38 @@ const computeLinesAdded = (commitData: ICommitData[] = []): number => {
 }
 
 const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
-  if (!memberData || !projectId) return null
-
-  const { id, displayName } = memberData
-
   const { Suspense, data, error } = useSuspense<IMemberStatData>(
     (setData, setError) => {
       let otherData: ICommitData[] | IMergeData[] | null = null
-      jsonFetcher<IMergeData[]>(
-        `/api/project/${projectId}/members/${id}/mergerequests`
-      )
-        .then(data => {
-          if (otherData) {
-            setData(computeStats(otherData as ICommitData[], data))
-          } else {
-            otherData = data
-          }
-        })
-        .catch(onError(setError))
-      jsonFetcher<ICommitData[]>(
-        `/api/project/${projectId}/members/${displayName}/commits`
-      )
-        .then(data => {
-          if (otherData) {
-            setData(computeStats(data, otherData as IMergeData[]))
-          } else {
-            otherData = data
-          }
-        })
-        .catch(onError(setError))
-    }
+
+      if (projectId && memberData) {
+        jsonFetcher<IMergeData[]>(
+          `/api/project/${projectId}/members/${memberData.id}/mergerequests`
+        )
+          .then(data => {
+            if (otherData) {
+              setData(computeStats(otherData as ICommitData[], data))
+            } else {
+              otherData = data
+            }
+          })
+          .catch(onError(setError))
+        jsonFetcher<ICommitData[]>(
+          `/api/project/${projectId}/members/${memberData.displayName}/commits`
+        )
+          .then(data => {
+            if (otherData) {
+              setData(computeStats(data, otherData as IMergeData[]))
+            } else {
+              otherData = data
+            }
+          })
+          .catch(onError(setError))
+      } else {
+        setError(new Error('Cannot find member.'))
+      }
+    },
+    [projectId, memberData]
   )
 
   const memberStatData = [
@@ -112,8 +115,8 @@ const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
           error={error?.message ?? 'Unknown Error'}
         >
           <ActivityGraph
-            mergeUrl={`/api/project/${projectId}/members/${id}/mergerequests`}
-            commitUrl={`/api/project/${projectId}/members/${displayName}/commits`}
+            mergeUrl={`/api/project/${projectId}/members/${memberData?.id}/mergerequests`}
+            commitUrl={`/api/project/${projectId}/members/${memberData?.displayName}/commits`}
             yAxisValue={'number'}
           />
         </Suspense>

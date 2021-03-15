@@ -1,0 +1,53 @@
+.container {
+  margin: 0 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 500px;
+}
+
+.header {
+  font: var(--font-header-medium-poppins);
+}
+
+.selectorContainer {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputColumn {
+  width: 150px;
+}
+
+.table {
+  max-width: 300px;
+  width: 100%;
+}
+
+.row {
+  margin: 12px 0;
+}
+
+.skinnyRow {
+  margin: 2px 0;
+}
+
+.generalInput {
+  width: 85px;
+  height: 28px;
+  border: 2px solid var(--color-gray);
+  border-radius: 4px;
+  margin-right: 10px;
+  padding: 0px 10px;
+}
+
+.saveButton {
+  margin-top: 10px;
+  border: 1px solid var(--color-primary);
+  border-radius: 5px;
+  text-align: center;
+  color: var(--color-primary);
+  padding: 5px;
+}

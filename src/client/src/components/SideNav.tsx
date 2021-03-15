@@ -1,12 +1,12 @@
 import classNames from '../utils/classNames'
 
 import SideNavItem from './SideNavItem'
+import UserConfig from './UserConfig'
 
 import styles from '../css/SideNav.module.css'
 
 import { ReactComponent as repoIcon } from '../assets/database.svg'
 import { ReactComponent as reportIcon } from '../assets/report.svg'
-import { ReactComponent as settingsIcon } from '../assets/settings.svg'
 
 export interface ISideNavProps {
   isOpen: boolean
@@ -17,7 +17,6 @@ export interface ISideNavProps {
 const items = [
   { icon: repoIcon, label: 'Projects', dest: '/home' },
   { icon: reportIcon, label: 'Reports', dest: '/reports' },
-  { icon: settingsIcon, label: 'Settings', dest: '/settings' },
 ]
 
 const SideNav = ({ isOpen, sideNavToggler, className }: ISideNavProps) => {
@@ -27,6 +26,17 @@ const SideNav = ({ isOpen, sideNavToggler, className }: ISideNavProps) => {
 
   return (
     <aside className={classNames(styles.sideNav, className)}>
+      <div className={styles.scrollContainer}>
+        {items.map(item => (
+          <SideNavItem
+            key={item.label}
+            Icon={item.icon}
+            label={item.label}
+            destPath={item.dest}
+          />
+        ))}
+        <UserConfig />
+      </div>
       <button
         type="button"
         className={styles.closeSideNavButton}
@@ -34,14 +44,6 @@ const SideNav = ({ isOpen, sideNavToggler, className }: ISideNavProps) => {
       >
         {isOpen ? <>&#8249;</> : <>&#8250;</>}
       </button>
-      {items.map(item => (
-        <SideNavItem
-          key={item.label}
-          Icon={item.icon}
-          label={item.label}
-          destPath={item.dest}
-        />
-      ))}
     </aside>
   )
 }

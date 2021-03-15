@@ -2,19 +2,13 @@ import { useLocation, useParams } from 'react-router-dom'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
-import { ICommitData, IMergeData } from '../types'
+import { IMemberData, ICommitData, IMergeData } from '../types'
 
 import Selector from '../components/Selector'
 import MemberSummary from '../components/MemberSummary'
 
 import styles from '../css/Member.module.css'
-
-export interface IMemberData {
-  id: string
-  username: string
-  displayName: string
-  role: string
-}
+import MergeRequests from '../components/MergeRequests'
 
 export interface IMemberStatData {
   commits: ICommitData[]
@@ -60,7 +54,7 @@ const Member = () => {
             <MemberSummary projectId={id} memberData={memberData} />
           </div>
           <div className={styles.mergeRequestsContainer}>
-            <h1>Merge requests</h1>
+            <MergeRequests projectId={id} memberId={memberId} />
           </div>
           <div className={styles.commentsContainer}>
             <h1>Comments Table</h1>

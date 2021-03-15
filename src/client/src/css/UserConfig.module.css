@@ -1,0 +1,94 @@
+.subHeader {
+  border-bottom: 1.5px solid var(--color-gray);
+  padding: 0px 5px;
+  border-spacing: -1px;
+  margin: 0px 0px 5px 0px;
+  font: var(--font-body-medium-poppins);
+}
+
+.inputField {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.label {
+  padding-left: 5px;
+  font: var(--font-body-medium-poppins);
+}
+
+.header {
+  background-color: var(--color-background-gray);
+  padding: 0px 10px;
+  margin: 8px 0px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font: var(--font-body-medium-poppins);
+}
+
+.editIcon {
+  margin-right: 5px;
+}
+
+.saveContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.saveIcon {
+  margin-right: 5px;
+}
+
+.saveLabel {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.nameInput {
+  background-color: var(--color-background-gray);
+  height: 25px;
+  width: clamp(70%, 170px, 170px);
+  padding: 0px 10px;
+  font: var(--font-body-small-poppins);
+}
+
+.error {
+  background-color: var(--color-background-red);
+  color: var(--color-text-red);
+  font: var(--font-body-small-poppins);
+  margin: 5px 0px;
+  width: 90%;
+  text-align: center;
+  border: 1px solid var(--color-text-red);
+  border-radius: 2px;
+}
+
+.saveButton {
+  margin: 10px 5px;
+  border: 1px solid var(--color-primary);
+  padding: 2px 5px;
+  text-align: center;
+  color: var(--color-primary);
+  width: 90%;
+  height: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font: var(--font-body-small-poppins);
+}
+
+.saveButton:disabled {
+  color: var(--color-gray);
+  border-color: var(--color-gray);
+}
+
+.saveButton:disabled .saveIcon {
+  stroke: var(--color-gray);
+}
