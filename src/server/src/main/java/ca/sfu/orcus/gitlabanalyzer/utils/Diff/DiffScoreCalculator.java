@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.utils;
+package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -7,24 +7,24 @@ import java.util.List;
 
 public class DiffScoreCalculator {
 
-    int numLineAdditions = 0;
-    int numLineDeletions = 0;
-    int numBlankAdditions = 0;
-    int numSyntaxChanges = 0;
-    int numSpacingChanges = 0;
-    List<String> generatedDiffList = new ArrayList<>();
+    private int numLineAdditions = 0;
+    private int numLineDeletions = 0;
+    private int numBlankAdditions = 0;
+    private int numSyntaxChanges = 0;
+    private int numSpacingChanges = 0;
+    private final double lineLengthFactor = 0.5;
+    private List<String> generatedDiffList = new ArrayList<>();
 
-    public DiffScoreDto parseDiffList(List<String> passedDiffString) {
-        generatedDiffList = passedDiffString;
+    public DiffScoreDto parseDiffList(List<String> diffStrings) {
+        generatedDiffList = diffStrings;
         int lineNumber = -1;
         for (String line : generatedDiffList) {
             lineNumber++;
             if (line.startsWith("---")) {
-                // Log line skipped
+                //Log line skipped
             } else if (line.startsWith("+++")) {
-                // Log line skipped
+                //Log line skipped
             } else if (line.startsWith("+")) {
-
                 if (line.substring(1).length() > 0) {
                     numLineAdditions++;
                 } else {
@@ -45,22 +45,22 @@ public class DiffScoreCalculator {
     }
 
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
-        int presentLine = -1;
+        int presentLine = 0;
         for (String line : generatedDiffList) {
-            presentLine++;
             if (presentLine < lineNumber) {
                 continue;
             }
             if (line.startsWith("-")) {
                 continue;
             } else {
-                // Checking the level of similarity between the two lines (if difference > half the original line, then it's considered a new addition, else a syntax change)
-                if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) / 2) {
+                //Checking the level of similarity between the two lines (if difference > half the original line, then it's considered a new addition, else a syntax change)
+                if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) * lineLengthFactor) {
                     numSyntaxChanges++;
                     generatedDiffList.set(presentLine, "---");
                     return true;
                 }
             }
+            presentLine++;
         }
         return false;
     }
@@ -75,7 +75,7 @@ public class DiffScoreCalculator {
             if (line.startsWith("-")) {
                 continue;
             } else {
-                // Checking whether all the differences between two lines are just blank spaces
+                //Checking whether all the differences between two lines are just blank spaces
                 if (StringUtils.difference(testingLine, line).isBlank()) {
                     numBlankAdditions++;
                     generatedDiffList.set(presentLine, "---");
