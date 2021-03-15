@@ -151,6 +151,8 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
       endDate = new Date(),
     } = userConfigs.selected
 
+    console.log(startDate)
+
     const range = data?.filter(
       date => date.time >= startDate.getTime() && date.time <= endDate.getTime()
     )

@@ -30,6 +30,7 @@ const reducer: TUserConfigReducer = async (state, action) => {
           }
         : state
     case SET_END_DATE:
+      console.log(action.date)
       return action.date > (state.selected.startDate ?? dateZero)
         ? {
             ...state,
@@ -109,7 +110,8 @@ const reducer: TUserConfigReducer = async (state, action) => {
           body: JSON.stringify({
             ...newConfig,
             startDate: newConfig.startDate?.getTime(),
-            endDate: newConfig.endDate?.getTime(),
+            // TODO: remove ?? edge case after BE fix.
+            endDate: newConfig.endDate?.getTime() ?? Date.now(),
           }),
         })
         newConfig.id = id
@@ -146,8 +148,14 @@ const reducer: TUserConfigReducer = async (state, action) => {
           if (config.id) {
             configs[config.id] = {
               ...config,
-              startDate: config.startDate && new Date(config.startDate),
-              endDate: config.endDate && new Date(config.endDate),
+              startDate:
+                config.startDate !== undefined
+                  ? new Date(config.startDate)
+                  : new Date(0),
+              endDate:
+                config.endDate !== undefined
+                  ? new Date(config.endDate)
+                  : new Date(),
             }
           }
         })
