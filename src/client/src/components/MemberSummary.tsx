@@ -24,25 +24,21 @@ const computeStats = (
   }
 }
 
-const computeCommitScore = (commitData: ICommitData[] = []): number => {
-  return commitData.reduce((accum, commit) => accum + commit.score, 0)
-}
+const computeCommitScore = (commitData: ICommitData[] = []): number =>
+  commitData.reduce((accum, commit) => accum + commit.score, 0)
 
-const computeMergeScore = (mergeRequestData: IMergeData[] = []): number => {
-  console.log(mergeRequestData)
-  return mergeRequestData.reduce(
+const computeMergeScore = (mergeRequestData: IMergeData[] = []): number =>
+  mergeRequestData.reduce(
     (accum, mergeRequest) => accum + mergeRequest.score,
     0
   )
-}
 
-const computeLinesAdded = (commitData: ICommitData[] = []): number => {
-  return commitData.reduce(
+const computeLinesAdded = (commitData: ICommitData[] = []): number =>
+  commitData.reduce(
     (accum, commit) =>
       accum + Math.floor(Math.random() * 80 + commit.author.length),
     0
   )
-}
 
 const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
   const { Suspense, data, error } = useSuspense<IMemberStatData>(
@@ -117,7 +113,6 @@ const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
           <ActivityGraph
             mergeUrl={`/api/project/${projectId}/members/${memberData?.id}/mergerequests`}
             commitUrl={`/api/project/${projectId}/members/${memberData?.displayName}/commits`}
-            yAxisValue={'number'}
           />
         </Suspense>
       </div>

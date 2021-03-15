@@ -24,7 +24,6 @@ export interface IActivityData {
 export interface IActivityGraphProps {
   mergeUrl: string
   commitUrl: string
-  yAxisValue?: 'score' | 'number'
 }
 
 export type TGraphData = {
@@ -117,11 +116,7 @@ const computeGraphData = (
   return graphData
 }
 
-const ActivityGraph = ({
-  mergeUrl,
-  commitUrl,
-  yAxisValue = 'number',
-}: IActivityGraphProps) => {
+const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
   const { Suspense, data, error } = useSuspense<TGraphData, Error>(
     (setData, setError) => {
       let otherData: ICommitData[] | IMergeData[] | null = null
@@ -148,6 +143,7 @@ const ActivityGraph = ({
 
   const { userConfigs } = useContext(UserConfigContext)
   const [selectedRange, setSelectedRange] = useState(data?.slice(-7))
+  const { yAxis } = userConfigs.selected
 
   useEffect(() => {
     const {
@@ -178,7 +174,7 @@ const ActivityGraph = ({
           <YAxis
             label={{
               value:
-                yAxisValue === 'number'
+                yAxis === 'NUMBER'
                   ? 'Number of Commits/Merge Requests'
                   : 'Score of Commits/Merge Requests',
               angle: -90,
@@ -189,12 +185,12 @@ const ActivityGraph = ({
           <Legend align="right" verticalAlign="top" layout="horizontal" />
           <Bar
             name="Merge Requests"
-            dataKey={yAxisValue === 'number' ? 'merges' : 'mergeScore'}
+            dataKey={yAxis === 'NUMBER' ? 'merges' : 'mergeScore'}
             fill="var(--color-secondary)"
           />
           <Bar
             name="Commits"
-            dataKey={yAxisValue === 'number' ? 'commits' : 'commitScore'}
+            dataKey={yAxis === 'NUMBER' ? 'commits' : 'commitScore'}
             fill="var(--color-primary)"
           />
         </BarChart>
