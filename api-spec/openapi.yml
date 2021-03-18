@@ -7,6 +7,8 @@ paths:
     $ref: './signin.yml'
   /api/auth:
     $ref: './auth.yml'
+  /api/config:
+    $ref: './config.yml'
   /api/ping:
     $ref: './ping.yml'
   /api/projects:
