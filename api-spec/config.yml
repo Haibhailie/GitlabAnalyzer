@@ -7,7 +7,7 @@ configGet:
         content:
           'application/json':
             schema:
-              $ref: './components/config200.yml'
+              $ref: './components/config.yml'
       '401':
         description: Unauthorized.
       '500':

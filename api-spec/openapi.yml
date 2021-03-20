@@ -7,12 +7,12 @@ paths:
     $ref: './signin.yml'
   /api/auth:
     $ref: './auth.yml'
+  /api/ping:
+    $ref: './ping.yml'
   /api/config:
     $ref: './config.yml#/configPost'
   /api/config/{configId}/:
     $ref: './config.yml#/configDelete'
-  /api/ping:
-    $ref: './ping.yml'
   /api/configs:
     $ref: './configs.yml'
   /api/config/{configId}:
