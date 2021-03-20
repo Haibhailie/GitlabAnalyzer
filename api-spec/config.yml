@@ -1,46 +1,47 @@
-post:
-  description: 'Save a config to the database.'
-  responses:
-    '200':
-      $ref: './components/config200.yml'
-    '401':
-      description: Unauthorized.
-    '500':
-      description: An error un-related to this request occurred.
-  requestBody:
-    content:
-      'application/json':
-        schema:
-          type: object
-          required:
-            - name
-            - scoreBy
-            - graphMode
-            - yAxis
-            - generalScores
-            - fileScores
-          properties:
-            id:
-              type: string
-            name:
-              type: string
-            startDate:
-              $ref: './components/epoch.yml'
-            endDate:
-              $ref: './components/epoch.yml'
-            scoreBy:
-              type: string
-            graphMode:
-              type: string
-            yAxis:
-              type: string
-            generalScores:
-              type: array
-              items:
-                items:
-                $ref: './components/generalScore.yml'
-            fileScores:
-              type: array
-              items:
-                items:
-                $ref: './components/fileScore.yml'
+configGet:
+  get:
+    description: 'Get a specific configuration.'
+    responses:
+      '200':
+        description: OK
+        content:
+          'application/json':
+            schema:
+              $ref: './components/config200.yml'
+      '401':
+        description: Unauthorized.
+      '500':
+        description: An error un-related to this request occurred.
+    parameters:
+      - $ref: './components/jwtcookie.yml'
+      - $ref: './components/configId.yml'
+
+configPost:
+  post:
+    description: 'Save a configuration to the database.'
+    responses:
+      '200':
+        $ref: './components/config200.yml'
+      '401':
+        description: Unauthorized.
+      '500':
+        description: An error un-related to this request occurred.
+    requestBody:
+      content:
+        'application/json':
+          schema:
+            $ref: './components/config.yml'
+
+configDelete:
+  delete:
+    description: 'Delete a specific configuration.'
+    responses:
+      '200':
+        description: Configuration successfully deleted.
+      '401':
+        description: Unauthorized.
+      '500':
+        description: An error un-related to this request occurred.
+    parameters:
+      - $ref: './components/jwtcookie.yml'
+      - $ref: './components/configId.yml'

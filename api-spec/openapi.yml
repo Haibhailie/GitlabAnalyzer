@@ -8,9 +8,15 @@ paths:
   /api/auth:
     $ref: './auth.yml'
   /api/config:
-    $ref: './config.yml'
+    $ref: './config.yml#/configPost'
+  /api/config/{configId}/:
+    $ref: './config.yml#/configDelete'
   /api/ping:
     $ref: './ping.yml'
+  /api/configs:
+    $ref: './configs.yml'
+  /api/config/{configId}:
+    $ref: './config.yml#/configGet'
   /api/projects:
     $ref: './projects.yml'
   /api/project/{projectId}:

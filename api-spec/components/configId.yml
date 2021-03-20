@@ -1,0 +1,4 @@
+name: configId
+in: path
+required: true
+description: 'Unique configuration ID'
