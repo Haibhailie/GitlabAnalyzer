@@ -19,6 +19,8 @@ import { onError } from '../utils/suspenseDefaults'
 import { useContext, useEffect, useState } from 'react'
 import { UserConfigContext } from '../context/UserConfigContext'
 
+import styles from '../css/ActivityGraph.module.css'
+
 export interface IActivityData {
   commits: ICommitData[]
   merges: IMergeData[]
@@ -155,6 +157,75 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
   const [selectedRange, setSelectedRange] = useState(data)
   const { yAxis } = userConfigs.selected
 
+  const graphConfig = {
+    options: {
+      chart: {
+        id: 'basic-bar',
+        height: 250,
+        stacked: true,
+        toolbar: {
+          show: true,
+          tools: {
+            download: true,
+            selection: true,
+            zoom: true,
+            zoomin: true,
+            zoomout: true,
+            pan: true,
+          },
+        },
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            legend: {
+              position: 'bottom',
+              offsetX: -10,
+              offsetY: 0,
+            },
+          },
+        },
+      ],
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '50%',
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        width: [4, 0, 0],
+      },
+      colors: ['#ffa94d', '#364fc7'],
+      xaxis: {
+        categories: selectedRange?.map(data => data.date),
+        title: {
+          text: 'Date',
+        },
+        tickPlacement: 'on',
+      },
+      legend: {
+        position: 'bottom',
+        horizontalAlign: 'left',
+      },
+    },
+    series: [
+      {
+        name: 'Merge requests',
+        data: selectedRange?.map(merge => merge.merges),
+        type: 'column',
+      },
+      {
+        name: 'Commits',
+        data: selectedRange?.map(commit => commit.commits),
+        type: 'column',
+      },
+    ],
+  }
+
   useEffect(() => {
     const {
       startDate = new Date(Date.now() - 100 * 24 * 60 * 60 * 1000),
@@ -173,8 +244,16 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
       fallback="Loading Commit Data..."
       error={error?.message ?? 'Unknown Error'}
     >
-      {/* <Chart></Chart> */}
-      <ResponsiveContainer width="100%" height="100%">
+      <div className={styles.graphContainer}>
+        <Chart
+          options={graphConfig.options}
+          series={graphConfig.series}
+          type="bar"
+          width={730}
+        ></Chart>
+      </div>
+
+      {/* <ResponsiveContainer width="100%" height="100%">
         <BarChart
           width={730}
           height={250}
@@ -209,7 +288,7 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
             stackId="stack"
           />
         </BarChart>
-      </ResponsiveContainer>
+      </ResponsiveContainer> */}
     </Suspense>
   )
 }
