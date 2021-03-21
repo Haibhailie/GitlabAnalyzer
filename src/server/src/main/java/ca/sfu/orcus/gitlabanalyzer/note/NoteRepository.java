@@ -1,4 +1,10 @@
-package ca.sfu.orcus.gitlabanalyzer.comment;
+package ca.sfu.orcus.gitlabanalyzer.note;
 
-public class CommentRepository {
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class NoteRepository {
+    public NoteRepository(){
+
+    }
 }
