@@ -9,7 +9,10 @@ import {
   Legend,
   Bar,
   ResponsiveContainer,
+  ReferenceLine,
+  CartesianGrid,
 } from 'recharts'
+import Chart from 'react-apexcharts'
 import { ICommitData, IMergeData } from '../types'
 
 import { onError } from '../utils/suspenseDefaults'
@@ -35,15 +38,17 @@ export type TGraphData = {
   mergeScore: number
 }[]
 
-const dateRegex = /\d{4}-\d{2}-\d{2}/
+//const dateRegex = /\d{4}-\d{2}-\d{2}/
 
 const epochToDate = (epoch: number) =>
-  new Date(epoch).toISOString().match(dateRegex)?.[0] ?? 'none'
+  //new Date(epoch).toISOString().match(dateRegex)?.[0] ?? 'none'
+  new Date(epoch).toDateString().slice(4, 10) ?? 'none'
 
 const computeGraphData = (
   commitData: ICommitData[],
   mergeData: IMergeData[]
 ): TGraphData => {
+  console.log(commitData)
   const graphObj: Record<
     string,
     {
@@ -84,15 +89,18 @@ const computeGraphData = (
     })
   }
 
-  oldestCommit = Math.min(oldestCommit, Date.now() - 7 * 24 * 60 * 60 * 1000)
+  oldestCommit = Math.min(oldestCommit, Date.now() - 100 * 24 * 60 * 60 * 1000)
 
   fillObj(commitData, 'commits', 'commitScore')
   fillObj(mergeData, 'merges', 'mergeScore')
 
-  Object.entries(graphObj).forEach(([key, { commitScore, mergeScore }]) => {
-    graphObj[key].commitScore = round(commitScore, 2)
-    graphObj[key].mergeScore = round(mergeScore, 2)
-  })
+  Object.entries(graphObj).forEach(
+    ([key, { commitScore, mergeScore, merges }]) => {
+      graphObj[key].commitScore = round(commitScore, 2)
+      graphObj[key].mergeScore = round(mergeScore, 2)
+      graphObj[key].merges = merges * -1
+    }
+  )
 
   const now = Date.now()
   while (oldestCommit <= now) {
@@ -112,6 +120,8 @@ const computeGraphData = (
       }
     })
     .sort((a, b) => (a.date < b.date ? -1 : 1))
+
+  console.log(graphData.map(data => data.date))
 
   return graphData
 }
@@ -142,12 +152,12 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
   )
 
   const { userConfigs } = useContext(UserConfigContext)
-  const [selectedRange, setSelectedRange] = useState(data?.slice(-7))
+  const [selectedRange, setSelectedRange] = useState(data)
   const { yAxis } = userConfigs.selected
 
   useEffect(() => {
     const {
-      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      startDate = new Date(Date.now() - 100 * 24 * 60 * 60 * 1000),
       endDate = new Date(),
     } = userConfigs.selected
 
@@ -163,12 +173,14 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
       fallback="Loading Commit Data..."
       error={error?.message ?? 'Unknown Error'}
     >
+      {/* <Chart></Chart> */}
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           width={730}
           height={250}
           data={selectedRange}
           margin={{ top: 40, left: 40, bottom: 40, right: 40 }}
+          stackOffset="sign"
         >
           <XAxis dataKey="date" />
           <YAxis
@@ -183,15 +195,18 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
           />
           <Tooltip />
           <Legend align="right" verticalAlign="top" layout="horizontal" />
+          <ReferenceLine y={0} stroke="#000" />
           <Bar
             name="Merge Requests"
             dataKey={yAxis === 'NUMBER' ? 'merges' : 'mergeScore'}
             fill="var(--color-secondary)"
+            stackId="stack"
           />
           <Bar
             name="Commits"
             dataKey={yAxis === 'NUMBER' ? 'commits' : 'commitScore'}
             fill="var(--color-primary)"
+            stackId="stack"
           />
         </BarChart>
       </ResponsiveContainer>
