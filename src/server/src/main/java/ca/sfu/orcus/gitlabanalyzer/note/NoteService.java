@@ -70,9 +70,15 @@ public class NoteService {
 
     private List<Note> getAllIssuesNotes(GitLabApi gitLabApi, int projectId) {
         try {
-            List<Issue> allIssues = (List<Issue>) gitLabApi.getIssuesApi().getIssues(projectId);
-            List<Note> allIssuesNotes = new ArrayList<>();
+            List<Issue> allIssues = gitLabApi.getIssuesApi().getIssues();
+            List<Issue> allIssuesByProjectId = new ArrayList<>();
             for (Issue issue : allIssues) {
+                if (issue.getProjectId() == projectId) {
+                    allIssuesByProjectId.add(issue);
+                }
+            }
+            List<Note> allIssuesNotes = new ArrayList<>();
+            for (Issue issue : allIssuesByProjectId) {
                 allIssuesNotes.addAll(gitLabApi.getNotesApi().getIssueNotes(projectId, issue.getIid()));
             }
             return allIssuesNotes;
