@@ -9,13 +9,13 @@ public class CommitterDto {
     private String email;
     private String name;
     private int id;
-    private MemberDto gitLabMember;
+    private MemberDto member;
 
-    public CommitterDto(String email, String name, int id, MemberDto gitLabMember) {
+    public CommitterDto(String email, String name, int id, MemberDto member) {
         setEmail(email);
         setName(name);
         setId(id);
-        setGitLabMember(gitLabMember);
+        setMember(member);
     }
 
     public void setEmail(String email) {
@@ -30,7 +30,7 @@ public class CommitterDto {
         this.id = id;
     }
 
-    public void setGitLabMember(MemberDto gitLabMember) {
-        this.gitLabMember = gitLabMember;
+    public void setMember(MemberDto member) {
+        this.member = member;
     }
 }

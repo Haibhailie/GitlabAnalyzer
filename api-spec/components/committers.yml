@@ -2,17 +2,17 @@ type: array
 items:
   type: object
   required:
-    - committerEmail
-    - committerName
-    - committerId
+    - email
+    - name
+    - id
     - memberDto
   properties:
-    committerEmail:
+    email:
       type: string
-    committerName:
+    name:
       type: string
       description: The given name of the committer such as John Smith
-    committerId:
+    id:
       type: number
     memberDto:
       $ref: './author.yml'
