@@ -29,6 +29,7 @@ export interface IActivityData {
 export interface IActivityGraphProps {
   mergeUrl: string
   commitUrl: string
+  graphTitle?: string
 }
 
 export type TGraphData = {
@@ -99,7 +100,7 @@ const computeGraphData = (
   Object.entries(graphObj).forEach(
     ([key, { commitScore, mergeScore, merges }]) => {
       graphObj[key].commitScore = round(commitScore, 2)
-      graphObj[key].mergeScore = round(mergeScore, 2)
+      graphObj[key].mergeScore = round(mergeScore * -1, 2)
       graphObj[key].merges = merges * -1
     }
   )
@@ -128,7 +129,11 @@ const computeGraphData = (
   return graphData
 }
 
-const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
+const ActivityGraph = ({
+  mergeUrl,
+  commitUrl,
+  graphTitle,
+}: IActivityGraphProps) => {
   const { Suspense, data, error } = useSuspense<TGraphData, Error>(
     (setData, setError) => {
       let otherData: ICommitData[] | IMergeData[] | null = null
@@ -161,7 +166,6 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
     options: {
       chart: {
         id: 'basic-bar',
-        height: 250,
         stacked: true,
         toolbar: {
           show: true,
@@ -173,31 +177,41 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
             zoomout: true,
             pan: true,
           },
+          redrawOnParentResize: true,
+          redrawOnWindowResize: true,
+          fontFamily: 'Poppins, sans-serif',
+        },
+      },
+      title: {
+        text: graphTitle ?? '',
+        align: 'left',
+        margin: 10,
+        offsetX: 0,
+        offsetY: 0,
+        floating: false,
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          fontFamily: 'Poppins',
+          color: '#000000',
         },
       },
       responsive: [
         {
           breakpoint: 480,
           options: {
-            legend: {
-              position: 'bottom',
-              offsetX: -10,
-              offsetY: 0,
-            },
+            width: 500,
           },
         },
       ],
       plotOptions: {
         bar: {
           horizontal: false,
-          columnWidth: '50%',
+          columnWidth: '70%',
         },
       },
       dataLabels: {
         enabled: false,
-      },
-      stroke: {
-        width: [4, 0, 0],
       },
       colors: ['#ffa94d', '#364fc7'],
       xaxis: {
@@ -207,20 +221,47 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
         },
         tickPlacement: 'on',
       },
+      yaxis: {
+        title: {
+          text:
+            yAxis === 'NUMBER'
+              ? 'Number of Commits/Merge Requests'
+              : 'Score of Commits/Merge Requests',
+        },
+      },
       legend: {
         position: 'bottom',
         horizontalAlign: 'left',
+      },
+      animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 700,
+        animateGradually: {
+          enabled: true,
+          delay: 160,
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 500,
+        },
       },
     },
     series: [
       {
         name: 'Merge requests',
-        data: selectedRange?.map(merge => merge.merges),
+        data:
+          yAxis === 'NUMBER'
+            ? selectedRange?.map(merge => merge.merges)
+            : selectedRange?.map(merge => merge.mergeScore),
         type: 'column',
       },
       {
         name: 'Commits',
-        data: selectedRange?.map(commit => commit.commits),
+        data:
+          yAxis === 'NUMBER'
+            ? selectedRange?.map(commit => commit.commits)
+            : selectedRange?.map(commit => commit.commitScore),
         type: 'column',
       },
     ],
@@ -249,7 +290,7 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
           options={graphConfig.options}
           series={graphConfig.series}
           type="bar"
-          width={730}
+          width={720}
         ></Chart>
       </div>
 
