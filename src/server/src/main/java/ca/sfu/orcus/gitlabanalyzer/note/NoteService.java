@@ -52,7 +52,7 @@ public class NoteService {
         if (getAllIssuesNotes(gitLabApi, projectId) != null) {
             allNotes.addAll(getAllIssuesNotes(gitLabApi, projectId));
         }
-        return allNotes.isEmpty() ? null : allNotes;
+        return allNotes;
     }
 
     private List<Note> getAllMergeRequestsNotes(GitLabApi gitLabApi, int projectId) {
