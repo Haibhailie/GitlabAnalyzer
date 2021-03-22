@@ -3,7 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
-import ca.sfu.orcus.gitlabanalyzer.utils.Diff.ScoreDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.ScoreDto;
 import org.gitlab4j.api.models.MergeRequest;
 
 import java.util.ArrayList;
