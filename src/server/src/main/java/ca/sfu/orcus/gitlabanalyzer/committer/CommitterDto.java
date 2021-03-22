@@ -3,7 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.committer;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 
 /**
- * A simple data transfer object to handle resolving git committers to their respective GitLab members
+ * A simple data transfer object to handle resolving git committers to their respective GitLab members.
  */
 public class CommitterDto {
     private String email;
