@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.comment;
+package ca.sfu.orcus.gitlabanalyzer.note;
 
-public class CommentController {
+public class NoteController {
 }

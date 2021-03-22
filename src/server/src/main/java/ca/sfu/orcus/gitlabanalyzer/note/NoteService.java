@@ -23,7 +23,19 @@ public class NoteService {
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
+    public List<NoteDto> getAllMergeRequestNotes(String jwt, int projectId) {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
+    }
 
+    public List<NoteDto> getAllIssuesNotes(String jwt, int projectId) {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
+    }
 
     public List<NoteDto> getNotesByMemberId(String jwt, int projectId, int memberId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
