@@ -24,6 +24,11 @@ public class ConfigRepository {
         this.collection = database.getCollection("CONFIGS_COLLECTION");
     }
 
+    public boolean contains(String configId) {
+        Document config = collection.find(eq("_id", configId)).first();
+        return (config != null);
+    }
+
     public String addNewConfigByJwt(String jwt, ConfigDto configDto) {
         String configId = new ObjectId().toString();
         configDto.setId(configId);
@@ -33,6 +38,12 @@ public class ConfigRepository {
 
     public void removeConfigById(String configId) {
         collection.deleteOne(eq("_id", configId));
+    }
+
+    public void updateConfig(String jwt, ConfigDto configDto) {
+        String configId = configDto.getId();
+        Document configDoc = generateNewConfigDoc(jwt, configId, configDto);
+        collection.replaceOne(eq("_id", configId), configDoc);
     }
 
     private Document generateNewConfigDoc(String jwt, String configId, ConfigDto configDto) {
