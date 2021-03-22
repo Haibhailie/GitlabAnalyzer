@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import com.google.gson.Gson;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class ConfigController {
         if (authService.jwtIsValid(jwt)) {
             tryAddingNewConfigByJwt(jwt, configDto, response);
         } else {
-            response.setStatus(401);
+            response.setStatus(HttpStatus.SC_UNAUTHORIZED);
         }
     }
 
@@ -39,9 +40,9 @@ public class ConfigController {
                              HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
             configService.removeConfigById(configId);
-            response.setStatus(200);
+            response.setStatus(HttpStatus.SC_OK);
         } else {
-            response.setStatus(401);
+            response.setStatus(HttpStatus.SC_UNAUTHORIZED);
         }
     }
 
@@ -50,10 +51,10 @@ public class ConfigController {
                                 @PathVariable("configId") String configId,
                                 HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            response.setStatus(200);
+            response.setStatus(HttpStatus.SC_OK);
             return configService.getConfigJsonById(configId);
         } else {
-            response.setStatus(401);
+            response.setStatus(HttpStatus.SC_UNAUTHORIZED);
             return "";
         }
     }
@@ -62,21 +63,42 @@ public class ConfigController {
     public String getAllConfigsByJwt(@CookieValue(value = "sessionId") String jwt,
                                      HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            response.setStatus(200);
+            response.setStatus(HttpStatus.SC_OK);
             return configService.getAllConfigJsonsByJwt(jwt);
         } else {
-            response.setStatus(401);
+            response.setStatus(HttpStatus.SC_UNAUTHORIZED);
             return "";
+        }
+    }
+
+    @PutMapping("/api/config/{configId}")
+    public void updateConfig(@CookieValue(value = "sessionId") String jwt,
+                             @PathVariable("configId") String configId,
+                             @RequestBody ConfigDto configDto,
+                             HttpServletResponse response) {
+        if (authService.jwtIsValid(jwt)) {
+            tryUpdatingConfig(jwt, configId, configDto, response);
+        } else {
+            response.setStatus(HttpStatus.SC_UNAUTHORIZED);
+        }
+    }
+
+    private void tryUpdatingConfig(String jwt, String configId, ConfigDto configDto, HttpServletResponse response) {
+        if (configId.equals(configDto.getId())) {
+            configService.updateConfig(jwt, configDto);
+            response.setStatus(HttpStatus.SC_OK);
+        } else {
+            response.setStatus(HttpStatus.SC_BAD_REQUEST);
         }
     }
 
     private void tryAddingNewConfigByJwt(String jwt, ConfigDto configDto, HttpServletResponse response) {
         try {
             String configId = configService.addNewConfigByJwt(jwt, configDto);
-            response.setStatus(200);
+            response.setStatus(HttpStatus.SC_OK);
             addConfigIdToResponse(response, configId);
         } catch (IOException e) {
-            response.setStatus(500);
+            response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
