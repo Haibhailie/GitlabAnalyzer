@@ -21,8 +21,9 @@ public class NoteDto {
 
     public int countWords(String str) {
 
-        if (str == null || str.isEmpty())
+        if (str == null || str.isEmpty()) {
             return 0;
+        }
 
         String[] words = str.split("\\s+");
 

@@ -23,42 +23,59 @@ public class NoteService {
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
-    public List<NoteDto> getAllMergeRequestNotes(String jwt, int projectId) {
+    public List<NoteDto> getNotesDtosByMemberId(String jwt, int projectId, int memberId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
+        return returnAllNotesDtosByMemberId(gitLabApi, projectId, memberId);
     }
 
-    public List<NoteDto> getAllIssuesNotes(String jwt, int projectId) {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
-            return null;
+    private List<NoteDto> returnAllNotesDtosByMemberId(GitLabApi gitLabApi, int projectId, int memberId) {
+        List<NoteDto> filteredNotes = new ArrayList<>();
+        List<Note> allNotes = getAllNotes(gitLabApi, projectId);
+
+        for (Note n : allNotes) {
+            if (n.getAuthor().getId() == memberId) {
+                filteredNotes.add(new NoteDto(n));
+            }
         }
+
+        return filteredNotes;
     }
 
-    public List<NoteDto> getNotesByMemberId(String jwt, int projectId, int memberId) {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
-            return null;
+    private List<Note> getAllNotes(GitLabApi gitLabApi, int projectId) {
+        List<Note> allNotes = new ArrayList<>();
+        if (getAllMergeRequestsNotes(gitLabApi, projectId) != null) {
+            allNotes.addAll(getAllMergeRequestsNotes(gitLabApi, projectId));
         }
+        if (getAllIssuesNotes(gitLabApi, projectId) != null) {
+            allNotes.addAll(getAllIssuesNotes(gitLabApi, projectId));
+        }
+        return allNotes.isEmpty() ? null : allNotes;
+    }
+
+    private List<Note> getAllMergeRequestsNotes(GitLabApi gitLabApi, int projectId) {
         try {
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId);
-            List<Issue> allIssues = (List<Issue>) gitLabApi.getIssuesApi().getIssues(projectId);
-            List<NoteDto> filteredNotes = new ArrayList<>();
-            List<Note> allNotes = new ArrayList<>();
+            List<Note> allMergeRequestsNotes = new ArrayList<>();
             for (MergeRequest mr : allMergeRequests) {
-                allNotes.addAll(gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mr.getIid()));
+                allMergeRequestsNotes.addAll(gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mr.getIid()));
             }
+            return allMergeRequestsNotes;
+        } catch (GitLabApiException e) {
+            return null;
+        }
+    }
+
+    private List<Note> getAllIssuesNotes(GitLabApi gitLabApi, int projectId) {
+        try {
+            List<Issue> allIssues = (List<Issue>) gitLabApi.getIssuesApi().getIssues(projectId);
+            List<Note> allIssuesNotes = new ArrayList<>();
             for (Issue issue : allIssues) {
-                allNotes.addAll(gitLabApi.getNotesApi().getIssueNotes(projectId, issue.getIid()));
+                allIssuesNotes.addAll(gitLabApi.getNotesApi().getIssueNotes(projectId, issue.getIid()));
             }
-            for (Note n: allNotes) {
-                if(n.getAuthor().getId() == memberId) {
-                    filteredNotes.add(new NoteDto(n));
-                }
-            }
-            return filteredNotes;
+            return allIssuesNotes;
         } catch (GitLabApiException e) {
             return null;
         }
