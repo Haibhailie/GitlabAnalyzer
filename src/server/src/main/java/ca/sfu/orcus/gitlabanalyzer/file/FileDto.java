@@ -1,12 +1,11 @@
 package ca.sfu.orcus.gitlabanalyzer.file;
 
-import org.gitlab4j.api.models.Diff;
-
 public class FileDto {
     String path;
-    int commitId;
-    int mergeRequestId;
+    String commitId;
+    String mergeRequestId;
     String diff;
-    Diff gitDiff;
+    double score;
     boolean isIgnored;
+
 }
