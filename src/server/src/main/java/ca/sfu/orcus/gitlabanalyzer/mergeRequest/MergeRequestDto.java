@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.ScoreDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -30,7 +31,7 @@ public class MergeRequestDto {
     private List<String> committers;
     private List<Participant> participants;
     private long time;
-    private double score;
+    private ScoreDto score;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
@@ -61,6 +62,7 @@ public class MergeRequestDto {
         setTime(presentMergeRequest.getMergedAt().getTime());
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setScore(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
+        System.out.println(score);
     }
 
     public void setMergeRequestId(int mergeRequestId) {
@@ -143,13 +145,15 @@ public class MergeRequestDto {
         this.notes = notes;
     }
 
+    public void setScore(ScoreDto score) {
+        this.score = score;
+    }
+
     public void setTime(long time) {
         this.time = time;
     }
 
-    public void setScore(double score) {
-        this.score = score;
-    }
+
 
     @Override
     public boolean equals(Object o) {

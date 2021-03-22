@@ -12,7 +12,7 @@ public class DiffScoreCalculator {
     private int numBlankAdditions = 0;
     private int numSyntaxChanges = 0;
     private int numSpacingChanges = 0;
-    private final double lineLengthFactor = 0.5;
+    private final double lineSimilarityFactor = 0.5;
     private List<String> generatedDiffList = new ArrayList<>();
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
@@ -32,6 +32,9 @@ public class DiffScoreCalculator {
                 }
             } else if (line.startsWith("-")) {
                 if (checkSyntaxChanges(lineNumber, line)) {
+                    break;
+                }
+                if (checkSpacingChanges(lineNumber, line)) {
                     break;
                 }
                 if (checkAddedBlankSpaces(lineNumber, line)) {
@@ -54,7 +57,7 @@ public class DiffScoreCalculator {
                 continue;
             } else {
                 //Checking the level of similarity between the two lines (if difference > half the original line, then it's considered a new addition, else a syntax change)
-                if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) * lineLengthFactor) {
+                if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) * lineSimilarityFactor) {
                     numSyntaxChanges++;
                     generatedDiffList.set(presentLine, "---");
                     return true;
@@ -77,6 +80,27 @@ public class DiffScoreCalculator {
                 //Checking whether all the differences between two lines are just blank spaces
                 if (StringUtils.difference(testingLine, line).isBlank()) {
                     numBlankAdditions++;
+                    generatedDiffList.set(presentLine, "---");
+                    return true;
+                }
+            }
+            presentLine++;
+        }
+        return false;
+    }
+
+    private boolean checkSpacingChanges(int lineNumber, String testingLine) {
+        int presentLine = 0;
+        for (String line : generatedDiffList) {
+            if (presentLine < lineNumber) {
+                continue;
+            }
+            if (line.startsWith("-")) {
+                continue;
+            } else {
+                //Checking if the line has only spacing changes (basically removing all spaces and checking if the lines are still the same)
+                if (testingLine.replaceAll("\\s+", "").equalsIgnoreCase(line.replaceAll("\\s+", ""))) {
+                    numSpacingChanges++;
                     generatedDiffList.set(presentLine, "---");
                     return true;
                 }
