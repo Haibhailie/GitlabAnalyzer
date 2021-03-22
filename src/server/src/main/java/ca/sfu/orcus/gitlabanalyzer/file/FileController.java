@@ -1,9 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.file;
 
-import ca.sfu.orcus.gitlabanalyzer.Constants;
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import com.google.gson.Gson;
+import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +24,10 @@ public class FileController {
                                         @PathVariable String commitid,
                                         @PathVariable String filepath,
                                         @PathVariable double score) {
-        return null;
+        FileDto file = fileService.changeCommitFileScore(jwt, projectId, commitid, filepath, score);
+        response.setStatus(file == null ? 401 : 200);
+        Gson gson = new Gson();
+        return gson.toJson(file);
     }
 
     @PostMapping("/api/project/{projectId}/file/{mergerequestid}/{filepath}/{score}")
