@@ -29,6 +29,14 @@ public class ConfigService {
         return configJson.orElse("");
     }
 
+    void updateConfig(String jwt, ConfigDto configDto) {
+        if (configRepository.contains(configDto.getId())) {
+            configRepository.updateConfig(jwt, configDto);
+        } else {
+            configRepository.addNewConfigByJwt(jwt, configDto);
+        }
+    }
+
     String getAllConfigJsonsByJwt(String jwt) {
         List<ConfigDto> configDtos = configRepository.getAllConfigDtosByJwt(jwt);
         Gson gson = new Gson();
