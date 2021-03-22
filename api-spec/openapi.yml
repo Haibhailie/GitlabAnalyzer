@@ -11,12 +11,10 @@ paths:
     $ref: './ping.yml'
   /api/config:
     $ref: './config.yml#/configPost'
-  /api/config/{configId}/:
-    $ref: './config.yml#/configDelete'
   /api/configs:
     $ref: './configs.yml'
   /api/config/{configId}:
-    $ref: './config.yml#/configGet'
+    $ref: './config.yml#/configGetAndDelete'
   /api/projects:
     $ref: './projects.yml'
   /api/project/{projectId}:
