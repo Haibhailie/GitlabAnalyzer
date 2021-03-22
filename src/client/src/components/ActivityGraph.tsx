@@ -167,6 +167,7 @@ const ActivityGraph = ({
       chart: {
         id: 'basic-bar',
         stacked: true,
+        fontFamily: 'Mulish, sans-serif',
         toolbar: {
           show: true,
           tools: {
@@ -179,7 +180,6 @@ const ActivityGraph = ({
           },
           redrawOnParentResize: true,
           redrawOnWindowResize: true,
-          fontFamily: 'Poppins, sans-serif',
         },
       },
       title: {
@@ -200,7 +200,13 @@ const ActivityGraph = ({
         {
           breakpoint: 480,
           options: {
-            width: 500,
+            width: 300,
+          },
+        },
+        {
+          breakpoint: 780,
+          options: {
+            width: 600,
           },
         },
       ],
@@ -290,7 +296,7 @@ const ActivityGraph = ({
           options={graphConfig.options}
           series={graphConfig.series}
           type="bar"
-          width={720}
+          width={700}
         ></Chart>
       </div>
 

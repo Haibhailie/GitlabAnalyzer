@@ -8,9 +8,11 @@
 }
 
 .graph {
-  width: 70%;
+  width: 80%;
+  overflow: hidden;
+  display: flex;
 }
 
 .stats {
-  width: 30%;
+  width: 20%;
 }
