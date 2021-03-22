@@ -6,5 +6,5 @@ properties:
   fileExtension:
     type: string
   scoreMultiplier:
-    type: integer
+    type: number
     minimum: 0
