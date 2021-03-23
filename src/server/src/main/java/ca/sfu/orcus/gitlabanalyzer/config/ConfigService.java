@@ -30,8 +30,15 @@ public class ConfigService {
         return generatedConfigId;
     }
 
-    void deleteConfigForJwt(String jwt, String configId) {
-        configRepository.deleteConfigForJwt(jwt, configId);
+    void deleteConfig(String jwt, String configId) throws GitLabApiException {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        int userId = gitLabApi.getUserApi().getCurrentUser().getId();
+
+        configRepository.deleteConfigForUser(userId, configId);
+
+        if (configRepository.getNumSubscribersOfConfig(configId) == 0) {
+            configRepository.deleteConfig(configId);
+        }
     }
 
     String getConfigJsonById(String configId) {

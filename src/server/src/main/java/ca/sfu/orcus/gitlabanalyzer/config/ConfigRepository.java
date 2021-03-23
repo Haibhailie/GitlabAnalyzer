@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.pull;
-import static com.mongodb.client.model.Updates.push;
+import static com.mongodb.client.model.Updates.*;
 
 @Repository
 public class ConfigRepository {
@@ -40,24 +39,22 @@ public class ConfigRepository {
         if (!containsUser(userId)) {
             userConfigsCollection.insertOne(generateNewUserConfigsDoc(userId, Collections.singletonList(configId)));
         } else {
-            userConfigsCollection.updateOne(eq("_userId", userId), push("configIds", configId));
+            userConfigsCollection.updateOne(eq("_userId", userId), addToSet("configIds", configId));
         }
     }
 
-    public void deleteConfigById(String configId) {
-        collection.deleteOne(eq("_id", configId));
+    public void deleteConfigForUser(int userId, String configId) {
+        userConfigsCollection.updateOne(eq("_userId", userId), pull("configIds", configId));
+        configsCollection.updateOne(eq("_id", configId), inc("numSubscribers", -1));
     }
 
-    public void deleteConfigForJwt(String jwt, String configId) {
-        Document configDoc = collection.find(eq("_id", configId)).first();
+    public void deleteConfig(String configId) {
+        configsCollection.deleteOne(eq("_id", configId));
+    }
 
-        if (configDoc != null) {
-            collection.updateOne(eq("_id", configId), pull("subscriberJwts", jwt));
-
-            if (isSubscriberListEmpty(configDoc)) {
-                deleteConfigById(configId);
-            }
-        }
+    public int getNumSubscribersOfConfig(String configId) {
+        Document configDoc = configsCollection.find(eq("_id", configId)).first();
+        return configDoc != null ? configDoc.getInteger("numSubscribers") : 0;
     }
 
     private Document generateNewConfigDoc(String configId, ConfigDto configDto, int numSubscribers) {
@@ -107,9 +104,5 @@ public class ConfigRepository {
     private ConfigDto getConfigDtoFromConfigDocument(Document configDoc) {
         String configJson = getConfigJsonFromConfigDocument(configDoc);
         return gson.fromJson(configJson, ConfigDto.class);
-    }
-
-    private boolean isSubscriberListEmpty(Document configDoc) {
-        return (configDoc.getList("subscriberJwts", String.class).isEmpty());
     }
 }
