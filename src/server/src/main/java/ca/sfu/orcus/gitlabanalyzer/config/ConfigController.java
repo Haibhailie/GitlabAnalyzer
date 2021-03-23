@@ -39,8 +39,7 @@ public class ConfigController {
                              @PathVariable("configId") String configId,
                              HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            configService.deleteConfigForJwt(jwt, configId);
-            response.setStatus(200);
+            tryDeletingConfig(jwt, configId, response);
         } else {
             response.setStatus(401);
         }
@@ -95,6 +94,15 @@ public class ConfigController {
 
         public ConfigIdDto(String id) {
             this.id = id;
+        }
+    }
+
+    private void tryDeletingConfig(String jwt, String configId, HttpServletResponse response) {
+        try {
+            configService.deleteConfig(jwt, configId);
+            response.setStatus(200);
+        } catch (GitLabApiException e) {
+            response.setStatus(500);
         }
     }
 }
