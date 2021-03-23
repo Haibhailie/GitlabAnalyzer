@@ -18,6 +18,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 public class ConfigController {
     private final ConfigService configService;
     private final AuthenticationService authService;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public ConfigController(ConfigService configService, AuthenticationService authService) {
@@ -86,7 +87,6 @@ public class ConfigController {
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        Gson gson = new Gson();
         out.print(gson.toJson(new ConfigIdDto(configId)));
         out.flush();
     }

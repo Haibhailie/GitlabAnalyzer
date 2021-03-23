@@ -34,7 +34,7 @@ public class ConfigRepository {
     public String addNewConfig(ConfigDto configDto) {
         String configId = new ObjectId().toString();
         configDto.setId(configId);
-        configsCollection.insertOne(generateNewConfigDoc(configId, configDto, 1));
+        configsCollection.insertOne(generateNewConfigDoc(configId, configDto));
         return configId;
     }
 
@@ -60,12 +60,12 @@ public class ConfigRepository {
         return (configDoc == null) ? 0 : configDoc.getInteger("numSubscribers");
     }
 
-    private Document generateNewConfigDoc(String configId, ConfigDto configDto, int numSubscribers) {
+    private Document generateNewConfigDoc(String configId, ConfigDto configDto) {
         String configJson = gson.toJson(configDto);
 
         return new Document("_id", configId)
                 .append("config", configJson)
-                .append("numSubscribers", numSubscribers);
+                .append("numSubscribers", 1);
     }
 
     private Document generateNewUserConfigsDoc(int userId, List<String> configIds) {

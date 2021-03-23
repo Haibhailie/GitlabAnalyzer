@@ -15,6 +15,7 @@ import java.util.Optional;
 public class ConfigService {
     private final ConfigRepository configRepository;
     private final GitLabApiWrapper gitLabApiWrapper;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public ConfigService(ConfigRepository configRepository, GitLabApiWrapper gitLabApiWrapper) {
@@ -61,7 +62,6 @@ public class ConfigService {
             configDto.ifPresent(configDtos::add);
         }
 
-        Gson gson = new Gson();
         return gson.toJson(configDtos);
     }
 }
