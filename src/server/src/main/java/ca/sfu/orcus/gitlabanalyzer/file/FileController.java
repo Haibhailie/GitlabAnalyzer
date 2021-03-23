@@ -1,7 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.file;
 
 import com.google.gson.Gson;
-import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,15 +27,5 @@ public class FileController {
         response.setStatus(file == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(file);
-    }
-
-    @PostMapping("/api/project/{projectId}/file/{mergerequestid}/{filepath}/{score}")
-    public String changeMRFileScore(@CookieValue(value = "sessionId") String jwt,
-                                    HttpServletResponse response,
-                                    @PathVariable int projectId,
-                                    @PathVariable String mergerequestid,
-                                    @PathVariable String filepath,
-                                    @PathVariable double score) {
-        return null;
     }
 }

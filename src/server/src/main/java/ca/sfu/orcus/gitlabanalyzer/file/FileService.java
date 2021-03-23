@@ -29,22 +29,19 @@ public class FileService {
     }
 
     public FileDto changeCommitFileScore(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
-        FileDto file = new FileDto();
-        file.commitId = commitId;
-        file.isIgnored = false;
-        file.path = filePath;
-        file.mergeRequestId = null;
         try {
             List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commitId);
+            String[] arr = new String[diffList.size()];
+            int i = 0;
             for (Diff d : diffList) {
                 if (d.getNewPath().equals(filePath)) {
-                    file.diff = d.getDiff();
+                    arr[i] = d.getDiff();
+                    i++;
                 }
             }
+            return new FileDto(filePath, commitId, arr, score);
         } catch (GitLabApiException e) {
             return null;
         }
-        file.score = score;
-        return file;
     }
 }
