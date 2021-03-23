@@ -8,39 +8,69 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.pull;
+import static com.mongodb.client.model.Updates.push;
 
 @Repository
 public class ConfigRepository {
-    MongoCollection<Document> collection;
+    MongoCollection<Document> configsCollection;
+    MongoCollection<Document> userConfigsCollection;
     private static final Gson gson = new Gson();
 
     public ConfigRepository() {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
-        this.collection = database.getCollection("CONFIGS_COLLECTION");
+        this.configsCollection = database.getCollection("CONFIGS_COLLECTION");
+        this.userConfigsCollection = database.getCollection("USER_CONFIGS_COLLECTION");
     }
 
-    public String addNewConfigByJwt(String jwt, ConfigDto configDto) {
+    public String addNewConfig(ConfigDto configDto) {
         String configId = new ObjectId().toString();
         configDto.setId(configId);
-        collection.insertOne(generateNewConfigDoc(jwt, configId, configDto));
+        configsCollection.insertOne(generateNewConfigDoc(configId, configDto, 1));
         return configId;
     }
 
-    public void removeConfigById(String configId) {
+    public void addConfigToUserProfile(int userId, String configId) {
+        if (!containsUser(userId)) {
+            userConfigsCollection.insertOne(generateNewUserConfigsDoc(userId, Collections.singletonList(configId)));
+        } else {
+            userConfigsCollection.updateOne(eq("_userId", userId), push("configIds", configId));
+        }
+    }
+
+    public void deleteConfigById(String configId) {
         collection.deleteOne(eq("_id", configId));
     }
 
-    private Document generateNewConfigDoc(String jwt, String configId, ConfigDto configDto) {
+    public void deleteConfigForJwt(String jwt, String configId) {
+        Document configDoc = collection.find(eq("_id", configId)).first();
+
+        if (configDoc != null) {
+            collection.updateOne(eq("_id", configId), pull("subscriberJwts", jwt));
+
+            if (isSubscriberListEmpty(configDoc)) {
+                deleteConfigById(configId);
+            }
+        }
+    }
+
+    private Document generateNewConfigDoc(String configId, ConfigDto configDto, int numSubscribers) {
         String configJson = gson.toJson(configDto);
 
         return new Document("_id", configId)
-                .append("jwt", jwt)
-                .append("config", configJson);
+                .append("config", configJson)
+                .append("numSubscribers", numSubscribers);
+    }
+
+    private Document generateNewUserConfigsDoc(int userId, List<String> configIds) {
+        return new Document("_userId", userId)
+                .append("configIds", configIds);
     }
 
     public Optional<String> getConfigJsonById(String configId) {
@@ -65,6 +95,11 @@ public class ConfigRepository {
         return configDtos;
     }
 
+    private boolean containsUser(int userId) {
+        Document userConfigsDocument = userConfigsCollection.find(eq("userId", userId)).first();
+        return (userConfigsDocument != null);
+    }
+
     private String getConfigJsonFromConfigDocument(Document configDoc) {
         return configDoc.getString("config");
     }
@@ -72,5 +107,9 @@ public class ConfigRepository {
     private ConfigDto getConfigDtoFromConfigDocument(Document configDoc) {
         String configJson = getConfigJsonFromConfigDocument(configDoc);
         return gson.fromJson(configJson, ConfigDto.class);
+    }
+
+    private boolean isSubscriberListEmpty(Document configDoc) {
+        return (configDoc.getList("subscriberJwts", String.class).isEmpty());
     }
 }

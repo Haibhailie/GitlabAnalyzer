@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import com.google.gson.Gson;
+import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class ConfigController {
                           @RequestBody ConfigDto configDto,
                           HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            tryAddingNewConfigByJwt(jwt, configDto, response);
+            tryAddingNewConfig(jwt, configDto, response);
         } else {
             response.setStatus(401);
         }
@@ -38,7 +39,7 @@ public class ConfigController {
                              @PathVariable("configId") String configId,
                              HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            configService.removeConfigById(configId);
+            configService.deleteConfigForJwt(jwt, configId);
             response.setStatus(200);
         } else {
             response.setStatus(401);
@@ -70,12 +71,12 @@ public class ConfigController {
         }
     }
 
-    private void tryAddingNewConfigByJwt(String jwt, ConfigDto configDto, HttpServletResponse response) {
+    private void tryAddingNewConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
         try {
-            String configId = configService.addNewConfigByJwt(jwt, configDto);
+            String configId = configService.addNewConfig(jwt, configDto);
             response.setStatus(200);
             addConfigIdToResponse(response, configId);
-        } catch (IOException e) {
+        } catch (IOException | GitLabApiException e) {
             response.setStatus(500);
         }
     }

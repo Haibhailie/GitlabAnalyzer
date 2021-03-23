@@ -1,6 +1,9 @@
 package ca.sfu.orcus.gitlabanalyzer.config;
 
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import com.google.gson.Gson;
+import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,18 +13,25 @@ import java.util.Optional;
 @Service
 public class ConfigService {
     private final ConfigRepository configRepository;
+    private final GitLabApiWrapper gitLabApiWrapper;
 
     @Autowired
-    public ConfigService(ConfigRepository configRepository) {
+    public ConfigService(ConfigRepository configRepository, GitLabApiWrapper gitLabApiWrapper) {
         this.configRepository = configRepository;
+        this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
-    String addNewConfigByJwt(String jwt, ConfigDto configDto) {
-        return configRepository.addNewConfigByJwt(jwt, configDto);
+    String addNewConfig(String jwt, ConfigDto configDto) throws GitLabApiException {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        int userId = gitLabApi.getUserApi().getCurrentUser().getId();
+
+        String generatedConfigId = configRepository.addNewConfig(configDto);
+        configRepository.addConfigToUserProfile(userId, generatedConfigId);
+        return generatedConfigId;
     }
 
-    void removeConfigById(String configId) {
-        configRepository.removeConfigById(configId);
+    void deleteConfigForJwt(String jwt, String configId) {
+        configRepository.deleteConfigForJwt(jwt, configId);
     }
 
     String getConfigJsonById(String configId) {
