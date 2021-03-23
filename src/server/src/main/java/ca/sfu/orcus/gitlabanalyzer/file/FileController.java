@@ -28,4 +28,30 @@ public class FileController {
         Gson gson = new Gson();
         return gson.toJson(file);
     }
+
+    @PostMapping("/api/project/{projectId}/file/{commitid}/{filepath}/{score}/true")
+    public String changeFileIgnoreTrue(@CookieValue(value = "sessionId") String jwt,
+                                        HttpServletResponse response,
+                                        @PathVariable int projectId,
+                                        @PathVariable String commitid,
+                                        @PathVariable String filepath,
+                                        @PathVariable double score) {
+        FileDto file = fileService.changeFileIgnoreTrue(jwt, projectId, commitid, filepath, score);
+        response.setStatus(file == null ? 401 : 200);
+        Gson gson = new Gson();
+        return gson.toJson(file);
+    }
+
+    @PostMapping("/api/project/{projectId}/file/{commitid}/{filepath}/{score}/false")
+    public String changeFileIgnoreFalse(@CookieValue(value = "sessionId") String jwt,
+                                       HttpServletResponse response,
+                                       @PathVariable int projectId,
+                                       @PathVariable String commitid,
+                                       @PathVariable String filepath,
+                                       @PathVariable double score) {
+        FileDto file = fileService.changeFileIgnoreFalse(jwt, projectId, commitid, filepath, score);
+        response.setStatus(file == null ? 401 : 200);
+        Gson gson = new Gson();
+        return gson.toJson(file);
+    }
 }
