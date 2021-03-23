@@ -57,7 +57,7 @@ public class ConfigRepository {
 
     public int getNumSubscribersOfConfig(String configId) {
         Document configDoc = configsCollection.find(eq("_id", configId)).first();
-        return configDoc != null ? configDoc.getInteger("numSubscribers") : 0;
+        return (configDoc == null) ? 0 : configDoc.getInteger("numSubscribers");
     }
 
     private Document generateNewConfigDoc(String configId, ConfigDto configDto, int numSubscribers) {
