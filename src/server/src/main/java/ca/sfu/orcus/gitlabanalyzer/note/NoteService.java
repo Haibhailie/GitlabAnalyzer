@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -33,48 +34,49 @@ public class NoteService {
 
     private List<NoteDto> returnAllNotesDtosByMemberId(GitLabApi gitLabApi, int projectId, int memberId) {
         List<NoteDto> filteredNotes = new ArrayList<>();
-        List<Note> allNotes = getAllNotes(gitLabApi, projectId);
+        HashMap<String, List<Note>> allNotes = getAllNotes(gitLabApi, projectId);
 
-        for (Note n : allNotes) {
-            if (n.getAuthor().getId() == memberId) {
-                filteredNotes.add(new NoteDto(n));
+        for (String webUrl : allNotes.keySet()) {
+            for (Note n : allNotes.get(webUrl)) {
+                if (n.getAuthor().getId() == memberId && n.getSystem() == false) {
+                    filteredNotes.add(new NoteDto(n, webUrl));
+                }
             }
         }
-
         return filteredNotes;
     }
 
-    private List<Note> getAllNotes(GitLabApi gitLabApi, int projectId) {
-        List<Note> allNotes = new ArrayList<>();
-        allNotes.addAll(getAllMergeRequestsNotes(gitLabApi, projectId));
-        allNotes.addAll(getAllIssuesNotes(gitLabApi, projectId));
+    private HashMap<String, List<Note>> getAllNotes(GitLabApi gitLabApi, int projectId) {
+        HashMap<String, List<Note>> allNotes = new HashMap<>();
+        allNotes.putAll(getAllMergeRequestsNotes(gitLabApi, projectId));
+        allNotes.putAll(getAllIssuesNotes(gitLabApi, projectId));
         return allNotes;
     }
 
-    private List<Note> getAllMergeRequestsNotes(GitLabApi gitLabApi, int projectId) {
+    private HashMap<String, List<Note>> getAllMergeRequestsNotes(GitLabApi gitLabApi, int projectId) {
         try {
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId);
-            List<Note> allMergeRequestsNotes = new ArrayList<>();
+            HashMap<String, List<Note>> allMergeRequestsNotes = new HashMap<>();
             for (MergeRequest mr : allMergeRequests) {
-                allMergeRequestsNotes.addAll(gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mr.getIid()));
+                allMergeRequestsNotes.put(mr.getWebUrl(), gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mr.getIid()));
             }
             return allMergeRequestsNotes;
         } catch (GitLabApiException e) {
-            return new ArrayList<>();
+            return new HashMap<>();
         }
     }
 
-    private List<Note> getAllIssuesNotes(GitLabApi gitLabApi, int projectId) {
+    private HashMap<String, List<Note>> getAllIssuesNotes(GitLabApi gitLabApi, int projectId) {
         try {
             List<Issue> allIssues = gitLabApi.getIssuesApi().getIssues(Integer.valueOf(projectId));
 
-            List<Note> allIssuesNotes = new ArrayList<>();
+            HashMap<String, List<Note>> allIssuesNotes = new HashMap<>();
             for (Issue issue : allIssues) {
-                allIssuesNotes.addAll(gitLabApi.getNotesApi().getIssueNotes(projectId, issue.getIid()));
+                allIssuesNotes.put(issue.getWebUrl(), gitLabApi.getNotesApi().getIssueNotes(projectId, issue.getIid()));
             }
             return allIssuesNotes;
         } catch (GitLabApiException e) {
-            return new ArrayList<>();
+            return new HashMap<>();
         }
     }
 
