@@ -107,7 +107,7 @@ public class ConfigController {
             return configJson;
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
-            return null;
+            return "";
         }
     }
 
@@ -117,7 +117,7 @@ public class ConfigController {
             return configService.getAllConfigJsonsForCurrentUser(jwt);
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
-            return null;
+            return "";
         }
     }
 
