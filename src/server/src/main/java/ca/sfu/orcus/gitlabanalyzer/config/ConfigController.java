@@ -46,12 +46,11 @@ public class ConfigController {
     }
 
     @GetMapping("/api/config/{configId}")
-    public String getConfigById(@CookieValue(value = "sessionId") String jwt,
-                                @PathVariable("configId") String configId,
-                                HttpServletResponse response) {
+    public String getConfigForCurrentUser(@CookieValue(value = "sessionId") String jwt,
+                                          @PathVariable("configId") String configId,
+                                          HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            response.setStatus(200);
-            return configService.getConfigJsonById(configId);
+            return tryGettingConfigForCurrentUser(jwt, configId, response);
         } else {
             response.setStatus(401);
             return "";
@@ -59,8 +58,8 @@ public class ConfigController {
     }
 
     @GetMapping("/api/configs")
-    public String getAllConfigsByJwt(@CookieValue(value = "sessionId") String jwt,
-                                     HttpServletResponse response) {
+    public String getAllConfigsForCurrentUser(@CookieValue(value = "sessionId") String jwt,
+                                              HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
             response.setStatus(200);
             return configService.getAllConfigJsonsByJwt(jwt);
@@ -103,6 +102,17 @@ public class ConfigController {
             response.setStatus(200);
         } catch (GitLabApiException e) {
             response.setStatus(500);
+        }
+    }
+
+    private String tryGettingConfigForCurrentUser(String jwt, String configId, HttpServletResponse response) {
+        try {
+            String configJson = configService.getConfigJsonById(jwt, configId);
+            response.setStatus(configJson.isEmpty() ? 404 : 200);
+            return configJson;
+        } catch (GitLabApiException e) {
+            response.setStatus(500);
+            return null;
         }
     }
 }

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.*;
 
@@ -71,7 +72,7 @@ public class ConfigRepository {
     }
 
     public Optional<String> getConfigJsonById(String configId) {
-        Document configDoc = collection.find(eq("_id", configId)).first();
+        Document configDoc = configsCollection.find(eq("_id", configId)).first();
 
         if (configDoc == null) {
             return Optional.empty();
@@ -93,8 +94,15 @@ public class ConfigRepository {
     }
 
     private boolean containsUser(int userId) {
-        Document userConfigsDocument = userConfigsCollection.find(eq("userId", userId)).first();
-        return (userConfigsDocument != null);
+        Document userConfigsDoc = userConfigsCollection.find(eq("userId", userId)).first();
+        return (userConfigsDoc != null);
+    }
+
+    public boolean userHasConfig(int userId, String configId) {
+        Document userConfigsDoc = userConfigsCollection.find(and(
+                eq("_userId", userId),
+                eq("configIds", configId))).first();
+        return (userConfigsDoc != null);
     }
 
     private String getConfigJsonFromConfigDocument(Document configDoc) {

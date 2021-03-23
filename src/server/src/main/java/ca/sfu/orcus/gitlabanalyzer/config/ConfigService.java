@@ -41,9 +41,16 @@ public class ConfigService {
         }
     }
 
-    String getConfigJsonById(String configId) {
-        Optional<String> configJson = configRepository.getConfigJsonById(configId);
-        return configJson.orElse("");
+    String getConfigJsonById(String jwt, String configId) throws GitLabApiException {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        int userId = gitLabApi.getUserApi().getCurrentUser().getId();
+
+        if (configRepository.userHasConfig(userId, configId)) {
+            Optional<String> configJson = configRepository.getConfigJsonById(configId);
+            return configJson.orElse("");
+        }
+
+        return "";
     }
 
     String getAllConfigJsonsByJwt(String jwt) {
