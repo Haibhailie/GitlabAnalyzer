@@ -2,12 +2,14 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.google.gson.Gson;
-import com.mongodb.client.*;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +27,8 @@ public class ConfigRepository {
     public ConfigRepository() {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
-        this.configsCollection = database.getCollection("CONFIGS_COLLECTION");
-        this.userConfigsCollection = database.getCollection("USER_CONFIGS_COLLECTION");
+        this.configsCollection = database.getCollection("TEST_CONFIGS_COLLECTION");
+        this.userConfigsCollection = database.getCollection("TEST_USER_CONFIGS_COLLECTION");
     }
 
     public String addNewConfig(ConfigDto configDto) {
