@@ -6,7 +6,7 @@ import java.util.Date;
 public class NoteDto {
 
     private int id;
-    private int wordCount;
+    private int wordcount;
     private String content;
     private Date date;
     private String context;
@@ -14,7 +14,7 @@ public class NoteDto {
 
     public NoteDto(Note presentNote, String webUrl) {
         setId(presentNote.getId());
-        setWordCount(countWords(presentNote.getBody()));
+        setWordcount(countWords(presentNote.getBody()));
         setContent(presentNote.getBody());
         setDate(presentNote.getCreatedAt());
         setContext(presentNote.getNoteableType());
@@ -34,8 +34,8 @@ public class NoteDto {
         this.id = id;
     }
 
-    public void setWordCount(int wordCount) {
-        this.wordCount = wordCount;
+    public void setWordcount(int wordcount) {
+        this.wordcount = wordcount;
     }
 
     public void setContent(String content) {

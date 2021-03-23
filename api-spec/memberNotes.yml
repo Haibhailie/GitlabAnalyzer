@@ -15,7 +15,7 @@ get:
                 - content
                 - date
                 - context
-                - weburl
+                - webUrl
               properties:
                 id:
                   type: string
@@ -32,7 +32,7 @@ get:
                     - MERGEREQUEST
                     - ISSUE
                     - EPIC
-                weburl:
+                webUrl:
                   type: string
     '401':
       description: Invalid JWT Token.
