@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static javax.servlet.http.HttpServletResponse.*;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ConfigController {
@@ -32,7 +34,7 @@ public class ConfigController {
         if (authService.jwtIsValid(jwt)) {
             tryAddingNewConfig(jwt, configDto, response);
         } else {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
         }
     }
 
@@ -43,7 +45,7 @@ public class ConfigController {
         if (authService.jwtIsValid(jwt)) {
             tryDeletingConfig(jwt, configId, response);
         } else {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
         }
     }
 
@@ -54,7 +56,7 @@ public class ConfigController {
         if (authService.jwtIsValid(jwt)) {
             return tryGettingConfigForCurrentUser(jwt, configId, response);
         } else {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
             return "";
         }
     }
@@ -65,7 +67,7 @@ public class ConfigController {
         if (authService.jwtIsValid(jwt)) {
             return tryGettingAllConfigsForCurrentUser(jwt, response);
         } else {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
             return "";
         }
     }
@@ -73,10 +75,10 @@ public class ConfigController {
     private void tryAddingNewConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
         try {
             String configId = configService.addNewConfig(jwt, configDto);
-            response.setStatus(200);
+            response.setStatus(SC_OK);
             addConfigIdToResponse(response, configId);
         } catch (IOException | GitLabApiException e) {
-            response.setStatus(500);
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -89,41 +91,42 @@ public class ConfigController {
         out.flush();
     }
 
-    private static final class ConfigIdDto {
-        private String id;
-
-        public ConfigIdDto(String id) {
-            this.id = id;
-        }
-    }
-
     private void tryDeletingConfig(String jwt, String configId, HttpServletResponse response) {
         try {
             configService.deleteConfig(jwt, configId);
-            response.setStatus(200);
+            response.setStatus(SC_OK);
         } catch (GitLabApiException e) {
-            response.setStatus(500);
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     private String tryGettingConfigForCurrentUser(String jwt, String configId, HttpServletResponse response) {
         try {
             String configJson = configService.getConfigJsonForCurrentUser(jwt, configId);
-            response.setStatus(configJson.isEmpty() ? 404 : 200);
+            response.setStatus(configJson.isEmpty() ? SC_NOT_FOUND : SC_OK);
             return configJson;
         } catch (GitLabApiException e) {
-            response.setStatus(500);
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
             return null;
         }
     }
 
     private String tryGettingAllConfigsForCurrentUser(String jwt, HttpServletResponse response) {
         try {
-            response.setStatus(200);
+            response.setStatus(SC_OK);
             return configService.getAllConfigJsonsForCurrentUser(jwt);
         } catch (GitLabApiException e) {
-            response.setStatus(500);
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
             return null;
+        }
+    }
+
+    // POST response body object
+    private static final class ConfigIdDto {
+        private String id;
+
+        public ConfigIdDto(String id) {
+            this.id = id;
         }
     }
 }
