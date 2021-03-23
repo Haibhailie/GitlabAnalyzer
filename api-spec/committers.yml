@@ -9,6 +9,8 @@ get:
             $ref: './components/committers.yml'
     '401':
       description: Invalid JWT Token.
+    '404':
+      description: Project not found.
     '500':
       description: An error un-related to this request occurred.
   parameters:
@@ -24,6 +26,8 @@ post:
       description: Malformed request body object
     '401':
       description: Invalid JWT Token.
+    '404':
+      description: Project not found.
     '500':
       description: An error un-related to this request occurred.
   parameters:
