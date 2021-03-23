@@ -23,7 +23,9 @@ public class ConfigController {
         this.authService = authService;
     }
 
-    @PostMapping(value = "/api/config", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/api/config",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public void addConfig(@CookieValue(value = "sessionId") String jwt,
                           @RequestBody ConfigDto configDto,
                           HttpServletResponse response) {
