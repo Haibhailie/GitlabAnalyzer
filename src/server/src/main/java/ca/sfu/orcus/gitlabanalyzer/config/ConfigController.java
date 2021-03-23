@@ -75,8 +75,8 @@ public class ConfigController {
     private void tryAddingNewConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
         try {
             String configId = configService.addNewConfig(jwt, configDto);
-            response.setStatus(SC_OK);
             addConfigIdToResponse(response, configId);
+            response.setStatus(SC_OK);
         } catch (IOException | GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
