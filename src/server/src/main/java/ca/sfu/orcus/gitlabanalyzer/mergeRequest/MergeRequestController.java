@@ -15,6 +15,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class MergeRequestController {
     private final MergeRequestService mergeRequestService;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public MergeRequestController(MergeRequestService mergeRequestService) {
@@ -31,7 +32,6 @@ public class MergeRequestController {
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<MergeRequestDto> mergeRequestDtos = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
         response.setStatus(mergeRequestDtos == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(mergeRequestDtos);
     }
 
@@ -42,7 +42,6 @@ public class MergeRequestController {
                                               @PathVariable int mergerequestId) {
         List<CommitDto> commitDtos = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(commitDtos == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(commitDtos);
     }
 
@@ -53,7 +52,6 @@ public class MergeRequestController {
                                             @PathVariable int mergerequestId) {
         String mergeRequestDiff = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
         response.setStatus(mergeRequestDiff == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(mergeRequestDiff);
     }
 }

@@ -11,6 +11,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ProjectController {
     private final ProjectService projectService;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public ProjectController(ProjectService projectService) {
@@ -22,7 +23,6 @@ public class ProjectController {
                                  HttpServletResponse response) {
         List<ProjectDto> projects = projectService.getAllProjects(jwt);
         response.setStatus(projects == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(projects);
     }
 
@@ -32,7 +32,6 @@ public class ProjectController {
                              HttpServletResponse response) {
         ProjectExtendedDto project = projectService.getProject(jwt, projectId);
         response.setStatus(project == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(project);
     }
 }

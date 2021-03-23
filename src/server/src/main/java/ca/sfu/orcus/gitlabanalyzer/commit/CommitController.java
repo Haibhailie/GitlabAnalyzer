@@ -14,6 +14,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CommitController {
     private final CommitService commitService;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public CommitController(CommitService commitService) {
@@ -30,7 +31,6 @@ public class CommitController {
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<CommitDto> commits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
         response.setStatus(commits == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(commits);
     }
 
@@ -41,7 +41,6 @@ public class CommitController {
                                   HttpServletResponse response) {
         CommitDto commit = commitService.getSingleCommit(jwt, projectId, sha);
         response.setStatus(commit == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(commit);
     }
 
@@ -52,7 +51,6 @@ public class CommitController {
                                        HttpServletResponse response) {
         String diffs = commitService.getDiffOfCommit(jwt, projectId, sha);
         response.setStatus(diffs == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(diffs);
     }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class MemberController {
     private final MemberService memberService;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public MemberController(MemberService memberService) {
@@ -28,7 +29,6 @@ public class MemberController {
                              @PathVariable int projectId) {
         List<MemberDto> members = memberService.getAllMembers(jwt, projectId);
         response.setStatus(members == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(members);
     }
 
@@ -43,7 +43,6 @@ public class MemberController {
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<CommitDto> allCommitsByMemberName = memberService.getCommitsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
         response.setStatus(allCommitsByMemberName == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(allCommitsByMemberName);
     }
 
@@ -58,7 +57,6 @@ public class MemberController {
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<MergeRequestDto> allMergeRequestsByMemberId = memberService.getMergeRequestsByMemberId(jwt, projectId, dateSince, dateUntil, memberId);
         response.setStatus(allMergeRequestsByMemberId == null ? 401 : 200);
-        Gson gson = new Gson();
         return gson.toJson(allMergeRequestsByMemberId);
     }
 }
