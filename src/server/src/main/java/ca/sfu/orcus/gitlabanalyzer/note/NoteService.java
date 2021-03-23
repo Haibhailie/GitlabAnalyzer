@@ -23,7 +23,7 @@ public class NoteService {
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
-    public List<NoteDto> getNotesDtosByMemberId(String jwt, int projectId, int memberId) {
+    public List<NoteDto> getNoteDtosByMemberId(String jwt, int projectId, int memberId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
@@ -46,12 +46,8 @@ public class NoteService {
 
     private List<Note> getAllNotes(GitLabApi gitLabApi, int projectId) {
         List<Note> allNotes = new ArrayList<>();
-        if (getAllMergeRequestsNotes(gitLabApi, projectId) != null) {
-            allNotes.addAll(getAllMergeRequestsNotes(gitLabApi, projectId));
-        }
-        if (getAllIssuesNotes(gitLabApi, projectId) != null) {
-            allNotes.addAll(getAllIssuesNotes(gitLabApi, projectId));
-        }
+        allNotes.addAll(getAllMergeRequestsNotes(gitLabApi, projectId));
+        allNotes.addAll(getAllIssuesNotes(gitLabApi, projectId));
         return allNotes;
     }
 
@@ -64,7 +60,7 @@ public class NoteService {
             }
             return allMergeRequestsNotes;
         } catch (GitLabApiException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -83,7 +79,7 @@ public class NoteService {
             }
             return allIssuesNotes;
         } catch (GitLabApiException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 

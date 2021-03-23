@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.note;
 
-import ca.sfu.orcus.gitlabanalyzer.Constants;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +18,11 @@ public class NoteController {
     }
 
     @GetMapping("/api/project/{projectId}/members/{memberId}/notes")
-    public String getCommitsByMemberName(@CookieValue(value = "sessionId") String jwt,
+    public String getNotesByMemberId(@CookieValue(value = "sessionId") String jwt,
                                          HttpServletResponse response,
                                          @PathVariable int projectId,
                                          @PathVariable int memberId) {
-        List<NoteDto> allNotesByMemberId = noteService.getNotesDtosByMemberId(jwt, projectId, memberId);
+        List<NoteDto> allNotesByMemberId = noteService.getNoteDtosByMemberId(jwt, projectId, memberId);
         response.setStatus(allNotesByMemberId == null ? 401 : 200);
         Gson gson = new Gson();
         return gson.toJson(allNotesByMemberId);
