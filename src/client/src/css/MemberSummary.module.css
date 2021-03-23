@@ -9,8 +9,6 @@
 
 .graph {
   width: 80%;
-  overflow: hidden;
-  display: flex;
 }
 
 .stats {

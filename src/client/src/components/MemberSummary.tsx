@@ -105,17 +105,16 @@ const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.graph}>
-        <Suspense
-          fallback={`Analyzing ${memberData?.displayName} . . . `}
-          error={error?.message ?? 'Unknown Error'}
-        >
-          <ActivityGraph
-            mergeUrl={`/api/project/${projectId}/members/${memberData?.id}/mergerequests`}
-            commitUrl={`/api/project/${projectId}/members/${memberData?.displayName}/commits`}
-          />
-        </Suspense>
-      </div>
+      <Suspense
+        fallback={`Analyzing ${memberData?.displayName} . . . `}
+        error={error?.message ?? 'Unknown Error'}
+      >
+        <ActivityGraph
+          mergeUrl={`/api/project/${projectId}/members/${memberData?.id}/mergerequests`}
+          commitUrl={`/api/project/${projectId}/members/${memberData?.displayName}/commits`}
+        />
+      </Suspense>
+
       <StatSummary statData={memberStatData} />
     </div>
   )
