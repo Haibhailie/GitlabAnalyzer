@@ -74,27 +74,19 @@ public class ConfigRepository {
     public Optional<String> getConfigJsonById(String configId) {
         Document configDoc = configsCollection.find(eq("_id", configId)).first();
 
-        if (configDoc == null) {
-            return Optional.empty();
-        }
-
-        String configJson = getConfigJsonFromConfigDocument(configDoc);
-        return Optional.of(configJson);
+        return (configDoc == null) ? Optional.empty() :
+                Optional.of(getConfigJsonFromConfigDocument(configDoc));
     }
 
-    public List<ConfigDto> getAllConfigDtosByJwt(String jwt) {
-        List<ConfigDto> configDtos = new ArrayList<>();
-        FindIterable<Document> configDocs = collection.find(eq("jwt", jwt));
+    public Optional<ConfigDto> getConfigDtoById(String configId) {
+        Document configDoc = configsCollection.find(eq("_id", configId)).first();
 
-        for (Document configDoc : configDocs) {
-            configDtos.add(getConfigDtoFromConfigDocument(configDoc));
-        }
-
-        return configDtos;
+        return (configDoc == null) ? Optional.empty() :
+                Optional.of(getConfigDtoFromConfigDocument(configDoc));
     }
 
     private boolean containsUser(int userId) {
-        Document userConfigsDoc = userConfigsCollection.find(eq("userId", userId)).first();
+        Document userConfigsDoc = userConfigsCollection.find(eq("_userId", userId)).first();
         return (userConfigsDoc != null);
     }
 
@@ -105,12 +97,18 @@ public class ConfigRepository {
         return (userConfigsDoc != null);
     }
 
-    private String getConfigJsonFromConfigDocument(Document configDoc) {
-        return configDoc.getString("config");
+    public Optional<List<String>> getAllConfigIdsForCurrentUser(int userId) {
+        Document userConfigsDoc = userConfigsCollection.find(eq("_userId", userId)).first();
+        return (userConfigsDoc == null) ? Optional.empty() :
+                Optional.of(userConfigsDoc.getList("configIds", String.class));
     }
 
     private ConfigDto getConfigDtoFromConfigDocument(Document configDoc) {
         String configJson = getConfigJsonFromConfigDocument(configDoc);
         return gson.fromJson(configJson, ConfigDto.class);
+    }
+
+    private String getConfigJsonFromConfigDocument(Document configDoc) {
+        return configDoc.getString("config");
     }
 }

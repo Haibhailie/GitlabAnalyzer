@@ -7,6 +7,7 @@ import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +23,7 @@ public class ConfigService {
     }
 
     String addNewConfig(String jwt, ConfigDto configDto) throws GitLabApiException {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        int userId = gitLabApi.getUserApi().getCurrentUser().getId();
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         String generatedConfigId = configRepository.addNewConfig(configDto);
         configRepository.addConfigToUserProfile(userId, generatedConfigId);
@@ -31,8 +31,7 @@ public class ConfigService {
     }
 
     void deleteConfig(String jwt, String configId) throws GitLabApiException {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        int userId = gitLabApi.getUserApi().getCurrentUser().getId();
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         configRepository.deleteConfigForUser(userId, configId);
 
@@ -41,9 +40,8 @@ public class ConfigService {
         }
     }
 
-    String getConfigJsonById(String jwt, String configId) throws GitLabApiException {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        int userId = gitLabApi.getUserApi().getCurrentUser().getId();
+    String getConfigJsonForCurrentUser(String jwt, String configId) throws GitLabApiException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         if (configRepository.userHasConfig(userId, configId)) {
             Optional<String> configJson = configRepository.getConfigJsonById(configId);
@@ -53,10 +51,17 @@ public class ConfigService {
         return "";
     }
 
-    String getAllConfigJsonsByJwt(String jwt) {
-        List<ConfigDto> configDtos = configRepository.getAllConfigDtosByJwt(jwt);
+    String getAllConfigJsonsForCurrentUser(String jwt) throws GitLabApiException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+
+        List<ConfigDto> configDtos = new ArrayList<>();
+        List<String> configIds = configRepository.getAllConfigIdsForCurrentUser(userId).orElse(new ArrayList<>());
+        for (String id : configIds) {
+            Optional<ConfigDto> configDto = configRepository.getConfigDtoById(id);
+            configDto.ifPresent(configDtos::add);
+        }
+
         Gson gson = new Gson();
         return gson.toJson(configDtos);
     }
-
 }

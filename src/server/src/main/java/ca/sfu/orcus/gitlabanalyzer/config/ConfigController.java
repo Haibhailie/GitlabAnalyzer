@@ -61,8 +61,7 @@ public class ConfigController {
     public String getAllConfigsForCurrentUser(@CookieValue(value = "sessionId") String jwt,
                                               HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            response.setStatus(200);
-            return configService.getAllConfigJsonsByJwt(jwt);
+            return tryGettingAllConfigsForCurrentUser(jwt, response);
         } else {
             response.setStatus(401);
             return "";
@@ -107,9 +106,19 @@ public class ConfigController {
 
     private String tryGettingConfigForCurrentUser(String jwt, String configId, HttpServletResponse response) {
         try {
-            String configJson = configService.getConfigJsonById(jwt, configId);
+            String configJson = configService.getConfigJsonForCurrentUser(jwt, configId);
             response.setStatus(configJson.isEmpty() ? 404 : 200);
             return configJson;
+        } catch (GitLabApiException e) {
+            response.setStatus(500);
+            return null;
+        }
+    }
+
+    private String tryGettingAllConfigsForCurrentUser(String jwt, HttpServletResponse response) {
+        try {
+            response.setStatus(200);
+            return configService.getAllConfigJsonsForCurrentUser(jwt);
         } catch (GitLabApiException e) {
             response.setStatus(500);
             return null;
