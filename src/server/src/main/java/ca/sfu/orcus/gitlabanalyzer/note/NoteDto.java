@@ -21,7 +21,7 @@ public class NoteDto {
         setWebUrl(webUrl);
     }
 
-    public int countWords(String str) {
+    private int countWords(String str) {
         if (str == null || str.isEmpty()) {
             return 0;
         }
