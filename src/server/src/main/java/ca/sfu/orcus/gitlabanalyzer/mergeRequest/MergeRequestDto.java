@@ -31,6 +31,7 @@ public class MergeRequestDto {
     private List<String> committers;
     private List<Participant> participants;
     private long time;
+    boolean isIgnored;
     private List<FileDto> files;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
@@ -62,8 +63,7 @@ public class MergeRequestDto {
         setTime(presentMergeRequest.getMergedAt().getTime());
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setFiles(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
-        for(int i=0;i<files.size();i++)
-            System.out.println(files.get(i).getTotalScore());
+        isIgnored = false;
 
     }
 
@@ -151,6 +151,9 @@ public class MergeRequestDto {
         this.notes = notes;
     }
 
+    public void setIgnored(boolean ignored) {
+        isIgnored = ignored;
+    }
 
     public void setTime(long time) {
         this.time = time;

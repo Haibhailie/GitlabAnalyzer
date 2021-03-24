@@ -7,14 +7,14 @@ public class FileDto {
     String name;
     boolean isMergeRequestFile;
     String packageId;
-    String[] unifiedDiff;
+    boolean isIgnored;
     Scores fileScore;
     LOCDto linesOfCodeChanges;
-
-    boolean isIgnored;
+    String[] unifiedDiff;
     // might want projectId as well although im not sure?
 
-    public FileDto(String[] unifiedDiff) {
+    public FileDto(String[] unifiedDiff, String name) {
+        this.name = name;
         this.unifiedDiff = unifiedDiff;
     }
 
@@ -23,7 +23,7 @@ public class FileDto {
         this.packageId = packageId;
         this.unifiedDiff = unifiedDiff;
         this.isIgnored = false;
-        this.fileScore.setTotalScore(score);
+        this.setTotalScore(score);
     }
 
     public void setMergeRquestFileScore(Scores fileScore, String packageId, boolean isMergeRequestFile) {
@@ -48,15 +48,8 @@ public class FileDto {
         this.name = name;
     }
 
-    public void setPackageId(String commitId) {
-        this.packageId = commitId;
-    }
-
-    public void setUnifiedDiff(String[] unifiedDiff) {
-        this.unifiedDiff = unifiedDiff;
-    }
-
     public void setIgnored(boolean ignored) {
         isIgnored = ignored;
     }
+
 }
