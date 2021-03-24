@@ -10,6 +10,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +51,14 @@ public class ConfigRepository {
         userConfigsCollection.updateOne(eq("_userId", userId), pull("configIds", configId));
         configsCollection.updateOne(eq("_id", configId), inc("numSubscribers", -1));
 
+        deleteUserConfigIfNoConfigIds(userId);
         deleteConfigIfNoSubscribers(configId);
+    }
+
+    private void deleteUserConfigIfNoConfigIds(int userId) {
+        if (getNumConfigIdsForUser(userId) == 0) {
+            deleteUserConfig(userId);
+        }
     }
 
     private void deleteConfigIfNoSubscribers(String configId) {
@@ -59,8 +67,17 @@ public class ConfigRepository {
         }
     }
 
+    private void deleteUserConfig(int userId) {
+        userConfigsCollection.deleteOne(eq("_userId", userId));
+    }
+
     private void deleteConfig(String configId) {
         configsCollection.deleteOne(eq("_id", configId));
+    }
+
+    private int getNumConfigIdsForUser(int userId) {
+        List<String> configIds = getAllConfigIdsForUser(userId).orElse(new ArrayList<>());
+        return configIds.size();
     }
 
     private int getNumSubscribersOfConfig(String configId) {
@@ -107,7 +124,7 @@ public class ConfigRepository {
         return (userConfigsDoc != null);
     }
 
-    public Optional<List<String>> getAllConfigIdsForCurrentUser(int userId) {
+    public Optional<List<String>> getAllConfigIdsForUser(int userId) {
         Document userConfigsDoc = userConfigsCollection.find(eq("_userId", userId)).first();
         return (userConfigsDoc == null) ? Optional.empty() :
                 Optional.of(userConfigsDoc.getList("configIds", String.class));

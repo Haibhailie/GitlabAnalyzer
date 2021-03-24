@@ -53,7 +53,7 @@ public class ConfigService {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         List<ConfigDto> configDtos = new ArrayList<>();
-        List<String> configIds = configRepository.getAllConfigIdsForCurrentUser(userId).orElse(new ArrayList<>());
+        List<String> configIds = configRepository.getAllConfigIdsForUser(userId).orElse(new ArrayList<>());
         for (String id : configIds) {
             Optional<ConfigDto> configDto = configRepository.getConfigDtoById(id);
             configDto.ifPresent(configDtos::add);
