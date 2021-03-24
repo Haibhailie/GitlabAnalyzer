@@ -2,7 +2,6 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import com.google.gson.Gson;
-import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ public class ConfigService {
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
-    String addNewConfig(String jwt, ConfigDto configDto) throws GitLabApiException {
+    public String addNewConfig(String jwt, ConfigDto configDto) throws GitLabApiException {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         String generatedConfigId = configRepository.addNewConfig(configDto);
@@ -31,7 +30,7 @@ public class ConfigService {
         return generatedConfigId;
     }
 
-    void deleteConfig(String jwt, String configId) throws GitLabApiException {
+    public void deleteConfig(String jwt, String configId) throws GitLabApiException {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         configRepository.deleteConfigForUser(userId, configId);
@@ -41,7 +40,7 @@ public class ConfigService {
         }
     }
 
-    String getConfigJsonForCurrentUser(String jwt, String configId) throws GitLabApiException {
+    public String getConfigJsonForCurrentUser(String jwt, String configId) throws GitLabApiException {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         if (configRepository.userHasConfig(userId, configId)) {
@@ -52,7 +51,7 @@ public class ConfigService {
         return "";
     }
 
-    String getAllConfigJsonsForCurrentUser(String jwt) throws GitLabApiException {
+    public String getAllConfigJsonsForCurrentUser(String jwt) throws GitLabApiException {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         List<ConfigDto> configDtos = new ArrayList<>();
