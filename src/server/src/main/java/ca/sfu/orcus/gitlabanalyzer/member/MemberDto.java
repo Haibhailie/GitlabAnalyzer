@@ -1,9 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
-
-import java.util.Locale;
 
 public class MemberDto {
     private String displayName;

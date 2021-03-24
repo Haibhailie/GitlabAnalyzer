@@ -1,0 +1,41 @@
+get:
+  description: 'Get the list of known committers'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            $ref: './components/committers.yml'
+    '401':
+      description: Invalid JWT Token.
+    '404':
+      description: Project not found.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
+    - $ref: './components/projectId.yml'
+
+post:
+  description: 'Send the list of resolved committers to the backend for storage'
+  responses:
+    '200':
+      description: OK
+    '400':
+      description: Malformed request body object
+    '401':
+      description: Invalid JWT Token.
+    '404':
+      description: Project not found.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
+    - $ref: './components/projectId.yml'
+  requestBody:
+    content:
+      'application/json':
+        schema:
+          $ref: './components/committers.yml'
+    
