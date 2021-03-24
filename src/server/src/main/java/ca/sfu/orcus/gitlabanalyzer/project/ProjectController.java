@@ -7,6 +7,9 @@ import com.google.gson.Gson;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ProjectController {
@@ -22,7 +25,7 @@ public class ProjectController {
     public String getAllProjects(@CookieValue(value = "sessionId") String jwt,
                                  HttpServletResponse response) {
         List<ProjectDto> projects = projectService.getAllProjects(jwt);
-        response.setStatus(projects == null ? 401 : 200);
+        response.setStatus(projects == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(projects);
     }
 
@@ -31,7 +34,7 @@ public class ProjectController {
                              @PathVariable("projectId") int projectId,
                              HttpServletResponse response) {
         ProjectExtendedDto project = projectService.getProject(jwt, projectId);
-        response.setStatus(project == null ? 401 : 200);
+        response.setStatus(project == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(project);
     }
 }

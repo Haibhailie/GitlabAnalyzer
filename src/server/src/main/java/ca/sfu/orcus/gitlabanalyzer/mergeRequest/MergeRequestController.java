@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class MergeRequestController {
@@ -31,7 +34,7 @@ public class MergeRequestController {
         Date dateSince = DateUtils.getDateSinceOrEarliest(since);
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<MergeRequestDto> mergeRequestDtos = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
-        response.setStatus(mergeRequestDtos == null ? 401 : 200);
+        response.setStatus(mergeRequestDtos == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(mergeRequestDtos);
     }
 
@@ -41,7 +44,7 @@ public class MergeRequestController {
                                               @PathVariable int projectId,
                                               @PathVariable int mergerequestId) {
         List<CommitDto> commitDtos = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
-        response.setStatus(commitDtos == null ? 401 : 200);
+        response.setStatus(commitDtos == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(commitDtos);
     }
 
@@ -51,7 +54,7 @@ public class MergeRequestController {
                                             @PathVariable int projectId,
                                             @PathVariable int mergerequestId) {
         String mergeRequestDiff = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
-        response.setStatus(mergeRequestDiff == null ? 401 : 200);
+        response.setStatus(mergeRequestDiff == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(mergeRequestDiff);
     }
 }
