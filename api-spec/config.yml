@@ -10,6 +10,8 @@ configGetAndDelete:
               $ref: './components/config.yml'
       '401':
         description: Unauthorized.
+      '404':
+        description: Config does not exist for the authenticated user.
       '500':
         description: An error un-related to this request occurred.
     parameters:
