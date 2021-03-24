@@ -1,0 +1,33 @@
+type: object
+required:
+  - name
+  - scoreBy
+  - graphMode
+  - yAxis
+  - generalScores
+  - fileScores
+properties:
+  id:
+    type: string
+  name:
+    type: string
+  startDate:
+    $ref: './epoch.yml'
+  endDate:
+    $ref: './epoch.yml'
+  scoreBy:
+    type: string
+  graphMode:
+    type: string
+  yAxis:
+    type: string
+  generalScores:
+    type: array
+    items:
+      items:
+      $ref: './generalScore.yml'
+  fileScores:
+    type: array
+    items:
+      items:
+      $ref: './fileScore.yml'
