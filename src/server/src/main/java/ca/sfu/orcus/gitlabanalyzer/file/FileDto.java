@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.file;
 
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.LOCDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
 
 public class FileDto {
@@ -8,6 +9,7 @@ public class FileDto {
     String packageId;
     String[] unifiedDiff;
     Scores fileScore;
+    LOCDto linesOfCodeChanges;
 
     boolean isIgnored;
     // might want projectId as well although im not sure?
@@ -32,6 +34,10 @@ public class FileDto {
 
     public void setTotalScore(double totalScore) {
         fileScore.setTotalScore(totalScore);
+    }
+
+    public void setLinesOfCodeChanges(LOCDto linesOfCodeChanges) {
+        this.linesOfCodeChanges = linesOfCodeChanges;
     }
 
     public double getTotalScore() {

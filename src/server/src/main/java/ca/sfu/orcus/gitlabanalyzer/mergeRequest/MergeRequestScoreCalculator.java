@@ -1,10 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreCalculator;
-import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
-import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.*;
 import org.gitlab4j.api.models.MergeRequest;
 
 import java.util.ArrayList;
@@ -55,8 +52,12 @@ public class MergeRequestScoreCalculator {
                     diffScoreDtos.get(i).getNumSyntaxChanges(),
                     diffScoreDtos.get(i).getNumSpacingChanges()), String.valueOf(mergeRequestChanges.getIid()), true);
 
+            fileDtos.get(i).setLinesOfCodeChanges(new LOCDto(diffScoreDtos.get(i).getNumLineAdditions(),
+                    (diffScoreDtos.get(i).getNumLineDeletions()),
+                    (diffScoreDtos.get(i).getNumBlankAdditions()),
+                    (diffScoreDtos.get(i).getNumSyntaxChanges()),
+                    (diffScoreDtos.get(i).getNumSpacingChanges())));
         }
-
         return fileDtos;
     }
 
