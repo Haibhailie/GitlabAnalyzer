@@ -4,6 +4,7 @@ public class ScoreDto {
 
     String[] unifiedDiff;
     Scores score;
+    //TODO: Give them LOCs as well as scores
 
     public ScoreDto(String[] unifiedDiff) {
         this.unifiedDiff = unifiedDiff;
@@ -12,8 +13,8 @@ public class ScoreDto {
     public void setScores(double totalScore, int scoreAdditions, int scoreDeletions, int scoreBlankAdditions, int scoreSyntaxChanges, int scoreSpacingChanges) {
         score = new Scores(totalScore, scoreAdditions, scoreDeletions, scoreBlankAdditions, scoreSyntaxChanges, scoreSpacingChanges);
     }
-    
-    class Scores {
+
+    static class Scores {
         double totalScore;
         int scoreAdditions;
         int scoreDeletions;

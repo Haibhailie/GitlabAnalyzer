@@ -62,8 +62,8 @@ public class MergeRequestDto {
         setTime(presentMergeRequest.getMergedAt().getTime());
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setScore(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
-        for(int i=0;i<score.size();i++)
-            System.out.println(score.get(i));
+        for (ScoreDto scoreDto : score)
+            System.out.println(scoreDto);
     }
 
     public void setMergeRequestId(int mergeRequestId) {
@@ -122,7 +122,6 @@ public class MergeRequestDto {
     public void setParticipants(List<Participant> participants) {
         this.participants = participants;
     }
-
 
     public void setScore(List<ScoreDto> score) {
         this.score = score;
