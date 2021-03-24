@@ -27,8 +27,8 @@ public class ConfigRepository {
     public ConfigRepository() {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
-        this.configsCollection = database.getCollection("TEST_CONFIGS_COLLECTION");
-        this.userConfigsCollection = database.getCollection("TEST_USER_CONFIGS_COLLECTION");
+        this.configsCollection = database.getCollection(VariableDecoderUtil.decode("CONFIGS_COLLECTION"));
+        this.userConfigsCollection = database.getCollection(VariableDecoderUtil.decode("USER_CONFIGS_COLLECTION"));
     }
 
     public String addNewConfig(ConfigDto configDto) {
@@ -49,13 +49,21 @@ public class ConfigRepository {
     public void deleteConfigForUser(int userId, String configId) {
         userConfigsCollection.updateOne(eq("_userId", userId), pull("configIds", configId));
         configsCollection.updateOne(eq("_id", configId), inc("numSubscribers", -1));
+
+        deleteConfigIfNoSubscribers(configId);
     }
 
-    public void deleteConfig(String configId) {
+    private void deleteConfigIfNoSubscribers(String configId) {
+        if (getNumSubscribersOfConfig(configId) == 0) {
+            deleteConfig(configId);
+        }
+    }
+
+    private void deleteConfig(String configId) {
         configsCollection.deleteOne(eq("_id", configId));
     }
 
-    public int getNumSubscribersOfConfig(String configId) {
+    private int getNumSubscribersOfConfig(String configId) {
         Document configDoc = configsCollection.find(eq("_id", configId)).first();
         return (configDoc == null) ? 0 : configDoc.getInteger("numSubscribers");
     }

@@ -93,7 +93,7 @@ public class ConfigController {
 
     private void tryDeletingConfig(String jwt, String configId, HttpServletResponse response) {
         try {
-            configService.deleteConfig(jwt, configId);
+            configService.deleteConfigForUser(jwt, configId);
             response.setStatus(SC_OK);
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
