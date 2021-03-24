@@ -32,7 +32,7 @@ public class MergeRequestScoreCalculator {
                 for (int j = i + 1; j < diffsList.size(); j++) {
                     if (diffsList.get(j).startsWith("diff --")) {
                         fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
-                        diffScoreDtos.add(calculateScore(diffsList.subList(i, j - 1)));
+                        diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
                     }
                 }
             }
@@ -69,7 +69,7 @@ public class MergeRequestScoreCalculator {
         return "N/A";
     }
 
-    private DiffScoreDto calculateScore(List<String> diffList) {
+    private DiffScoreDto generateDiffScoreDto(List<String> diffList) {
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
         return diffScoreCalculator.parseDiffList(diffList);
     }

@@ -61,10 +61,11 @@ public class MergeRequestDto {
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectId, mergeRequestId));
         setNotesNameAndNotes(gitLabApi, projectId, mergeRequestId);
         setTime(presentMergeRequest.getMergedAt().getTime());
+
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setFiles(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
         isIgnored = false;
-
+        System.out.println(title+" and the file is: "+files);
     }
 
     public void setMergeRequestId(int mergeRequestId) {
