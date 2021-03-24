@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class NoteService {
@@ -34,7 +35,7 @@ public class NoteService {
 
     private List<NoteDto> returnAllNotesDtosByMemberId(GitLabApi gitLabApi, int projectId, int memberId) {
         List<NoteDto> filteredNotes = new ArrayList<>();
-        HashMap<String, List<Note>> allNotes = getAllNotes(gitLabApi, projectId);
+        Map<String, List<Note>> allNotes = getAllNotes(gitLabApi, projectId);
 
         for (String webUrl : allNotes.keySet()) {
             for (Note n : allNotes.get(webUrl)) {
@@ -46,17 +47,17 @@ public class NoteService {
         return filteredNotes;
     }
 
-    private HashMap<String, List<Note>> getAllNotes(GitLabApi gitLabApi, int projectId) {
-        HashMap<String, List<Note>> allNotes = new HashMap<>();
+    private Map<String, List<Note>> getAllNotes(GitLabApi gitLabApi, int projectId) {
+        Map<String, List<Note>> allNotes = new HashMap<>();
         allNotes.putAll(getAllMergeRequestsNotes(gitLabApi, projectId));
         allNotes.putAll(getAllIssuesNotes(gitLabApi, projectId));
         return allNotes;
     }
 
-    private HashMap<String, List<Note>> getAllMergeRequestsNotes(GitLabApi gitLabApi, int projectId) {
+    private Map<String, List<Note>> getAllMergeRequestsNotes(GitLabApi gitLabApi, int projectId) {
         try {
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId);
-            HashMap<String, List<Note>> allMergeRequestsNotes = new HashMap<>();
+            Map<String, List<Note>> allMergeRequestsNotes = new HashMap<>();
             for (MergeRequest mr : allMergeRequests) {
                 allMergeRequestsNotes.put(mr.getWebUrl(), gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mr.getIid()));
             }
@@ -66,11 +67,10 @@ public class NoteService {
         }
     }
 
-    private HashMap<String, List<Note>> getAllIssuesNotes(GitLabApi gitLabApi, int projectId) {
+    private Map<String, List<Note>> getAllIssuesNotes(GitLabApi gitLabApi, int projectId) {
         try {
             List<Issue> allIssues = gitLabApi.getIssuesApi().getIssues(Integer.valueOf(projectId));
-
-            HashMap<String, List<Note>> allIssuesNotes = new HashMap<>();
+            Map<String, List<Note>> allIssuesNotes = new HashMap<>();
             for (Issue issue : allIssues) {
                 allIssuesNotes.put(issue.getWebUrl(), gitLabApi.getNotesApi().getIssueNotes(projectId, issue.getIid()));
             }
