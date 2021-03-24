@@ -1,4 +1,4 @@
-configGet:
+configGetAndDelete:
   get:
     description: 'Get a specific configuration.'
     responses:
@@ -8,6 +8,19 @@ configGet:
           'application/json':
             schema:
               $ref: './components/config.yml'
+      '401':
+        description: Unauthorized.
+      '500':
+        description: An error un-related to this request occurred.
+    parameters:
+      - $ref: './components/jwtcookie.yml'
+      - $ref: './components/configId.yml'
+
+  delete:
+    description: 'Delete a specific configuration.'
+    responses:
+      '200':
+        description: Configuration successfully deleted.
       '401':
         description: Unauthorized.
       '500':
@@ -31,17 +44,3 @@ configPost:
         'application/json':
           schema:
             $ref: './components/config.yml'
-
-configDelete:
-  delete:
-    description: 'Delete a specific configuration.'
-    responses:
-      '200':
-        description: Configuration successfully deleted.
-      '401':
-        description: Unauthorized.
-      '500':
-        description: An error un-related to this request occurred.
-    parameters:
-      - $ref: './components/jwtcookie.yml'
-      - $ref: './components/configId.yml'

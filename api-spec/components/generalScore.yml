@@ -6,5 +6,5 @@ properties:
   type:
     type: string
   value:
-    type: integer
+    type: number
     minimum: 0

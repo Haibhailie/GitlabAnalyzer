@@ -59,7 +59,7 @@ final class ConfigDto {
 
     private static final class FileTypeScoreDto {
         private String fileExtension;
-        private int scoreMultiplier;
+        private double scoreMultiplier;
 
         private FileTypeScoreDto() {}
 
@@ -67,14 +67,14 @@ final class ConfigDto {
             this.fileExtension = fileExtension;
         }
 
-        public void setScoreMultiplier(int scoreMultiplier) {
+        public void setScoreMultiplier(double scoreMultiplier) {
             this.scoreMultiplier = scoreMultiplier;
         }
     }
 
     private static final class GeneralTypeScoreDto {
         private String type;
-        private int value;
+        private double value;
 
         private GeneralTypeScoreDto() {}
 
@@ -82,7 +82,7 @@ final class ConfigDto {
             this.type = type;
         }
 
-        public void setValue(int value) {
+        public void setValue(double value) {
             this.value = value;
         }
     }
