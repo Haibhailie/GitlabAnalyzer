@@ -25,11 +25,16 @@ public class CommitScoreCalculator {
         List<String> diffsList = Arrays.asList(diffArray);
         DiffScoreDto commitScoreDto = generateDiffScoreDto(diffsList);
 
-        //Loop that separates the diffs and scores of individual files in a Merge Request diff
+        //Loop that separates the diffs and scores of individual files in a Commit diff
         for (int i = 0; i < diffsList.size(); i++) {
             if (diffsList.get(i).startsWith("diff --")) {
                 for (int j = i + 1; j < diffsList.size(); j++) {
                     if (diffsList.get(j).startsWith("diff --")) {
+                        fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
+                        diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
+                        break;
+                    }
+                    else if(j+1==diffsList.size()){
                         fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
                         diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
                     }
@@ -49,7 +54,7 @@ public class CommitScoreCalculator {
                     diffScoreDtos.get(i).getNumLineDeletions(),
                     diffScoreDtos.get(i).getNumBlankAdditions(),
                     diffScoreDtos.get(i).getNumSyntaxChanges(),
-                    diffScoreDtos.get(i).getNumSpacingChanges()), id, true);
+                    diffScoreDtos.get(i).getNumSpacingChanges()), id, false);
 
             fileDtos.get(i).setLinesOfCodeChanges(new LOCDto(diffScoreDtos.get(i).getNumLineAdditions(),
                     (diffScoreDtos.get(i).getNumLineDeletions()),

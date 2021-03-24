@@ -1,9 +1,11 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
+import org.gitlab4j.api.models.Diff;
 
 import java.util.Date;
 import java.util.List;
@@ -37,9 +39,13 @@ public class CommitDto {
         this.setNumDeletions(presentCommit.getStats().getDeletions());
         this.setTotal(presentCommit.getStats().getTotal());
 
+        List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
+        this.setDiffs((DiffStringParser.parseDiff(diffList)));
+
         CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
         this.setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId()), id));
-        System.out.println(title+" and the file is: "+files);
+
+        isIgnored = false;
     }
 
     public void setTitle(String title) {
@@ -82,18 +88,17 @@ public class CommitDto {
         this.total = total;
     }
 
-    public void setIgnored(boolean ignored) {
-        isIgnored = ignored;
+    public void setDiffs(String diffs) {
+        this.diffs = diffs;
     }
 
-    public List<FileDto> getFiles() {
-        return files;
+    public void setIgnored(boolean ignored) {
+        isIgnored = ignored;
     }
 
     public void setFiles(List<FileDto> files) {
         this.files = files;
     }
-
 
     public String getDiffs() {
         return diffs;

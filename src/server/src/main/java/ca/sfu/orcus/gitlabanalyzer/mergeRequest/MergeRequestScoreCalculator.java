@@ -33,6 +33,11 @@ public class MergeRequestScoreCalculator {
                     if (diffsList.get(j).startsWith("diff --")) {
                         fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
                         diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
+                        break;
+                    }
+                    else if(j+1==diffsList.size()){
+                        fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
+                        diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
                     }
                 }
             }

@@ -65,7 +65,6 @@ public class MergeRequestDto {
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setFiles(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
         isIgnored = false;
-        System.out.println(title+" and the file is: "+files);
     }
 
     public void setMergeRequestId(int mergeRequestId) {
