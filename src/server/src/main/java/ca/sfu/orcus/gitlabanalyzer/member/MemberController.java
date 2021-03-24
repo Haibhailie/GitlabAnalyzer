@@ -12,10 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class MemberController {
     private final MemberService memberService;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public MemberController(MemberService memberService) {
@@ -27,8 +31,7 @@ public class MemberController {
                              HttpServletResponse response,
                              @PathVariable int projectId) {
         List<MemberDto> members = memberService.getAllMembers(jwt, projectId);
-        response.setStatus(members == null ? 401 : 200);
-        Gson gson = new Gson();
+        response.setStatus(members == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(members);
     }
 
@@ -42,8 +45,7 @@ public class MemberController {
         Date dateSince = DateUtils.getDateSinceOrEarliest(since);
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<CommitDto> allCommitsByMemberName = memberService.getCommitsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
-        response.setStatus(allCommitsByMemberName == null ? 401 : 200);
-        Gson gson = new Gson();
+        response.setStatus(allCommitsByMemberName == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(allCommitsByMemberName);
     }
 
@@ -57,8 +59,7 @@ public class MemberController {
         Date dateSince = DateUtils.getDateSinceOrEarliest(since);
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<MergeRequestDto> allMergeRequestsByMemberId = memberService.getMergeRequestsByMemberId(jwt, projectId, dateSince, dateUntil, memberId);
-        response.setStatus(allMergeRequestsByMemberId == null ? 401 : 200);
-        Gson gson = new Gson();
+        response.setStatus(allMergeRequestsByMemberId == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(allMergeRequestsByMemberId);
     }
 }

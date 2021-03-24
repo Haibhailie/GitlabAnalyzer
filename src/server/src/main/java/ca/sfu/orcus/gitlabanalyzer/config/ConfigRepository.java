@@ -2,86 +2,140 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.google.gson.Gson;
-import com.mongodb.client.*;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.*;
 
 @Repository
 public class ConfigRepository {
-    MongoCollection<Document> collection;
+    MongoCollection<Document> configsCollection;
+    MongoCollection<Document> userConfigsCollection;
     private static final Gson gson = new Gson();
 
     public ConfigRepository() {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
-        this.collection = database.getCollection("CONFIGS_COLLECTION");
+        this.configsCollection = database.getCollection(VariableDecoderUtil.decode("CONFIGS_COLLECTION"));
+        this.userConfigsCollection = database.getCollection(VariableDecoderUtil.decode("USER_CONFIGS_COLLECTION"));
     }
 
-    public boolean contains(String configId) {
-        Document config = collection.find(eq("_id", configId)).first();
-        return (config != null);
-    }
-
-    public String addNewConfigByJwt(String jwt, ConfigDto configDto) {
+    public String addNewConfig(ConfigDto configDto) {
         String configId = new ObjectId().toString();
         configDto.setId(configId);
-        collection.insertOne(generateNewConfigDoc(jwt, configId, configDto));
+        configsCollection.insertOne(generateNewConfigDoc(configId, configDto));
         return configId;
     }
 
-    public void removeConfigById(String configId) {
-        collection.deleteOne(eq("_id", configId));
+    public void addConfigToUserProfile(int userId, String configId) {
+        if (!containsUser(userId)) {
+            userConfigsCollection.insertOne(generateNewUserConfigsDoc(userId, Collections.singletonList(configId)));
+        } else {
+            userConfigsCollection.updateOne(eq("_userId", userId), addToSet("configIds", configId));
+        }
     }
 
-    public void updateConfig(String jwt, ConfigDto configDto) {
-        String configId = configDto.getId();
-        Document configDoc = generateNewConfigDoc(jwt, configId, configDto);
-        collection.replaceOne(eq("_id", configId), configDoc);
+    public void deleteConfigForUser(int userId, String configId) {
+        userConfigsCollection.updateOne(eq("_userId", userId), pull("configIds", configId));
+        configsCollection.updateOne(eq("_id", configId), inc("numSubscribers", -1));
+
+        deleteUserConfigIfNoConfigIds(userId);
+        deleteConfigIfNoSubscribers(configId);
     }
 
-    private Document generateNewConfigDoc(String jwt, String configId, ConfigDto configDto) {
+    private void deleteUserConfigIfNoConfigIds(int userId) {
+        if (getNumConfigIdsForUser(userId) == 0) {
+            deleteUserConfig(userId);
+        }
+    }
+
+    private void deleteConfigIfNoSubscribers(String configId) {
+        if (getNumSubscribersOfConfig(configId) == 0) {
+            deleteConfig(configId);
+        }
+    }
+
+    private void deleteUserConfig(int userId) {
+        userConfigsCollection.deleteOne(eq("_userId", userId));
+    }
+
+    private void deleteConfig(String configId) {
+        configsCollection.deleteOne(eq("_id", configId));
+    }
+
+    private int getNumConfigIdsForUser(int userId) {
+        List<String> configIds = getAllConfigIdsForUser(userId).orElse(new ArrayList<>());
+        return configIds.size();
+    }
+
+    private int getNumSubscribersOfConfig(String configId) {
+        Document configDoc = configsCollection.find(eq("_id", configId)).first();
+        return (configDoc == null) ? 0 : configDoc.getInteger("numSubscribers");
+    }
+
+    private Document generateNewConfigDoc(String configId, ConfigDto configDto) {
         String configJson = gson.toJson(configDto);
 
         return new Document("_id", configId)
-                .append("jwt", jwt)
-                .append("config", configJson);
+                .append("config", configJson)
+                .append("numSubscribers", 1);
+    }
+
+    private Document generateNewUserConfigsDoc(int userId, List<String> configIds) {
+        return new Document("_userId", userId)
+                .append("configIds", configIds);
     }
 
     public Optional<String> getConfigJsonById(String configId) {
-        Document configDoc = collection.find(eq("_id", configId)).first();
+        Document configDoc = configsCollection.find(eq("_id", configId)).first();
 
-        if (configDoc == null) {
-            return Optional.empty();
-        }
-
-        String configJson = getConfigJsonFromConfigDocument(configDoc);
-        return Optional.of(configJson);
+        return (configDoc == null) ? Optional.empty() :
+                Optional.of(getConfigJsonFromConfigDocument(configDoc));
     }
 
-    public List<ConfigDto> getAllConfigDtosByJwt(String jwt) {
-        List<ConfigDto> configDtos = new ArrayList<>();
-        FindIterable<Document> configDocs = collection.find(eq("jwt", jwt));
+    public Optional<ConfigDto> getConfigDtoById(String configId) {
+        Document configDoc = configsCollection.find(eq("_id", configId)).first();
 
-        for (Document configDoc : configDocs) {
-            configDtos.add(getConfigDtoFromConfigDocument(configDoc));
-        }
-
-        return configDtos;
+        return (configDoc == null) ? Optional.empty() :
+                Optional.of(getConfigDtoFromConfigDocument(configDoc));
     }
 
-    private String getConfigJsonFromConfigDocument(Document configDoc) {
-        return configDoc.getString("config");
+    private boolean containsUser(int userId) {
+        Document userConfigsDoc = userConfigsCollection.find(eq("_userId", userId)).first();
+        return (userConfigsDoc != null);
+    }
+
+    public boolean userHasConfig(int userId, String configId) {
+        Document userConfigsDoc = userConfigsCollection.find(and(
+                eq("_userId", userId),
+                eq("configIds", configId))).first();
+        return (userConfigsDoc != null);
+    }
+
+    public Optional<List<String>> getAllConfigIdsForUser(int userId) {
+        Document userConfigsDoc = userConfigsCollection.find(eq("_userId", userId)).first();
+        return (userConfigsDoc == null) ? Optional.empty() :
+                Optional.of(userConfigsDoc.getList("configIds", String.class));
     }
 
     private ConfigDto getConfigDtoFromConfigDocument(Document configDoc) {
         String configJson = getConfigJsonFromConfigDocument(configDoc);
         return gson.fromJson(configJson, ConfigDto.class);
+    }
+
+    private String getConfigJsonFromConfigDocument(Document configDoc) {
+        return configDoc.getString("config");
     }
 }
