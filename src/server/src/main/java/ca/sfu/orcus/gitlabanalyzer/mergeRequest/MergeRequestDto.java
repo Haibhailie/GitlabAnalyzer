@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
-import ca.sfu.orcus.gitlabanalyzer.utils.ScoreDto;
+import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -31,7 +31,7 @@ public class MergeRequestDto {
     private List<String> committers;
     private List<Participant> participants;
     private long time;
-    private List<ScoreDto> score;
+    private List<FileDto> files;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
@@ -61,9 +61,10 @@ public class MergeRequestDto {
         setNotesNameAndNotes(gitLabApi, projectId, mergeRequestId);
         setTime(presentMergeRequest.getMergedAt().getTime());
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
-        setScore(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
-        for (ScoreDto scoreDto : score)
-            System.out.println(scoreDto);
+        setFiles(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
+        for(int i=0;i<files.size();i++)
+            System.out.println(files.get(i).getTotalScore());
+
     }
 
     public void setMergeRequestId(int mergeRequestId) {
@@ -123,8 +124,8 @@ public class MergeRequestDto {
         this.participants = participants;
     }
 
-    public void setScore(List<ScoreDto> score) {
-        this.score = score;
+    public void setFiles(List<FileDto> files) {
+        this.files = files;
     }
 
     public void setCommitters(List<Commit> commits) {
@@ -185,6 +186,6 @@ public class MergeRequestDto {
                 && this.committers.equals(m.committers)
                 && this.participants.equals(m.participants)
                 && this.time == (m.time)
-                && this.score == (m.score));
+                && this.files.equals(m.files));
     }
 }

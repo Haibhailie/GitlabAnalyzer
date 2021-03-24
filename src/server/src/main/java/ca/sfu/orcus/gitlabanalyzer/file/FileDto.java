@@ -1,35 +1,53 @@
 package ca.sfu.orcus.gitlabanalyzer.file;
 
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
+
 public class FileDto {
-    String path;
-    String commitId;
-    String[] diff;
-    double score;
+    String name;
+    boolean isMergeRequestFile;
+    String packageId;
+    String[] unifiedDiff;
+    Scores fileScore;
+
     boolean isIgnored;
     // might want projectId as well although im not sure?
 
-    public FileDto(String path, String commitId, String[] diff, double score) {
-        this.path = path;
-        this.commitId = commitId;
-        this.diff = diff;
-        this.score = score;
+    public FileDto(String[] unifiedDiff) {
+        this.unifiedDiff = unifiedDiff;
+    }
+
+    public FileDto(String name, String packageId, String[] unifiedDiff, double score) {
+        this.name = name;
+        this.packageId = packageId;
+        this.unifiedDiff = unifiedDiff;
         this.isIgnored = false;
+        this.fileScore.setTotalScore(score);
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setMergeRquestFileScore(Scores fileScore, String packageId, boolean isMergeRequestFile) {
+        this.isMergeRequestFile = isMergeRequestFile;
+        this.packageId = packageId;
+        this.fileScore = fileScore;
     }
 
-    public void setCommitId(String commitId) {
-        this.commitId = commitId;
+    public void setTotalScore(double totalScore) {
+        fileScore.setTotalScore(totalScore);
     }
 
-    public void setDiff(String[] diff) {
-        this.diff = diff;
+    public double getTotalScore() {
+        return fileScore.getTotalScore();
     }
 
-    public void setScore(double score) {
-        this.score = score;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPackageId(String commitId) {
+        this.packageId = commitId;
+    }
+
+    public void setUnifiedDiff(String[] unifiedDiff) {
+        this.unifiedDiff = unifiedDiff;
     }
 
     public void setIgnored(boolean ignored) {
