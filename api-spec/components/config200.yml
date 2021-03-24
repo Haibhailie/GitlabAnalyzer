@@ -1,0 +1,9 @@
+description: Saved config's unique ID.
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        id:
+          type: string
+          example: generatedAlphaNumericConfigId123
