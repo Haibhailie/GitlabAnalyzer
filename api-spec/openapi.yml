@@ -9,6 +9,12 @@ paths:
     $ref: './auth.yml'
   /api/ping:
     $ref: './ping.yml'
+  /api/config:
+    $ref: './config.yml#/configPost'
+  /api/configs:
+    $ref: './configs.yml'
+  /api/config/{configId}:
+    $ref: './config.yml#/configGetAndDelete'
   /api/projects:
     $ref: './projects.yml'
   /api/project/{projectId}:
@@ -19,6 +25,8 @@ paths:
     $ref: './commit.yml'
   /api/project/{projectId}/commit/{commitSha}/diff:
     $ref: './commitDiff.yml'
+  /api/project/{projectId}/committers:
+    $ref: './committers.yml'
   /api/project/{projectId}/mergerequests:
     $ref: './mergerequests.yml'
   /api/project/{projectId}/mergerequest/{mergerequestsId}:

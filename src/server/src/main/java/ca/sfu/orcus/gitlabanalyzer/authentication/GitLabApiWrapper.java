@@ -101,4 +101,8 @@ public class GitLabApiWrapper {
         }
     }
 
+    public int getGitLabUserIdFromJwt(String jwt) throws GitLabApiException {
+        GitLabApi gitLabApi = getGitLabApiFor(jwt);
+        return gitLabApi.getUserApi().getCurrentUser().getId();
+    }
 }
