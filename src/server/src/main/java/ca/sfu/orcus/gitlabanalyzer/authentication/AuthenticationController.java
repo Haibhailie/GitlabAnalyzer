@@ -8,6 +8,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 
+import static javax.servlet.http.HttpServletResponse.*;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthenticationController {
@@ -32,11 +34,11 @@ public class AuthenticationController {
             String jwt = authService.signInWithPat(user);
             Cookie cookie = createSessionIdCookie(jwt);
             response.addCookie(cookie);
-            response.setStatus(200);
+            response.setStatus(SC_OK);
         } catch (IllegalArgumentException e) {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
         } catch (BadRequestException e) {
-            response.setStatus(400);
+            response.setStatus(SC_BAD_REQUEST);
         }
     }
 
@@ -47,11 +49,11 @@ public class AuthenticationController {
             String jwt = authService.signInWithUserPass(user);
             Cookie cookie = createSessionIdCookie(jwt);
             response.addCookie(cookie);
-            response.setStatus(200);
+            response.setStatus(SC_OK);
         } catch (IllegalArgumentException e) {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
         } catch (BadRequestException e) {
-            response.setStatus(400);
+            response.setStatus(SC_BAD_REQUEST);
         }
     }
 
@@ -60,16 +62,16 @@ public class AuthenticationController {
                                   HttpServletResponse response) {
         Cookie cookie = new Cookie("sessionId", jwt);
         cookie.setMaxAge(0); // Set cookie age as 0 to delete an existing cookie.
-        response.setStatus(200);
+        response.setStatus(SC_OK);
     }
 
     @GetMapping("/api/ping")
     public void checkJwtIsValid(@CookieValue(value = "sessionId") String jwt,
                                 HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            response.setStatus(200);
+            response.setStatus(SC_OK);
         } else {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
         }
     }
 

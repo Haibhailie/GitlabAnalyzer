@@ -10,10 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CommitController {
     private final CommitService commitService;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public CommitController(CommitService commitService) {
@@ -29,8 +33,7 @@ public class CommitController {
         Date dateSince = DateUtils.getDateSinceOrEarliest(since);
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
         List<CommitDto> commits = commitService.getAllCommits(jwt, projectId, dateSince, dateUntil);
-        response.setStatus(commits == null ? 401 : 200);
-        Gson gson = new Gson();
+        response.setStatus(commits == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(commits);
     }
 
@@ -40,8 +43,7 @@ public class CommitController {
                                   @PathVariable String sha,
                                   HttpServletResponse response) {
         CommitDto commit = commitService.getSingleCommit(jwt, projectId, sha);
-        response.setStatus(commit == null ? 401 : 200);
-        Gson gson = new Gson();
+        response.setStatus(commit == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(commit);
     }
 
@@ -51,8 +53,7 @@ public class CommitController {
                                        @PathVariable String sha,
                                        HttpServletResponse response) {
         String diffs = commitService.getDiffOfCommit(jwt, projectId, sha);
-        response.setStatus(diffs == null ? 401 : 200);
-        Gson gson = new Gson();
+        response.setStatus(diffs == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(diffs);
     }
 }
