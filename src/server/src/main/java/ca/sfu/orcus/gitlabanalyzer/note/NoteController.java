@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 import java.util.List;
 
 @RestController
@@ -23,7 +24,7 @@ public class NoteController {
                                          @PathVariable int projectId,
                                          @PathVariable int memberId) {
         List<NoteDto> allNotesByMemberId = noteService.getNoteDtosByMemberId(jwt, projectId, memberId);
-        response.setStatus(allNotesByMemberId == null ? 401 : 200);
+        response.setStatus(allNotesByMemberId == null ? SC_UNAUTHORIZED : SC_OK);
         Gson gson = new Gson();
         return gson.toJson(allNotesByMemberId);
     }
