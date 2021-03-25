@@ -112,6 +112,7 @@ const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
         <ActivityGraph
           mergeUrl={`/api/project/${projectId}/members/${memberData?.id}/mergerequests`}
           commitUrl={`/api/project/${projectId}/members/${memberData?.displayName}/commits`}
+          graphTitle={`${memberData?.displayName}'s Summary`}
         />
       </Suspense>
 
