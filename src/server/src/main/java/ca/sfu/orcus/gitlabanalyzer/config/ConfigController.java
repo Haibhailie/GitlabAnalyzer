@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import com.google.gson.Gson;
+import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -10,11 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static javax.servlet.http.HttpServletResponse.*;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ConfigController {
     private final ConfigService configService;
     private final AuthenticationService authService;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public ConfigController(ConfigService configService, AuthenticationService authService) {
@@ -22,14 +26,16 @@ public class ConfigController {
         this.authService = authService;
     }
 
-    @PostMapping(value = "/api/config", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/api/config",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public void addConfig(@CookieValue(value = "sessionId") String jwt,
                           @RequestBody ConfigDto configDto,
                           HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            tryAddingNewConfigByJwt(jwt, configDto, response);
+            tryAddingNewConfig(jwt, configDto, response);
         } else {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
         }
     }
 
@@ -38,45 +44,42 @@ public class ConfigController {
                              @PathVariable("configId") String configId,
                              HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            configService.removeConfigById(configId);
-            response.setStatus(200);
+            tryDeletingConfig(jwt, configId, response);
         } else {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
         }
     }
 
     @GetMapping("/api/config/{configId}")
-    public String getConfigById(@CookieValue(value = "sessionId") String jwt,
-                                @PathVariable("configId") String configId,
-                                HttpServletResponse response) {
+    public String getConfigForCurrentUser(@CookieValue(value = "sessionId") String jwt,
+                                          @PathVariable("configId") String configId,
+                                          HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            response.setStatus(200);
-            return configService.getConfigJsonById(configId);
+            return tryGettingConfigForCurrentUser(jwt, configId, response);
         } else {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
             return "";
         }
     }
 
     @GetMapping("/api/configs")
-    public String getAllConfigsByJwt(@CookieValue(value = "sessionId") String jwt,
-                                     HttpServletResponse response) {
+    public String getAllConfigsForCurrentUser(@CookieValue(value = "sessionId") String jwt,
+                                              HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            response.setStatus(200);
-            return configService.getAllConfigJsonsByJwt(jwt);
+            return tryGettingAllConfigsForCurrentUser(jwt, response);
         } else {
-            response.setStatus(401);
+            response.setStatus(SC_UNAUTHORIZED);
             return "";
         }
     }
 
-    private void tryAddingNewConfigByJwt(String jwt, ConfigDto configDto, HttpServletResponse response) {
+    private void tryAddingNewConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
         try {
-            String configId = configService.addNewConfigByJwt(jwt, configDto);
-            response.setStatus(200);
+            String configId = configService.addNewConfig(jwt, configDto);
             addConfigIdToResponse(response, configId);
-        } catch (IOException e) {
-            response.setStatus(500);
+            response.setStatus(SC_OK);
+        } catch (IOException | GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -84,11 +87,41 @@ public class ConfigController {
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        Gson gson = new Gson();
         out.print(gson.toJson(new ConfigIdDto(configId)));
         out.flush();
     }
 
+    private void tryDeletingConfig(String jwt, String configId, HttpServletResponse response) {
+        try {
+            configService.deleteConfigForUser(jwt, configId);
+            response.setStatus(SC_OK);
+        } catch (GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private String tryGettingConfigForCurrentUser(String jwt, String configId, HttpServletResponse response) {
+        try {
+            String configJson = configService.getConfigJsonForCurrentUser(jwt, configId);
+            response.setStatus(configJson.isEmpty() ? SC_NOT_FOUND : SC_OK);
+            return configJson;
+        } catch (GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
+            return "";
+        }
+    }
+
+    private String tryGettingAllConfigsForCurrentUser(String jwt, HttpServletResponse response) {
+        try {
+            response.setStatus(SC_OK);
+            return configService.getAllConfigJsonsForCurrentUser(jwt);
+        } catch (GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
+            return "";
+        }
+    }
+
+    // POST response body object
     private static final class ConfigIdDto {
         private String id;
 
