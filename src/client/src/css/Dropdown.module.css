@@ -1,0 +1,36 @@
+/* .container {
+  width: 100%;
+} */
+
+.headerBtn {
+  /* display: flex; */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.collapseImg {
+  width: 12px;
+  height: 14px;
+  /* stroke: #ffffff; */
+  transform: rotate(90deg);
+  transition: transform ease-in-out 300ms;
+}
+
+.collapsed .collapseImg {
+  transform: rotate(0deg);
+}
+
+.dropdown {
+  overflow: hidden;
+  transition: max-height ease-in-out 300ms;
+}
+
+.firstPass {
+  position: absolute;
+  z-index: -9999;
+  left: -9999999px;
+  display: block;
+}

@@ -8,7 +8,7 @@ import styles from '../css/StatSummary.module.css'
 import clipboard from '../assets/clipboard.svg'
 
 export interface IStatSummaryProps {
-  statData?: IStatProps[]
+  statData: IStatProps[]
 }
 
 const StatSummary = ({ statData }: IStatSummaryProps) => {
@@ -32,16 +32,14 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
   }
 
   useEffect(() => {
-    if (statData !== undefined) {
-      setCsvString(
-        [
-          ['Stat', 'Value'],
-          ...statData.map(stat => [stat.name, stat.rawValue ?? stat.value]),
-        ]
-          .map(r => r.join('\t'))
-          .join('\n')
-      )
-    }
+    setCsvString(
+      [
+        ['Stat', 'Value'],
+        ...statData.map(stat => [stat.name, stat.rawValue ?? stat.value]),
+      ]
+        .map(row => row.join('\t'))
+        .join('\n')
+    )
   }, [statData])
 
   const copyToClipboard = () => {
@@ -61,11 +59,7 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
   }
 
   useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-    }
+    return timeoutRef.current && clearTimeout(timeoutRef.current)
   }, [])
 
   return (
@@ -84,7 +78,7 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
         <textarea
           style={{ position: 'fixed', left: '-10000000px' }}
           ref={copyNodeRef}
-        ></textarea>
+        />
       </div>
     </ThemeProvider>
   )
