@@ -1,5 +1,4 @@
-.graphContainer {
-  max-width: 800px;
-  height: 100%;
-  margin: 35px auto;
+.graphTitle {
+  font: var(--font-header-medium-mulish);
+  margin: 30px 0px 0px;
 }
