@@ -98,4 +98,9 @@ public class ConfigService {
 
         return configJson;
     }
+
+    public void updateCurrentConfig(String jwt, ConfigDto configDto) throws GitLabApiException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+        configRepository.updateCurrentConfigForUser(userId, configDto);
+    }
 }

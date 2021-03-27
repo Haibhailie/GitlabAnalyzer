@@ -54,6 +54,18 @@ public class ConfigRepository {
                 generateNewConfigDoc(configId, configDto, numSubscribers));
     }
 
+    public void updateCurrentConfigForUser(int userId, ConfigDto currentConfigDto) {
+        String currentConfigJson = gson.toJson(currentConfigDto);
+
+        if (!containsUser(userId)) {
+            userConfigsCollection.insertOne(generateNewUserConfigsDoc(userId, currentConfigJson));
+        } else {
+            userConfigsCollection.updateOne(
+                    eq(UserConfigKeys.userId, userId),
+                    set(UserConfigKeys.currentConfig, currentConfigJson));
+        }
+    }
+
     public void deleteConfigForUser(int userId, String configId) {
         userConfigsCollection.updateOne(eq("_userId", userId), pull("configIds", configId));
         configsCollection.updateOne(eq("_id", configId), inc("numSubscribers", -1));
@@ -103,6 +115,11 @@ public class ConfigRepository {
     private Document generateNewUserConfigsDoc(int userId, List<String> configIds) {
         return new Document("_userId", userId)
                 .append("configIds", configIds);
+    }
+
+    private Document generateNewUserConfigsDoc(int userId, String currentConfig) {
+        return new Document("_userId", userId)
+                .append("currentConfig", currentConfig);
     }
 
     public Optional<String> getConfigJsonById(String configId) {
