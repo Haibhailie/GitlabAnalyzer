@@ -90,7 +90,7 @@ public class ConfigController {
                                @RequestBody ConfigIdDto configIdDto,
                                HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            // do sth
+            return tryImportingConfigForUser(jwt, configIdDto, response);
         } else {
             response.setStatus(SC_UNAUTHORIZED);
             return "";
@@ -125,24 +125,29 @@ public class ConfigController {
     }
 
     private String tryGettingConfigForCurrentUser(String jwt, String configId, HttpServletResponse response) {
+        String configJson = "";
+
         try {
-            String configJson = configService.getConfigJsonForCurrentUser(jwt, configId);
+            configJson = configService.getConfigJsonForCurrentUser(jwt, configId);
             response.setStatus(configJson.isEmpty() ? SC_NOT_FOUND : SC_OK);
-            return configJson;
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
-            return "";
         }
+
+        return configJson;
     }
 
     private String tryGettingAllConfigsForCurrentUser(String jwt, HttpServletResponse response) {
+        String configsJson = "";
+
         try {
+            configsJson = configService.getAllConfigJsonsForCurrentUser(jwt);
             response.setStatus(SC_OK);
-            return configService.getAllConfigJsonsForCurrentUser(jwt);
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
-            return "";
         }
+
+        return configsJson;
     }
 
     private void tryUpdatingConfig(String jwt, String configId, ConfigDto configDto, HttpServletResponse response) {
@@ -156,5 +161,17 @@ public class ConfigController {
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private String tryImportingConfigForUser(String jwt, ConfigIdDto configIdDto, HttpServletResponse response) {
+        String configJson = "";
+
+        try {
+            configJson = configService.importConfigForUser(jwt, configIdDto, response);
+        } catch (GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
+        }
+
+        return configJson;
     }
 }
