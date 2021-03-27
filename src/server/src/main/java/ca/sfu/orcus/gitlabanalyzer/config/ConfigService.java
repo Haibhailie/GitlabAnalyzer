@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,8 +46,7 @@ public class ConfigService {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         if (configRepository.userHasConfig(userId, configId)) {
-            Optional<String> configJson = configRepository.getConfigJsonById(configId);
-            return configJson.orElse("");
+            return configRepository.getConfigJsonById(configId).orElse("");
         }
 
         return "";
@@ -69,13 +69,33 @@ public class ConfigService {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         String configId = configDto.getId();
 
-        if (!configRepository.userHasConfig(userId, configId)
-            || configRepository.getNumSubscribersOfConfig(configId) == 0) {
+        if (!configRepository.containsConfig(configId) || !configRepository.userHasConfig(userId, configId)) {
             response.setStatus(SC_NOT_FOUND);
             return;
         }
 
         configRepository.updateConfig(configId, configDto);
         response.setStatus(SC_OK);
+    }
+
+    public String importConfigForUser(String jwt, ConfigIdDto configIdDto, HttpServletResponse response) throws GitLabApiException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+        String configId = configIdDto.getId();
+
+        String configJson = "";
+
+        if (!configRepository.containsConfig(configId)) {
+            response.setStatus(SC_NOT_FOUND);
+            return configJson;
+        }
+
+        if (!configRepository.userHasConfig(userId, configId)) {
+            configRepository.addConfigToUserProfile(userId, configId);
+        }
+
+        configJson = configRepository.getConfigJsonById(configId).orElse("");
+        response.setStatus(SC_OK);
+
+        return configJson;
     }
 }
