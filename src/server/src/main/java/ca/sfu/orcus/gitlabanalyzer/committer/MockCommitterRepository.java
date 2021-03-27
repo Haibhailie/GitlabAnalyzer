@@ -7,13 +7,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Repository("mockCommitterRepo")
 public class MockCommitterRepository implements CommitterRepository {
 
     @Override
     public Optional<List<CommitterDto>> getCommitterTableForProject(int projectId) {
         List<CommitterDto> list = generateCommitterTable();
-        System.out.println(list);
         return Optional.of(list);
     }
 

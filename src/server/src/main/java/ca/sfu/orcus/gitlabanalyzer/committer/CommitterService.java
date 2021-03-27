@@ -4,10 +4,9 @@ import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
 import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
-import javax.ws.rs.BadRequestException;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,18 +17,20 @@ public class CommitterService {
     private final GitLabApiWrapper gitLabApiWrapper;
 
     @Autowired
-    public CommitterService(CommitterRepository committerRepo, MemberRepository memberRepo, GitLabApiWrapper gitLabApiWrapper) {
+    public CommitterService(@Qualifier("mockCommitterRepo") CommitterRepository committerRepo,
+                            @Qualifier("mockMemberRepo") MemberRepository memberRepo,
+                            GitLabApiWrapper gitLabApiWrapper) {
         this.committerRepo = committerRepo;
         this.memberRepo = memberRepo;
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
-    public Optional<List<CommitterDto>> getCommittersInProject(String jwt, int projectId) throws GitLabApiException, BadRequestException {
+    public Optional<List<CommitterDto>> getCommittersInProject(String jwt, int projectId) throws GitLabApiException {
         int memberId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         if (memberRepo.projectContainsMember(projectId, memberId)) {
             return committerRepo.getCommitterTableForProject(projectId);
         } else {
-            throw new BadRequestException("Member does not have access to this project");
+            return Optional.empty();
         }
     }
 }
