@@ -14,7 +14,7 @@ paths:
   /api/configs:
     $ref: './configs.yml'
   /api/config/{configId}:
-    $ref: './config.yml#/configGetAndDelete'
+    $ref: './config.yml#/configGetPutDelete'
   /api/projects:
     $ref: './projects.yml'
   /api/project/{projectId}:
