@@ -85,6 +85,18 @@ public class ConfigController {
         }
     }
 
+    @PostMapping("/api/config/import")
+    public String importConfig(@CookieValue(value = "sessionId") String jwt,
+                               @RequestBody ConfigIdDto configIdDto,
+                               HttpServletResponse response) {
+        if (authService.jwtIsValid(jwt)) {
+            // do sth
+        } else {
+            response.setStatus(SC_UNAUTHORIZED);
+            return "";
+        }
+    }
+
     private void tryAddingNewConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
         try {
             String configId = configService.addNewConfig(jwt, configDto);
@@ -143,15 +155,6 @@ public class ConfigController {
             configService.updateConfig(jwt, configDto, response);
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // POST response body object
-    private static final class ConfigIdDto {
-        private String id;
-
-        public ConfigIdDto(String id) {
-            this.id = id;
         }
     }
 }

@@ -2,7 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import java.util.List;
 
-final class ConfigDto {
+public final class ConfigDto {
     private String id;
     private String name;
     private long startDate;
@@ -16,7 +16,7 @@ final class ConfigDto {
     private ConfigDto() {}
 
     public String getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(String id) {
