@@ -15,6 +15,10 @@ final class ConfigDto {
 
     private ConfigDto() {}
 
+    public String getId() {
+        return this.id;
+    }
+
     public void setId(String id) {
         this.id = id;
     }

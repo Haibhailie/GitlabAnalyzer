@@ -73,6 +73,18 @@ public class ConfigController {
         }
     }
 
+    @PutMapping("/api/config/{configId}")
+    public void updateConfig(@CookieValue(value = "sessionId") String jwt,
+                             @PathVariable("configId") String configId,
+                             @RequestBody ConfigDto configDto,
+                             HttpServletResponse response) {
+        if (authService.jwtIsValid(jwt)) {
+            tryUpdatingConfig(jwt, configId, configDto, response);
+        } else {
+            response.setStatus(SC_UNAUTHORIZED);
+        }
+    }
+
     private void tryAddingNewConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
         try {
             String configId = configService.addNewConfig(jwt, configDto);
@@ -118,6 +130,19 @@ public class ConfigController {
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
             return "";
+        }
+    }
+
+    private void tryUpdatingConfig(String jwt, String configId, ConfigDto configDto, HttpServletResponse response) {
+        if (!configId.equals(configDto.getId())) {
+            response.setStatus(SC_BAD_REQUEST);
+            return;
+        }
+
+        try {
+            configService.updateConfig(jwt, configDto, response);
+        } catch (GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
     }
 
