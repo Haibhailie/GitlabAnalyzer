@@ -4,7 +4,6 @@ items:
   required:
     - email
     - name
-    - id
     - memberDto
   properties:
     email:
@@ -12,7 +11,5 @@ items:
     name:
       type: string
       description: The given name of the committer such as John Smith
-    id:
-      type: number
     memberDto:
       $ref: './author.yml'
