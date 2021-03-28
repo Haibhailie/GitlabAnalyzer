@@ -4,9 +4,11 @@ import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
 import { IMemberData, ICommitData, IMergeData } from '../types'
 
-import styles from '../css/MemberResolution.module.css'
 import Table from '../components/Table'
 import MemberDropdown from '../components/MemberDropdown'
+import Button from '../components/Button'
+
+import styles from '../css/MemberResolution.module.css'
 
 export interface IMemberStatData {
   commits: ICommitData[]
@@ -51,26 +53,31 @@ const MemberResolution = () => {
     // >
     <div className={styles.container}>
       <h1 className={styles.header}>Member to Committer Resolution</h1>
-      <Table
-        sortable
-        headers={['Committer', 'Email', 'Member']}
-        columnWidths={['2fr', '2fr', '3fr']}
-        classes={{
-          container: styles.tableContainer,
-          table: styles.table,
-          header: styles.theader,
-          data: styles.tdata,
-        }}
-        data={
-          testData?.map(({ committer, email, member }) => {
-            return {
-              committer,
-              email,
-              member: <MemberDropdown data={memberData} />,
-            }
-          }) ?? [{}]
-        }
-      />
+      <form className={styles.formContainer}>
+        <Table
+          sortable
+          headers={['Committer', 'Email', 'Member']}
+          columnWidths={['2fr', '2fr', '3fr']}
+          classes={{
+            container: styles.tableContainer,
+            table: styles.table,
+            header: styles.theader,
+            data: styles.tdata,
+          }}
+          data={
+            testData?.map(({ committer, email, member }) => {
+              return {
+                committer,
+                email,
+                member: <MemberDropdown data={memberData} selected={member} />,
+              }
+            }) ?? [{}]
+          }
+        />
+      </form>
+      <button type="button" className={styles.button}>
+        Save
+      </button>
     </div>
     // </Suspense>
   )
