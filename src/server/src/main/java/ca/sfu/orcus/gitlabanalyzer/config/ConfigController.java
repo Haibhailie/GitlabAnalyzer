@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import com.google.gson.Gson;
+import javassist.NotFoundException;
 import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -140,7 +141,10 @@ public class ConfigController {
         }
 
         try {
-            configService.updateConfig(jwt, configDto, response);
+            configService.updateConfig(jwt, configDto);
+            response.setStatus(SC_OK);
+        } catch (NotFoundException e) {
+            response.setStatus(SC_NOT_FOUND);
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }

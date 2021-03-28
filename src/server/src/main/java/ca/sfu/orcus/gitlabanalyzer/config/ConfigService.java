@@ -2,16 +2,14 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import com.google.gson.Gson;
+import javassist.NotFoundException;
 import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static javax.servlet.http.HttpServletResponse.*;
 
 @Service
 public class ConfigService {
@@ -65,17 +63,15 @@ public class ConfigService {
         return gson.toJson(configDtos);
     }
 
-    public void updateConfig(String jwt, ConfigDto configDto, HttpServletResponse response) throws GitLabApiException {
+    public void updateConfig(String jwt, ConfigDto configDto) throws GitLabApiException, NotFoundException {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         String configId = configDto.getId();
 
         if (!configRepository.userHasConfig(userId, configId)
             || configRepository.getNumSubscribersOfConfig(configId) == 0) {
-            response.setStatus(SC_NOT_FOUND);
-            return;
+            throw new NotFoundException("Config not found");
         }
 
         configRepository.updateConfig(configId, configDto);
-        response.setStatus(SC_OK);
     }
 }
