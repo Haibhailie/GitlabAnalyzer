@@ -31,6 +31,7 @@ public class MergeRequestDto {
     private List<Participant> participants;
     private long time;
     private double score;
+    private String webUrl;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
@@ -61,6 +62,7 @@ public class MergeRequestDto {
         setTime(presentMergeRequest.getMergedAt().getTime());
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setScore(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
+        setWebUrl(presentMergeRequest.getWebUrl());
     }
 
     public void setMergeRequestId(int mergeRequestId) {
@@ -149,6 +151,10 @@ public class MergeRequestDto {
 
     public void setScore(double score) {
         this.score = score;
+    }
+
+    public void setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
     }
 
     @Override

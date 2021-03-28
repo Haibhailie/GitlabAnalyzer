@@ -8,6 +8,7 @@ public class ProjectDto {
     private String role;
     private long lastActivityAt;
     private boolean analyzed;
+    private String webUrl;
 
     public ProjectDto(Project project, String role) {
         setId(project.getId());
@@ -15,6 +16,7 @@ public class ProjectDto {
         setRole(role);
         setLastActivityAt(project.getLastActivityAt().getTime());
         setAnalyzed(false); // TODO: Iteration 2
+        setWebUrl(project.getWebUrl());
     }
 
     public void setId(int id) {
@@ -35,6 +37,10 @@ public class ProjectDto {
 
     public void setAnalyzed(boolean analyzed) {
         this.analyzed = analyzed;
+    }
+
+    public void setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
     }
 
     @Override
