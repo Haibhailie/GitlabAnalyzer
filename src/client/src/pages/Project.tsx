@@ -8,6 +8,7 @@ import ErrorComp from '../components/ErrorComp'
 import Selector from '../components/Selector'
 import MemberTable from '../components/MemberTable'
 import ProjectSummary from '../components/ProjectSummary'
+import Button from '../components/Button'
 
 import styles from '../css/Project.module.css'
 
@@ -52,6 +53,10 @@ const Project = () => {
           </div>
           <div className={styles.memberContainer}>
             <MemberTable projectId={id} projectName={project?.name ?? ''} />
+            <Button
+              message="Member to Committer Resolution"
+              destPath={`/project/${id}/memberResolution`}
+            />
           </div>
         </Selector>
       </div>

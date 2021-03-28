@@ -1,0 +1,40 @@
+.container {
+  min-height: calc(100% - 100px);
+  overflow-x: hidden;
+  width: 100%;
+  padding-bottom: 100px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.header {
+  font: var(--font-header-large-poppins);
+  margin: 50px 0px 20px;
+}
+
+.tableContainer {
+  width: 60%;
+}
+
+.table {
+  border: 1px solid var(--color-light-gray);
+  width: calc(100% - 2px);
+}
+
+.theader,
+.tdata {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  height: 56px;
+  font: var(--font-body-medium-poppins);
+  border-bottom: 1px solid var(--color-light-gray);
+  text-align: left;
+}
+
+.theader {
+  background-color: var(--color-background-gray);
+}
