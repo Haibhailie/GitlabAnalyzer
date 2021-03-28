@@ -47,7 +47,8 @@ public class ConfigRepository {
         }
     }
 
-    public void updateConfig(String configId, ConfigDto configDto) {
+    public void updateConfig(ConfigDto configDto) {
+        String configId = configDto.getId();
         int numSubscribers = getNumSubscribersOfConfig(configId);
         configsCollection.replaceOne(
                 eq("_id", configId),

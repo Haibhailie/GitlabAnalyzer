@@ -72,6 +72,6 @@ public class ConfigService {
             throw new NotFoundException("Config not found");
         }
 
-        configRepository.updateConfig(configId, configDto);
+        configRepository.updateConfig(configDto);
     }
 }
