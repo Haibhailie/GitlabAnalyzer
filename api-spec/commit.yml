@@ -14,7 +14,7 @@ get:
               - time
               - insertions
               - deletions
-              - url
+              - webUrl
             properties:
               sha:
                 type: string
@@ -30,7 +30,7 @@ get:
               deletions:
                 type: integer
                 minimum: 0
-              url:
+              webUrl:
                 type: string
     '401':
       description: Invalid JWT Token.
