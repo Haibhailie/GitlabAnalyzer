@@ -20,6 +20,7 @@ get:
               - srcBranch
               - destBranch
               - score
+              - webUrl
             properties:
               id:
                 type: string
@@ -51,6 +52,8 @@ get:
                 type: string
               score:
                 type: number
+              webUrl:
+                type: string
     '401':
       description: Invalid JWT Token.
     '500':
