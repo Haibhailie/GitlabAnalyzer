@@ -35,7 +35,7 @@ public class ConfigRepository {
     public String addNewConfig(ConfigDto configDto) {
         String configId = new ObjectId().toString();
         configDto.setId(configId);
-        configsCollection.insertOne(generateNewConfigDoc(configId, configDto));
+        configsCollection.insertOne(generateNewConfigDoc(configId, configDto, 1));
         return configId;
     }
 
@@ -45,6 +45,14 @@ public class ConfigRepository {
         } else {
             userConfigsCollection.updateOne(eq("_userId", userId), addToSet("configIds", configId));
         }
+    }
+
+    public void updateConfig(ConfigDto configDto) {
+        String configId = configDto.getId();
+        int numSubscribers = getNumSubscribersOfConfig(configId);
+        configsCollection.replaceOne(
+                eq("_id", configId),
+                generateNewConfigDoc(configId, configDto, numSubscribers));
     }
 
     public void deleteConfigForUser(int userId, String configId) {
@@ -80,17 +88,17 @@ public class ConfigRepository {
         return configIds.size();
     }
 
-    private int getNumSubscribersOfConfig(String configId) {
+    public int getNumSubscribersOfConfig(String configId) {
         Document configDoc = configsCollection.find(eq("_id", configId)).first();
         return (configDoc == null) ? 0 : configDoc.getInteger("numSubscribers");
     }
 
-    private Document generateNewConfigDoc(String configId, ConfigDto configDto) {
+    private Document generateNewConfigDoc(String configId, ConfigDto configDto, int numSubscribers) {
         String configJson = gson.toJson(configDto);
 
         return new Document("_id", configId)
                 .append("config", configJson)
-                .append("numSubscribers", 1);
+                .append("numSubscribers", numSubscribers);
     }
 
     private Document generateNewUserConfigsDoc(int userId, List<String> configIds) {
