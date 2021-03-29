@@ -14,4 +14,23 @@ public class LOCDto {
         this.numSyntaxChanges = numSyntaxChanges;
         this.numSpacingChanges = numSpacingChanges;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof LOCDto)) {
+            return false;
+        }
+
+        LOCDto m = (LOCDto) o;
+
+        return this.numAdditions == m.numAdditions
+                && this.numDeletions == m.numDeletions
+                && this.numBlankAdditions == m.numBlankAdditions
+                && this.numSyntaxChanges == m.numSyntaxChanges
+                && this.numSpacingChanges == m.numSpacingChanges;
+    }
 }

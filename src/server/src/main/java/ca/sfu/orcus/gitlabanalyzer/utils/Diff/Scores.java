@@ -24,4 +24,24 @@ public class Scores {
     public double getTotalScore() {
         return totalScore;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof Scores)) {
+            return false;
+        }
+
+        Scores m = (Scores) o;
+
+        return this.scoreAdditions == m.scoreAdditions
+                && this.scoreDeletions == m.scoreDeletions
+                && this.scoreBlankAdditions == m.scoreBlankAdditions
+                && this.scoreSyntaxChanges == m.scoreSyntaxChanges
+                && this.scoreSpacingChanges == m.scoreSpacingChanges
+                && this.totalScore == m.totalScore;
+    }
 }

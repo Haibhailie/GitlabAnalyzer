@@ -48,4 +48,23 @@ public class DiffScoreDto {
         return fileDiffs;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof DiffScoreDto)) {
+            return false;
+        }
+
+        DiffScoreDto m = (DiffScoreDto) o;
+
+        return (this.fileDiffs.equals(m.fileDiffs)
+                && this.numLineAdditions == m.numLineAdditions
+                && this.numBlankAdditions == m.numBlankAdditions
+                && this.numLineDeletions == m.numLineDeletions
+                && this.numSpacingChanges == m.numSpacingChanges
+                && this.numSyntaxChanges == m.numSyntaxChanges);
+    }
 }

@@ -49,7 +49,6 @@ public class FileDto {
         }
     }
 
-
     public void setMergeRquestFileScore(Scores fileScore) {
         this.fileScore = fileScore;
     }
@@ -66,7 +65,6 @@ public class FileDto {
         isIgnored = ignored;
     }
 
-
     public double getTotalScore() {
         return fileScore.getTotalScore();
     }
@@ -79,5 +77,23 @@ public class FileDto {
         return linesOfCodeChanges;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
 
+        if (!(o instanceof FileDto)) {
+            return false;
+        }
+
+        FileDto m = (FileDto) o;
+
+        return (this.name.equals(m.name)
+                && this.extension.equals(m.extension)
+                && this.isIgnored == m.isIgnored
+                && this.fileScore.equals(m.fileScore)
+                && this.linesOfCodeChanges.equals(m.linesOfCodeChanges))
+                && this.fileDiffDtos.equals(m.fileDiffDtos);
+    }
 }

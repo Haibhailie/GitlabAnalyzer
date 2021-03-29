@@ -31,7 +31,6 @@ public class MergeRequestDto {
     private List<FileDto> files;
     private double sumOfCommitsScore;
     private List<MergeRequestCommitsDto> commitsInfoInMergeRequest = new ArrayList<>();
-    //add a lightweight commitDto that contains the scoreDto and LocDto
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
@@ -172,6 +171,8 @@ public class MergeRequestDto {
                 && this.committers.equals(m.committers)
                 && this.participants.equals(m.participants)
                 && this.time == (m.time)
-                && this.files.equals(m.files));
+                && this.files.equals(m.files)
+                && this.commitsInfoInMergeRequest.equals(m.commitsInfoInMergeRequest)
+                && this.isIgnored == m.isIgnored);
     }
 }

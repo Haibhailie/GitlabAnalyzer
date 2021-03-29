@@ -34,4 +34,20 @@ public class FileDiffDto {
             lineType = diffLineType.LINE_NUMBER_SPECIFICATION;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof FileDiffDto)) {
+            return false;
+        }
+
+        FileDiffDto m = (FileDiffDto) o;
+
+        return (this.diffLine.equals(m.diffLine)
+                && this.lineType == m.lineType);
+    }
 }
