@@ -1,11 +1,14 @@
 package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
+import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 import org.gitlab4j.api.models.Diff;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class DiffStringParser {
+
     private static String oldPath;
     private static String newPath;
     private static final String defaultPath = "dev/null";

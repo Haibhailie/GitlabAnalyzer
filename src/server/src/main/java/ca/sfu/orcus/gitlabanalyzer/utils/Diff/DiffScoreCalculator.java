@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
+import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;

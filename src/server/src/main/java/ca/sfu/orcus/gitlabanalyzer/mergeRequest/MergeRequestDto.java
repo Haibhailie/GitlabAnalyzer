@@ -5,7 +5,6 @@ import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.MergeRequest;
-import org.gitlab4j.api.models.Note;
 import org.gitlab4j.api.models.Participant;
 
 import java.util.ArrayList;
@@ -26,8 +25,6 @@ public class MergeRequestDto {
     private String targetBranch;
     private int numAdditions;
     private int numDeletions;
-    private List<String> notesName;
-    private List<String> notes;
     private List<String> committers;
     private List<Participant> participants;
     private long time;
@@ -59,7 +56,6 @@ public class MergeRequestDto {
         setNumAdditionsAndDeletions(commits, gitLabApi, projectId);
 
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectId, mergeRequestId));
-        setNotesNameAndNotes(gitLabApi, projectId, mergeRequestId);
         setTime(presentMergeRequest.getMergedAt().getTime());
 
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
@@ -137,20 +133,6 @@ public class MergeRequestDto {
         committers = new ArrayList<>(commitAuthorsSet);
     }
 
-    public void setNotesNameAndNotes(GitLabApi gitLabApi, int projectId, int mergeRequestId) throws GitLabApiException {
-        List<String> notesName = new ArrayList<>();
-        List<String> notes = new ArrayList<>();
-
-        List<Note> mrNotes = gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mergeRequestId);
-        for (Note n : mrNotes) {
-            notesName.add(n.getAuthor().getName());
-            notes.add(n.getBody());
-        }
-
-        this.notesName = notesName;
-        this.notes = notes;
-    }
-
     public void setIgnored(boolean ignored) {
         isIgnored = ignored;
     }
@@ -184,8 +166,6 @@ public class MergeRequestDto {
                 && this.targetBranch.equals(m.targetBranch)
                 && this.numAdditions == (m.numAdditions)
                 && this.numDeletions == (m.numDeletions)
-                && this.notesName.equals(m.notesName)
-                && this.notes.equals(m.notes)
                 && this.committers.equals(m.committers)
                 && this.participants.equals(m.participants)
                 && this.time == (m.time)
