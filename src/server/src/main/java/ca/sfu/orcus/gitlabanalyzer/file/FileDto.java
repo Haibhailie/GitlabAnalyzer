@@ -9,7 +9,7 @@ import java.util.List;
 
 public class FileDto {
     String name;
-    //add string extension
+    String extension;
     boolean isIgnored;
     Scores fileScore;
     LOCDto linesOfCodeChanges;
@@ -19,14 +19,28 @@ public class FileDto {
 
     public FileDto(String[] unifiedDiff, String name) {
         this.name = name;
+        setExtension(name);
         generateFileDiffDto(unifiedDiff);
     }
 
     public FileDto(String name, String[] unifiedDiff, double score) {
         this.name = name;
+        setExtension(name);
         generateFileDiffDto(unifiedDiff);
         this.isIgnored = false;
         this.setTotalScore(score);
+    }
+
+    public void setExtension(String name) {
+        if (name.contains(".")) {
+            extension = name.substring(name.indexOf("."));
+        } else {
+            extension = "Unknown";
+        }
+    }
+
+    public void setFileDiffDtos(List<FileDiffDto> fileDiffDtos) {
+        this.fileDiffDtos = fileDiffDtos;
     }
 
     public void generateFileDiffDto(String[] unifiedDiff) {
@@ -34,6 +48,7 @@ public class FileDto {
             fileDiffDtos.add(new FileDiffDto(line));
         }
     }
+
 
     public void setMergeRquestFileScore(Scores fileScore) {
         this.fileScore = fileScore;
@@ -45,10 +60,6 @@ public class FileDto {
 
     public void setLinesOfCodeChanges(LOCDto linesOfCodeChanges) {
         this.linesOfCodeChanges = linesOfCodeChanges;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setIgnored(boolean ignored) {

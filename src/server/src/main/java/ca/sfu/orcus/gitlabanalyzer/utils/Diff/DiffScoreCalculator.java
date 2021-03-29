@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
+import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,37 +17,47 @@ public class DiffScoreCalculator {
     private int numSpacingChanges = 0;
     private final double lineSimilarityFactor = 0.5;
     private List<String> generatedDiffList = new ArrayList<>();
+    List<FileDiffDto> fileDiffs = new ArrayList<>();
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
         generatedDiffList = diffStrings;
+
         int lineNumber = -1;
         for (String line : generatedDiffList) {
             lineNumber++;
             if (line.startsWith("---")) {
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.HEADER));
                 //Log line skipped
             } else if (line.startsWith("+++")) {
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.HEADER));
                 //Log line skipped
             } else if (line.startsWith("+")) {
                 if (line.substring(1).length() > 0) {
                     numLineAdditions++;
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION));
                 } else {
                     numBlankAdditions++;
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION_BLANK));
                 }
             } else if (line.startsWith("-")) {
                 if (checkSyntaxChanges(lineNumber, line)) {
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION_SYNTAX));
                     break;
                 }
                 if (checkSpacingChanges(lineNumber, line)) {
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION_SPACING));
                     break;
                 }
                 if (checkAddedBlankSpaces(lineNumber, line)) {
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION_BLANK));
                     break;
                 } else {
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.DELETION));
                     numLineDeletions++;
                 }
             }
         }
-        return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges);
+        return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
     }
 
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
@@ -151,6 +162,9 @@ public class DiffScoreCalculator {
                     (diffScoreDtos.get(i).getNumBlankAdditions()),
                     (diffScoreDtos.get(i).getNumSyntaxChanges()),
                     (diffScoreDtos.get(i).getNumSpacingChanges())));
+
+            fileDtos.get(i).setFileDiffDtos(diffScoreDtos.get(i).getFileDiffs());
+
         }
         return fileDtos;
     }
@@ -165,8 +179,7 @@ public class DiffScoreCalculator {
     }
 
     private DiffScoreDto generateDiffScoreDto(List<String> diffList) {
-        DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
-        return diffScoreCalculator.parseDiffList(diffList);
+        return parseDiffList(diffList);
     }
 
     private String[] convertToString(List<String> stringList) {

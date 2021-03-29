@@ -1,5 +1,11 @@
 package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
+import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DiffScoreDto {
 
     int numLineAdditions;
@@ -7,13 +13,15 @@ public class DiffScoreDto {
     int numBlankAdditions;
     int numSyntaxChanges;
     int numSpacingChanges;
+    List<FileDiffDto> fileDiffs;
 
-    public DiffScoreDto(int numLineAdditions, int numLineDeletions, int numBlankAdditions, int numSyntaxChanges, int numSpacingChanges) {
+    public DiffScoreDto(int numLineAdditions, int numLineDeletions, int numBlankAdditions, int numSyntaxChanges, int numSpacingChanges, List<FileDiffDto> fileDiffs) {
         this.numLineAdditions = numLineAdditions;
         this.numLineDeletions = numLineDeletions;
         this.numBlankAdditions = numBlankAdditions;
         this.numSyntaxChanges = numSyntaxChanges;
         this.numSpacingChanges = numSpacingChanges;
+        this.fileDiffs = fileDiffs;
     }
 
     public int getNumLineAdditions() {
@@ -34,6 +42,10 @@ public class DiffScoreDto {
 
     public int getNumSpacingChanges() {
         return numSpacingChanges;
+    }
+
+    public List<FileDiffDto> getFileDiffs() {
+        return fileDiffs;
     }
 
 }

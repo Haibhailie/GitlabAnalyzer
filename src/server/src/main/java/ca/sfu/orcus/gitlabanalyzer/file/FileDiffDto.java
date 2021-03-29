@@ -2,11 +2,13 @@ package ca.sfu.orcus.gitlabanalyzer.file;
 
 public class FileDiffDto {
 
-    enum diffLineType {
+    public enum diffLineType {
         HEADER,
         ADDITION,
+        ADDITION_SYNTAX,
+        ADDITION_BLANK,
+        ADDITION_SPACING,
         DELETION,
-        UNCHANGED,
         LINE_NUMBER_SPECIFICATION
     }
 
@@ -15,23 +17,21 @@ public class FileDiffDto {
 
     public FileDiffDto(String diffLine) {
         this.diffLine = diffLine;
-        setDiffLineType();
+        setInitialDiffLineType();
     }
 
-    public void setDiffLineType() {
+    public FileDiffDto(String diffLine, diffLineType lineType) {
+        this.diffLine = diffLine;
+        this.lineType = lineType;
+    }
+
+    public void setInitialDiffLineType() {
         if (diffLine.startsWith("diff")
                 || diffLine.startsWith("---")
                 || diffLine.startsWith("+++")) {
             lineType = diffLineType.HEADER;
         } else if (diffLine.startsWith("@@")) {
             lineType = diffLineType.LINE_NUMBER_SPECIFICATION;
-        } else if (diffLine.startsWith("+")) {
-            lineType = diffLineType.ADDITION;
-        } else if (diffLine.startsWith("-")) {
-            lineType = diffLineType.DELETION;
-        } else {
-            lineType = diffLineType.UNCHANGED;
         }
     }
-
 }
