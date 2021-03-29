@@ -16,7 +16,7 @@ public class CommitScoreCalculator {
     double blankLOCFactor = 0;
     double spacingChangeFactor = 0;
 
-    public List<FileDto> getCommitScore(List<Diff> diffs, String id) {
+    public List<FileDto> getCommitScore(List<Diff> diffs) {
 
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();

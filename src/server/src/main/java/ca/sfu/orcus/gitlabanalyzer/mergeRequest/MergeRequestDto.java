@@ -1,5 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
+import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
@@ -7,6 +9,7 @@ import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.MergeRequest;
 import org.gitlab4j.api.models.Participant;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,13 +26,12 @@ public class MergeRequestDto {
     private String description;
     private String sourceBranch;
     private String targetBranch;
-    private int numAdditions;
-    private int numDeletions;
     private List<String> committers;
     private List<Participant> participants;
     private long time;
     boolean isIgnored;
     private List<FileDto> files;
+    private int sumOfCommitsScore;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
@@ -53,13 +55,14 @@ public class MergeRequestDto {
 
         List<Commit> commits = gitLabApi.getMergeRequestApi().getCommits(projectId, mergeRequestId);
         setCommitters(commits);
-        setNumAdditionsAndDeletions(commits, gitLabApi, projectId);
+        setSumOfCommitsScore(commits, gitLabApi, projectId);
 
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectId, mergeRequestId));
         setTime(presentMergeRequest.getMergedAt().getTime());
 
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setFiles(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
+
         isIgnored = false;
     }
 
@@ -103,15 +106,15 @@ public class MergeRequestDto {
         this.targetBranch = targetBranch;
     }
 
-    public void setNumAdditionsAndDeletions(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
-        numAdditions = 0;
-        numDeletions = 0;
-
+    public void setSumOfCommitsScore(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
+        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
+        sumOfCommitsScore = 0;
         for (Commit c : commits) {
             Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
             if (presentCommit.getStats() != null) {
-                numAdditions += presentCommit.getStats().getAdditions();
-                numDeletions += presentCommit.getStats().getDeletions();
+                List<FileDto> presentCommitFiles = scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, presentCommit.getShortId()));
+                for (FileDto fileIterator : presentCommitFiles)
+                    sumOfCommitsScore += fileIterator.getTotalScore();
             }
         }
     }
@@ -164,8 +167,7 @@ public class MergeRequestDto {
                 && this.description.equals(m.description)
                 && this.sourceBranch.equals(m.sourceBranch)
                 && this.targetBranch.equals(m.targetBranch)
-                && this.numAdditions == (m.numAdditions)
-                && this.numDeletions == (m.numDeletions)
+                && this.sumOfCommitsScore == (m.sumOfCommitsScore)
                 && this.committers.equals(m.committers)
                 && this.participants.equals(m.participants)
                 && this.time == (m.time)

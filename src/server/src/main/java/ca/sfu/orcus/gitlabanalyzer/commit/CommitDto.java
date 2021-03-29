@@ -43,7 +43,7 @@ public class CommitDto {
         this.setDiffs((DiffStringParser.parseDiff(diffList)));
 
         CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
-        this.setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId()), id));
+        this.setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
 
         isIgnored = false;
     }
