@@ -2,16 +2,19 @@ package ca.sfu.orcus.gitlabanalyzer.file;
 
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.LOCDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileDto {
     String name;
-
+    //add string extension
     boolean isIgnored;
     Scores fileScore;
     LOCDto linesOfCodeChanges;
+
+    @SerializedName("fileDiffs")
     List<FileDiffDto> fileDiffDtos = new ArrayList<>();
 
     public FileDto(String[] unifiedDiff, String name) {
@@ -44,10 +47,6 @@ public class FileDto {
         this.linesOfCodeChanges = linesOfCodeChanges;
     }
 
-    public double getTotalScore() {
-        return fileScore.getTotalScore();
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -55,5 +54,19 @@ public class FileDto {
     public void setIgnored(boolean ignored) {
         isIgnored = ignored;
     }
+
+
+    public double getTotalScore() {
+        return fileScore.getTotalScore();
+    }
+
+    public Scores getFileScore() {
+        return fileScore;
+    }
+
+    public LOCDto getLinesOfCodeChanges() {
+        return linesOfCodeChanges;
+    }
+
 
 }

@@ -127,6 +127,7 @@ public class CommitDto {
                 && this.numDeletions == c.numDeletions
                 && this.total == c.total
                 && this.diffs.equals(c.diffs)
+                && this.isIgnored == c.isIgnored
                 && this.files == c.files);
     }
 }
