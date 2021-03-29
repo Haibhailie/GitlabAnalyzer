@@ -60,13 +60,21 @@ const Home = () => {
     history.push(`/project/${id}`)
   }
 
-  const preAnalyze = (id: string, index: number) => {
-    const currentAnalyzeError: boolean[] = analyzeError
-    currentAnalyzeError[index] = false
-    setAnalyzeError([...currentAnalyzeError])
+  const updateAnalyzing = (index: number, value: boolean) => {
     const currentAnalyzing: boolean[] = isAnalyzing
-    currentAnalyzing[index] = true
+    currentAnalyzing[index] = value
     setIsAnalyzing([...currentAnalyzing])
+  }
+
+  const updateAnalyzingError = (index: number, value: boolean) => {
+    const currentAnalyzeError: boolean[] = analyzeError
+    currentAnalyzeError[index] = value
+    setAnalyzeError([...currentAnalyzeError])
+  }
+
+  const preAnalyze = (id: string, index: number) => {
+    updateAnalyzingError(index, false)
+    updateAnalyzing(index, true)
 
     jsonFetch(`/api/project/${id}/analyze`, {
       responseIsEmpty: true,
@@ -81,18 +89,12 @@ const Home = () => {
         } else if (res === 401 || res === 400) {
           history.push('/login')
         } else {
-          const currentAnalyzeError: boolean[] = analyzeError
-          currentAnalyzeError[index] = true
-          setAnalyzeError([...currentAnalyzeError])
+          updateAnalyzingError(index, true)
         }
       })
       .catch(() => {
-        const currentAnalyzing: boolean[] = isAnalyzing
-        currentAnalyzing[index] = false
-        setIsAnalyzing([...currentAnalyzing])
-        const currentAnalyzeError: boolean[] = analyzeError
-        currentAnalyzeError[index] = true
-        setAnalyzeError([...currentAnalyzeError])
+        updateAnalyzing(index, false)
+        updateAnalyzingError(index, true)
       })
   }
 
