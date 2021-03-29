@@ -15,6 +15,7 @@ get:
               - numCommits
               - repoSize
               - createdAt
+              - webUrl
             properties:
               id:
                 type: string
@@ -36,9 +37,11 @@ get:
                 description: size of the repo in bytes.
                 type: integer
                 minimum: 0
-    '401':
               createdAt:
-                $ref: "./components/epoch.yml"
+                $ref: './components/epoch.yml'
+              webUrl:
+                type: string
+    '401':
       description: Invalid JWT Token.
     '500':
       description: An error un-related to this request occurred.

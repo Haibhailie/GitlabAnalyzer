@@ -31,6 +31,8 @@ public class MergeRequestDto {
     private List<FileDto> files;
     private double sumOfCommitsScore;
     private List<MergeRequestCommitsDto> commitsInfoInMergeRequest = new ArrayList<>();
+    private double score;
+    private String webUrl;
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
@@ -60,6 +62,8 @@ public class MergeRequestDto {
         setTime(presentMergeRequest.getMergedAt().getTime());
 
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
+        setScore(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
+        setWebUrl(presentMergeRequest.getWebUrl());
         setFiles(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
 
         isIgnored = false;
@@ -143,6 +147,14 @@ public class MergeRequestDto {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
+    }
+
+    public void setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
     }
 
     @Override

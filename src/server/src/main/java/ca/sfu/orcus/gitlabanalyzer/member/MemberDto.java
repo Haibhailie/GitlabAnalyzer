@@ -1,15 +1,13 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
-
-import java.util.Locale;
 
 public class MemberDto {
     private String displayName;
     private int id;
     private String username;
     private String role;
+    private String webUrl;
 
     public MemberDto(Member presentMember) {
         setDisplayName(presentMember.getName());
@@ -20,6 +18,7 @@ public class MemberDto {
         } catch (NullPointerException e) {
             setRole("GUEST");
         }
+        setWebUrl(presentMember.getWebUrl());
     }
 
     public void setDisplayName(String displayName) {
@@ -36,6 +35,10 @@ public class MemberDto {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public void  setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
     }
 
     @Override

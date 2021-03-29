@@ -24,6 +24,8 @@ public class CommitDto {
     private String diffs;
     boolean isIgnored;
     private List<FileDto> files;
+    private double score;
+    private String webUrl;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
@@ -45,6 +47,8 @@ public class CommitDto {
         CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
         this.setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
         isIgnored = false;
+        this.setScore(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
+        this.setWebUrl(presentCommit.getWebUrl());
     }
 
     public void setTitle(String title) {
@@ -97,6 +101,10 @@ public class CommitDto {
 
     public void setFiles(List<FileDto> files) {
         this.files = files;
+    }
+
+    public void setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
     }
 
     public String getDiffs() {

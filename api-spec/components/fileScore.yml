@@ -1,0 +1,10 @@
+type: object
+required:
+  - fileExtension
+  - scoreMultiplier
+properties:
+  fileExtension:
+    type: string
+  scoreMultiplier:
+    type: number
+    minimum: 0
