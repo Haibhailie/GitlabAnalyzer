@@ -62,8 +62,8 @@ public class ConfigRepository {
             userConfigsCollection.insertOne(generateNewUserConfigsDoc(userId, currentConfigJson));
         } else {
             userConfigsCollection.updateOne(
-                    eq(UserConfigKeys.userId, userId),
-                    set(UserConfigKeys.currentConfig, currentConfigJson));
+                    eq("_userId", userId),
+                    set("currentConfig", currentConfigJson));
         }
     }
 
