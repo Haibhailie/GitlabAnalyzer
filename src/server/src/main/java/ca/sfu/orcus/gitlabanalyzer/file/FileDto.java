@@ -5,30 +5,27 @@ import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
 
 public class FileDto {
     String name;
-    boolean isMergeRequestFile;
-    String packageId;
+
     boolean isIgnored;
     Scores fileScore;
     LOCDto linesOfCodeChanges;
+
+    //Another object
     String[] unifiedDiff;
-    // might want projectId as well although im not sure?
 
     public FileDto(String[] unifiedDiff, String name) {
         this.name = name;
         this.unifiedDiff = unifiedDiff;
     }
 
-    public FileDto(String name, String packageId, String[] unifiedDiff, double score) {
+    public FileDto(String name, String[] unifiedDiff, double score) {
         this.name = name;
-        this.packageId = packageId;
         this.unifiedDiff = unifiedDiff;
         this.isIgnored = false;
         this.setTotalScore(score);
     }
 
-    public void setMergeRquestFileScore(Scores fileScore, String packageId, boolean isMergeRequestFile) {
-        this.isMergeRequestFile = isMergeRequestFile;
-        this.packageId = packageId;
+    public void setMergeRquestFileScore(Scores fileScore) {
         this.fileScore = fileScore;
     }
 

@@ -55,7 +55,7 @@ public class MergeRequestScoreCalculator {
                     diffScoreDtos.get(i).getNumLineDeletions(),
                     diffScoreDtos.get(i).getNumBlankAdditions(),
                     diffScoreDtos.get(i).getNumSyntaxChanges(),
-                    diffScoreDtos.get(i).getNumSpacingChanges()), String.valueOf(mergeRequestChanges.getIid()), true);
+                    diffScoreDtos.get(i).getNumSpacingChanges()));
 
             fileDtos.get(i).setLinesOfCodeChanges(new LOCDto(diffScoreDtos.get(i).getNumLineAdditions(),
                     (diffScoreDtos.get(i).getNumLineDeletions()),

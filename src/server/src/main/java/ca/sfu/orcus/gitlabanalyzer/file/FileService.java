@@ -31,7 +31,7 @@ public class FileService {
     public FileDto changeCommitFileScore(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
         try {
             String[] arr = addDiffs(gitLabApi, projectId, commitId, filePath);
-            return new FileDto(filePath, commitId, arr, score);
+            return new FileDto(filePath, arr, score);
         } catch (GitLabApiException e) {
             return null;
         }
@@ -48,7 +48,7 @@ public class FileService {
     public FileDto changeFileIgnoreTrue(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
         try {
             String[] arr = addDiffs(gitLabApi, projectId, commitId, filePath);
-            FileDto file = new FileDto(filePath, commitId, arr, score);
+            FileDto file = new FileDto(filePath, arr, score);
             file.setIgnored(true);
             return file;
         } catch (GitLabApiException e) {

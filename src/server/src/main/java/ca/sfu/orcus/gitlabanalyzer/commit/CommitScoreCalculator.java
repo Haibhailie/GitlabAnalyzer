@@ -54,7 +54,7 @@ public class CommitScoreCalculator {
                     diffScoreDtos.get(i).getNumLineDeletions(),
                     diffScoreDtos.get(i).getNumBlankAdditions(),
                     diffScoreDtos.get(i).getNumSyntaxChanges(),
-                    diffScoreDtos.get(i).getNumSpacingChanges()), id, false);
+                    diffScoreDtos.get(i).getNumSpacingChanges()));
 
             fileDtos.get(i).setLinesOfCodeChanges(new LOCDto(diffScoreDtos.get(i).getNumLineAdditions(),
                     (diffScoreDtos.get(i).getNumLineDeletions()),
