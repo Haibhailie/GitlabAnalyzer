@@ -182,7 +182,10 @@ public class ConfigController {
         String configJson = "";
 
         try {
-            configJson = configService.importConfigForUser(jwt, configIdDto, response);
+            configJson = configService.importConfigForUser(jwt, configIdDto);
+            response.setStatus(SC_OK);
+        } catch (NotFoundException e) {
+            response.setStatus(SC_NOT_FOUND);
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }

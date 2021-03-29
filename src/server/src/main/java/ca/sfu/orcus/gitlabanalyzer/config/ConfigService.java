@@ -7,13 +7,9 @@ import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 @Service
 public class ConfigService {
@@ -70,33 +66,26 @@ public class ConfigService {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         String configId = configDto.getId();
 
-        if (!configRepository.userHasConfig(userId, configId)
-            || configRepository.getNumSubscribersOfConfig(configId) == 0) {
+        if (!configRepository.userHasConfig(userId, configId) || !configRepository.userHasConfig(userId, configId)) {
             throw new NotFoundException("Config not found");
         }
 
         configRepository.updateConfig(configDto);
     }
 
-    public String importConfigForUser(String jwt, ConfigIdDto configIdDto, HttpServletResponse response) throws GitLabApiException {
+    public String importConfigForUser(String jwt, ConfigIdDto configIdDto) throws GitLabApiException, NotFoundException {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         String configId = configIdDto.getId();
 
-        String configJson = "";
-
         if (!configRepository.containsConfig(configId)) {
-            response.setStatus(SC_NOT_FOUND);
-            return configJson;
+            throw new NotFoundException("Config not found");
         }
 
         if (!configRepository.userHasConfig(userId, configId)) {
             configRepository.addConfigToUserProfile(userId, configId);
         }
 
-        configJson = configRepository.getConfigJsonById(configId).orElse("");
-        response.setStatus(SC_OK);
-
-        return configJson;
+        return configRepository.getConfigJsonById(configId).orElse("");
     }
 
     public void updateCurrentConfig(String jwt, ConfigDto configDto) throws GitLabApiException {
