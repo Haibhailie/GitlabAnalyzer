@@ -1,7 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
-import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
@@ -9,7 +8,6 @@ import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.MergeRequest;
 import org.gitlab4j.api.models.Participant;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

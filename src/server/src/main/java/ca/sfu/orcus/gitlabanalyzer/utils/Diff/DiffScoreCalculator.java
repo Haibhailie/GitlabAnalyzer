@@ -1,9 +1,10 @@
 package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
-import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
+import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DiffScoreCalculator {
@@ -109,5 +110,67 @@ public class DiffScoreCalculator {
             presentLine++;
         }
         return false;
+    }
+
+    //Loop that separates the diffs and scores of individual files in a Merge Request diff
+    public List<FileDto> fileScoreCalculator(List<String> diffsList, double addFactor, double deleteFactor, double syntaxFactor, double blankFactor, double spacingFactor){
+
+        List<FileDto> fileDtos = new ArrayList<>();
+        List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
+        for (int i = 0; i < diffsList.size(); i++) {
+            if (diffsList.get(i).startsWith("diff --")) {
+                for (int j = i + 1; j < diffsList.size(); j++) {
+                    if (diffsList.get(j).startsWith("diff --")) {
+                        fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
+                        diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
+                        break;
+                    }
+                    else if(j+1==diffsList.size()){
+                        fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
+                        diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < diffScoreDtos.size(); i++) {
+            double totalScore = (diffScoreDtos.get(i).getNumLineAdditions() * addFactor)
+                    + (diffScoreDtos.get(i).getNumLineDeletions() * deleteFactor)
+                    + (diffScoreDtos.get(i).getNumBlankAdditions() * blankFactor)
+                    + (diffScoreDtos.get(i).getNumSyntaxChanges() * syntaxFactor)
+                    + (diffScoreDtos.get(i).getNumSpacingChanges() * spacingFactor);
+
+            fileDtos.get(i).setMergeRquestFileScore(new Scores(totalScore,
+                    diffScoreDtos.get(i).getNumLineAdditions(),
+                    diffScoreDtos.get(i).getNumLineDeletions(),
+                    diffScoreDtos.get(i).getNumBlankAdditions(),
+                    diffScoreDtos.get(i).getNumSyntaxChanges(),
+                    diffScoreDtos.get(i).getNumSpacingChanges()));
+
+            fileDtos.get(i).setLinesOfCodeChanges(new LOCDto(diffScoreDtos.get(i).getNumLineAdditions(),
+                    (diffScoreDtos.get(i).getNumLineDeletions()),
+                    (diffScoreDtos.get(i).getNumBlankAdditions()),
+                    (diffScoreDtos.get(i).getNumSyntaxChanges()),
+                    (diffScoreDtos.get(i).getNumSpacingChanges())));
+        }
+        return fileDtos;
+    }
+
+    private String getFileNameFromDiff(List<String> diff) {
+        for (String s : diff) {
+            if (s.startsWith("+++"))
+                return s.substring(s.indexOf("b/") + 2);
+        }
+        return "N/A";
+    }
+
+    private DiffScoreDto generateDiffScoreDto(List<String> diffList) {
+        DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
+        return diffScoreCalculator.parseDiffList(diffList);
+    }
+
+    private String[] convertToString(List<String> stringList) {
+        Object[] objectList = stringList.toArray();
+        return Arrays.copyOf(objectList, objectList.length, String[].class);
     }
 }

@@ -4,10 +4,11 @@ import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.*;
 import org.gitlab4j.api.models.Diff;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+//The reason this class still exists instead of moving this single function to the DTO is because we'll be extracting data from the config here and pushing it forward for calculation
+//Thought it might be better if we do that
 public class CommitScoreCalculator {
     // TODO: Should be getting these from config
     double addLOCFactor = 1;
@@ -18,69 +19,12 @@ public class CommitScoreCalculator {
 
     public List<FileDto> getCommitScore(List<Diff> diffs) {
 
-        List<FileDto> fileDtos = new ArrayList<>();
-        List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
         // regex to split lines by new line and store in generatedDiffList
         String[] diffArray = DiffStringParser.parseDiff(diffs).split("\\r?\\n");
         List<String> diffsList = Arrays.asList(diffArray);
-        DiffScoreDto commitScoreDto = generateDiffScoreDto(diffsList);
 
-        //Loop that separates the diffs and scores of individual files in a Commit diff
-        for (int i = 0; i < diffsList.size(); i++) {
-            if (diffsList.get(i).startsWith("diff --")) {
-                for (int j = i + 1; j < diffsList.size(); j++) {
-                    if (diffsList.get(j).startsWith("diff --")) {
-                        fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
-                        diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
-                        break;
-                    }
-                    else if(j+1==diffsList.size()){
-                        fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
-                        diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < diffScoreDtos.size(); i++) {
-            double totalScore = (diffScoreDtos.get(i).getNumLineAdditions() * addLOCFactor)
-                    + (diffScoreDtos.get(i).getNumLineDeletions() * deleteLOCFactor)
-                    + (diffScoreDtos.get(i).getNumBlankAdditions() * blankLOCFactor)
-                    + (diffScoreDtos.get(i).getNumSyntaxChanges() * syntaxChangeFactor)
-                    + (diffScoreDtos.get(i).getNumSpacingChanges() * spacingChangeFactor);
-
-            fileDtos.get(i).setMergeRquestFileScore(new Scores(totalScore,
-                    diffScoreDtos.get(i).getNumLineAdditions(),
-                    diffScoreDtos.get(i).getNumLineDeletions(),
-                    diffScoreDtos.get(i).getNumBlankAdditions(),
-                    diffScoreDtos.get(i).getNumSyntaxChanges(),
-                    diffScoreDtos.get(i).getNumSpacingChanges()));
-
-            fileDtos.get(i).setLinesOfCodeChanges(new LOCDto(diffScoreDtos.get(i).getNumLineAdditions(),
-                    (diffScoreDtos.get(i).getNumLineDeletions()),
-                    (diffScoreDtos.get(i).getNumBlankAdditions()),
-                    (diffScoreDtos.get(i).getNumSyntaxChanges()),
-                    (diffScoreDtos.get(i).getNumSpacingChanges())));
-        }
-
-        return fileDtos;
-    }
-
-    private String getFileNameFromDiff(List<String> diff) {
-        for (String s : diff) {
-            if (s.startsWith("+++"))
-                return s.substring(s.indexOf("b/") + 2);
-        }
-        return "N/A";
-    }
-
-    private DiffScoreDto generateDiffScoreDto(List<String> diffList) {
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
-        return diffScoreCalculator.parseDiffList(diffList);
-    }
+        return diffScoreCalculator.fileScoreCalculator(diffsList, addLOCFactor, deleteLOCFactor, syntaxChangeFactor, blankLOCFactor, spacingChangeFactor);
 
-    private String[] convertToString(List<String> stringList) {
-        Object[] objectList = stringList.toArray();
-        return Arrays.copyOf(objectList, objectList.length, String[].class);
     }
 }
