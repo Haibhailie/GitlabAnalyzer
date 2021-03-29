@@ -18,19 +18,20 @@ public class FileDiffDto {
         setDiffLineType();
     }
 
-    public void setDiffLineType(){
-        if(diffLine.startsWith("diff")
-                ||diffLine.startsWith("---")
-                ||diffLine.startsWith("+++"))
-            lineType=diffLineType.HEADER;
-        else if(diffLine.startsWith("@@"))
-            lineType=diffLineType.LINE_NUMBER_SPECIFICATION;
-        else if(diffLine.startsWith("+"))
-            lineType=diffLineType.ADDITION;
-        else if(diffLine.startsWith("-"))
-            lineType=diffLineType.DELETION;
-        else
-            lineType=diffLineType.UNCHANGED;
+    public void setDiffLineType() {
+        if (diffLine.startsWith("diff")
+                || diffLine.startsWith("---")
+                || diffLine.startsWith("+++")) {
+            lineType = diffLineType.HEADER;
+        } else if (diffLine.startsWith("@@")) {
+            lineType = diffLineType.LINE_NUMBER_SPECIFICATION;
+        } else if (diffLine.startsWith("+")) {
+            lineType = diffLineType.ADDITION;
+        } else if (diffLine.startsWith("-")) {
+            lineType = diffLineType.DELETION;
+        } else {
+            lineType = diffLineType.UNCHANGED;
+        }
     }
 
 }

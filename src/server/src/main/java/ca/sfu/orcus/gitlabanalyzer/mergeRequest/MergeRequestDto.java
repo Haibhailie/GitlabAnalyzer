@@ -111,8 +111,9 @@ public class MergeRequestDto {
             Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
             if (presentCommit.getStats() != null) {
                 List<FileDto> presentCommitFiles = scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, presentCommit.getShortId()));
-                for (FileDto fileIterator : presentCommitFiles)
+                for (FileDto fileIterator : presentCommitFiles) {
                     sumOfCommitsScore += fileIterator.getTotalScore();
+                }
             }
         }
     }
@@ -141,7 +142,6 @@ public class MergeRequestDto {
     public void setTime(long time) {
         this.time = time;
     }
-
 
     @Override
     public boolean equals(Object o) {

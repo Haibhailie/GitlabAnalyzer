@@ -17,11 +17,11 @@ public class Scores {
         this.scoreSpacingChanges = scoreSpacingChanges;
     }
 
-    public void setTotalScore(double totalScore){
+    public void setTotalScore(double totalScore) {
         this.totalScore = totalScore;
     }
 
-    public double getTotalScore(){
+    public double getTotalScore() {
         return totalScore;
     }
 }

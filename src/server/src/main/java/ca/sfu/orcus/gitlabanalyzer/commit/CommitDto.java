@@ -104,7 +104,6 @@ public class CommitDto {
         return diffs;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {

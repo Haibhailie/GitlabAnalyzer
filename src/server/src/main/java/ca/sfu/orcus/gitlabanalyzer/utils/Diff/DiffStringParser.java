@@ -1,10 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
-import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 import org.gitlab4j.api.models.Diff;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public final class DiffStringParser {
@@ -23,19 +20,6 @@ public final class DiffStringParser {
             convertedDiff.append(headerA).append(headerB).append(diffBody);
         }
         return convertedDiff.toString();
-    }
-
-    public static List<String> parseDiffList(List<Diff> diffsList) {
-        List<String> diffListString = new ArrayList<>();
-        for (Diff presentDiff : diffsList) {
-            StringBuilder presentDiffString = new StringBuilder();
-            setDiffPaths(presentDiff);
-            String header = "--- a/" + oldPath + "\n+++ b/" + newPath + "\n";
-            String diffBody = presentDiff.getDiff();
-            presentDiffString.append(header).append(diffBody);
-            diffListString.add(presentDiffString.toString());
-        }
-        return diffListString;
     }
 
     private static void setDiffPaths(Diff diff) {

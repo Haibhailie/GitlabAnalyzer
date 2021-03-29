@@ -26,8 +26,8 @@ public class FileDto {
         this.setTotalScore(score);
     }
 
-    public void generateFileDiffDto(String[] unifiedDiff){
-        for(String line:unifiedDiff){
+    public void generateFileDiffDto(String[] unifiedDiff) {
+        for (String line : unifiedDiff) {
             fileDiffDtos.add(new FileDiffDto(line));
         }
     }

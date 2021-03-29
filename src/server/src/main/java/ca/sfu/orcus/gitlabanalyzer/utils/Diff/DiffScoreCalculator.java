@@ -113,7 +113,7 @@ public class DiffScoreCalculator {
     }
 
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
-    public List<FileDto> fileScoreCalculator(List<String> diffsList, double addFactor, double deleteFactor, double syntaxFactor, double blankFactor, double spacingFactor){
+    public List<FileDto> fileScoreCalculator(List<String> diffsList, double addFactor, double deleteFactor, double syntaxFactor, double blankFactor, double spacingFactor) {
 
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
@@ -124,8 +124,7 @@ public class DiffScoreCalculator {
                         fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
                         diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
                         break;
-                    }
-                    else if(j+1==diffsList.size()){
+                    } else if (j + 1 == diffsList.size()) {
                         fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
                         diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
                     }
@@ -158,8 +157,9 @@ public class DiffScoreCalculator {
 
     private String getFileNameFromDiff(List<String> diff) {
         for (String s : diff) {
-            if (s.startsWith("+++"))
+            if (s.startsWith("+++")) {
                 return s.substring(s.indexOf("b/") + 2);
+            }
         }
         return "N/A";
     }
