@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSuspense from '../utils/useSuspense'
 import jsonFetch from '../utils/jsonFetcher'
@@ -13,22 +13,35 @@ import AnalyzeButton from '../components/AnalyzeButton'
 
 import styles from '../css/Home.module.css'
 
+import { ReactComponent as reload } from '../assets/reload.svg'
+import { ReactComponent as errorSmall } from '../assets/error-small.svg'
+
 export type TProjects = {
   id: string
   name: string
   role: string
   lastActivityAt: number
-  analyzed: boolean
+  lastAnalyzedAt: number
 }[]
 
 const Home = () => {
   const history = useHistory()
   const { dispatch } = useContext(ProjectContext)
+
+  const [isAnalyzing, setIsAnalyzing] = useState<boolean[]>([])
+  const [analyzeError, setAnalyzeError] = useState<boolean[]>([])
+
   const { Suspense, data, error } = useSuspense<TProjects, Error>(
     (setData, setError) => {
-      jsonFetch<TProjects>('/api/projects')
+      jsonFetch<TProjects>('http://localhost:8081/api/projects')
         .then(data => {
           setData(data)
+          const initialAnalyzing: boolean[] = []
+          data.forEach(() => {
+            initialAnalyzing.push(false)
+          })
+          setIsAnalyzing(initialAnalyzing)
+          setAnalyzeError(initialAnalyzing)
         })
         .catch(err => {
           if (err.message === '401' || err.message === '400') {
@@ -47,6 +60,42 @@ const Home = () => {
     history.push(`/project/${id}`)
   }
 
+  const preAnalyze = (id: string, index: number) => {
+    const currentAnalyzeError: boolean[] = analyzeError
+    currentAnalyzeError[index] = false
+    setAnalyzeError([...currentAnalyzeError])
+    const currentAnalyzing: boolean[] = isAnalyzing
+    currentAnalyzing[index] = true
+    setIsAnalyzing([...currentAnalyzing])
+
+    jsonFetch(`/api/project/${id}/analyze`, {
+      responseIsEmpty: true,
+      method: 'PUT',
+    })
+      .then(res => {
+        const currentAnalyzing: boolean[] = isAnalyzing
+        currentAnalyzing[index] = false
+        setIsAnalyzing([...currentAnalyzing])
+        if (res === 200) {
+          // TODO: update last analyzed
+        } else if (res === 401 || res === 400) {
+          history.push('/login')
+        } else {
+          const currentAnalyzeError: boolean[] = analyzeError
+          currentAnalyzeError[index] = true
+          setAnalyzeError([...currentAnalyzeError])
+        }
+      })
+      .catch(() => {
+        const currentAnalyzing: boolean[] = isAnalyzing
+        currentAnalyzing[index] = false
+        setIsAnalyzing([...currentAnalyzing])
+        const currentAnalyzeError: boolean[] = analyzeError
+        currentAnalyzeError[index] = true
+        setAnalyzeError([...currentAnalyzeError])
+      })
+  }
+
   return (
     <Suspense
       fallback={<Loading message="Loading Projects..." />}
@@ -56,30 +105,49 @@ const Home = () => {
         <h1 className={styles.header}>Your Projects</h1>
         {data && (
           <Table
-            data={data?.map(({ id, name, analyzed, lastActivityAt, role }) => {
-              return {
-                name,
-                role,
-                lastActivityAt: dateConverter(lastActivityAt, true),
-                analyzed: analyzed ? 'Yes' : 'No',
-                action: (
-                  <AnalyzeButton
-                    id={id}
-                    onClick={onAnalyze}
-                    message="Analyze"
-                  />
-                ),
+            data={data?.map(
+              ({ id, name, lastAnalyzedAt, lastActivityAt, role }, index) => {
+                return {
+                  name,
+                  role,
+                  lastActivityAt: dateConverter(lastActivityAt, true),
+                  lastAnalyzedAt: lastAnalyzedAt
+                    ? dateConverter(lastAnalyzedAt, true)
+                    : 'N/A',
+                  action: (
+                    <AnalyzeButton
+                      id={id}
+                      index={index}
+                      onClick={preAnalyze}
+                      message={lastAnalyzedAt ? 'Re-Analyze' : 'Pre-Analyze'}
+                      disabled={
+                        lastActivityAt <= lastAnalyzedAt || isAnalyzing[index]
+                      }
+                      isAnalyzing={isAnalyzing[index]}
+                      Icon={analyzeError[index] ? errorSmall : reload}
+                    />
+                  ),
+                }
               }
-            })}
-            headers={['Project Name', 'Role', 'Last Updated', 'Analyzed?', '']}
+            )}
+            headers={[
+              'Project Name',
+              'Role',
+              'Last GitLab Activity',
+              'Last Analyzed',
+              '',
+            ]}
             classes={{
               container: styles.tableContainer,
               table: styles.table,
               header: styles.theader,
               data: styles.data,
             }}
-            columnWidths={['3fr', '2fr', '2fr', '1fr', '1fr']}
+            columnWidths={['3fr', '2fr', '2fr', '2fr', '2fr']}
             sortable
+            onClick={(e, index) => {
+              onAnalyze(data[index].id)
+            }}
           />
         )}
       </div>
