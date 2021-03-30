@@ -1,7 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
-import org.springframework.stereotype.Repository;
+public interface ProjectRepository {
 
-@Repository
-public class ProjectRepository {
+    boolean projectIsPublic(int projectId);
 }
