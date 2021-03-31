@@ -31,7 +31,10 @@ public class DiffScoreCalculator {
             } else if (line.startsWith("+++")) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.HEADER));
                 //Log line skipped
-            } else if (line.startsWith("+")) {
+            } else if (line.startsWith("@@")) {
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.LINE_NUMBER_SPECIFICATION));
+                //Log line skipped
+            }else if (line.startsWith("+")) {
                 if (line.substring(1).length() > 0) {
                     numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION));
