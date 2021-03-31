@@ -22,31 +22,31 @@ public class CommitDto {
     private int numDeletions;
     private int total;
     private String diffs;
-    boolean isIgnored;
+    private boolean isIgnored;
     private List<FileDto> files;
     private String webUrl;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
-        this.setTitle(commit.getTitle());
-        this.setAuthor(commit.getAuthorName());
-        this.setAuthorEmail(commit.getAuthorEmail());
-        this.setId(commit.getId());
-        this.setDateCommitted(commit.getCommittedDate());
-        this.setTime(commit.getCommittedDate().getTime());
-        this.setMessage(commit.getMessage());
+        setTitle(commit.getTitle());
+        setAuthor(commit.getAuthorName());
+        setAuthorEmail(commit.getAuthorEmail());
+        setId(commit.getId());
+        setDateCommitted(commit.getCommittedDate());
+        setTime(commit.getCommittedDate().getTime());
+        setMessage(commit.getMessage());
 
         Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, commit.getShortId()); // Needed otherwise getStats() returns null
-        this.setNumAdditions(presentCommit.getStats().getAdditions());
-        this.setNumDeletions(presentCommit.getStats().getDeletions());
-        this.setTotal(presentCommit.getStats().getTotal());
+        setNumAdditions(presentCommit.getStats().getAdditions());
+        setNumDeletions(presentCommit.getStats().getDeletions());
+        setTotal(presentCommit.getStats().getTotal());
 
         List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
-        this.setDiffs((DiffStringParser.parseDiff(diffList)));
+        setDiffs((DiffStringParser.parseDiff(diffList)));
 
         CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
-        this.setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
-        this.setIgnored(false);
-        this.setWebUrl(presentCommit.getWebUrl());
+        setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
+        setIgnored(false);
+        setWebUrl(presentCommit.getWebUrl());
     }
 
     public void setTitle(String title) {
@@ -93,8 +93,8 @@ public class CommitDto {
         this.diffs = diffs;
     }
 
-    public void setIgnored(boolean ignored) {
-        isIgnored = ignored;
+    public void setIgnored(boolean isIgnored) {
+        this.isIgnored = isIgnored;
     }
 
     public void setFiles(List<FileDto> files) {

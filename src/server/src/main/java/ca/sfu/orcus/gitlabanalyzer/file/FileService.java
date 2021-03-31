@@ -37,15 +37,15 @@ public class FileService {
         }
     }
 
-    public FileDto changeFileIgnoreTrue(String jwt, int projectId, String commitId, String filePath, double score) {
+    public FileDto ignoreFile(String jwt, int projectId, String commitId, String filePath, double score) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        return changeFileIgnoreTrue(gitLabApi, projectId, commitId, filePath, score);
+        return ignoreFile(gitLabApi, projectId, commitId, filePath, score);
     }
 
-    private FileDto changeFileIgnoreTrue(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
+    private FileDto ignoreFile(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
         try {
             String[] arr = addDiffs(gitLabApi, projectId, commitId, filePath);
             FileDto file = new FileDto(filePath, arr, score, false);
@@ -56,13 +56,13 @@ public class FileService {
         }
     }
 
-    public FileDto changeFileIgnoreFalse(String jwt, int projectId, String commitId, String filePath, double score) {
+    public FileDto unignoreFile(String jwt, int projectId, String commitId, String filePath, double score) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
 
-        FileDto file = changeFileIgnoreTrue(gitLabApi, projectId, commitId, filePath, score);
+        FileDto file = ignoreFile(gitLabApi, projectId, commitId, filePath, score);
         if (file == null) {
             return null;
         }

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class FileController {
     private final FileService fileService;
-
+    private final static Gson gson = new Gson();
     @Autowired
     public FileController(FileService fileService) {
         this.fileService = fileService;
@@ -26,7 +26,6 @@ public class FileController {
                                         @PathVariable double score) {
         FileDto file = fileService.changeCommitFileScore(jwt, projectId, commitId, filepath, score);
         response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
-        Gson gson = new Gson();
         return gson.toJson(file);
     }
 
@@ -37,9 +36,8 @@ public class FileController {
                                         @PathVariable("commitid") String commitId,
                                         @PathVariable String filepath,
                                         @PathVariable double score) {
-        FileDto file = fileService.changeFileIgnoreTrue(jwt, projectId, commitId, filepath, score);
+        FileDto file = fileService.ignoreFile(jwt, projectId, commitId, filepath, score);
         response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
-        Gson gson = new Gson();
         return gson.toJson(file);
     }
 
@@ -50,9 +48,8 @@ public class FileController {
                                        @PathVariable("commitid") String commitId,
                                        @PathVariable String filepath,
                                        @PathVariable double score) {
-        FileDto file = fileService.changeFileIgnoreFalse(jwt, projectId, commitId, filepath, score);
+        FileDto file = fileService.unignoreFile(jwt, projectId, commitId, filepath, score);
         response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
-        Gson gson = new Gson();
         return gson.toJson(file);
     }
 }
