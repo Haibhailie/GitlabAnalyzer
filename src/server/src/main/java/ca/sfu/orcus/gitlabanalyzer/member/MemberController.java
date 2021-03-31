@@ -62,4 +62,19 @@ public class MemberController {
         response.setStatus(allMergeRequestsByMemberId == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(allMergeRequestsByMemberId);
     }
+
+    @GetMapping("/api/project/{projectId}/members/{memberName}/mergerequests")
+    public String getOrphanedMergeRequestsByMemberName(@CookieValue(value = "sessionId") String jwt,
+                                         HttpServletResponse response,
+                                         @PathVariable int projectId,
+                                         @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
+                                         @RequestParam(required = false, defaultValue = Constants.DEFAULT_UNTIL) long until,
+                                         @PathVariable String memberName) {
+        Date dateSince = DateUtils.getDateSinceOrEarliest(since);
+        Date dateUntil = DateUtils.getDateUntilOrNow(until);
+        List<MergeRequestDto> orphanedMergeRequestsByMemberName = memberService.getOrphanedMergeRequestsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
+        response.setStatus(orphanedMergeRequestsByMemberName == null ? SC_UNAUTHORIZED : SC_OK);
+        return gson.toJson(orphanedMergeRequestsByMemberName);
+    }
+
 }
