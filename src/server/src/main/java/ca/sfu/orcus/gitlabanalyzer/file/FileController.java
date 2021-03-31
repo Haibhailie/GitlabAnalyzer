@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.file;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,7 +25,7 @@ public class FileController {
                                         @PathVariable String filepath,
                                         @PathVariable double score) {
         FileDto file = fileService.changeCommitFileScore(jwt, projectId, commitid, filepath, score);
-        response.setStatus(file == null ? 401 : 200);
+        response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
         Gson gson = new Gson();
         return gson.toJson(file);
     }
@@ -37,7 +38,7 @@ public class FileController {
                                         @PathVariable String filepath,
                                         @PathVariable double score) {
         FileDto file = fileService.changeFileIgnoreTrue(jwt, projectId, commitid, filepath, score);
-        response.setStatus(file == null ? 401 : 200);
+        response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
         Gson gson = new Gson();
         return gson.toJson(file);
     }
@@ -50,7 +51,7 @@ public class FileController {
                                        @PathVariable String filepath,
                                        @PathVariable double score) {
         FileDto file = fileService.changeFileIgnoreFalse(jwt, projectId, commitid, filepath, score);
-        response.setStatus(file == null ? 401 : 200);
+        response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
         Gson gson = new Gson();
         return gson.toJson(file);
     }
