@@ -6,4 +6,4 @@ content:
       properties:
         id:
           type: string
-          example: generatedAlphaNumericConfigId123
+          example: alphaNumericConfigId
