@@ -17,7 +17,6 @@ public class FileDiffDto {
 
     public FileDiffDto(String diffLine) {
         this.diffLine = diffLine;
-
     }
 
     public FileDiffDto(String diffLine, DiffLineType lineType) {

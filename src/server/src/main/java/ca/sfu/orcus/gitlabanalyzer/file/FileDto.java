@@ -23,17 +23,17 @@ public class FileDto {
         generateFileDiffDto(unifiedDiff);
     }
 
-    public FileDto(String name, String[] unifiedDiff, double score, boolean isIgnored) {
+    public FileDto(String name, List<FileDiffDto> fileDiffDtos, double score, boolean isIgnored) {
         this.name = name;
         setExtension(name);
-        generateFileDiffDto(unifiedDiff);
+        setFileDiffDtos(fileDiffDtos);
         this.isIgnored = isIgnored;
         this.setTotalScore(score);
     }
 
     public void setExtension(String name) {
         if (name.contains(".")) {
-            extension = name.substring(name.indexOf("."));
+            extension = name.substring(name.indexOf(".") + 1);
         } else {
             extension = "Unknown";
         }
