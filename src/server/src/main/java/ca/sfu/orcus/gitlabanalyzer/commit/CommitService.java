@@ -4,6 +4,7 @@ import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
+import org.gitlab4j.api.models.MergeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -85,5 +86,24 @@ public class CommitService {
         }
         CommitDto commitDto = getSingleCommit(jwt, projectId, sha);
         return commitDto.getDiffs();
+    }
+
+    public List<MergeRequest> getOrphanMergeRequests(String jwt, int projectId, Date since, Date until) throws GitLabApiException {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
+        List<MergeRequest> orphanMergeRequest = new ArrayList<>();
+        String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
+        List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
+        for (Commit c : allGitCommits) {
+            List<MergeRequest> relatedMr = gitLabApi.getCommitsApi().getMergeRequests(projectId, c.getLastPipeline().getSha());
+            for (MergeRequest mr : relatedMr) {
+                if (!c.getAuthorName().equalsIgnoreCase(mr.getAuthor().getName()) && !c.getAuthorName().equalsIgnoreCase(mr.getAuthor().getUsername())) {
+                    orphanMergeRequest.add(mr);
+                }
+            }
+        }
+        return orphanMergeRequest;
     }
 }

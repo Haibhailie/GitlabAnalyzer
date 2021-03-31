@@ -23,6 +23,7 @@ public class CommitDto {
     private String diffs;
     private double score;
     private String webUrl;
+    private String sha;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
         this.setTitle(commit.getTitle());
@@ -44,6 +45,8 @@ public class CommitDto {
         CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
         this.setScore(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
         this.setWebUrl(presentCommit.getWebUrl());
+        this.setSha(presentCommit.getLastPipeline().getSha());
+
     }
 
     public void setTitle(String title) {
@@ -104,6 +107,14 @@ public class CommitDto {
 
     public double getScore() {
         return score;
+    }
+
+    public void setSha(String sha) {
+        this.sha = sha;
+    }
+
+    public String getSha() {
+        return sha;
     }
 
     @Override
