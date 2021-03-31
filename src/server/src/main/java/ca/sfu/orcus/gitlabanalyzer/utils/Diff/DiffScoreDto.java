@@ -2,8 +2,6 @@ package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
 import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DiffScoreDto {
