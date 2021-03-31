@@ -1,0 +1,11 @@
+type: array
+items:
+  type: object
+  required:
+    - name
+    - memberId
+  properties:
+    name:
+      type: string
+    memberId:
+      type: integer
