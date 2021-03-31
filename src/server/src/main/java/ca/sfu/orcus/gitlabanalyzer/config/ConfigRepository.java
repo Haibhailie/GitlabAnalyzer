@@ -45,6 +45,8 @@ public class ConfigRepository {
         } else {
             userConfigsCollection.updateOne(eq("_userId", userId), addToSet("configIds", configId));
         }
+
+        configsCollection.updateOne(eq("_id", configId), inc("numSubscribers", 1));
     }
 
     public void updateConfig(ConfigDto configDto) {

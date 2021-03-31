@@ -53,7 +53,6 @@ public class MemberService {
         } catch (GitLabApiException e) {
             return null;
         }
-
     }
 
     public List<CommitDto> getCommitsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
