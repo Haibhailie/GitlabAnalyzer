@@ -2,50 +2,81 @@ import { useParams } from 'react-router-dom'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
-import { IMemberData, ICommitData, IMergeData } from '../types'
+import { IMemberData, TMemberData } from '../types'
 
 import Table from '../components/Table'
 import MemberDropdown from '../components/MemberDropdown'
 import Button from '../components/Button'
 
 import styles from '../css/MemberResolution.module.css'
+import { identity } from 'lodash'
 
-export interface IMemberStatData {
-  commits: ICommitData[]
-  mergeRequests: IMergeData[]
+export interface ICommitterData {
+  email: string
+  name: string
+  memberDto: IMemberData
 }
 
 const MemberResolution = () => {
   const { id } = useParams<{ id: string }>()
-
   const testData = [
-    { committer: 'akhamesy', email: 'akhamesy@sfu.ca', member: 'Ali Khamesy' },
-    { committer: 'gla74', email: 'gla74@sfu.ca', member: 'Grace Luo' },
+    {
+      name: 'Ali Khamesy',
+      email: 'akhamesy@sfu.ca',
+      memberDto: {
+        id: 7,
+        username: 'akhamesy',
+        displayName: 'Ali Khamesy',
+        role: 'MAINTAINER',
+      },
+    },
+    {
+      name: 'Grace Luo',
+      email: 'grace.r.luo@gmail.com',
+      memberDto: {
+        id: 5,
+        username: 'gracelu0',
+        displayName: 'Grace Luo',
+        role: 'MAINTAINER',
+      },
+    },
+    {
+      committer: 'Grace Luo',
+      email: 'gla74@sfu.ca',
+      memberDto: {
+        id: 15,
+        username: 'gla74',
+        displayName: 'Grace Luo',
+        role: 'MAINTAINER',
+      },
+    },
   ]
 
-  const memberData = [{ committer: 'akhamesy', member: 'Ali Khamesy' }]
-  //   const { state } = useLocation<IMemberData>()
+  //   const memberData = [{ committer: 'akhamesy', member: 'Ali Khamesy' }]
 
-  //   const {
-  //     Suspense,
-  //     data: memberData,
-  //     error: memberError,
-  //   } = useSuspense<IMemberData>((setData, setError) => {
-  //     if (state) {
-  //       setData(state)
-  //     } else {
-  //       jsonFetcher<IMemberData[]>(`/api/project/${id}/members`)
-  //         .then(memberData => {
-  //           for (const member of memberData) {
-  //             if (member.id == memberId) {
-  //               return setData(member)
-  //             }
-  //           }
-  //         })
-  //         .catch(onError(setError))
-  //     }
-  //   })
+  const {
+    Suspense: MemberSuspense,
+    data: memberData,
+    error: memberError,
+  } = useSuspense<TMemberData, Error>((setData, setError) => {
+    jsonFetcher<TMemberData>(`/api/project/${id}/members`)
+      .then(members => {
+        setData(members)
+      })
+      .catch(onError(setError))
+  })
 
+  const {
+    Suspense: CommitterSuspense,
+    data: committerData,
+    error: committerError,
+  } = useSuspense<ICommitterData[], Error>((setData, setError) => {
+    jsonFetcher<ICommitterData[]>(`/api/project/${id}/committers`)
+      .then(committers => {
+        setData(committers)
+      })
+      .catch(onError(setError))
+  })
   return (
     // <Suspense
     //   fallback="Getting member details..."
@@ -64,11 +95,13 @@ const MemberResolution = () => {
             data: styles.tdata,
           }}
           data={
-            testData?.map(({ committer, email, member }) => {
+            testData?.map(({ committer, email, memberDto }) => {
               return {
                 committer,
                 email,
-                member: <MemberDropdown data={memberData} selected={member} />,
+                memberDto: (
+                  <MemberDropdown data={memberData} selected={memberDto} />
+                ),
               }
             }) ?? [{}]
           }
