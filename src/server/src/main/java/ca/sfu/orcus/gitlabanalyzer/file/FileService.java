@@ -45,18 +45,7 @@ public class FileService {
         if (gitLabApi == null) {
             return null;
         }
-        return ignoreFile(gitLabApi, projectId, commitId, filePath, score);
-    }
-
-    private FileDto ignoreFile(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
-        try {
-            List<FileDiffDto> fileDiffDtos = retrieveDiffsForFile(gitLabApi, projectId, commitId, filePath);
-            FileDto file = new FileDto(filePath, fileDiffDtos, score, false);
-            file.setIgnored(true);
-            return file;
-        } catch (GitLabApiException e) {
-            return null;
-        }
+        return retrieveFile(gitLabApi, projectId, commitId, filePath, score, true);
     }
 
     public FileDto unignoreFile(String jwt, int projectId, String commitId, String filePath, double score) {
@@ -64,14 +53,20 @@ public class FileService {
         if (gitLabApi == null) {
             return null;
         }
+        return retrieveFile(gitLabApi, projectId, commitId, filePath, score, false);
+    }
 
-        FileDto file = ignoreFile(gitLabApi, projectId, commitId, filePath, score);
-        if (file == null) {
+    private FileDto retrieveFile(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score, boolean isIgnored) {
+        try {
+            List<FileDiffDto> fileDiffDtos = retrieveDiffsForFile(gitLabApi, projectId, commitId, filePath);
+            FileDto file = new FileDto(filePath, fileDiffDtos, score, isIgnored);
+            file.setIgnored(true);
+            return file;
+        } catch (GitLabApiException e) {
             return null;
         }
-        file.setIgnored(false);
-        return file;
     }
+
 
     private List<FileDiffDto> retrieveDiffsForFile(GitLabApi gitLabApi, int projectId, String commitId, String filePath) throws GitLabApiException {
         List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commitId);
