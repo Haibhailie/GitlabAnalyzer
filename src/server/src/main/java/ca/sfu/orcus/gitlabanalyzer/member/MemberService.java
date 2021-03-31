@@ -5,6 +5,7 @@ import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestService;
+import com.mongodb.internal.operation.CommitTransactionOperation;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
@@ -71,5 +72,13 @@ public class MemberService {
         }
         return mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId);
 
+    }
+
+    public List<CommitDto> getOrphanedMRsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
+        //TODO: GET ALL commits, then if author of mr == author of commit
     }
 }
