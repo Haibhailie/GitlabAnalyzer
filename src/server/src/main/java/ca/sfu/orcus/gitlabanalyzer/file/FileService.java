@@ -67,7 +67,6 @@ public class FileService {
         }
     }
 
-
     private List<FileDiffDto> retrieveDiffsForFile(GitLabApi gitLabApi, int projectId, String commitId, String filePath) throws GitLabApiException {
         List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commitId);
         String[] diffString = DiffStringParser.parseDiff(diffList).split("\\r?\\n");
