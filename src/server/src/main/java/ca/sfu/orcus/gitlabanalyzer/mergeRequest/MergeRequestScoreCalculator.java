@@ -7,8 +7,6 @@ import org.gitlab4j.api.models.MergeRequest;
 import java.util.Arrays;
 import java.util.List;
 
-//The reason this class still exists instead of moving this single function to the DTO is because we'll be extracting data from the config here and pushing it forward for calculation
-//Thought it might be better if we do that
 public class MergeRequestScoreCalculator {
 
     //TODO: Get these from config
