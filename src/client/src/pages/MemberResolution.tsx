@@ -19,12 +19,12 @@ export interface ICommitterData {
 
 const MemberResolution = () => {
   const { id } = useParams<{ id: string }>()
-  const testData = [
+  const testCommitterData = [
     {
       name: 'Ali Khamesy',
       email: 'akhamesy@sfu.ca',
       memberDto: {
-        id: 7,
+        id: '7',
         username: 'akhamesy',
         displayName: 'Ali Khamesy',
         role: 'MAINTAINER',
@@ -34,17 +34,17 @@ const MemberResolution = () => {
       name: 'Grace Luo',
       email: 'grace.r.luo@gmail.com',
       memberDto: {
-        id: 5,
+        id: '5',
         username: 'gracelu0',
         displayName: 'Grace Luo',
         role: 'MAINTAINER',
       },
     },
     {
-      committer: 'Grace Luo',
+      name: 'Grace Luo',
       email: 'gla74@sfu.ca',
       memberDto: {
-        id: 15,
+        id: '15',
         username: 'gla74',
         displayName: 'Grace Luo',
         role: 'MAINTAINER',
@@ -52,7 +52,7 @@ const MemberResolution = () => {
     },
   ]
 
-  //   const memberData = [{ committer: 'akhamesy', member: 'Ali Khamesy' }]
+  const testMemberData = [{ committer: 'akhamesy', member: 'Ali Khamesy' }]
 
   const {
     Suspense: MemberSuspense,
@@ -66,52 +66,58 @@ const MemberResolution = () => {
       .catch(onError(setError))
   })
 
-  const {
-    Suspense: CommitterSuspense,
-    data: committerData,
-    error: committerError,
-  } = useSuspense<ICommitterData[], Error>((setData, setError) => {
-    jsonFetcher<ICommitterData[]>(`/api/project/${id}/committers`)
-      .then(committers => {
-        setData(committers)
-      })
-      .catch(onError(setError))
-  })
+  //   const {
+  //     Suspense: CommitterSuspense,
+  //     data: committerData,
+  //     error: committerError,
+  //   } = useSuspense<ICommitterData[], Error>((setData, setError) => {
+  //     jsonFetcher<ICommitterData[]>(`/api/project/${id}/committers`)
+  //       .then(committers => {
+  //         setData(committers)
+  //       })
+  //       .catch(onError(setError))
+  //   })
+
   return (
-    // <Suspense
-    //   fallback="Getting member details..."
-    //   error={memberError?.message ?? 'Unknown Error'}
-    // >
-    <div className={styles.container}>
-      <h1 className={styles.header}>Member to Committer Resolution</h1>
-      <form className={styles.formContainer}>
-        <Table
-          headers={['Committer', 'Email', 'Member']}
-          columnWidths={['2fr', '2fr', '3fr']}
-          classes={{
-            container: styles.tableContainer,
-            table: styles.table,
-            header: styles.theader,
-            data: styles.tdata,
-          }}
-          data={
-            testData?.map(({ committer, email, memberDto }) => {
-              return {
-                committer,
-                email,
-                memberDto: (
-                  <MemberDropdown data={memberData} selected={memberDto} />
-                ),
-              }
-            }) ?? [{}]
-          }
-        />
-      </form>
-      <button type="button" className={styles.button}>
-        Save
-      </button>
-    </div>
-    // </Suspense>
+    <MemberSuspense
+      fallback="Getting project members..."
+      error={memberError?.message ?? 'Unknown Error'}
+    >
+      {/* <CommitterSuspense
+        fallback="Getting project committers..."
+        error={committerError?.message ?? 'Unknown Error'}
+      > */}
+      <div className={styles.container}>
+        <h1 className={styles.header}>Member to Committer Resolution</h1>
+        <form className={styles.formContainer}>
+          <Table
+            headers={['Committer', 'Email', 'Member']}
+            columnWidths={['2fr', '2fr', '3fr']}
+            classes={{
+              container: styles.tableContainer,
+              table: styles.table,
+              header: styles.theader,
+              data: styles.tdata,
+            }}
+            data={
+              testCommitterData?.map(({ name, email, memberDto }) => {
+                return {
+                  name,
+                  email,
+                  memberDto: memberData ? (
+                    <MemberDropdown data={memberData} selected={memberDto.id} />
+                  ) : null,
+                }
+              }) ?? [{}]
+            }
+          />
+        </form>
+        <button type="button" className={styles.button}>
+          Save
+        </button>
+      </div>
+      {/* </CommitterSuspense> */}
+    </MemberSuspense>
   )
 }
 
