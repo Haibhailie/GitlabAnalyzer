@@ -26,36 +26,36 @@ public class DiffScoreCalculator {
         for (String line : generatedDiffList) {
             lineNumber++;
             if (line.startsWith("---")) {
-                fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.HEADER));
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
                 //Log line skipped
             } else if (line.startsWith("+++")) {
-                fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.HEADER));
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
                 //Log line skipped
             } else if (line.startsWith("@@")) {
-                fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.LINE_NUMBER_SPECIFICATION));
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.LINE_NUMBER_SPECIFICATION));
                 //Log line skipped
             } else if (line.startsWith("+")) {
                 if (line.substring(1).length() > 0) {
                     numLineAdditions++;
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION));
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION));
                 } else {
                     numBlankAdditions++;
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION_BLANK));
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 }
             } else if (line.startsWith("-")) {
                 if (checkSyntaxChanges(lineNumber, line)) {
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION_SYNTAX));
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_SYNTAX));
                     break;
                 }
                 if (checkSpacingChanges(lineNumber, line)) {
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION_SPACING));
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_SPACING));
                     break;
                 }
                 if (checkAddedBlankSpaces(lineNumber, line)) {
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.ADDITION_BLANK));
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                     break;
                 } else {
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.diffLineType.DELETION));
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.DELETION));
                     numLineDeletions++;
                 }
             }

@@ -24,7 +24,12 @@ public class CommitScoreCalculator {
         List<String> diffsList = Arrays.asList(diffArray);
 
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
-        return diffScoreCalculator.fileScoreCalculator(diffsList, addLOCFactor, deleteLOCFactor, syntaxChangeFactor, blankLOCFactor, spacingChangeFactor);
+        return diffScoreCalculator.fileScoreCalculator(diffsList,
+                addLOCFactor,
+                deleteLOCFactor,
+                syntaxChangeFactor,
+                blankLOCFactor,
+                spacingChangeFactor);
 
     }
 }

@@ -43,7 +43,7 @@ public class FileDto {
         this.fileDiffDtos = fileDiffDtos;
     }
 
-    public void generateFileDiffDto(String[] unifiedDiff) {
+    private void generateFileDiffDto(String[] unifiedDiff) {
         for (String line : unifiedDiff) {
             fileDiffDtos.add(new FileDiffDto(line));
         }

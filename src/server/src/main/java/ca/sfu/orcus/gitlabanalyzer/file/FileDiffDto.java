@@ -2,7 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.file;
 
 public class FileDiffDto {
 
-    public enum diffLineType {
+    public enum DiffLineType {
         HEADER,
         ADDITION,
         ADDITION_SYNTAX,
@@ -13,26 +13,16 @@ public class FileDiffDto {
     }
 
     String diffLine;
-    diffLineType lineType;
+    DiffLineType lineType;
 
     public FileDiffDto(String diffLine) {
         this.diffLine = diffLine;
-        setInitialDiffLineType();
+
     }
 
-    public FileDiffDto(String diffLine, diffLineType lineType) {
+    public FileDiffDto(String diffLine, DiffLineType lineType) {
         this.diffLine = diffLine;
         this.lineType = lineType;
-    }
-
-    public void setInitialDiffLineType() {
-        if (diffLine.startsWith("diff")
-                || diffLine.startsWith("---")
-                || diffLine.startsWith("+++")) {
-            lineType = diffLineType.HEADER;
-        } else if (diffLine.startsWith("@@")) {
-            lineType = diffLineType.LINE_NUMBER_SPECIFICATION;
-        }
     }
 
     @Override
