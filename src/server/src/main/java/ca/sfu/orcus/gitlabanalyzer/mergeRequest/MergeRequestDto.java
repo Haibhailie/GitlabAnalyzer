@@ -63,8 +63,7 @@ public class MergeRequestDto {
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setWebUrl(presentMergeRequest.getWebUrl());
         setFiles(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
-
-        isIgnored = false;
+        setIgnored(false);
     }
 
     public void setMergeRequestId(int mergeRequestId) {

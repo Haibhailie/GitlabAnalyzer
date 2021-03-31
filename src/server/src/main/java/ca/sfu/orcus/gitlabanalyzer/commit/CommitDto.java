@@ -45,7 +45,7 @@ public class CommitDto {
 
         CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
         this.setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
-        isIgnored = false;
+        this.setIgnored(false);
         this.setWebUrl(presentCommit.getWebUrl());
     }
 
