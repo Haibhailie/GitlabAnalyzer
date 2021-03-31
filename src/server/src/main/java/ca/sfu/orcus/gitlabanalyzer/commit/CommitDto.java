@@ -117,6 +117,10 @@ public class CommitDto {
         return sha;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {

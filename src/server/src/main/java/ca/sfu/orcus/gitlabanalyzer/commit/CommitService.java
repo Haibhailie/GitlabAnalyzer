@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -88,22 +89,22 @@ public class CommitService {
         return commitDto.getDiffs();
     }
 
-    public List<MergeRequest> getOrphanMergeRequests(String jwt, int projectId, Date since, Date until) throws GitLabApiException {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
-            return null;
-        }
-        List<MergeRequest> orphanMergeRequest = new ArrayList<>();
-        String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
-        List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
-        for (Commit c : allGitCommits) {
-            List<MergeRequest> relatedMr = gitLabApi.getCommitsApi().getMergeRequests(projectId, c.getLastPipeline().getSha());
-            for (MergeRequest mr : relatedMr) {
-                if (!c.getAuthorName().equalsIgnoreCase(mr.getAuthor().getName()) && !c.getAuthorName().equalsIgnoreCase(mr.getAuthor().getUsername())) {
-                    orphanMergeRequest.add(mr);
+    public List<MergeRequestDto> getOrphanMergeRequestsByMemberName(GitLabApi gitLabApi, int projectId, Date since, Date until, String memberName) {
+        try {
+            List<MergeRequestDto> orphanMergeRequestByMemberName = new ArrayList<>();
+            List<CommitDto> allCommitsByMemberName = returnAllCommits(gitLabApi, projectId, since, until, memberName);
+            for (CommitDto c : allCommitsByMemberName) {
+                List<MergeRequest> relatedMergeRequests = gitLabApi.getCommitsApi().getMergeRequests(projectId, c.getSha());
+                for (MergeRequest mr : relatedMergeRequests) {
+                    if (!c.getAuthor().equalsIgnoreCase(mr.getAuthor().getName()) && !c.getAuthor().equalsIgnoreCase(mr.getAuthor().getUsername())) {
+                        orphanMergeRequestByMemberName.add(new MergeRequestDto(gitLabApi, projectId, mr));
+                    }
                 }
             }
+            return orphanMergeRequestByMemberName;
+
+        } catch (GitLabApiException e) {
+            return  null;
         }
-        return orphanMergeRequest;
     }
 }

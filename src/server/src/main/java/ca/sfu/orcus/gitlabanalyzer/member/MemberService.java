@@ -9,6 +9,7 @@ import com.mongodb.internal.operation.CommitTransactionOperation;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
+import org.gitlab4j.api.models.MergeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,11 +75,10 @@ public class MemberService {
 
     }
 
-    public List<CommitDto> getOrphanedMRsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
+    public List<MergeRequestDto> getOrphanedMergeRequestsByMemberId(String jwt, int projectId, Date since, Date until, int memberId ) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        //TODO: GET ALL commits, then if author of mr == author of commit
-    }
+
 }
