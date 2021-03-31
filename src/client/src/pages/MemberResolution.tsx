@@ -55,7 +55,6 @@ const MemberResolution = () => {
       <h1 className={styles.header}>Member to Committer Resolution</h1>
       <form className={styles.formContainer}>
         <Table
-          sortable
           headers={['Committer', 'Email', 'Member']}
           columnWidths={['2fr', '2fr', '3fr']}
           classes={{
