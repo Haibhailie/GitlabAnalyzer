@@ -66,7 +66,7 @@ public class ConfigService {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         String configId = configDto.getId();
 
-        if (!configRepository.userHasConfig(userId, configId) || !configRepository.userHasConfig(userId, configId)) {
+        if (!configRepository.containsConfig(configId) || !configRepository.userHasConfig(userId, configId)) {
             throw new NotFoundException("Config not found");
         }
 
