@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.file;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import static javax.servlet.http.HttpServletResponse.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class FileController {
     private final FileService fileService;
-    private final static Gson gson = new Gson();
+    private final Gson gson = new Gson();
+
     @Autowired
     public FileController(FileService fileService) {
         this.fileService = fileService;
@@ -31,11 +33,11 @@ public class FileController {
 
     @PostMapping("/api/project/{projectId}/file/{commitid}/{filepath}/{score}/true")
     public String changeFileIgnoreTrue(@CookieValue(value = "sessionId") String jwt,
-                                        HttpServletResponse response,
-                                        @PathVariable int projectId,
-                                        @PathVariable("commitid") String commitId,
-                                        @PathVariable String filepath,
-                                        @PathVariable double score) {
+                                       HttpServletResponse response,
+                                       @PathVariable int projectId,
+                                       @PathVariable("commitid") String commitId,
+                                       @PathVariable String filepath,
+                                       @PathVariable double score) {
         FileDto file = fileService.ignoreFile(jwt, projectId, commitId, filepath, score);
         response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(file);
@@ -43,11 +45,11 @@ public class FileController {
 
     @PostMapping("/api/project/{projectId}/file/{commitid}/{filepath}/{score}/false")
     public String changeFileIgnoreFalse(@CookieValue(value = "sessionId") String jwt,
-                                       HttpServletResponse response,
-                                       @PathVariable int projectId,
-                                       @PathVariable("commitid") String commitId,
-                                       @PathVariable String filepath,
-                                       @PathVariable double score) {
+                                        HttpServletResponse response,
+                                        @PathVariable int projectId,
+                                        @PathVariable("commitid") String commitId,
+                                        @PathVariable String filepath,
+                                        @PathVariable double score) {
         FileDto file = fileService.unignoreFile(jwt, projectId, commitId, filepath, score);
         response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(file);
