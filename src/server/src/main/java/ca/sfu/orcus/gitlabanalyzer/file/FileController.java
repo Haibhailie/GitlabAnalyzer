@@ -21,10 +21,10 @@ public class FileController {
     public String changeCommitFileScore(@CookieValue(value = "sessionId") String jwt,
                                         HttpServletResponse response,
                                         @PathVariable int projectId,
-                                        @PathVariable String commitid,
+                                        @PathVariable("commitid") String commitId,
                                         @PathVariable String filepath,
                                         @PathVariable double score) {
-        FileDto file = fileService.changeCommitFileScore(jwt, projectId, commitid, filepath, score);
+        FileDto file = fileService.changeCommitFileScore(jwt, projectId, commitId, filepath, score);
         response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
         Gson gson = new Gson();
         return gson.toJson(file);
@@ -34,10 +34,10 @@ public class FileController {
     public String changeFileIgnoreTrue(@CookieValue(value = "sessionId") String jwt,
                                         HttpServletResponse response,
                                         @PathVariable int projectId,
-                                        @PathVariable String commitid,
+                                        @PathVariable("commitid") String commitId,
                                         @PathVariable String filepath,
                                         @PathVariable double score) {
-        FileDto file = fileService.changeFileIgnoreTrue(jwt, projectId, commitid, filepath, score);
+        FileDto file = fileService.changeFileIgnoreTrue(jwt, projectId, commitId, filepath, score);
         response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
         Gson gson = new Gson();
         return gson.toJson(file);
@@ -47,10 +47,10 @@ public class FileController {
     public String changeFileIgnoreFalse(@CookieValue(value = "sessionId") String jwt,
                                        HttpServletResponse response,
                                        @PathVariable int projectId,
-                                       @PathVariable String commitid,
+                                       @PathVariable("commitid") String commitId,
                                        @PathVariable String filepath,
                                        @PathVariable double score) {
-        FileDto file = fileService.changeFileIgnoreFalse(jwt, projectId, commitid, filepath, score);
+        FileDto file = fileService.changeFileIgnoreFalse(jwt, projectId, commitId, filepath, score);
         response.setStatus(file == null ? SC_UNAUTHORIZED : SC_OK);
         Gson gson = new Gson();
         return gson.toJson(file);

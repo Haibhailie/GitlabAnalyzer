@@ -23,11 +23,11 @@ public class FileDto {
         generateFileDiffDto(unifiedDiff);
     }
 
-    public FileDto(String name, String[] unifiedDiff, double score) {
+    public FileDto(String name, String[] unifiedDiff, double score, boolean isIgnored) {
         this.name = name;
         setExtension(name);
         generateFileDiffDto(unifiedDiff);
-        this.isIgnored = false;
+        this.isIgnored = isIgnored;
         this.setTotalScore(score);
     }
 
@@ -49,7 +49,7 @@ public class FileDto {
         }
     }
 
-    public void setMergeRquestFileScore(Scores fileScore) {
+    public void setMergeRequestFileScore(Scores fileScore) {
         this.fileScore = fileScore;
     }
 

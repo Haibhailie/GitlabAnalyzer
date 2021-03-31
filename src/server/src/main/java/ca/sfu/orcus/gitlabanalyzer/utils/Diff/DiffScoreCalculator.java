@@ -128,7 +128,6 @@ public class DiffScoreCalculator {
 
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
     public List<FileDto> fileScoreCalculator(List<String> diffsList, double addFactor, double deleteFactor, double syntaxFactor, double blankFactor, double spacingFactor) {
-
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
         for (int i = 0; i < diffsList.size(); i++) {
@@ -153,7 +152,7 @@ public class DiffScoreCalculator {
                     + (diffScoreDtos.get(i).getNumSyntaxChanges() * syntaxFactor)
                     + (diffScoreDtos.get(i).getNumSpacingChanges() * spacingFactor);
 
-            fileDtos.get(i).setMergeRquestFileScore(new Scores(totalScore,
+            fileDtos.get(i).setMergeRequestFileScore(new Scores(totalScore,
                     diffScoreDtos.get(i).getNumLineAdditions(),
                     diffScoreDtos.get(i).getNumLineDeletions(),
                     diffScoreDtos.get(i).getNumBlankAdditions(),

@@ -28,10 +28,10 @@ public class FileService {
         return changeCommitFileScore(gitLabApi, projectId, commitId, filePath, score);
     }
 
-    public FileDto changeCommitFileScore(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
+    private FileDto changeCommitFileScore(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
         try {
             String[] arr = addDiffs(gitLabApi, projectId, commitId, filePath);
-            return new FileDto(filePath, arr, score);
+            return new FileDto(filePath, arr, score, false);
         } catch (GitLabApiException e) {
             return null;
         }
@@ -45,10 +45,10 @@ public class FileService {
         return changeFileIgnoreTrue(gitLabApi, projectId, commitId, filePath, score);
     }
 
-    public FileDto changeFileIgnoreTrue(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
+    private FileDto changeFileIgnoreTrue(GitLabApi gitLabApi, int projectId, String commitId, String filePath, double score) {
         try {
             String[] arr = addDiffs(gitLabApi, projectId, commitId, filePath);
-            FileDto file = new FileDto(filePath, arr, score);
+            FileDto file = new FileDto(filePath, arr, score, false);
             file.setIgnored(true);
             return file;
         } catch (GitLabApiException e) {
@@ -61,7 +61,11 @@ public class FileService {
         if (gitLabApi == null) {
             return null;
         }
+
         FileDto file = changeFileIgnoreTrue(gitLabApi, projectId, commitId, filePath, score);
+        if (file == null) {
+            return null;
+        }
         file.setIgnored(false);
         return file;
     }
@@ -72,8 +76,7 @@ public class FileService {
         int i = 0;
         for (Diff d : diffList) {
             if (d.getNewPath().equals(filePath)) {
-                arr[i] = d.getDiff();
-                i++;
+                arr[i++] = d.getDiff();
             }
         }
         return arr;
