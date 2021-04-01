@@ -45,6 +45,8 @@ public class ConfigRepository {
         } else {
             userConfigsCollection.updateOne(eq("_userId", userId), addToSet("configIds", configId));
         }
+
+        configsCollection.updateOne(eq("_id", configId), inc("numSubscribers", 1));
     }
 
     public void updateConfig(ConfigDto configDto) {
@@ -88,7 +90,7 @@ public class ConfigRepository {
         return configIds.size();
     }
 
-    public int getNumSubscribersOfConfig(String configId) {
+    private int getNumSubscribersOfConfig(String configId) {
         Document configDoc = configsCollection.find(eq("_id", configId)).first();
         return (configDoc == null) ? 0 : configDoc.getInteger("numSubscribers");
     }
@@ -123,6 +125,11 @@ public class ConfigRepository {
     private boolean containsUser(int userId) {
         Document userConfigsDoc = userConfigsCollection.find(eq("_userId", userId)).first();
         return (userConfigsDoc != null);
+    }
+
+    public boolean containsConfig(String configId) {
+        Document configDoc = configsCollection.find(eq("_id", configId)).first();
+        return (configDoc != null);
     }
 
     public boolean userHasConfig(int userId, String configId) {

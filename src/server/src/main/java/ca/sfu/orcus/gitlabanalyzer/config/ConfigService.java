@@ -43,8 +43,7 @@ public class ConfigService {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         if (configRepository.userHasConfig(userId, configId)) {
-            Optional<String> configJson = configRepository.getConfigJsonById(configId);
-            return configJson.orElse("");
+            return configRepository.getConfigJsonById(configId).orElse("");
         }
 
         return "";
@@ -67,11 +66,25 @@ public class ConfigService {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         String configId = configDto.getId();
 
-        if (!configRepository.userHasConfig(userId, configId)
-            || configRepository.getNumSubscribersOfConfig(configId) == 0) {
+        if (!configRepository.containsConfig(configId) || !configRepository.userHasConfig(userId, configId)) {
             throw new NotFoundException("Config not found");
         }
 
         configRepository.updateConfig(configDto);
+    }
+
+    public String importConfigForUser(String jwt, ConfigIdDto configIdDto) throws GitLabApiException, NotFoundException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+        String configId = configIdDto.getId();
+
+        if (!configRepository.containsConfig(configId)) {
+            throw new NotFoundException("Config not found");
+        }
+
+        if (!configRepository.userHasConfig(userId, configId)) {
+            configRepository.addConfigToUserProfile(userId, configId);
+        }
+
+        return configRepository.getConfigJsonById(configId).orElse("");
     }
 }

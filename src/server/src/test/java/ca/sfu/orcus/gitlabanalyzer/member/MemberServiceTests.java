@@ -9,7 +9,6 @@ import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestService;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.ProjectApi;
 import org.gitlab4j.api.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
