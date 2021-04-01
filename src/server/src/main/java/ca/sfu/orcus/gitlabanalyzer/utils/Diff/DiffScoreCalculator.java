@@ -16,6 +16,7 @@ public class DiffScoreCalculator {
     private int numSyntaxChanges = 0;
     private int numSpacingChanges = 0;
     private final double lineSimilarityFactor = 0.5;
+
     private List<String> generatedDiffList = new ArrayList<>();
     List<FileDiffDto> fileDiffs = new ArrayList<>();
 
@@ -91,7 +92,6 @@ public class DiffScoreCalculator {
                 return i;
             }
         }
-
         return diffsList.size();
     }
 
@@ -116,7 +116,6 @@ public class DiffScoreCalculator {
         }
 
         for (int i = 0; i < diffScoreDtos.size(); i++) {
-
             int additions = diffScoreDtos.get(i).getNumLineAdditions();
             int deletions = diffScoreDtos.get(i).getNumLineDeletions();
             int blankAdditions = diffScoreDtos.get(i).getNumBlankAdditions();

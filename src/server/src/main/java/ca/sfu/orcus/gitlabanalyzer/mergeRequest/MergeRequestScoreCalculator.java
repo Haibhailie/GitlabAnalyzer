@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.*;
 import org.gitlab4j.api.models.MergeRequest;
