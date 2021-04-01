@@ -97,6 +97,17 @@ public class ConfigRepository {
         }
     }
 
+    public Optional<ConfigDto> getCurrentConfigForUser(int userId) {
+        Document currentConfigDoc = userConfigsCollection.find(eq(UserConfig.userId.key, userId)).first();
+        return (currentConfigDoc == null) ? Optional.empty() :
+                Optional.of(getCurrentConfigDtoFromCurrentConfigDoc(currentConfigDoc));
+    }
+
+    private ConfigDto getCurrentConfigDtoFromCurrentConfigDoc(Document currentConfigDoc) {
+        String currentConfigJson = currentConfigDoc.getString(UserConfig.currentConfig.key);
+        return gson.fromJson(currentConfigJson, ConfigDto.class);
+    }
+
     public void deleteConfigForUser(int userId, String configId) {
         userConfigsCollection.updateOne(eq(UserConfig.userId.key, userId), pull(UserConfig.configIds.key, configId));
         configsCollection.updateOne(eq(Config.id.key, configId), inc(Config.numSubscribers.key, -1));
