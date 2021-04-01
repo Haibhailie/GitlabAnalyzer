@@ -1,6 +1,8 @@
 import { Select, FormControl, InputLabel, MenuItem } from '@material-ui/core'
-import styles from '../css/MemberDropdown.module.css'
+
 import { TMemberData } from '../types'
+
+import styles from '../css/MemberDropdown.module.css'
 
 export interface IMemberDropdownProps {
   data: TMemberData
@@ -18,7 +20,7 @@ const MemberDropdown = ({ data, selected }: IMemberDropdownProps) => {
             </MenuItem>
           )
         })}
-        <MenuItem value={'Grace Luo'}>Grace Luo @gla74</MenuItem>
+        <MenuItem value="-1">Ignore committer</MenuItem>
       </Select>
     </FormControl>
   )
