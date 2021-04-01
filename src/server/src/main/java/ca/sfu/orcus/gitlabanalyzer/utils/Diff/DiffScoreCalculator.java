@@ -25,15 +25,10 @@ public class DiffScoreCalculator {
         int lineNumber = -1;
         for (String line : generatedDiffList) {
             lineNumber++;
-            if (line.startsWith("---")) {
+            if (line.startsWith("---") || line.startsWith("+++")) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
-                //Log line skipped
-            } else if (line.startsWith("+++")) {
-                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
-                //Log line skipped
             } else if (line.startsWith("@@")) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.LINE_NUMBER_SPECIFICATION));
-                //Log line skipped
             } else if (line.startsWith("+")) {
                 if (line.substring(1).length() > 0) {
                     numLineAdditions++;
@@ -101,7 +96,12 @@ public class DiffScoreCalculator {
     }
 
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
-    public List<FileDto> fileScoreCalculator(List<String> diffsList, double addFactor, double deleteFactor, double syntaxFactor, double blankFactor, double spacingFactor) {
+    public List<FileDto> fileScoreCalculator(List<String> diffsList,
+                                             double addFactor,
+                                             double deleteFactor,
+                                             double syntaxFactor,
+                                             double blankFactor,
+                                             double spacingFactor) {
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
         int diffStart = findDiffStartIndex(diffsList, 0);
@@ -117,24 +117,30 @@ public class DiffScoreCalculator {
 
         for (int i = 0; i < diffScoreDtos.size(); i++) {
 
-            double totalScore = (diffScoreDtos.get(i).getNumLineAdditions() * addFactor)
-                    + (diffScoreDtos.get(i).getNumLineDeletions() * deleteFactor)
-                    + (diffScoreDtos.get(i).getNumBlankAdditions() * blankFactor)
-                    + (diffScoreDtos.get(i).getNumSyntaxChanges() * syntaxFactor)
-                    + (diffScoreDtos.get(i).getNumSpacingChanges() * spacingFactor);
+            int additions = diffScoreDtos.get(i).getNumLineAdditions();
+            int deletions = diffScoreDtos.get(i).getNumLineDeletions();
+            int blankAdditions = diffScoreDtos.get(i).getNumBlankAdditions();
+            int syntaxChanges = diffScoreDtos.get(i).getNumSyntaxChanges();
+            int spacingChanges = diffScoreDtos.get(i).getNumSpacingChanges();
+
+            double totalScore = (additions * addFactor)
+                    + deletions * deleteFactor
+                    + blankAdditions * blankFactor
+                    + syntaxChanges * syntaxFactor
+                    + spacingChanges * spacingFactor;
 
             fileDtos.get(i).setMergeRequestFileScore(new Scores(totalScore,
-                    diffScoreDtos.get(i).getNumLineAdditions(),
-                    diffScoreDtos.get(i).getNumLineDeletions(),
-                    diffScoreDtos.get(i).getNumBlankAdditions(),
-                    diffScoreDtos.get(i).getNumSyntaxChanges(),
-                    diffScoreDtos.get(i).getNumSpacingChanges()));
+                    additions,
+                    deletions,
+                    blankAdditions,
+                    syntaxChanges,
+                    spacingChanges));
 
-            fileDtos.get(i).setLinesOfCodeChanges(new LOCDto(diffScoreDtos.get(i).getNumLineAdditions(),
-                    (diffScoreDtos.get(i).getNumLineDeletions()),
-                    (diffScoreDtos.get(i).getNumBlankAdditions()),
-                    (diffScoreDtos.get(i).getNumSyntaxChanges()),
-                    (diffScoreDtos.get(i).getNumSpacingChanges())));
+            fileDtos.get(i).setLinesOfCodeChanges(new LOCDto(additions,
+                    deletions,
+                    blankAdditions,
+                    syntaxChanges,
+                    spacingChanges));
 
             fileDtos.get(i).setFileDiffDtos(diffScoreDtos.get(i).getFileDiffs());
 
