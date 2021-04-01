@@ -48,10 +48,6 @@ public class DiffScoreCalculator {
                     break;
                 }
                 if (checkSpacingChanges(lineNumber, line)) {
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_SPACING));
-                    break;
-                }
-                if (checkAddedBlankSpaces(lineNumber, line)) {
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                     break;
                 } else {
@@ -64,88 +60,63 @@ public class DiffScoreCalculator {
     }
 
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
-        int presentLine = 0;
-        for (String line : generatedDiffList) {
-            if (presentLine < lineNumber) {
-                continue;
-            }
-            if (line.startsWith("-")) {
-                continue;
-            } else {
-                //Checking the level of similarity between the two lines (if difference > half the original line, then it's considered a new addition, else a syntax change)
-                if (StringUtils.difference(testingLine, line).length() > (testingLine.length()) * lineSimilarityFactor) {
+        for (int i = lineNumber; i < generatedDiffList.size(); i++) {
+            String presentLine = generatedDiffList.get(i);
+            if (!presentLine.startsWith("-")) {
+                //Checking the level of similarity between the two lines (if difference > half the original line, then
+                //it's considered a new addition, else a syntax change)
+                if (StringUtils.difference(testingLine, presentLine).length() > (testingLine.length()) * lineSimilarityFactor) {
                     numSyntaxChanges++;
-                    generatedDiffList.set(presentLine, "---");
+                    generatedDiffList.set(i, "---");
                     return true;
                 }
             }
-            presentLine++;
-        }
-        return false;
-    }
-
-    private boolean checkAddedBlankSpaces(int lineNumber, String testingLine) {
-        int presentLine = 0;
-        for (String line : generatedDiffList) {
-            if (presentLine < lineNumber) {
-                continue;
-            }
-            if (line.startsWith("-")) {
-                continue;
-            } else {
-                //Checking whether all the differences between two lines are just blank spaces
-                if (StringUtils.difference(testingLine, line).isBlank()) {
-                    numBlankAdditions++;
-                    generatedDiffList.set(presentLine, "---");
-                    return true;
-                }
-            }
-            presentLine++;
         }
         return false;
     }
 
     private boolean checkSpacingChanges(int lineNumber, String testingLine) {
-        int presentLine = 0;
-        for (String line : generatedDiffList) {
-            if (presentLine < lineNumber) {
-                continue;
-            }
-            if (line.startsWith("-")) {
-                continue;
-            } else {
-                //Checking if the line has only spacing changes (basically removing all spaces and checking if the lines are still the same)
-                if (testingLine.replaceAll("\\s+", "").equalsIgnoreCase(line.replaceAll("\\s+", ""))) {
+        for (int i = lineNumber; i < generatedDiffList.size(); i++) {
+            String presentLine = generatedDiffList.get(i);
+            if (!presentLine.startsWith("-")) {
+                //Checks if the difference between two lines is just blank spaces/spacing changes
+                if (StringUtils.difference(testingLine, presentLine).isBlank()) {
                     numSpacingChanges++;
-                    generatedDiffList.set(presentLine, "---");
+                    generatedDiffList.set(i, "---");
                     return true;
                 }
             }
-            presentLine++;
         }
         return false;
+    }
+
+    private int findDiffStartIndex(List<String> diffsList, int startIndex) {
+        for (int i = startIndex; i < diffsList.size(); i++) {
+            if (diffsList.get(i).startsWith("diff --")) {
+                return i;
+            }
+        }
+
+        return diffsList.size();
     }
 
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
     public List<FileDto> fileScoreCalculator(List<String> diffsList, double addFactor, double deleteFactor, double syntaxFactor, double blankFactor, double spacingFactor) {
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
-        for (int i = 0; i < diffsList.size(); i++) {
-            if (diffsList.get(i).startsWith("diff --")) {
-                for (int j = i + 1; j < diffsList.size(); j++) {
-                    if (diffsList.get(j).startsWith("diff --")) {
-                        fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
-                        diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
-                        break;
-                    } else if (j + 1 == diffsList.size()) {
-                        fileDtos.add(new FileDto(convertToString(diffsList.subList(i, j - 1)), getFileNameFromDiff((diffsList.subList(i, j - 1)))));
-                        diffScoreDtos.add(generateDiffScoreDto(diffsList.subList(i, j - 1)));
-                    }
-                }
-            }
+        int diffStart = findDiffStartIndex(diffsList, 0);
+        while (diffStart < diffsList.size()) {
+            int nextDiffStart = findDiffStartIndex(diffsList, diffStart + 1);
+            List<String> diffList = diffsList.subList(diffStart, nextDiffStart - 1);
+
+            fileDtos.add(new FileDto(convertToString(diffList), getFileNameFromDiff(diffList)));
+            diffScoreDtos.add(generateDiffScoreDto(diffList));
+
+            diffStart = nextDiffStart;
         }
 
         for (int i = 0; i < diffScoreDtos.size(); i++) {
+
             double totalScore = (diffScoreDtos.get(i).getNumLineAdditions() * addFactor)
                     + (diffScoreDtos.get(i).getNumLineDeletions() * deleteFactor)
                     + (diffScoreDtos.get(i).getNumBlankAdditions() * blankFactor)
