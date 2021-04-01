@@ -9,6 +9,7 @@ import MemberSummary from '../components/MemberSummary'
 
 import styles from '../css/Member.module.css'
 import MergeRequests from '../components/MergeRequests'
+import CommentTable from '../components/CommentTable'
 
 export interface IMemberStatData {
   commits: ICommitData[]
@@ -57,7 +58,7 @@ const Member = () => {
             <MergeRequests projectId={id} memberId={memberId} />
           </div>
           <div className={styles.commentsContainer}>
-            <h1>Comments Table</h1>
+            <CommentTable projectId={id} memberId={memberId} />
           </div>
         </Selector>
       </div>

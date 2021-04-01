@@ -30,3 +30,12 @@ export interface IMemberData {
 export interface IDiffData {
   diff: string
 }
+
+export interface ICommentData {
+  id: string
+  wordcount: number
+  content: string
+  date: number
+  context: string
+  webUrl: string
+}

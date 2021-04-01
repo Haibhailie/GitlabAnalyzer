@@ -35,3 +35,10 @@
   margin: auto;
   padding: 0px 20px;
 }
+
+.commentsContainer {
+  display: flex;
+  width: 85%;
+  height: auto;
+  margin: auto;
+}
