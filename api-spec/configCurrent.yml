@@ -1,0 +1,16 @@
+put:
+  description: 'Update the current config for the user.'
+  responses:
+    '200':
+      description: Current config successfully updated.
+    '401':
+      description: Unauthorized.
+    '500':
+      description: An error un-related to this request occurred.
+  requestBody:
+    content:
+      'application/json':
+        schema:
+          $ref: './components/config.yml'
+  parameters:
+    - $ref: './components/jwtcookie.yml'

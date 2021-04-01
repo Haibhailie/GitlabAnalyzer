@@ -98,7 +98,7 @@ public class ConfigController {
         }
     }
 
-    @PostMapping("/api/config/current")
+    @PutMapping("/api/config/current")
     public void updateCurrentConfig(@CookieValue(value = "sessionId") String jwt,
                                     @RequestBody ConfigDto configDto,
                                     HttpServletResponse response) {
