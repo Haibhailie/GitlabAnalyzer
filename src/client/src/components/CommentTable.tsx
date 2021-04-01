@@ -1,5 +1,6 @@
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
+import dateConverter from '../utils/dateConverter'
 import { onError } from '../utils/suspenseDefaults'
 import { useHistory } from 'react-router-dom'
 import { ICommentData } from '../types'
@@ -7,6 +8,7 @@ import { ICommentData } from '../types'
 import Table from '../components/Table'
 
 import styles from '../css/CommentTable.module.css'
+import ExternalLink from './ExternalLink'
 
 export interface ICommentTableProps {
   projectId: string
@@ -34,7 +36,7 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
     >
       <Table
         sortable
-        headers={['Date', 'Comment', 'Word count', 'Type', 'GitLab Link']}
+        headers={['Date', 'Comment', 'Word count', 'Type', 'GitLab link']}
         columnWidths={['2fr', '3fr', '1fr', '1fr', '1fr']}
         classes={{
           container: styles.tableContainer,
@@ -46,11 +48,11 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
         data={
           data?.map(({ id, wordcount, content, date, context, webUrl }) => {
             return {
-              date,
+              date: dateConverter(date, true),
               content,
               wordcount,
               context,
-              webUrl,
+              gitlabUrl: <ExternalLink link={webUrl} />,
             }
           }) ?? [{}]
         }
