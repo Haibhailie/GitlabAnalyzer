@@ -106,7 +106,7 @@ public class MemberServiceTests {
         List<MergeRequestDto> mergeRequestDtos = new ArrayList<>();
 
         int memberId = MemberMock.defaultId;
-        when(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId)).thenReturn(mergeRequestDtos);
+        when(mergeRequestService.returnAllMergeRequests(jwt, gitLabApi, projectId, since, until, memberId)).thenReturn(mergeRequestDtos);
 
         List<MergeRequestDto> mergeRequestByMemberId = memberService.getMergeRequestsByMemberId(jwt, projectId, since, until, memberId);
 

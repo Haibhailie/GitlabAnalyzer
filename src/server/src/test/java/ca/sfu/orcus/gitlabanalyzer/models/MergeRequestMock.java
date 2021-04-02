@@ -75,7 +75,7 @@ public class MergeRequestMock extends AuthorMock {
         List<MergeRequestDto> expectedMergeRequestDtoList = new ArrayList<>();
         for (MergeRequest m : mergeRequests) {
             if (m.getCreatedAt().after(dateSince) && m.getCreatedAt().before(dateUntil)) {
-                expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m));
+                expectedMergeRequestDtoList.add(new MergeRequestDto(jwt, gitLabApi, projectId, m));
             }
         }
         return expectedMergeRequestDtoList;

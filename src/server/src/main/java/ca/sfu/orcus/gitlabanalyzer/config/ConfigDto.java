@@ -9,6 +9,7 @@ public final class ConfigDto {
     private long endDate;
     private String scoreBy;
     private String graphMode;
+
     private List<GeneralTypeScoreDto> generalScores;
     private List<FileTypeScoreDto> fileScores;
     private String yAxis;
@@ -55,6 +56,10 @@ public final class ConfigDto {
         this.yAxis = yAxis;
     }
 
+    public List<GeneralTypeScoreDto> getGeneralScores() {
+        return generalScores;
+    }
+
     // Nested class types
 
     private static final class FileTypeScoreDto {
@@ -72,7 +77,7 @@ public final class ConfigDto {
         }
     }
 
-    private static final class GeneralTypeScoreDto {
+    public static final class GeneralTypeScoreDto {
         private String type;
         private double value;
 
@@ -84,6 +89,14 @@ public final class ConfigDto {
 
         public void setValue(double value) {
             this.value = value;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public double getValue() {
+            return value;
         }
     }
 }

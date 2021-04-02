@@ -72,7 +72,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     @Test
     public void gitlabApiReturnAllMergeRequestsNullTest() {
         initialNullCheckSetup();
-        assertNull(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
+        assertNull(mergeRequestService.returnAllMergeRequests(jwt, gitLabApi, projectId, dateSince, dateUntil, userId));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         when(mergeRequestApi.getMergeRequestChanges(anyInt(), anyInt())).thenReturn(mergeRequests.get(0));
         when(gitLabApi.getNotesApi()).thenReturn(notesApi);
         when(notesApi.getMergeRequestNotes(projectId, mergeRequestIdA)).thenReturn(notesList);
-        List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId);
+        List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.returnAllMergeRequests(jwt, gitLabApi, projectId, dateSince, dateUntil, userId);
         List<MergeRequestDto> expectedMergeRequestDtoList = createTestMergeRequestDto(mergeRequests, gitLabApi);
         assertEquals(mergeRequestDtoList, expectedMergeRequestDtoList);
     }
@@ -120,7 +120,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     public void getAllMergeRequestsWithMemberIDTestException() throws GitLabApiException {
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenThrow(GitLabApiException.class);
-        assertNull(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, dateSince, dateUntil, userId));
+        assertNull(mergeRequestService.returnAllMergeRequests(jwt, gitLabApi, projectId, dateSince, dateUntil, userId));
     }
 
     @Test

@@ -33,7 +33,7 @@ public class MergeRequestDto {
     private List<MergeRequestCommitsDto> commitsInfoInMergeRequest = new ArrayList<>();
     private String webUrl;
 
-    public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
+    public MergeRequestDto(String jwt, GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
 
         setMergeRequestId(mergeRequestId);
@@ -62,7 +62,7 @@ public class MergeRequestDto {
 
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setWebUrl(presentMergeRequest.getWebUrl());
-        setFiles(scoreCalculator.getMergeRequestScore(gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
+        setFiles(scoreCalculator.getMergeRequestScore(jwt, gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId)));
         setIgnored(false);
     }
 
