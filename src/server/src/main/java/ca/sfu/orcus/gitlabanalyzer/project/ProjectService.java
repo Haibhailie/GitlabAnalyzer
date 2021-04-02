@@ -42,7 +42,9 @@ public class ProjectService {
             ArrayList<ProjectDto> projectDtos = new ArrayList<>();
             List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
             for (Project p : projects) {
-                projectDtos.add(getProjectDto(gitLabApi, p));
+                ProjectDto projectDto = getProjectDto(gitLabApi, p);
+                projectDtos.add(projectDto);
+                projectRepository.cacheProjectSkeleton(projectDto, p.getVisibility());
             }
             return projectDtos;
         } catch (GitLabApiException e) {

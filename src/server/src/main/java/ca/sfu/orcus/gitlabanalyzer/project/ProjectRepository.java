@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.gitlab4j.api.models.Visibility;
 import org.springframework.stereotype.Repository;
 
 import javax.ws.rs.NotFoundException;
@@ -41,9 +42,19 @@ public class ProjectRepository {
         }
     }
 
-    public void cacheProjectSkeleton(ProjectDto projectDto, boolean isPublic) {
-        Document projectSkeleton = generateProjectDocument(projectDto, isPublic);
-        projectsCollection.insertOne(projectSkeleton);
+    public void cacheProjectSkeleton(ProjectDto projectDto, Visibility visibility) {
+        if (!projectAlreadyCached(projectDto.getId(), projectDto.getWebUrl())) {
+            Document projectSkeleton = generateProjectDocument(projectDto, (visibility == Visibility.PUBLIC));
+            projectsCollection.insertOne(projectSkeleton);
+        }
+    }
+
+    private boolean projectAlreadyCached(int projectId, String repoUrl) {
+        Document project =
+                projectsCollection.find(and(eq(Project.projectId.key, projectId),
+                        eq(Project.repoUrl.key, repoUrl)))
+                        .projection(include(Project.projectId.key)).first();
+        return (project != null);
     }
 
     private Document generateProjectDocument(ProjectDto projectDto, boolean isPublic) {
