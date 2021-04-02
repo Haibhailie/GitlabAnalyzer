@@ -110,4 +110,9 @@ public class MergeRequestService {
         }
     }
 
+    //TODO: for commit score.
+    public List<CommitDto> getAllCommitsForOrphanMergeRequest(String jwt, int projectId, int mergeRequestId){
+
+    }
+
 }
