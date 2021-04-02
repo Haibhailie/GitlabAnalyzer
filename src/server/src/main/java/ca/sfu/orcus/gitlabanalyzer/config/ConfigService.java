@@ -92,4 +92,9 @@ public class ConfigService {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         configRepository.updateCurrentConfigForUser(userId, configDto);
     }
+
+    public Optional<ConfigDto> getCurrentConfig(String jwt) throws GitLabApiException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+        return configRepository.getCurrentConfigForUser(userId);
+    }
 }
