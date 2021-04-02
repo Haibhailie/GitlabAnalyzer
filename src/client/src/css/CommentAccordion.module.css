@@ -1,11 +1,29 @@
 .container {
   display: flex;
   flex-direction: row;
+  margin: 10px 0px;
 }
 
 .commentContainer {
-  height: 60px;
-  overflow-y: scroll;
+  text-align: justify;
+  padding: 0px 15px 0px 0px;
+}
+
+.collapsed {
+  max-height: 20px;
+  overflow-y: hidden;
+  transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+}
+
+.expanded {
+  max-height: 10000px;
+  transition: max-height 0.8s ease-in-out;
+}
+
+.toggleButton {
+  display: flex;
+  justify-content: flex-start;
+  margin-right: 7px;
 }
 
 .openIcon {

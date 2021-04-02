@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import classNames from '../utils/classNames'
+
 import styles from '../css/CommentAccordion.module.css'
 
 import { ReactComponent as Dropdown } from '../assets/dropdown-small.svg'
@@ -16,10 +18,17 @@ const CommentAccordion = ({ comment }: ICommentAccordionProps) => {
 
   return (
     <div className={styles.container}>
-      <button onClick={toggleComment}>
+      <button className={styles.toggleButton} onClick={toggleComment}>
         <Dropdown className={isOpen ? styles.openIcon : styles.closedIcon} />
       </button>
-      <div className={styles.commentContainer}>{comment}</div>
+      <div
+        className={classNames(
+          styles.commentContainer,
+          isOpen ? styles.expanded : styles.collapsed
+        )}
+      >
+        {comment}
+      </div>
     </div>
   )
 }

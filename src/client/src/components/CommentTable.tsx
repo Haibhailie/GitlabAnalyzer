@@ -42,7 +42,7 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
       <Table
         sortable
         headers={['Date', 'Comment', 'Word count', 'Type', 'GitLab link']}
-        columnWidths={['2fr', '3fr', '1fr', '1fr', '1fr']}
+        columnWidths={['1fr', '6fr', '0.8fr', '1fr', '0.8fr']}
         classes={{
           container: styles.tableContainer,
           table: styles.table,
@@ -60,7 +60,7 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
                 content
               ),
               wordcount,
-              context,
+              context: context === 'MergeRequest' ? 'Merge Request' : context,
               gitlabUrl: <ExternalLink link={webUrl} />,
             }
           }) ?? [{}]
