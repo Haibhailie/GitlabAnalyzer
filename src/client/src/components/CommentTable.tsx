@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom'
 import { ICommentData } from '../types'
 
 import Table from '../components/Table'
+import CommentAccordion from '../components/CommentAccordion'
 
 import styles from '../css/CommentTable.module.css'
 import ExternalLink from './ExternalLink'
@@ -13,6 +14,10 @@ import ExternalLink from './ExternalLink'
 export interface ICommentTableProps {
   projectId: string
   memberId: string
+}
+
+const isLongComment = (content: string) => {
+  return content.length > 60
 }
 
 const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
@@ -49,7 +54,11 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
           data?.map(({ id, wordcount, content, date, context, webUrl }) => {
             return {
               date: dateConverter(date, true),
-              content,
+              content: isLongComment(content) ? (
+                <CommentAccordion comment={content}></CommentAccordion>
+              ) : (
+                content
+              ),
               wordcount,
               context,
               gitlabUrl: <ExternalLink link={webUrl} />,
