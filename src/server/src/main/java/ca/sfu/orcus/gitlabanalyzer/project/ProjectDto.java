@@ -10,12 +10,12 @@ public class ProjectDto {
     private boolean analyzed;
     private String webUrl;
 
-    public ProjectDto(Project project, String role) {
+    public ProjectDto(Project project, String role, boolean analyzed) {
         setId(project.getId());
         setName(project.getName());
         setRole(role);
         setLastActivityAt(project.getLastActivityAt().getTime());
-        setAnalyzed(false); // TODO: Iteration 2
+        setAnalyzed(analyzed); // TODO: Iteration 2
         setWebUrl(project.getWebUrl());
     }
 
@@ -59,6 +59,7 @@ public class ProjectDto {
                 && this.name.equals(p.name)
                 && this.role.equals(p.role)
                 && this.lastActivityAt == p.lastActivityAt
-                && this.analyzed == p.analyzed);
+                && this.analyzed == p.analyzed)
+                && this.webUrl.equals(p.webUrl);
     }
 }

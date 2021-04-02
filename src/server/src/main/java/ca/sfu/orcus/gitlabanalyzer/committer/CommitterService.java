@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.committer;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
 import ca.sfu.orcus.gitlabanalyzer.project.ProjectRepository;
+import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +24,7 @@ public class CommitterService {
     @Autowired
     public CommitterService(@Qualifier("mockCommitterRepo") CommitterRepository committerRepo,
                             @Qualifier("mockMemberRepo") MemberRepository memberRepo,
-                            @Qualifier("mockProjectRepo") ProjectRepository projectRepo,
+                            ProjectRepository projectRepo,
                             GitLabApiWrapper gitLabApiWrapper) {
         this.committerRepo = committerRepo;
         this.memberRepo = memberRepo;
@@ -52,6 +53,7 @@ public class CommitterService {
     }
 
     private boolean userHasAccessToProject(int memberId, int projectId) {
-        return projectRepo.projectIsPublic(projectId) || memberRepo.projectContainsMember(projectId, memberId);
+        return projectRepo.projectIsPublic(projectId,
+                VariableDecoderUtil.decode("GITLAB_URL")) || memberRepo.projectContainsMember(projectId, memberId);
     }
 }
