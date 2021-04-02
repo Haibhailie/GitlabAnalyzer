@@ -42,15 +42,18 @@ public class ProjectService {
             ArrayList<ProjectDto> projectDtos = new ArrayList<>();
             List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
             for (Project p : projects) {
-                String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, p.getId());
-                boolean isAnalyzed = projectRepository.isProjectAnalyzed(p.getId(), VariableDecoderUtil.decode("GITLAB_URL"));
-                ProjectDto projectDto = new ProjectDto(p, memberRole, isAnalyzed);
-                projectDtos.add(projectDto);
+                projectDtos.add(getProjectDto(gitLabApi, p));
             }
             return projectDtos;
         } catch (GitLabApiException e) {
             return null;
         }
+    }
+
+    private ProjectDto getProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
+        String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
+        boolean isAnalyzed = projectRepository.isProjectAnalyzed(project.getId(), VariableDecoderUtil.decode("GITLAB_URL"));
+        return new ProjectDto(project, memberRole, isAnalyzed);
     }
 
     public ProjectExtendedDto getProject(String jwt, int projectId) {

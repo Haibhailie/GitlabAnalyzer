@@ -43,6 +43,18 @@ public class ProjectDto {
         this.webUrl = webUrl;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public boolean isAnalyzed() {
+        return analyzed;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
