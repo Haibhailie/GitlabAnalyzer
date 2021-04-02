@@ -13,6 +13,7 @@ import javax.ws.rs.NotFoundException;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.include;
 
 @Repository
 public class ProjectRepository {
@@ -57,8 +58,10 @@ public class ProjectRepository {
     }
 
     public boolean projectIsPublic(int projectId, String repoUrl) throws NotFoundException {
-        Document project = projectsCollection.find(and(eq(Project.projectId.key, projectId),
-                                                        eq(Project.repoUrl.key, repoUrl))).first();
+        Document project =
+                projectsCollection.find(and(eq(Project.projectId.key, projectId),
+                    eq(Project.repoUrl.key, repoUrl)))
+                    .projection(include(Project.isPublic.key)).first();
         if (project == null) {
             throw new NotFoundException("Project is not in database");
         }
@@ -67,8 +70,10 @@ public class ProjectRepository {
     }
 
     public boolean isProjectAnalyzed(int projectId, String repoUrl) {
-        Document project = projectsCollection.find(and(eq(Project.projectId.key, projectId),
-                                                        eq(Project.repoUrl.key, repoUrl))).first();
+        Document project =
+                projectsCollection.find(and(eq(Project.projectId.key, projectId),
+                        eq(Project.repoUrl.key, repoUrl)))
+                        .projection(include(Project.isAnalyzed.key)).first();
         return (project != null) && (project.getBoolean(Project.isAnalyzed.key, false));
     }
 }
