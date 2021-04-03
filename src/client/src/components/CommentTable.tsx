@@ -79,7 +79,7 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
           title={`Code review comments`}
           data={
             selectedRange?.map(
-              ({ id, wordcount, content, date, context, webUrl }) => {
+              ({ wordcount, content, date, context, webUrl }) => {
                 return {
                   date: dateConverter(date, true),
                   content: isLongComment(content) ? (

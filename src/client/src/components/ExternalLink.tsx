@@ -1,5 +1,3 @@
-import styles from '../css/ExternalLink.module.css'
-
 import linkIcon from '../assets/link.svg'
 
 export interface IExternalLinkProps {
