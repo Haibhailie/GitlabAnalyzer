@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PreanalysisService {
-    private final PreanalysisRepository preanalysisRepository;
+public class AnalysisService {
+    private final AnalysisRepository analysisRepository;
     private final GitLabApiWrapper gitLabApiWrapper;
 
     @Autowired
-    public PreanalysisService(PreanalysisRepository preanalysisRepository, GitLabApiWrapper gitLabApiWrapper) {
-        this.preanalysisRepository = preanalysisRepository;
+    public AnalysisService(AnalysisRepository analysisRepository, GitLabApiWrapper gitLabApiWrapper) {
+        this.analysisRepository = analysisRepository;
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 }
