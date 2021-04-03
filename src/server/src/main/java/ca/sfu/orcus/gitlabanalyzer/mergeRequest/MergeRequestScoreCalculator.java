@@ -17,21 +17,30 @@ import java.util.List;
 import java.util.Optional;
 
 public class MergeRequestScoreCalculator {
-
-    //TODO: Get these from config
     double addLOCFactor = 1;
     double deleteLOCFactor = 0.2;
     double syntaxChangeFactor = 0.2;
     double blankLOCFactor = 0;
     double spacingChangeFactor = 0;
 
-    private JwtService jwtService = new JwtService();
-    private AuthenticationRepository authenticationRepository = new AuthenticationRepository();
-    private ConfigRepository configRepository = new ConfigRepository();
-    private GitLabApiWrapper gitLabApiWrapper = new GitLabApiWrapper(jwtService, authenticationRepository);
-    private ConfigService configService = new ConfigService(configRepository, gitLabApiWrapper);
+    private final JwtService jwtService = new JwtService();
+    private final AuthenticationRepository authenticationRepository = new AuthenticationRepository();
+    private final ConfigRepository configRepository = new ConfigRepository();
+    private final GitLabApiWrapper gitLabApiWrapper = new GitLabApiWrapper(jwtService, authenticationRepository);
+    private final ConfigService configService = new ConfigService(configRepository, gitLabApiWrapper);
 
-    public List<FileDto> getMergeRequestScore(String jwt, MergeRequest mergeRequestChanges) throws GitLabApiException {
+    public List<FileDto> getMergeRequestScore(String jwt, MergeRequest mergeRequestChanges) {
+        setMultipliersFromConfig(jwt);
+
+        // regex to split lines by new line and store in generatedDiffList
+        String[] diffString = DiffStringParser.parseDiff(mergeRequestChanges.getChanges()).split("\\r?\\n");
+        List<String> diffsList = Arrays.asList(diffString);
+
+        DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
+        return diffScoreCalculator.fileScoreCalculator(diffsList, addLOCFactor, deleteLOCFactor, syntaxChangeFactor, blankLOCFactor, spacingChangeFactor);
+    }
+
+    private void setMultipliersFromConfig(String jwt) {
         try {
             Optional<ConfigDto> configDto = configService.getCurrentConfig(jwt);
             if (configDto.isPresent()) {
@@ -50,11 +59,5 @@ public class MergeRequestScoreCalculator {
         } catch (GitLabApiException e) {
             // default multipliers
         }
-        // regex to split lines by new line and store in generatedDiffList
-        String[] diffString = DiffStringParser.parseDiff(mergeRequestChanges.getChanges()).split("\\r?\\n");
-        List<String> diffsList = Arrays.asList(diffString);
-
-        DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
-        return diffScoreCalculator.fileScoreCalculator(diffsList, addLOCFactor, deleteLOCFactor, syntaxChangeFactor, blankLOCFactor, spacingChangeFactor);
     }
 }
