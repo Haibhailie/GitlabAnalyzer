@@ -1,7 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.note;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
-import ca.sfu.orcus.gitlabanalyzer.utils.Pair;
+import org.springframework.data.util.Pair;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Issue;
@@ -39,10 +39,10 @@ public class NoteService {
         Map<String, Pair<Integer, List<Note>>> allNotes = getAllNotes(gitLabApi, projectId);
 
         for (String webUrl : allNotes.keySet()) {
-            for (Note n : allNotes.get(webUrl).secondAttribute) {
+            for (Note n : allNotes.get(webUrl).getSecond()) {
                 if (n.getAuthor().getId() == memberId && !n.getSystem()) {
                     try {
-                        String by = allNotes.get(webUrl).firstAttribute == memberId ? "self" : gitLabApi.getProjectApi().getMember(projectId, memberId).getName();
+                        String by = allNotes.get(webUrl).getFirst() == memberId ? "self" : gitLabApi.getProjectApi().getMember(projectId, memberId).getName();
                         filteredNotes.add(new NoteDto(n, webUrl, by));
                     } catch (GitLabApiException e) {
                         filteredNotes.add(new NoteDto(n, webUrl, ""));
@@ -65,7 +65,8 @@ public class NoteService {
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId);
             Map<String, Pair<Integer, List<Note>>> allMergeRequestsNotes = new HashMap<>();
             for (MergeRequest mr : allMergeRequests) {
-                allMergeRequestsNotes.put(mr.getWebUrl(), new Pair(mr.getAuthor().getId(), gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mr.getIid())));
+                allMergeRequestsNotes.put(mr.getWebUrl(),
+                    Pair.of(mr.getAuthor().getId(), gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mr.getIid())));
             }
             return allMergeRequestsNotes;
         } catch (GitLabApiException e) {
@@ -78,7 +79,8 @@ public class NoteService {
             List<Issue> allIssues = gitLabApi.getIssuesApi().getIssues(Integer.valueOf(projectId));
             Map<String, Pair<Integer, List<Note>>> allIssuesNotes = new HashMap<>();
             for (Issue issue : allIssues) {
-                allIssuesNotes.put(issue.getWebUrl(), new Pair(issue.getAuthor().getId(), gitLabApi.getNotesApi().getIssueNotes(projectId, issue.getIid())));
+                allIssuesNotes.put(issue.getWebUrl(),
+                    Pair.of(issue.getAuthor().getId(), gitLabApi.getNotesApi().getIssueNotes(projectId, issue.getIid())));
             }
             return allIssuesNotes;
         } catch (GitLabApiException e) {
