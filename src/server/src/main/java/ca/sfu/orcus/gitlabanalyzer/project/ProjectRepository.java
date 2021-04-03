@@ -43,13 +43,13 @@ public class ProjectRepository {
     }
 
     public void cacheProjectSkeleton(ProjectDto projectDto, Visibility visibility) {
-        if (!projectAlreadyCached(projectDto.getId(), projectDto.getWebUrl())) {
+        if (!projectIsAlreadyCached(projectDto.getId(), projectDto.getWebUrl())) {
             Document projectSkeleton = generateProjectDocument(projectDto, (visibility == Visibility.PUBLIC));
             projectsCollection.insertOne(projectSkeleton);
         }
     }
 
-    private boolean projectAlreadyCached(int projectId, String repoUrl) {
+    private boolean projectIsAlreadyCached(int projectId, String repoUrl) {
         Document project = getPartialProjectDocument(projectId, repoUrl, Project.projectId.key);
         return (project != null);
     }
