@@ -159,7 +159,7 @@ public class ProjectServiceTests {
 
         List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
         for (Project p : projects) {
-            expectedProjectDtos.add(new ProjectDto(p, defaultRole, false));
+            expectedProjectDtos.add(new ProjectDto(p, defaultRole, 0));
         }
 
         return expectedProjectDtos;

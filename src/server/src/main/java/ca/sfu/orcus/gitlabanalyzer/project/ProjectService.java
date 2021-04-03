@@ -54,8 +54,9 @@ public class ProjectService {
 
     private ProjectDto getProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
         String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
-        boolean isAnalyzed = projectRepository.isProjectAnalyzed(project.getId(), VariableDecoderUtil.decode("GITLAB_URL"));
-        return new ProjectDto(project, memberRole, isAnalyzed);
+        long lastAnalysisTime = projectRepository.getLastAnalysisTimeForProject(project.getId(),
+                VariableDecoderUtil.decode("GITLAB_URL"));
+        return new ProjectDto(project, memberRole, lastAnalysisTime);
     }
 
     public ProjectExtendedDto getProject(String jwt, int projectId) {

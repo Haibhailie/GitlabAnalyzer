@@ -30,7 +30,7 @@ public class ProjectRepository {
         documentId("_id"),
         projectId("projectId"),
         repoUrl("repoUrl"),
-        isAnalyzed("isAnalyzed"),
+        lastAnalysisTime("lastAnalysisTime"),
         isPublic("isPublic"),
         analysis("analysis"),
         memberDocumentRefs("memRefs");
@@ -60,11 +60,11 @@ public class ProjectRepository {
     private Document generateProjectDocument(ProjectDto projectDto, boolean isPublic) {
         int projectId = projectDto.getId();
         String repoUrl = projectDto.getWebUrl();
-        boolean isAnalyzed = projectDto.isAnalyzed();
+        long lastAnalysisTime = projectDto.getLastAnalysisTime();
         return new Document(Project.projectId.key, new ObjectId().toString())
                     .append(Project.projectId.key, projectId)
                     .append(Project.repoUrl.key, repoUrl)
-                    .append(Project.isAnalyzed.key, isAnalyzed)
+                    .append(Project.lastAnalysisTime.key, lastAnalysisTime)
                     .append(Project.isPublic.key, isPublic);
     }
 
@@ -80,11 +80,15 @@ public class ProjectRepository {
         return project.getBoolean(project.getBoolean(Project.isPublic.key));
     }
 
-    public boolean isProjectAnalyzed(int projectId, String repoUrl) {
+    public long getLastAnalysisTimeForProject(int projectId, String repoUrl) {
         Document project =
                 projectsCollection.find(and(eq(Project.projectId.key, projectId),
                         eq(Project.repoUrl.key, repoUrl)))
-                        .projection(include(Project.isAnalyzed.key)).first();
-        return (project != null) && (project.getBoolean(Project.isAnalyzed.key, false));
+                        .projection(include(Project.lastAnalysisTime.key)).first();
+        if (project == null) {
+            return 0;
+        } else {
+            return project.getLong(Project.lastAnalysisTime.key);
+        }
     }
 }
