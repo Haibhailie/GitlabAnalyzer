@@ -50,10 +50,7 @@ public class ProjectRepository {
     }
 
     private boolean projectAlreadyCached(int projectId, String repoUrl) {
-        Document project =
-                projectsCollection.find(and(eq(Project.projectId.key, projectId),
-                        eq(Project.repoUrl.key, repoUrl)))
-                        .projection(include(Project.projectId.key)).first();
+        Document project = getPartialProjectDocument(projectId, repoUrl, Project.projectId.key);
         return (project != null);
     }
 
@@ -69,26 +66,22 @@ public class ProjectRepository {
     }
 
     public boolean projectIsPublic(int projectId, String repoUrl) throws NotFoundException {
-        Document project =
-                projectsCollection.find(and(eq(Project.projectId.key, projectId),
-                    eq(Project.repoUrl.key, repoUrl)))
-                    .projection(include(Project.isPublic.key)).first();
+        Document project = getPartialProjectDocument(projectId, repoUrl, Project.isPublic.key);
+
         if (project == null) {
             throw new NotFoundException("Project is not in database");
         }
-
-        return project.getBoolean(project.getBoolean(Project.isPublic.key));
+        return project.getBoolean(Project.isPublic.key);
     }
 
     public long getLastAnalysisTimeForProject(int projectId, String repoUrl) {
-        Document project =
-                projectsCollection.find(and(eq(Project.projectId.key, projectId),
-                        eq(Project.repoUrl.key, repoUrl)))
-                        .projection(include(Project.lastAnalysisTime.key)).first();
-        if (project == null) {
-            return 0;
-        } else {
-            return project.getLong(Project.lastAnalysisTime.key);
-        }
+        Document project = getPartialProjectDocument(projectId, repoUrl, Project.lastAnalysisTime.key);
+        return project == null ? 0 : project.getLong(Project.lastAnalysisTime.key);
+    }
+
+    private Document getPartialProjectDocument(int projectId, String repoUrl, String projectionKey) {
+        return projectsCollection.find(and(eq(Project.projectId.key, projectId),
+                eq(Project.repoUrl.key, repoUrl)))
+                .projection(include(projectionKey)).first();
     }
 }

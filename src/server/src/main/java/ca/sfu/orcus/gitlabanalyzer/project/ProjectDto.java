@@ -15,7 +15,7 @@ public class ProjectDto {
         setName(project.getName());
         setRole(role);
         setLastActivityTime(project.getLastActivityAt().getTime());
-        setAnalyzed(lastAnalysisTime); // TODO: Iteration 2
+        setAnalyzed(lastAnalysisTime);
         setWebUrl(project.getWebUrl());
     }
 
