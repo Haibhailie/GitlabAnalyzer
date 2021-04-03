@@ -5,12 +5,16 @@ import { onError } from '../utils/suspenseDefaults'
 import { ICommentData } from '../types'
 import { useContext, useEffect, useState } from 'react'
 import { UserConfigContext } from '../context/UserConfigContext'
+import { ThemeProvider, Tooltip } from '@material-ui/core'
+import tooltipTheme from '../themes/tooltipTheme'
 
 import Table from '../components/Table'
 import CommentAccordion from '../components/CommentAccordion'
+import ExternalLink from '../components/ExternalLink'
 
 import styles from '../css/CommentTable.module.css'
-import ExternalLink from './ExternalLink'
+
+import warning from '../assets/warning.svg'
 
 export interface ICommentTableProps {
   projectId: string
@@ -19,6 +23,10 @@ export interface ICommentTableProps {
 
 const isLongComment = (content: string) => {
   return content.length > 60
+}
+
+const isInvalidUrl = (url: string) => {
+  return url.includes('example')
 }
 
 const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
@@ -53,40 +61,53 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
   }, [userConfigs.selected.startDate, userConfigs.selected.endDate, data])
 
   return (
-    <Suspense
-      fallback="Loading Comments..."
-      error={error?.message ?? 'Unknown Error'}
-    >
-      <Table
-        sortable
-        headers={['Date', 'Comment', 'Word count', 'Type', 'GitLab link']}
-        columnWidths={['1fr', '6fr', '0.8fr', '1fr', '0.8fr']}
-        classes={{
-          container: styles.tableContainer,
-          table: styles.table,
-          header: styles.theader,
-          data: styles.tdata,
-        }}
-        title={`Code review comments`}
-        data={
-          selectedRange?.map(
-            ({ id, wordcount, content, date, context, webUrl }) => {
-              return {
-                date: dateConverter(date, true),
-                content: isLongComment(content) ? (
-                  <CommentAccordion comment={content}></CommentAccordion>
-                ) : (
-                  content
-                ),
-                wordcount,
-                context: context === 'MergeRequest' ? 'Merge Request' : context,
-                gitlabUrl: <ExternalLink link={webUrl} />,
+    <ThemeProvider theme={tooltipTheme}>
+      <Suspense
+        fallback="Loading Comments..."
+        error={error?.message ?? 'Unknown Error'}
+      >
+        <Table
+          sortable
+          headers={['Date', 'Comment', 'Word count', 'Type', 'GitLab link']}
+          columnWidths={['1fr', '6fr', '0.8fr', '1fr', '0.8fr']}
+          classes={{
+            container: styles.tableContainer,
+            table: styles.table,
+            header: styles.theader,
+            data: styles.tdata,
+          }}
+          title={`Code review comments`}
+          data={
+            selectedRange?.map(
+              ({ id, wordcount, content, date, context, webUrl }) => {
+                return {
+                  date: dateConverter(date, true),
+                  content: isLongComment(content) ? (
+                    <CommentAccordion comment={content}></CommentAccordion>
+                  ) : (
+                    content
+                  ),
+                  wordcount,
+                  context:
+                    context === 'MergeRequest' ? 'Merge Request' : context,
+                  gitlabUrl: isInvalidUrl(webUrl) ? (
+                    <Tooltip
+                      title="Unable to retrieve link due to server configuration error. "
+                      placement="top"
+                      arrow
+                    >
+                      <img className={styles.icon} src={warning} />
+                    </Tooltip>
+                  ) : (
+                    <ExternalLink link={webUrl} />
+                  ),
+                }
               }
-            }
-          ) ?? [{}]
-        }
-      />
-    </Suspense>
+            ) ?? [{}]
+          }
+        />
+      </Suspense>
+    </ThemeProvider>
   )
 }
 
