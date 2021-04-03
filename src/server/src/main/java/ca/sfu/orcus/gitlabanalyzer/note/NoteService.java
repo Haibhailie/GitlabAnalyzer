@@ -65,7 +65,7 @@ public class NoteService {
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId);
             Map<String, Pair<Integer, List<Note>>> allMergeRequestsNotes = new HashMap<>();
             for (MergeRequest mr : allMergeRequests) {
-                allMergeRequestsNotes.put(mr.getWebUrl(), new Pair(mr.getAuthor().getId(), mr.getIid()));
+                allMergeRequestsNotes.put(mr.getWebUrl(), new Pair(mr.getAuthor().getId(), gitLabApi.getNotesApi().getMergeRequestNotes(projectId, mr.getIid())));
             }
             return allMergeRequestsNotes;
         } catch (GitLabApiException e) {
@@ -78,7 +78,7 @@ public class NoteService {
             List<Issue> allIssues = gitLabApi.getIssuesApi().getIssues(Integer.valueOf(projectId));
             Map<String, Pair<Integer, List<Note>>> allIssuesNotes = new HashMap<>();
             for (Issue issue : allIssues) {
-                allIssuesNotes.put(issue.getWebUrl(), new Pair(issue.getAuthor().getId(), issue.getIid()));
+                allIssuesNotes.put(issue.getWebUrl(), new Pair(issue.getAuthor().getId(), gitLabApi.getNotesApi().getIssueNotes(projectId, issue.getIid())));
             }
             return allIssuesNotes;
         } catch (GitLabApiException e) {
