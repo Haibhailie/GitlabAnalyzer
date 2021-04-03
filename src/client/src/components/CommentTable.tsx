@@ -2,8 +2,9 @@ import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import dateConverter from '../utils/dateConverter'
 import { onError } from '../utils/suspenseDefaults'
-import { useHistory } from 'react-router-dom'
 import { ICommentData } from '../types'
+import { useContext, useEffect, useState } from 'react'
+import { UserConfigContext } from '../context/UserConfigContext'
 
 import Table from '../components/Table'
 import CommentAccordion from '../components/CommentAccordion'
@@ -21,7 +22,6 @@ const isLongComment = (content: string) => {
 }
 
 const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
-  const history = useHistory()
   const { Suspense, data, error } = useSuspense<ICommentData[], Error>(
     (setData, setError) => {
       jsonFetcher<ICommentData[]>(
@@ -33,6 +33,24 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
         .catch(onError(setError))
     }
   )
+
+  const { userConfigs } = useContext(UserConfigContext)
+  const [selectedRange, setSelectedRange] = useState(data)
+
+  useEffect(() => {
+    const {
+      startDate = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
+      endDate = new Date(),
+    } = userConfigs.selected
+
+    const range = data?.filter(
+      comment =>
+        new Date(comment.date).getTime() >= startDate.getTime() &&
+        new Date(comment.date).getTime() <= endDate.getTime()
+    )
+
+    setSelectedRange(range?.length !== 0 ? range : data?.slice(-1))
+  }, [userConfigs.selected.startDate, userConfigs.selected.endDate, data])
 
   return (
     <Suspense
@@ -51,19 +69,21 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
         }}
         title={`Code review comments`}
         data={
-          data?.map(({ id, wordcount, content, date, context, webUrl }) => {
-            return {
-              date: dateConverter(date, true),
-              content: isLongComment(content) ? (
-                <CommentAccordion comment={content}></CommentAccordion>
-              ) : (
-                content
-              ),
-              wordcount,
-              context: context === 'MergeRequest' ? 'Merge Request' : context,
-              gitlabUrl: <ExternalLink link={webUrl} />,
+          selectedRange?.map(
+            ({ id, wordcount, content, date, context, webUrl }) => {
+              return {
+                date: dateConverter(date, true),
+                content: isLongComment(content) ? (
+                  <CommentAccordion comment={content}></CommentAccordion>
+                ) : (
+                  content
+                ),
+                wordcount,
+                context: context === 'MergeRequest' ? 'Merge Request' : context,
+                gitlabUrl: <ExternalLink link={webUrl} />,
+              }
             }
-          }) ?? [{}]
+          ) ?? [{}]
         }
       />
     </Suspense>
