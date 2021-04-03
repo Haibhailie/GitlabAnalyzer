@@ -11,14 +11,16 @@ public class NoteDto {
     private Date date;
     private String context;
     private String webUrl;
+    private String by;
 
-    public NoteDto(Note presentNote, String webUrl) {
+    public NoteDto(Note presentNote, String webUrl, String by) {
         setId(presentNote.getId());
         setWordcount(countWords(presentNote.getBody()));
         setContent(presentNote.getBody());
         setDate(presentNote.getCreatedAt());
         setContext(presentNote.getNoteableType());
         setWebUrl(webUrl);
+        setBy(by);
     }
 
     private int countWords(String str) {
@@ -52,5 +54,9 @@ public class NoteDto {
 
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+    }
+
+    public void setBy(String by) {
+        this.by = by;
     }
 }
