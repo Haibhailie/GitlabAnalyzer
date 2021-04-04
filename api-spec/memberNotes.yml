@@ -16,7 +16,7 @@ get:
                 - date
                 - context
                 - webUrl
-                - by
+                - parentAuthor
               properties:
                 id:
                   type: string
@@ -35,7 +35,7 @@ get:
                     - EPIC
                 webUrl:
                   type: string
-                by:
+                parentAuthor:
                   type: string
     '401':
       description: Invalid JWT Token.
