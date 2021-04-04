@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import com.google.gson.Gson;
+import javassist.NotFoundException;
 import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -73,6 +74,41 @@ public class ConfigController {
         }
     }
 
+    @PutMapping("/api/config/{configId}")
+    public void updateConfig(@CookieValue(value = "sessionId") String jwt,
+                             @PathVariable("configId") String configId,
+                             @RequestBody ConfigDto configDto,
+                             HttpServletResponse response) {
+        if (authService.jwtIsValid(jwt)) {
+            tryUpdatingConfig(jwt, configId, configDto, response);
+        } else {
+            response.setStatus(SC_UNAUTHORIZED);
+        }
+    }
+
+    @PostMapping("/api/config/import")
+    public String importConfig(@CookieValue(value = "sessionId") String jwt,
+                               @RequestBody ConfigIdDto configIdDto,
+                               HttpServletResponse response) {
+        if (authService.jwtIsValid(jwt)) {
+            return tryImportingConfigForUser(jwt, configIdDto, response);
+        } else {
+            response.setStatus(SC_UNAUTHORIZED);
+            return "";
+        }
+    }
+
+    @PutMapping("/api/config/current")
+    public void updateCurrentConfig(@CookieValue(value = "sessionId") String jwt,
+                                    @RequestBody ConfigDto configDto,
+                                    HttpServletResponse response) {
+        if (authService.jwtIsValid(jwt)) {
+            tryUpdatingCurrentConfig(jwt, configDto, response);
+        } else {
+            response.setStatus(SC_UNAUTHORIZED);
+        }
+    }
+
     private void tryAddingNewConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
         try {
             String configId = configService.addNewConfig(jwt, configDto);
@@ -101,32 +137,68 @@ public class ConfigController {
     }
 
     private String tryGettingConfigForCurrentUser(String jwt, String configId, HttpServletResponse response) {
+        String configJson = "";
+
         try {
-            String configJson = configService.getConfigJsonForCurrentUser(jwt, configId);
+            configJson = configService.getConfigJsonForCurrentUser(jwt, configId);
             response.setStatus(configJson.isEmpty() ? SC_NOT_FOUND : SC_OK);
-            return configJson;
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
-            return "";
         }
+
+        return configJson;
     }
 
     private String tryGettingAllConfigsForCurrentUser(String jwt, HttpServletResponse response) {
+        String configsJson = "";
+
         try {
+            configsJson = configService.getAllConfigJsonsForCurrentUser(jwt);
             response.setStatus(SC_OK);
-            return configService.getAllConfigJsonsForCurrentUser(jwt);
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
-            return "";
+        }
+
+        return configsJson;
+    }
+
+    private void tryUpdatingConfig(String jwt, String configId, ConfigDto configDto, HttpServletResponse response) {
+        if (!configId.equals(configDto.getId())) {
+            response.setStatus(SC_BAD_REQUEST);
+            return;
+        }
+
+        try {
+            configService.updateConfig(jwt, configDto);
+            response.setStatus(SC_OK);
+        } catch (NotFoundException e) {
+            response.setStatus(SC_NOT_FOUND);
+        } catch (GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
     }
 
-    // POST response body object
-    private static final class ConfigIdDto {
-        private String id;
+    private String tryImportingConfigForUser(String jwt, ConfigIdDto configIdDto, HttpServletResponse response) {
+        String configJson = "";
 
-        public ConfigIdDto(String id) {
-            this.id = id;
+        try {
+            configJson = configService.importConfigForUser(jwt, configIdDto);
+            response.setStatus(SC_OK);
+        } catch (NotFoundException e) {
+            response.setStatus(SC_NOT_FOUND);
+        } catch (GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
+        }
+
+        return configJson;
+    }
+
+    private void tryUpdatingCurrentConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
+        try {
+            configService.updateCurrentConfig(jwt, configDto);
+            response.setStatus(SC_OK);
+        } catch (GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
     }
 }

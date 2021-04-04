@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.config;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import com.google.gson.Gson;
+import javassist.NotFoundException;
 import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +43,7 @@ public class ConfigService {
         int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
 
         if (configRepository.userHasConfig(userId, configId)) {
-            Optional<String> configJson = configRepository.getConfigJsonById(configId);
-            return configJson.orElse("");
+            return configRepository.getConfigJsonById(configId).orElse("");
         }
 
         return "";
@@ -60,5 +60,41 @@ public class ConfigService {
         }
 
         return gson.toJson(configDtos);
+    }
+
+    public void updateConfig(String jwt, ConfigDto configDto) throws GitLabApiException, NotFoundException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+        String configId = configDto.getId();
+
+        if (!configRepository.containsConfig(configId) || !configRepository.userHasConfig(userId, configId)) {
+            throw new NotFoundException("Config not found");
+        }
+
+        configRepository.updateConfig(configDto);
+    }
+
+    public String importConfigForUser(String jwt, ConfigIdDto configIdDto) throws GitLabApiException, NotFoundException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+        String configId = configIdDto.getId();
+
+        if (!configRepository.containsConfig(configId)) {
+            throw new NotFoundException("Config not found");
+        }
+
+        if (!configRepository.userHasConfig(userId, configId)) {
+            configRepository.addConfigToUserProfile(userId, configId);
+        }
+
+        return configRepository.getConfigJsonById(configId).orElse("");
+    }
+
+    public void updateCurrentConfig(String jwt, ConfigDto configDto) throws GitLabApiException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+        configRepository.updateCurrentConfigForUser(userId, configDto);
+    }
+
+    public Optional<ConfigDto> getCurrentConfig(String jwt) throws GitLabApiException {
+        int userId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+        return configRepository.getCurrentConfigForUser(userId);
     }
 }
