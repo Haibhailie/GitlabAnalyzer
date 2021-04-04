@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.preanalysis;
+package ca.sfu.orcus.gitlabanalyzer.analysis;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import org.gitlab4j.api.GitLabApiException;
@@ -16,8 +16,8 @@ public class AnalysisController {
     private final AuthenticationService authService;
 
     @Autowired
-    public AnalysisController(AnalysisService preanalysisService, AuthenticationService authService) {
-        this.analysisService = preanalysisService;
+    public AnalysisController(AnalysisService analysisService, AuthenticationService authService) {
+        this.analysisService = analysisService;
         this.authService = authService;
     }
 

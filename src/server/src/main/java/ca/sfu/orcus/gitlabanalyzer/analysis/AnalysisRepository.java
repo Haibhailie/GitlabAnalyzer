@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.preanalysis;
+package ca.sfu.orcus.gitlabanalyzer.analysis;
 
 import org.springframework.stereotype.Repository;
 
