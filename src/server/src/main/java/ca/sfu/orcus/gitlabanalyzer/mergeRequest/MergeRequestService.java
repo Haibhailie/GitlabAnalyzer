@@ -110,9 +110,15 @@ public class MergeRequestService {
         }
     }
 
-    //TODO: for commit score.
-    public List<CommitDto> getAllCommitsForOrphanMergeRequest(String jwt, int projectId, int mergeRequestId){
-
+    public List<CommitDto> getOrphanCommitsForOrphanMergeRequestByMemberName(GitLabApi gitLabApi, int projectId, int mergeRequestId, String memberName) {
+        List<CommitDto> allCommits = returnAllCommitsFromMergeRequest(gitLabApi, projectId, mergeRequestId);
+        List<CommitDto> orphanCommits = new ArrayList<>();
+        for (CommitDto c : allCommits) {
+            if (c.getAuthor().equalsIgnoreCase(memberName)) {
+                orphanCommits.add(c);
+            }
+        }
+        return orphanCommits;
     }
 
 }
