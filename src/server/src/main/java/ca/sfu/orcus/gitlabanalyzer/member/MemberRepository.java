@@ -12,6 +12,10 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.include;
+
 @Repository
 public class MemberRepository {
     private final MongoCollection<Document> memberCollection;
@@ -38,15 +42,25 @@ public class MemberRepository {
     }
 
     public List<String> cacheAllMembers(List<MemberDto> allMembers) {
+        System.out.println("caching members...");
         List<String> documentIds = new ArrayList<>();
         for (MemberDto member : allMembers) {
-            String documentId = storeMember(member);
-            documentIds.add(documentId);
+            if (!memberIsAlreadyCached(member)) {
+                String documentId = cacheMember(member);
+                documentIds.add(documentId);
+            }
         }
         return documentIds;
     }
 
-    private String storeMember(MemberDto member) {
+    private boolean memberIsAlreadyCached(MemberDto member) {
+        Document memberDoc = memberCollection.find(and(eq(Member.memberId.key, member.getId()),
+                                                    eq(Member.repoUrl.key, member.getWebUrl())))
+                                                    .projection(include(Member.memberId.key)).first();
+        return (memberDoc != null);
+    }
+
+    private String cacheMember(MemberDto member) {
         String documentId = new ObjectId().toString();
         Document memberDocument = generateMemberDocument(member, documentId);
         memberCollection.insertOne(memberDocument);

@@ -30,9 +30,9 @@ public class MemberService {
         this.commitService = commitService;
     }
 
-    public List<MemberDto> getAllMembers(String jwt, int projectID) {
+    public List<MemberDto> getAllMembers(String jwt, int projectId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        List<MemberDto> allMembers = getAllMembers(gitLabApi, projectID);
+        List<MemberDto> allMembers = getAllMembers(gitLabApi, projectId);
         memberRepository.cacheAllMembers(allMembers);
         return allMembers;
     }
