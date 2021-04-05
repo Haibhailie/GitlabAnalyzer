@@ -78,12 +78,12 @@ public class MemberController {
     }
 
     @GetMapping("/api/project/{projectId}/members/{memberName}/{mergerequestId}/commits")
-    public String getOrphanedMergeRequestsByMemberName(@CookieValue(value = "sessionId") String jwt,
+    public String getOrphanCommitsFromOrphanMergeRequestByMemberName(@CookieValue(value = "sessionId") String jwt,
                                                        HttpServletResponse response,
                                                        @PathVariable int projectId,
                                                        @PathVariable int mergerequestId,
                                                        @PathVariable String memberName) {
-        List<CommitDto> orphanCommitsForOrphanMergeRequestByMemberName = memberService.getOrphanCommitsForOrphanMergeRequestByMemberName(jwt, projectId, mergerequestId, memberName);
+        List<CommitDto> orphanCommitsForOrphanMergeRequestByMemberName = memberService.getOrphanCommitsFromOrphanMergeRequestByMemberName(jwt, projectId, mergerequestId, memberName);
         response.setStatus(orphanCommitsForOrphanMergeRequestByMemberName == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(orphanCommitsForOrphanMergeRequestByMemberName);
     }

@@ -110,7 +110,7 @@ public class MergeRequestService {
         }
     }
 
-    public List<CommitDto> getOrphanCommitsForOrphanMergeRequestByMemberName(GitLabApi gitLabApi, int projectId, int mergeRequestId, String memberName) {
+    public List<CommitDto> getOrphanCommitsFromOrphanMergeRequestByMemberName(GitLabApi gitLabApi, int projectId, int mergeRequestId, String memberName) {
         List<CommitDto> allCommits = returnAllCommitsFromMergeRequest(gitLabApi, projectId, mergeRequestId);
         List<CommitDto> orphanCommits = new ArrayList<>();
         for (CommitDto c : allCommits) {
