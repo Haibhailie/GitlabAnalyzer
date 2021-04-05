@@ -17,6 +17,7 @@ public final class ProjectMock {
     public static final Date defaultCreatedAt = new Date();
     public static final Date defaultLastActivityAt = new Date();
     public static final String defaultDefaultBranch = "master";
+    public static final String defaultWebUrl = "www.example.com";
 
     public static Project createProject() {
         return createProject(defaultId,
@@ -24,7 +25,8 @@ public final class ProjectMock {
                 defaultProjectStatistics,
                 defaultCreatedAt,
                 defaultLastActivityAt,
-                defaultDefaultBranch);
+                defaultDefaultBranch,
+                defaultWebUrl);
     }
 
     public static Project createProject(int id,
@@ -32,7 +34,8 @@ public final class ProjectMock {
                                         ProjectStatistics statistics,
                                         Date createdAt,
                                         Date lastActivityAt,
-                                        String defaultBranch) {
+                                        String defaultBranch,
+                                        String webUrl) {
         Project project = new Project();
 
         project.setId(id);
@@ -41,6 +44,7 @@ public final class ProjectMock {
         project.setCreatedAt(createdAt);
         project.setLastActivityAt(lastActivityAt);
         project.setDefaultBranch(defaultBranch);
+        project.setWebUrl(webUrl);
 
         return project;
     }
