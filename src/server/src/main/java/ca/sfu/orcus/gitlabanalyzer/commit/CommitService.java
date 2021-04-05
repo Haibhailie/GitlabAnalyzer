@@ -96,7 +96,7 @@ public class CommitService {
             for (CommitDto c : allCommitsByMemberName) {
                 List<MergeRequest> relatedMergeRequests = gitLabApi.getCommitsApi().getMergeRequests(projectId, c.getSha());
                 for (MergeRequest mr : relatedMergeRequests) {
-                    if (!c.getAuthor().equalsIgnoreCase(mr.getAuthor().getName()) && !c.getAuthor().equalsIgnoreCase(mr.getAuthor().getUsername())) {
+                    if (!memberName.equalsIgnoreCase(mr.getAuthor().getName())) {
                         orphanMergeRequestByMemberName.add(new MergeRequestDto(gitLabApi, projectId, mr));
                     }
                 }
