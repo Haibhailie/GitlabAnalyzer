@@ -4,6 +4,7 @@ import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
+import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
@@ -41,14 +42,21 @@ public class ProjectService {
             ArrayList<ProjectDto> projectDtos = new ArrayList<>();
             List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
             for (Project p : projects) {
-                String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, p.getId());
-                ProjectDto projectDto = new ProjectDto(p, memberRole);
+                ProjectDto projectDto = getProjectDto(gitLabApi, p);
                 projectDtos.add(projectDto);
+                projectRepository.cacheProjectSkeleton(projectDto, p.getVisibility());
             }
             return projectDtos;
         } catch (GitLabApiException e) {
             return null;
         }
+    }
+
+    private ProjectDto getProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
+        String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
+        long lastAnalysisTime = projectRepository.getLastAnalysisTimeForProject(project.getId(),
+                VariableDecoderUtil.decode("GITLAB_URL"));
+        return new ProjectDto(project, memberRole, lastAnalysisTime);
     }
 
     public ProjectExtendedDto getProject(String jwt, int projectId) {

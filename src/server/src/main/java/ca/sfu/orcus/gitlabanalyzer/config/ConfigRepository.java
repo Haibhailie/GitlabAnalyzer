@@ -32,10 +32,36 @@ public class ConfigRepository {
         this.userConfigsCollection = database.getCollection(VariableDecoderUtil.decode("USER_CONFIGS_COLLECTION"));
     }
 
+    // BSON document keys for documents to be stored in Configs collection
+    private enum Config {
+        id("_id"),
+        config("config"),
+        numSubscribers("numSubscribers");
+
+        public final String key;
+
+        Config(String key) {
+            this.key = key;
+        }
+    }
+
+    // BSON document keys for documents to be stored in UserConfigs collection
+    private enum UserConfig {
+        userId("_userId"),
+        configIds("configIds"),
+        currentConfig("currentConfig");
+
+        public final String key;
+
+        UserConfig(String key) {
+            this.key = key;
+        }
+    }
+
     public String addNewConfig(ConfigDto configDto) {
         String configId = new ObjectId().toString();
         configDto.setId(configId);
-        configsCollection.insertOne(generateNewConfigDoc(configId, configDto));
+        configsCollection.insertOne(generateNewConfigDoc(configId, configDto, 1));
         return configId;
     }
 
@@ -43,13 +69,48 @@ public class ConfigRepository {
         if (!containsUser(userId)) {
             userConfigsCollection.insertOne(generateNewUserConfigsDoc(userId, Collections.singletonList(configId)));
         } else {
-            userConfigsCollection.updateOne(eq("_userId", userId), addToSet("configIds", configId));
+            userConfigsCollection.updateOne(
+                    eq(UserConfig.userId.key, userId),
+                    addToSet(UserConfig.configIds.key, configId));
+        }
+
+        configsCollection.updateOne(eq(Config.id.key, configId), inc(Config.numSubscribers.key, 1));
+    }
+
+    public void updateConfig(ConfigDto configDto) {
+        String configId = configDto.getId();
+        int numSubscribers = getNumSubscribersOfConfig(configId);
+        configsCollection.replaceOne(
+                eq(Config.id.key, configId),
+                generateNewConfigDoc(configId, configDto, numSubscribers));
+    }
+
+    public void updateCurrentConfigForUser(int userId, ConfigDto currentConfigDto) {
+        String currentConfigJson = gson.toJson(currentConfigDto);
+
+        if (!containsUser(userId)) {
+            userConfigsCollection.insertOne(generateNewUserConfigsDoc(userId, currentConfigJson));
+        } else {
+            userConfigsCollection.updateOne(
+                    eq(UserConfig.userId.key, userId),
+                    set(UserConfig.currentConfig.key, currentConfigJson));
         }
     }
 
+    public Optional<ConfigDto> getCurrentConfigForUser(int userId) {
+        Document currentConfigDoc = userConfigsCollection.find(eq(UserConfig.userId.key, userId)).first();
+        return (currentConfigDoc == null) ? Optional.empty() :
+                Optional.of(getCurrentConfigDtoFromCurrentConfigDoc(currentConfigDoc));
+    }
+
+    private ConfigDto getCurrentConfigDtoFromCurrentConfigDoc(Document currentConfigDoc) {
+        String currentConfigJson = currentConfigDoc.getString(UserConfig.currentConfig.key);
+        return gson.fromJson(currentConfigJson, ConfigDto.class);
+    }
+
     public void deleteConfigForUser(int userId, String configId) {
-        userConfigsCollection.updateOne(eq("_userId", userId), pull("configIds", configId));
-        configsCollection.updateOne(eq("_id", configId), inc("numSubscribers", -1));
+        userConfigsCollection.updateOne(eq(UserConfig.userId.key, userId), pull(UserConfig.configIds.key, configId));
+        configsCollection.updateOne(eq(Config.id.key, configId), inc(Config.numSubscribers.key, -1));
 
         deleteUserConfigIfNoConfigIds(userId);
         deleteConfigIfNoSubscribers(configId);
@@ -68,11 +129,11 @@ public class ConfigRepository {
     }
 
     private void deleteUserConfig(int userId) {
-        userConfigsCollection.deleteOne(eq("_userId", userId));
+        userConfigsCollection.deleteOne(eq(UserConfig.userId.key, userId));
     }
 
     private void deleteConfig(String configId) {
-        configsCollection.deleteOne(eq("_id", configId));
+        configsCollection.deleteOne(eq(Config.id.key, configId));
     }
 
     private int getNumConfigIdsForUser(int userId) {
@@ -81,53 +142,63 @@ public class ConfigRepository {
     }
 
     private int getNumSubscribersOfConfig(String configId) {
-        Document configDoc = configsCollection.find(eq("_id", configId)).first();
-        return (configDoc == null) ? 0 : configDoc.getInteger("numSubscribers");
+        Document configDoc = configsCollection.find(eq(Config.id.key, configId)).first();
+        return (configDoc == null) ? 0 : configDoc.getInteger(Config.numSubscribers.key);
     }
 
-    private Document generateNewConfigDoc(String configId, ConfigDto configDto) {
+    private Document generateNewConfigDoc(String configId, ConfigDto configDto, int numSubscribers) {
         String configJson = gson.toJson(configDto);
 
-        return new Document("_id", configId)
-                .append("config", configJson)
-                .append("numSubscribers", 1);
+        return new Document(Config.id.key, configId)
+                .append(Config.config.key, configJson)
+                .append(Config.numSubscribers.key, numSubscribers);
     }
 
     private Document generateNewUserConfigsDoc(int userId, List<String> configIds) {
-        return new Document("_userId", userId)
-                .append("configIds", configIds);
+        return new Document(UserConfig.userId.key, userId)
+                .append(UserConfig.configIds.key, configIds);
+    }
+
+    private Document generateNewUserConfigsDoc(int userId, String currentConfig) {
+        return new Document(UserConfig.userId.key, userId)
+                .append(UserConfig.currentConfig.key, currentConfig);
     }
 
     public Optional<String> getConfigJsonById(String configId) {
-        Document configDoc = configsCollection.find(eq("_id", configId)).first();
+        Document configDoc = configsCollection.find(eq(Config.id.key, configId)).first();
 
         return (configDoc == null) ? Optional.empty() :
                 Optional.of(getConfigJsonFromConfigDocument(configDoc));
     }
 
     public Optional<ConfigDto> getConfigDtoById(String configId) {
-        Document configDoc = configsCollection.find(eq("_id", configId)).first();
+        Document configDoc = configsCollection.find(eq(Config.id.key, configId)).first();
 
         return (configDoc == null) ? Optional.empty() :
                 Optional.of(getConfigDtoFromConfigDocument(configDoc));
     }
 
     private boolean containsUser(int userId) {
-        Document userConfigsDoc = userConfigsCollection.find(eq("_userId", userId)).first();
+        Document userConfigsDoc = userConfigsCollection.find(eq(UserConfig.userId.key, userId)).first();
         return (userConfigsDoc != null);
+    }
+
+    public boolean containsConfig(String configId) {
+        Document configDoc = configsCollection.find(eq(Config.id.key, configId)).first();
+        return (configDoc != null);
     }
 
     public boolean userHasConfig(int userId, String configId) {
         Document userConfigsDoc = userConfigsCollection.find(and(
-                eq("_userId", userId),
-                eq("configIds", configId))).first();
+                eq(UserConfig.userId.key, userId),
+                eq(UserConfig.configIds.key, configId))).first();
         return (userConfigsDoc != null);
     }
 
     public Optional<List<String>> getAllConfigIdsForUser(int userId) {
-        Document userConfigsDoc = userConfigsCollection.find(eq("_userId", userId)).first();
+        Document userConfigsDoc = userConfigsCollection.find(eq(UserConfig.userId.key, userId)).first();
         return (userConfigsDoc == null) ? Optional.empty() :
-                Optional.of(userConfigsDoc.getList("configIds", String.class));
+                Optional.of(userConfigsDoc.getList(UserConfig.configIds.key, String.class));
     }
 
     private ConfigDto getConfigDtoFromConfigDocument(Document configDoc) {
@@ -136,6 +207,6 @@ public class ConfigRepository {
     }
 
     private String getConfigJsonFromConfigDocument(Document configDoc) {
-        return configDoc.getString("config");
+        return configDoc.getString(Config.config.key);
     }
 }

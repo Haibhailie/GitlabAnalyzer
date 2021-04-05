@@ -5,7 +5,7 @@ import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
-import ca.sfu.orcus.gitlabanalyzer.models.MemberMock;
+import ca.sfu.orcus.gitlabanalyzer.member.MemberMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
 import ca.sfu.orcus.gitlabanalyzer.models.UserMock;
 import org.gitlab4j.api.GitLabApi;
@@ -159,7 +159,7 @@ public class ProjectServiceTests {
 
         List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
         for (Project p : projects) {
-            expectedProjectDtos.add(new ProjectDto(p, defaultRole));
+            expectedProjectDtos.add(new ProjectDto(p, defaultRole, 0));
         }
 
         return expectedProjectDtos;

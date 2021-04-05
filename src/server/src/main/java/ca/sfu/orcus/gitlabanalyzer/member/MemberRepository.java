@@ -1,10 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-import org.springframework.stereotype.Repository;
+public interface MemberRepository {
 
-@Repository
-public class MemberRepository {
-    public MemberRepository(){
-
-    }
+    boolean projectContainsMember(int projectId, int memberId);
 }

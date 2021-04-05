@@ -8,13 +8,11 @@ import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 public class CommitterDto {
     private String email;
     private String name;
-    private int id;
     private MemberDto member;
 
-    public CommitterDto(String email, String name, int id, MemberDto member) {
+    public CommitterDto(String email, String name, MemberDto member) {
         setEmail(email);
         setName(name);
-        setId(id);
         setMember(member);
     }
 
@@ -24,10 +22,6 @@ public class CommitterDto {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setMember(MemberDto member) {
