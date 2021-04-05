@@ -6,16 +6,16 @@ public class ProjectDto {
     private int id;
     private String name;
     private String role;
-    private long lastActivityAt;
-    private boolean analyzed;
+    private long lastActivityTime;
+    private long lastAnalysisTime;
     private String webUrl;
 
-    public ProjectDto(Project project, String role) {
+    public ProjectDto(Project project, String role, long lastAnalysisTime) {
         setId(project.getId());
         setName(project.getName());
         setRole(role);
-        setLastActivityAt(project.getLastActivityAt().getTime());
-        setAnalyzed(false); // TODO: Iteration 2
+        setLastActivityTime(project.getLastActivityAt().getTime());
+        setLastAnalysisTime(lastAnalysisTime);
         setWebUrl(project.getWebUrl());
     }
 
@@ -31,16 +31,28 @@ public class ProjectDto {
         this.role = role;
     }
 
-    public void setLastActivityAt(long lastActivityAt) {
-        this.lastActivityAt = lastActivityAt;
+    public void setLastActivityTime(long lastActivityTime) {
+        this.lastActivityTime = lastActivityTime;
     }
 
-    public void setAnalyzed(boolean analyzed) {
-        this.analyzed = analyzed;
+    public void setLastAnalysisTime(long lastAnalysisTime) {
+        this.lastAnalysisTime = lastAnalysisTime;
     }
 
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public long getLastAnalysisTime() {
+        return lastAnalysisTime;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
     }
 
     @Override
@@ -58,7 +70,8 @@ public class ProjectDto {
         return (this.id == p.id
                 && this.name.equals(p.name)
                 && this.role.equals(p.role)
-                && this.lastActivityAt == p.lastActivityAt
-                && this.analyzed == p.analyzed);
+                && this.lastActivityTime == p.lastActivityTime
+                && this.lastAnalysisTime == p.lastAnalysisTime)
+                && this.webUrl.equals(p.webUrl);
     }
 }
