@@ -40,10 +40,7 @@ export type TGraphData = {
   mergeScore: number
 }[]
 
-//const dateRegex = /\d{4}-\d{2}-\d{2}/
-
 const epochToDate = (epoch: number) =>
-  //new Date(epoch).toISOString().match(dateRegex)?.[0] ?? 'none'
   new Date(epoch).toDateString().slice(4, 10) ?? 'none'
 
 const computeGraphData = (
