@@ -9,6 +9,7 @@ import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,11 +31,15 @@ public class MemberService {
         this.commitService = commitService;
     }
 
-    public List<MemberDto> getAllMembers(String jwt, int projectId) {
+    public void cacheAllMembers(String jwt, int projectId, String projectUrl) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         List<MemberDto> allMembers = getAllMembers(gitLabApi, projectId);
-        memberRepository.cacheAllMembers(allMembers);
-        return allMembers;
+        memberRepository.cacheAllMembers(allMembers, projectUrl);
+    }
+
+    public List<MemberDto> getAllMembers(String jwt, int projectId) {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        return getAllMembers(gitLabApi, projectId);
     }
 
     public List<MemberDto> getAllMembers(GitLabApi gitLabApi, int projectId) {

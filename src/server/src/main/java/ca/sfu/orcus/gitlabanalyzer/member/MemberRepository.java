@@ -22,11 +22,12 @@ public class MemberRepository {
 
     private enum Member {
         documentId("_id"),
-        displayName("displayName"),
         memberId("memberId"),
+        projectUrl("projectUrl"),
+        displayName("displayName"),
         username("username"),
         role("role"),
-        repoUrl("repoUrl");
+        memberUrl("memberUrl");
 
         public String key;
 
@@ -41,39 +42,40 @@ public class MemberRepository {
         memberCollection = database.getCollection(VariableDecoderUtil.decode("MEMBERS_COLLECTION"));
     }
 
-    public List<String> cacheAllMembers(List<MemberDto> allMembers) {
+    public List<String> cacheAllMembers(List<MemberDto> allMembers, String projectUrl) {
         System.out.println("caching members...");
         List<String> documentIds = new ArrayList<>();
         for (MemberDto member : allMembers) {
-            if (!memberIsAlreadyCached(member)) {
-                String documentId = cacheMember(member);
+            if (!memberIsAlreadyCached(member, projectUrl)) {
+                String documentId = cacheMember(member, projectUrl);
                 documentIds.add(documentId);
             }
         }
         return documentIds;
     }
 
-    private boolean memberIsAlreadyCached(MemberDto member) {
+    private boolean memberIsAlreadyCached(MemberDto member, String projectUrl) {
         Document memberDoc = memberCollection.find(and(eq(Member.memberId.key, member.getId()),
-                                                    eq(Member.repoUrl.key, member.getWebUrl())))
+                                                    eq(Member.projectUrl.key, projectUrl)))
                                                     .projection(include(Member.memberId.key)).first();
         return (memberDoc != null);
     }
 
-    private String cacheMember(MemberDto member) {
+    private String cacheMember(MemberDto member, String projectUrl) {
         String documentId = new ObjectId().toString();
-        Document memberDocument = generateMemberDocument(member, documentId);
+        Document memberDocument = generateMemberDocument(member, documentId, projectUrl);
         memberCollection.insertOne(memberDocument);
         return documentId;
     }
 
-    private Document generateMemberDocument(MemberDto member, String documentId) {
+    private Document generateMemberDocument(MemberDto member, String documentId, String projectUrl) {
         return new Document(Member.documentId.key, documentId)
-                    .append(Member.displayName.key, member.getDisplayName())
                     .append(Member.memberId.key, member.getId())
+                    .append(Member.projectUrl.key, projectUrl)
+                    .append(Member.displayName.key, member.getDisplayName())
                     .append(Member.username.key, member.getUsername())
                     .append(Member.role.key, member.getRole())
-                    .append(Member.repoUrl.key, member.getWebUrl());
+                    .append(Member.memberUrl.key, member.getWebUrl());
     }
 
     public boolean projectContainsMember(int projectId, int memberId) {
