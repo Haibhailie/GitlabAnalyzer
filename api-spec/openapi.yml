@@ -15,8 +15,10 @@ paths:
     $ref: './configs.yml'
   /api/config/{configId}:
     $ref: './config.yml#/configGetPutDelete'
-  /api/config/import/:
+  /api/config/import:
     $ref: './configImport.yml'
+  /api/config/current:
+    $ref: './configCurrent.yml'
   /api/projects:
     $ref: './projects.yml'
   /api/project/{projectId}:

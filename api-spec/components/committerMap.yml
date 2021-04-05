@@ -2,10 +2,10 @@ type: array
 items:
   type: object
   required:
-    - name
+    - email
     - memberId
   properties:
-    name:
+    email:
       type: string
     memberId:
       type: integer
