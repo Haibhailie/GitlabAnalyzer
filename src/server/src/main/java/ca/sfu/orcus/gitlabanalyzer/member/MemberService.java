@@ -72,7 +72,7 @@ public class MemberService {
 
     }
 
-    public List<MergeRequestDto> getOrphanedMergeRequestsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
+    public List<MergeRequestDto> getOrphanMergeRequestsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;

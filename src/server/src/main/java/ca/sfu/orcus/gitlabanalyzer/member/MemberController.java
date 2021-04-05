@@ -64,7 +64,7 @@ public class MemberController {
     }
 
     @GetMapping("/api/project/{projectId}/members/{memberName}/mergerequests")
-    public String getOrphanedMergeRequestsByMemberName(@CookieValue(value = "sessionId") String jwt,
+    public String getOrphanMergeRequestsByMemberName(@CookieValue(value = "sessionId") String jwt,
                                          HttpServletResponse response,
                                          @PathVariable int projectId,
                                          @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
@@ -72,9 +72,9 @@ public class MemberController {
                                          @PathVariable String memberName) {
         Date dateSince = DateUtils.getDateSinceOrEarliest(since);
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
-        List<MergeRequestDto> orphanedMergeRequestsByMemberName = memberService.getOrphanedMergeRequestsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
-        response.setStatus(orphanedMergeRequestsByMemberName == null ? SC_UNAUTHORIZED : SC_OK);
-        return gson.toJson(orphanedMergeRequestsByMemberName);
+        List<MergeRequestDto> orphanMergeRequestsByMemberName = memberService.getOrphanMergeRequestsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
+        response.setStatus(orphanMergeRequestsByMemberName == null ? SC_UNAUTHORIZED : SC_OK);
+        return gson.toJson(orphanMergeRequestsByMemberName);
     }
 
     @GetMapping("/api/project/{projectId}/members/{memberName}/{mergerequestId}/commits")
