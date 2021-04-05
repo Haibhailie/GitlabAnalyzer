@@ -42,7 +42,7 @@ public class NoteService {
             for (Note n : allNotes.get(webUrl).getSecond()) {
                 if (n.getAuthor().getId() == memberId && !n.getSystem()) {
                     try {
-                        String parentAuthor = allNotes.get(webUrl).getFirst() == memberId ? "self" : gitLabApi.getProjectApi().getMember(projectId, memberId).getName();
+                        String parentAuthor = allNotes.get(webUrl).getFirst() == memberId ? "self" : gitLabApi.getProjectApi().getMember(projectId, allNotes.get(webUrl).getFirst()).getName();
                         filteredNotes.add(new NoteDto(n, webUrl, parentAuthor));
                     } catch (GitLabApiException e) {
                         filteredNotes.add(new NoteDto(n, webUrl, ""));
