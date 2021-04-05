@@ -93,10 +93,12 @@ public class CommitService {
         try {
             List<MergeRequestDto> orphanMergeRequestByMemberName = new ArrayList<>();
             List<CommitDto> allCommitsByMemberName = returnAllCommits(gitLabApi, projectId, since, until, memberName);
+            List<Integer> addedMergeRequests = new ArrayList<>();
             for (CommitDto c : allCommitsByMemberName) {
                 List<MergeRequest> relatedMergeRequests = gitLabApi.getCommitsApi().getMergeRequests(projectId, c.getSha());
                 for (MergeRequest mr : relatedMergeRequests) {
-                    if (!memberName.equalsIgnoreCase(mr.getAuthor().getName())) {
+                    if (!memberName.equalsIgnoreCase(mr.getAuthor().getName()) && !addedMergeRequests.contains(mr.getIid())) {
+                        addedMergeRequests.add(mr.getIid());
                         orphanMergeRequestByMemberName.add(new MergeRequestDto(gitLabApi, projectId, mr));
                     }
                 }
