@@ -41,6 +41,26 @@ public class MemberDto {
         this.webUrl = webUrl;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -58,5 +78,4 @@ public class MemberDto {
                 && this.username.equals(m.username)
                 && this.role.equals(m.role));
     }
-
 }
