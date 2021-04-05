@@ -47,7 +47,6 @@ const computeGraphData = (
   commitData: ICommitData[],
   mergeData: IMergeData[]
 ): TGraphData => {
-  console.log(commitData)
   const graphObj: Record<
     string,
     {
