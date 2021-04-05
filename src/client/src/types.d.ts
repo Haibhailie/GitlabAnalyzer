@@ -38,4 +38,5 @@ export interface ICommentData {
   date: number
   context: string
   webUrl: string
+  parentAuthor: string
 }

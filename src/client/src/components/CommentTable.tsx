@@ -1,12 +1,13 @@
+import { useContext, useEffect, useState } from 'react'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import dateConverter from '../utils/dateConverter'
 import { onError } from '../utils/suspenseDefaults'
-import { ICommentData } from '../types'
-import { useContext, useEffect, useState } from 'react'
 import { UserConfigContext } from '../context/UserConfigContext'
 import { ThemeProvider, Tooltip } from '@material-ui/core'
 import tooltipTheme from '../themes/tooltipTheme'
+
+import { ICommentData } from '../types'
 
 import Table from '../components/Table'
 import CommentAccordion from '../components/CommentAccordion'
@@ -22,11 +23,15 @@ export interface ICommentTableProps {
 }
 
 const isLongComment = (content: string) => {
-  return content.length > 60
+  return content.length > 120
 }
 
 const isInvalidUrl = (url: string) => {
   return url.includes('example')
+}
+
+const formatParentAuthor = (author: string) => {
+  return author == 'self' ? 'Self' : author == '' ? 'Deleted user' : author
 }
 
 const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
@@ -68,8 +73,15 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
       >
         <Table
           sortable
-          headers={['Date', 'Comment', 'Word count', 'Type', 'GitLab link']}
-          columnWidths={['1fr', '6fr', '0.8fr', '1fr', '0.8fr']}
+          headers={[
+            'Date',
+            'Comment',
+            'Word count',
+            'Type',
+            'By',
+            'GitLab link',
+          ]}
+          columnWidths={['1fr', '6fr', '0.8fr', '1fr', '0.8fr', '0.8fr']}
           classes={{
             container: styles.tableContainer,
             table: styles.table,
@@ -79,17 +91,18 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
           title={`Code review comments`}
           data={
             selectedRange?.map(
-              ({ wordcount, content, date, context, webUrl }) => {
+              ({ wordcount, content, date, context, webUrl, parentAuthor }) => {
                 return {
                   date: dateConverter(date, true),
                   content: isLongComment(content) ? (
-                    <CommentAccordion comment={content}></CommentAccordion>
+                    <CommentAccordion comment={content} />
                   ) : (
                     content
                   ),
                   wordcount,
                   context:
                     context === 'MergeRequest' ? 'Merge Request' : context,
+                  parentAuthor: formatParentAuthor(parentAuthor),
                   gitlabUrl: isInvalidUrl(webUrl) ? (
                     <Tooltip
                       title="Unable to retrieve link due to server configuration error. "
