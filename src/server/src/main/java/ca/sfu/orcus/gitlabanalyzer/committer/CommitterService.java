@@ -23,7 +23,7 @@ public class CommitterService {
 
     @Autowired
     public CommitterService(@Qualifier("mockCommitterRepo") CommitterRepository committerRepo,
-                            @Qualifier("mockMemberRepo") MemberRepository memberRepo,
+                            MemberRepository memberRepo,
                             ProjectRepository projectRepo,
                             GitLabApiWrapper gitLabApiWrapper) {
         this.committerRepo = committerRepo;

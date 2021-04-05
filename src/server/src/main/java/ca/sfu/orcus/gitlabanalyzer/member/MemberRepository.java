@@ -9,6 +9,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -36,14 +37,24 @@ public class MemberRepository {
         memberCollection = database.getCollection(VariableDecoderUtil.decode("MEMBERS_COLLECTION"));
     }
 
-    public void cacheAllMembers(List<MemberDto> allMembers) {
+    public List<String> cacheAllMembers(List<MemberDto> allMembers) {
+        List<String> documentIds = new ArrayList<>();
         for (MemberDto member : allMembers) {
-            Document memberDocument = generateMemberDocument(member);
+            String documentId = storeMember(member);
+            documentIds.add(documentId);
         }
+        return documentIds;
     }
 
-    private Document generateMemberDocument(MemberDto member) {
-        return new Document(Member.documentId.key, new ObjectId().toString())
+    private String storeMember(MemberDto member) {
+        String documentId = new ObjectId().toString();
+        Document memberDocument = generateMemberDocument(member, documentId);
+        memberCollection.insertOne(memberDocument);
+        return documentId;
+    }
+
+    private Document generateMemberDocument(MemberDto member, String documentId) {
+        return new Document(Member.documentId.key, documentId)
                     .append(Member.displayName.key, member.getDisplayName())
                     .append(Member.memberId.key, member.getId())
                     .append(Member.username.key, member.getUsername())

@@ -32,10 +32,9 @@ public class MemberService {
 
     public List<MemberDto> getAllMembers(String jwt, int projectID) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
-            return null;
-        }
-        return getAllMembers(gitLabApi, projectID);
+        List<MemberDto> allMembers = getAllMembers(gitLabApi, projectID);
+        memberRepository.cacheAllMembers(allMembers);
+        return allMembers;
     }
 
     public List<MemberDto> getAllMembers(GitLabApi gitLabApi, int projectId) {
@@ -43,16 +42,20 @@ public class MemberService {
             return null;
         }
         try {
-            List<MemberDto> filteredAllMembers = new ArrayList<>();
-            List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectId);
-            for (Member m : allMembers) {
-                MemberDto presentMember = new MemberDto(m);
-                filteredAllMembers.add(presentMember);
-            }
-            return filteredAllMembers;
+            return getFilteredMembers(gitLabApi, projectId);
         } catch (GitLabApiException e) {
             return null;
         }
+    }
+
+    private List<MemberDto> getFilteredMembers(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
+        List<MemberDto> filteredAllMembers = new ArrayList<>();
+        List<Member> allMembers = gitLabApi.getProjectApi().getAllMembers(projectId);
+        for (Member m : allMembers) {
+            MemberDto presentMember = new MemberDto(m);
+            filteredAllMembers.add(presentMember);
+        }
+        return filteredAllMembers;
     }
 
     public List<CommitDto> getCommitsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
