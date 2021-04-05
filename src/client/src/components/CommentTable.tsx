@@ -23,7 +23,7 @@ export interface ICommentTableProps {
 }
 
 const isLongComment = (content: string) => {
-  return content.length > 120
+  return content.length > 140
 }
 
 const isInvalidUrl = (url: string) => {
@@ -31,7 +31,13 @@ const isInvalidUrl = (url: string) => {
 }
 
 const formatParentAuthor = (author: string) => {
-  return author == 'self' ? 'Self' : author == '' ? 'Deleted user' : author
+  let formattedAuthor: string = author
+  if (author === 'self') {
+    formattedAuthor = 'Self'
+  } else if (author === '') {
+    formattedAuthor = 'Deleted user'
+  }
+  return formattedAuthor
 }
 
 const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
