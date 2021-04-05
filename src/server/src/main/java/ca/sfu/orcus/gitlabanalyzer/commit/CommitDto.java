@@ -25,7 +25,6 @@ public class CommitDto {
     private boolean isIgnored;
     private List<FileDto> files;
     private String webUrl;
-    private String sha;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
         setTitle(commit.getTitle());
@@ -48,7 +47,6 @@ public class CommitDto {
         setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
         setIgnored(false);
         setWebUrl(presentCommit.getWebUrl());
-        setSha(presentCommit.getLastPipeline().getSha());
     }
 
     public void setTitle(String title) {
@@ -111,12 +109,8 @@ public class CommitDto {
         return diffs;
     }
 
-    public void setSha(String sha) {
-        this.sha = sha;
-    }
-
     public String getSha() {
-        return sha;
+        return id;
     }
 
     public String getAuthor() {
