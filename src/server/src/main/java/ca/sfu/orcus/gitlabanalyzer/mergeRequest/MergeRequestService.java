@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
@@ -22,11 +23,11 @@ public class MergeRequestService {
     private final GitLabApiWrapper gitLabApiWrapper;
     private final ConfigService configService;
 
-    double addLOCFactor = 1;
-    double deleteLOCFactor = 0.2;
-    double syntaxChangeFactor = 0.2;
-    double blankLOCFactor = 0;
-    double spacingChangeFactor = 0;
+    double addLOCFactor;
+    double deleteLOCFactor;
+    double syntaxChangeFactor;
+    double blankLOCFactor;
+    double spacingChangeFactor;
 
     @Autowired
     public MergeRequestService(MergeRequestRepository mergeRequestRepository, GitLabApiWrapper gitLabApiWrapper, ConfigService configService) {
@@ -50,9 +51,7 @@ public class MergeRequestService {
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
             for (MergeRequest mr : allMergeRequests) {
                 if (mr.getCreatedAt().after(since) && mr.getCreatedAt().before(until)) {
-                    List<FileDto> fileScores = setMergeRequestScores(jwt, gitLabApi, projectId, mr.getId());
-                    MergeRequestDto presentMergeRequest = new MergeRequestDto(jwt, gitLabApi, projectId, mr, fileScores);
-                    filteredMergeRequests.add(presentMergeRequest);
+                    createAndStoreDto(jwt, gitLabApi, projectId, filteredMergeRequests, mr);
                 }
             }
             return filteredMergeRequests;
@@ -70,15 +69,23 @@ public class MergeRequestService {
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
             for (MergeRequest mr : allMergeRequests) {
                 if (mr.getAuthor().getId() == memberId && mr.getCreatedAt().after(since) && mr.getCreatedAt().before(until)) {
-                    List<FileDto> fileScores = setMergeRequestScores(jwt, gitLabApi, projectId, mr.getId());
-                    MergeRequestDto presentMergeRequest = new MergeRequestDto(jwt, gitLabApi, projectId, mr, fileScores);
-                    filteredMergeRequests.add(presentMergeRequest);
+                    createAndStoreDto(jwt, gitLabApi, projectId, filteredMergeRequests, mr);
                 }
             }
             return filteredMergeRequests;
         } catch (GitLabApiException e) {
             return null;
         }
+    }
+
+    private void createAndStoreDto(String jwt, GitLabApi gitLabApi, int projectId, List<MergeRequestDto> filteredMergeRequests, MergeRequest mr) throws GitLabApiException {
+        List<FileDto> fileScores = setMergeRequestScores(jwt, gitLabApi, projectId, mr.getId());
+        List<MergeRequestCommitsDto> mrCommits = new ArrayList<>();
+        List<Commit> commits = gitLabApi.getMergeRequestApi().getCommits(projectId, mr.getId());
+        double sumOfCommitsScore = getSumOfCommitsScore(gitLabApi, projectId, commits, mrCommits);
+
+        MergeRequestDto presentMergeRequest = new MergeRequestDto(gitLabApi, projectId, mr, fileScores, sumOfCommitsScore, mrCommits);
+        filteredMergeRequests.add(presentMergeRequest);
     }
 
     private List<FileDto> setMergeRequestScores(String jwt, GitLabApi gitLabApi, int projectId, int mergeRequestId) throws GitLabApiException {
@@ -105,15 +112,20 @@ public class MergeRequestService {
                     switch (g.getType()) {
                         case "addLoc" -> addLOCFactor = g.getValue();
                         case "deleteLoc" -> deleteLOCFactor = g.getValue();
-                        case "Syntax" -> syntaxChangeFactor = g.getValue();
+                        case "syntax" -> syntaxChangeFactor = g.getValue();
                         case "blank" -> blankLOCFactor = g.getValue();
                         case "spacing" -> spacingChangeFactor = g.getValue();
-                        default -> throw new IllegalStateException("Unexpected value: " + g.getType());
+                        default -> throw new IllegalStateException("Unexpected type: " + g.getType());
                     }
                 }
             }
         } catch (GitLabApiException e) {
             // default multipliers
+            addLOCFactor = 1;
+            deleteLOCFactor = 0.2;
+            syntaxChangeFactor = 0.2;
+            blankLOCFactor = 0;
+            spacingChangeFactor = 0;
         }
     }
 
@@ -155,5 +167,21 @@ public class MergeRequestService {
         } catch (GitLabApiException e) {
             return null;
         }
+    }
+
+    public double getSumOfCommitsScore(GitLabApi gitLabApi, int projectId, List<Commit> commits, List<MergeRequestCommitsDto> commitsInfoInMergeRequest) throws GitLabApiException {
+        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
+        double sumOfCommitsScore = 0;
+        for (Commit c : commits) {
+            Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
+            if (presentCommit.getStats() != null) {
+                List<FileDto> presentCommitFiles = scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, presentCommit.getShortId()));
+                for (FileDto fileIterator : presentCommitFiles) {
+                    sumOfCommitsScore += fileIterator.getTotalScore();
+                    commitsInfoInMergeRequest.add(new MergeRequestCommitsDto(fileIterator.getFileScore(), fileIterator.getLinesOfCodeChanges()));
+                }
+            }
+        }
+        return sumOfCommitsScore;
     }
 }

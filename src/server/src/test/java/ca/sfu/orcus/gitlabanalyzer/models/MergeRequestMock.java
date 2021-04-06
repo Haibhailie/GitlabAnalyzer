@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestCommitsDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
@@ -77,7 +78,8 @@ public class MergeRequestMock extends AuthorMock {
         for (MergeRequest m : mergeRequests) {
             if (m.getCreatedAt().after(dateSince) && m.getCreatedAt().before(dateUntil)) {
                 List<FileDto> fileScores = new ArrayList<>();
-                expectedMergeRequestDtoList.add(new MergeRequestDto(jwt, gitLabApi, projectId, m, fileScores));
+                List<MergeRequestCommitsDto> mrCommits = new ArrayList<>();
+                expectedMergeRequestDtoList.add(new MergeRequestDto(gitLabApi, projectId, m, fileScores, 0, mrCommits));
             }
         }
         return expectedMergeRequestDtoList;

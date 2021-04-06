@@ -33,7 +33,7 @@ public class MergeRequestDto {
     private List<MergeRequestCommitsDto> commitsInfoInMergeRequest = new ArrayList<>();
     private String webUrl;
 
-    public MergeRequestDto(String jwt, GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest, List<FileDto> fileScores) throws GitLabApiException {
+    public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest, List<FileDto> fileScores, double sumOfCommitsScore, List<MergeRequestCommitsDto> mrCommitsInfo) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();
 
         setMergeRequestId(mergeRequestId);
@@ -55,7 +55,9 @@ public class MergeRequestDto {
 
         List<Commit> commits = gitLabApi.getMergeRequestApi().getCommits(projectId, mergeRequestId);
         setCommitters(commits);
-        setSumOfCommitsScore(commits, gitLabApi, projectId);
+        setSumOfCommitsScore(sumOfCommitsScore);
+
+        setCommitsInfoInMergeRequest(mrCommitsInfo);
 
         setParticipants(gitLabApi.getMergeRequestApi().getParticipants(projectId, mergeRequestId));
         setTime(presentMergeRequest.getMergedAt().getTime());
@@ -105,19 +107,8 @@ public class MergeRequestDto {
         this.targetBranch = targetBranch;
     }
 
-    public void setSumOfCommitsScore(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
-        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
-        sumOfCommitsScore = 0;
-        for (Commit c : commits) {
-            Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
-            if (presentCommit.getStats() != null) {
-                List<FileDto> presentCommitFiles = scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, presentCommit.getShortId()));
-                for (FileDto fileIterator : presentCommitFiles) {
-                    sumOfCommitsScore += fileIterator.getTotalScore();
-                    commitsInfoInMergeRequest.add(new MergeRequestCommitsDto(fileIterator.getFileScore(), fileIterator.getLinesOfCodeChanges()));
-                }
-            }
-        }
+    public void setSumOfCommitsScore(double sumOfCommitsScore) {
+        this.sumOfCommitsScore = sumOfCommitsScore;
     }
 
     public void setParticipants(List<Participant> participants) {
@@ -133,8 +124,11 @@ public class MergeRequestDto {
         for (Commit c : commits) {
             commitAuthorsSet.add(c.getAuthorName());
         }
-
         committers = new ArrayList<>(commitAuthorsSet);
+    }
+
+    public void setCommitsInfoInMergeRequest(List<MergeRequestCommitsDto> commitsInfoInMergeRequest) {
+        this.commitsInfoInMergeRequest = commitsInfoInMergeRequest;
     }
 
     public void setIgnored(boolean ignored) {
