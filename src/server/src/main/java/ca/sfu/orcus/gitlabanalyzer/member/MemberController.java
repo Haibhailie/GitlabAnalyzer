@@ -6,6 +6,7 @@ import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +23,7 @@ public class MemberController {
     private static final Gson gson = new Gson();
 
     @Autowired
-    public MemberController(MemberService memberService) {
+    public MemberController(@Qualifier("direct") MemberService memberService) {
         this.memberService = memberService;
     }
 

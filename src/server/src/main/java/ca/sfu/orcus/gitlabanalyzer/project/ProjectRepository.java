@@ -11,6 +11,8 @@ import org.gitlab4j.api.models.Visibility;
 import org.springframework.stereotype.Repository;
 
 import javax.ws.rs.NotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -40,8 +42,8 @@ public class ProjectRepository {
         Project(String key) {
             this.key = key;
         }
-    }
 
+    }
     public void cacheProjectSkeleton(ProjectDto projectDto, Visibility visibility) {
         if (!projectAlreadyCached(projectDto.getId(), projectDto.getWebUrl())) {
             Document projectSkeleton = generateProjectDocument(projectDto, (visibility == Visibility.PUBLIC));
@@ -65,8 +67,8 @@ public class ProjectRepository {
                     .append(Project.isPublic.key, isPublic);
     }
 
-    public boolean projectIsPublic(int projectId, String repoUrl) throws NotFoundException {
-        Document project = getPartialProjectDocument(projectId, repoUrl, Project.isPublic.key);
+    public boolean projectIsPublic(int projectId, String projectUrl) throws NotFoundException {
+        Document project = getPartialProjectDocument(projectId, projectUrl, Project.isPublic.key);
 
         if (project == null) {
             throw new NotFoundException("Project is not in database");
@@ -74,9 +76,16 @@ public class ProjectRepository {
         return project.getBoolean(Project.isPublic.key);
     }
 
-    public long getLastAnalysisTimeForProject(int projectId, String repoUrl) {
-        Document project = getPartialProjectDocument(projectId, repoUrl, Project.lastAnalysisTime.key);
+    public long getLastAnalysisTimeForProject(int projectId, String projectUrl) {
+        Document project = getPartialProjectDocument(projectId, projectUrl, Project.lastAnalysisTime.key);
         return project == null ? 0 : project.getLong(Project.lastAnalysisTime.key);
+    }
+
+    public List<String> getMemberDocIds(int projectId, String projectUrl) {
+        Document project = getPartialProjectDocument(projectId, projectUrl, Project.memberDocumentRefs.key);
+        List<String> memberDocIds = project.getList(Project.memberDocumentRefs.key, String.class);
+        return memberDocIds == null ? new ArrayList<>() :
+                project.getList(Project.memberDocumentRefs.key, String.class);
     }
 
     private Document getPartialProjectDocument(int projectId, String repoUrl, String projectionKey) {

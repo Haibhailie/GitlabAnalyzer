@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -76,6 +77,32 @@ public class MemberRepository {
                     .append(Member.username.key, member.getUsername())
                     .append(Member.role.key, member.getRole())
                     .append(Member.memberUrl.key, member.getWebUrl());
+    }
+
+    public List<MemberDto> getMembers(List<String> documentIds) {
+        List<MemberDto> members = new ArrayList<>();
+        for (String documentId : documentIds) {
+            Optional<MemberDto> member = getMember(documentId);
+            member.ifPresent(members::add);
+        }
+        return members;
+    }
+
+    private Optional<MemberDto> getMember(String documentId) {
+        Document memberDoc = memberCollection.find(eq(Member.documentId.key, documentId)).first();
+        return Optional.ofNullable(docToDto(memberDoc));
+    }
+
+    private MemberDto docToDto(Document memberDoc) {
+        if (memberDoc == null) {
+            return null;
+        }
+        String displayName = memberDoc.getString(Member.displayName.key);
+        int id = memberDoc.getInteger(Member.memberId.key);
+        String username = memberDoc.getString(Member.username.key);
+        String role = memberDoc.getString(Member.role.key);
+        String memberUrl = memberDoc.getString(Member.memberUrl.key);
+        return new MemberDto(displayName, id, username, role, memberUrl);
     }
 
     public boolean projectContainsMember(int projectId, int memberId) {

@@ -10,6 +10,7 @@ import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
 import org.gitlab4j.api.models.Project;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,7 +23,9 @@ public class ProjectService {
     private final MemberService memberService;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, GitLabApiWrapper gitLabApiWrapper, MemberService memberService) {
+    public ProjectService(ProjectRepository projectRepository,
+                          GitLabApiWrapper gitLabApiWrapper,
+                          @Qualifier("direct") MemberService memberService) {
         this.projectRepository = projectRepository;
         this.gitLabApiWrapper = gitLabApiWrapper;
         this.memberService = memberService;

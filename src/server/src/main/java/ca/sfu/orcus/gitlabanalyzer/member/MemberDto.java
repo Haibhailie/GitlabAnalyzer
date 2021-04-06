@@ -21,6 +21,14 @@ public class MemberDto {
         setWebUrl(presentMember.getWebUrl());
     }
 
+    public MemberDto(String displayName, int id, String username, String role, String webUrl) {
+        this.displayName = displayName;
+        this.id = id;
+        this.username = username;
+        this.role = role;
+        this.webUrl = webUrl;
+    }
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }

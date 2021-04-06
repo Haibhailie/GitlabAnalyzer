@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Service
+@Service("direct")
 public class MemberServiceDirect implements MemberService {
     private final GitLabApiWrapper gitLabApiWrapper;
     private final MergeRequestService mergeRequestService;
