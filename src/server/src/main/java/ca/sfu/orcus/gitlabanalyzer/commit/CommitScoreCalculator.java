@@ -1,11 +1,14 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.*;
+import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Diff;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class CommitScoreCalculator {
     // TODO: Should be getting these from config
@@ -30,4 +33,5 @@ public class CommitScoreCalculator {
                 spacingChangeFactor);
 
     }
+
 }

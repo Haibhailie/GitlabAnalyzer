@@ -92,7 +92,7 @@ public class MemberServiceTests {
         List<CommitDto> commitDtos = new ArrayList<>();
 
         String displayName = MemberMock.defaultDisplayName;
-        when(commitService.returnAllCommits(gitLabApi, projectId, since, until, displayName)).thenReturn(commitDtos);
+        when(commitService.returnAllCommitsOfAMember(jwt, gitLabApi, projectId, since, until, displayName)).thenReturn(commitDtos);
 
         List<CommitDto> commitsByMemberName = memberService.getCommitsByMemberName(jwt, projectId, since, until, displayName);
 

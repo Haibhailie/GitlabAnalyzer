@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
@@ -11,6 +12,7 @@ import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
+import org.gitlab4j.api.models.Diff;
 import org.gitlab4j.api.models.MergeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class MergeRequestService {
     private final MergeRequestRepository mergeRequestRepository;
     private final GitLabApiWrapper gitLabApiWrapper;
     private final ConfigService configService;
+    private final CommitService commitService;
 
     double addLOCFactor;
     double deleteLOCFactor;
@@ -30,10 +33,11 @@ public class MergeRequestService {
     double spacingChangeFactor;
 
     @Autowired
-    public MergeRequestService(MergeRequestRepository mergeRequestRepository, GitLabApiWrapper gitLabApiWrapper, ConfigService configService) {
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, GitLabApiWrapper gitLabApiWrapper, ConfigService configService, CommitService commitService) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.gitLabApiWrapper = gitLabApiWrapper;
         this.configService = configService;
+        this.commitService = commitService;
     }
 
     public List<MergeRequestDto> getAllMergeRequests(String jwt, int projectId, Date since, Date until) {
@@ -132,18 +136,20 @@ public class MergeRequestService {
     public List<CommitDto> getAllCommitsFromMergeRequest(String jwt, int projectId, int mergeRequestId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
-            return returnAllCommitsFromMergeRequest(gitLabApi, projectId, mergeRequestId);
+            return returnAllCommitsFromMergeRequest(jwt, gitLabApi, projectId, mergeRequestId);
         } else {
             return null;
         }
     }
 
-    private List<CommitDto> returnAllCommitsFromMergeRequest(GitLabApi gitLabApi, int projectId, int mergeRequestId) {
+    private List<CommitDto> returnAllCommitsFromMergeRequest(String jwt, GitLabApi gitLabApi, int projectId, int mergeRequestId) {
         try {
             List<CommitDto> filteredCommits = new ArrayList<>();
             List<Commit> allCommits = gitLabApi.getMergeRequestApi().getCommits(projectId, mergeRequestId);
             for (Commit c : allCommits) {
-                filteredCommits.add(new CommitDto(gitLabApi, projectId, c));
+                List<Diff> diffs = gitLabApi.getCommitsApi().getDiff(projectId, c.getId());
+                List<FileDto> fileScores = commitService.getCommitScore(jwt, diffs);
+                filteredCommits.add(new CommitDto(gitLabApi, projectId, c, fileScores));
             }
             return filteredCommits;
         } catch (GitLabApiException e) {

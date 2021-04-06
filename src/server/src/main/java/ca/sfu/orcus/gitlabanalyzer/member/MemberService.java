@@ -60,7 +60,7 @@ public class MemberService {
         if (gitLabApi == null) {
             return null;
         }
-        return commitService.returnAllCommits(gitLabApi, projectId, since, until, memberName);
+        return commitService.returnAllCommitsOfAMember(jwt, gitLabApi, projectId, since, until, memberName);
     }
 
     public List<MergeRequestDto> getMergeRequestsByMemberId(String jwt, int projectId, Date since, Date until, int memberId) {

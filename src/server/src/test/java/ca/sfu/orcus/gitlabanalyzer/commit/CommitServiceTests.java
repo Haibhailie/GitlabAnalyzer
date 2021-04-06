@@ -2,6 +2,7 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
+import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
 import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
@@ -17,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -85,7 +87,8 @@ public class CommitServiceTests {
 
         when(commitsApi.getCommit(projectId, CommitMock.defaultSha)).thenReturn(commit);
         CommitDto commitDto = commitService.getSingleCommit(jwt, projectId, CommitMock.defaultSha);
-        CommitDto expectedCommitDto = new CommitDto(gitLabApi, projectId, commit);
+        List<FileDto> fileScores = new ArrayList<>();
+        CommitDto expectedCommitDto = new CommitDto(gitLabApi, projectId, commit, fileScores);
 
         assertEquals(commitDto, expectedCommitDto);
     }
@@ -101,8 +104,9 @@ public class CommitServiceTests {
 
         List<CommitDto> commitDtos = commitService.getAllCommits(jwt, projectId, since, until);
         List<CommitDto> expectedCommitDtos = new ArrayList<>();
+        List<FileDto> fileScores = new ArrayList<>();
         for (Commit c : commitList) {
-            expectedCommitDtos.add(new CommitDto(gitLabApi, projectId, c));
+            expectedCommitDtos.add(new CommitDto(gitLabApi, projectId, c, fileScores));
         }
         assertEquals(commitDtos, expectedCommitDtos);
     }

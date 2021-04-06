@@ -26,7 +26,7 @@ public class CommitDto {
     private List<FileDto> files;
     private String webUrl;
 
-    public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
+    public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit, List<FileDto> fileScores) throws GitLabApiException {
         setTitle(commit.getTitle());
         setAuthor(commit.getAuthorName());
         setAuthorEmail(commit.getAuthorEmail());
@@ -43,8 +43,7 @@ public class CommitDto {
         List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
         setDiffs((DiffStringParser.parseDiff(diffList)));
 
-        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
-        setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
+        setFiles(fileScores);
         setIgnored(false);
         setWebUrl(presentCommit.getWebUrl());
     }
