@@ -82,9 +82,7 @@ const useSuspense = <DataType, ErrorType = Error>(
           <div
             key="preventTreeUpdate"
             style={{
-              visibility: 'hidden',
-              position: 'absolute',
-              zIndex: -1000,
+              display: 'none',
             }}
           >
             {LoadedComp}

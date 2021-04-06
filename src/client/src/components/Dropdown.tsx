@@ -12,6 +12,12 @@ export interface IDropdownProps {
   isOpen?: boolean
   startOpened?: boolean
   fixedCollapsed?: boolean
+  className?: string
+  classes?: {
+    dropdown?: string
+  }
+  arrowOnLeft?: boolean
+  maxHeight?: number
 }
 
 const Dropdown = ({
@@ -20,38 +26,69 @@ const Dropdown = ({
   isOpen: openOverride,
   startOpened,
   fixedCollapsed,
+  className,
+  classes,
+  arrowOnLeft,
+  maxHeight,
 }: IDropdownProps) => {
   const [isOpen, setOpen] = useState(!!startOpened)
+
   const [height, setHeight] = useState(MAX_INT)
-  const [firstPass, setFirstPass] = useState(true)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => setOpen(!!openOverride), [openOverride])
+  useEffect(() => {
+    openOverride && setOpen(!!openOverride)
+  }, [openOverride])
 
   useEffect(() => {
-    setHeight(dropdownRef.current?.clientHeight ?? MAX_INT)
-    setFirstPass(false)
-  }, [])
+    if (!dropdownRef.current) return
 
-  const toggleCollapse = () => setOpen(!isOpen)
+    if (maxHeight) {
+      setHeight(maxHeight)
+      return
+    }
+
+    const fakeChild = dropdownRef.current.cloneNode(true) as HTMLDivElement
+    fakeChild.style.maxHeight = ''
+    fakeChild.style.width = `${dropdownRef.current.clientWidth}px`
+    fakeChild.className = styles.fakeChild
+    document.body.appendChild(fakeChild)
+    setHeight(fakeChild.clientHeight)
+    document.body.removeChild(fakeChild)
+  }, [
+    children,
+    dropdownRef.current?.clientHeight,
+    dropdownRef.current?.clientWidth,
+  ])
+
+  const toggleCollapse = () => !fixedCollapsed && setOpen(!isOpen)
 
   return (
-    <div
-      className={classNames(styles.container, !isOpen && styles.collapsed)}
-      onClick={toggleCollapse}
-    >
+    <div className={classNames(className, !isOpen && styles.collapsed)}>
       {header && (
-        <button className={styles.headerBtn}>
-          <div className={styles.header}>
+        <button className={styles.headerBtn} onClick={toggleCollapse}>
+          <div
+            className={classNames(
+              styles.header,
+              arrowOnLeft && styles.leftArrow
+            )}
+          >
             {header}
-            {!fixedCollapsed && <Gt className={styles.collapseImg} />}
+            {!fixedCollapsed && (
+              <Gt
+                className={classNames(
+                  styles.collapseImg,
+                  classes?.dropdown ?? styles.collapse
+                )}
+              />
+            )}
           </div>
         </button>
       )}
       <div
-        className={classNames(styles.dropdown, firstPass && styles.firstPass)}
+        className={styles.dropdown}
         style={{
-          maxHeight: `${firstPass || isOpen ? height : 0}px`,
+          maxHeight: `${isOpen ? height : 0}px`,
         }}
         ref={dropdownRef}
       >

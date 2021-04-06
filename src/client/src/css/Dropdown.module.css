@@ -1,34 +1,49 @@
-/* .container {
-  width: 100%;
-} */
+.container {
+  /* width: 100%; */
+}
 
 .headerBtn {
   /* display: flex; */
+  width: 100%;
 }
 
 .header {
-  display: flex;
-  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.leftArrow .collapseImg {
+  left: 10px;
 }
 
 .collapseImg {
   width: 12px;
   height: 14px;
-  /* stroke: #ffffff; */
-  transform: rotate(90deg);
-  transition: transform ease-in-out 300ms;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: rotate(90deg) translateX(-50%);
+  transition: transform ease-in-out 200ms;
 }
 
 .collapsed .collapseImg {
-  transform: rotate(0deg);
+  transform: rotate(0deg) translateY(-50%);
+}
+
+.collapse {
+  stroke: #000000;
+}
+
+.header:hover .collapse {
+  stroke: var(--color-primary);
 }
 
 .dropdown {
-  overflow: hidden;
-  transition: max-height ease-in-out 300ms;
+  overflow: auto;
+  transition: max-height ease-in-out 200ms;
 }
 
-.firstPass {
+.fakeChild {
   position: absolute;
   z-index: -9999;
   left: -9999999px;

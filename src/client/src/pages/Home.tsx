@@ -12,7 +12,6 @@ import ErrorComp from '../components/ErrorComp'
 import AnalyzeButton from '../components/AnalyzeButton'
 
 import styles from '../css/Home.module.css'
-import Dropdown from '../components/Dropdown'
 
 export type TProjects = {
   id: string
@@ -54,9 +53,6 @@ const Home = () => {
       error={<ErrorComp message={error?.message ?? 'Unknown Error'} />}
     >
       <div className={styles.container}>
-        <Dropdown header="t1234">
-          <p>test</p>
-        </Dropdown>
         <h1 className={styles.header}>Your Projects</h1>
         {data && (
           <Table

@@ -46,14 +46,7 @@ const Selector = ({
         <div
           key={i}
           style={{
-            ...(i !== selected && {
-              visibility: 'hidden',
-              position: 'absolute',
-              overflow: 'hidden',
-              zIndex: -1000,
-              left: 0,
-              top: 0,
-            }),
+            display: i !== selected ? 'none' : '',
             width: '100%',
             height: '100%',
           }}
