@@ -32,19 +32,17 @@ const MemberDropdown = ({
     <div className={styles.container}>
       <div className={styles.header}>Select Member:</div>
       <div className={styles.subContainer}>
-        <button>
-          <select
-            value={selectedId}
-            onChange={e => setSelectedId(e.target.value)}
-            className={styles.dropdown}
-          >
-            {members.map(member => (
-              <option value={member.id} key={member.id}>
-                {member.displayName}
-              </option>
-            ))}
-          </select>
-        </button>
+        <select
+          value={selectedId}
+          onChange={e => setSelectedId(e.target.value)}
+          className={styles.dropdown}
+        >
+          {members.map(member => (
+            <option value={member.id} key={member.id}>
+              {member.displayName}
+            </option>
+          ))}
+        </select>
         <button onClick={onMemberChange} className={styles.button}>
           <Go />
         </button>

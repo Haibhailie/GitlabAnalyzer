@@ -22,6 +22,10 @@
   font: var(--font-body-large-poppins);
 }
 
+.dropdown:hover {
+  cursor: pointer;
+}
+
 .button {
   display: flex;
   margin-left: 10px;
