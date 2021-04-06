@@ -44,7 +44,6 @@ const Home = () => {
             }
           })
           setAnalysis({ ...analysis })
-          console.log(analysis)
         })
         .catch(err => {
           if (err.message === '401' || err.message === '400') {
