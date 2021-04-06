@@ -1,5 +1,5 @@
 import { useLocation, useParams } from 'react-router-dom'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
@@ -7,7 +7,6 @@ import { IMemberData, ICommitData, IMergeData } from '../types'
 
 import Selector from '../components/Selector'
 import MemberSummary from '../components/MemberSummary'
-import { ProjectContext } from '../context/ProjectContext'
 import MemberDropdown from '../components/MemberDropdown'
 import MergeRequests from '../components/MergeRequests'
 
