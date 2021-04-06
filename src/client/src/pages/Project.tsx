@@ -2,14 +2,17 @@ import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { useParams } from 'react-router-dom'
 import { onError } from '../utils/suspenseDefaults'
+import { useContext } from 'react'
 
 import Loading from '../components/Loading'
 import ErrorComp from '../components/ErrorComp'
 import Selector from '../components/Selector'
 import MemberTable from '../components/MemberTable'
 import ProjectSummary from '../components/ProjectSummary'
+import { IProjectData } from '../types'
 
 import styles from '../css/Project.module.css'
+import { ProjectContext } from '../context/ProjectContext'
 
 export interface IMember {
   id: string
@@ -18,23 +21,16 @@ export interface IMember {
   role: string
 }
 
-export interface IProjectData {
-  id: string
-  name: string
-  members: IMember[]
-  numBranches: number
-  numCommits: number
-  repoSize: number
-  createdAt: number
-}
-
 const Project = () => {
   const { id } = useParams<{ id: string }>()
-
+  const { dispatch } = useContext(ProjectContext)
   const { Suspense, data: project, error } = useSuspense<IProjectData, Error>(
     (setData, setError) => {
       jsonFetcher<IProjectData>(`/api/project/${id}`)
-        .then(data => setData(data))
+        .then(data => {
+          dispatch({ type: 'SET_PROJECT', project: data })
+          setData(data)
+        })
         .catch(onError(setError))
     }
   )

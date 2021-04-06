@@ -41,9 +41,7 @@ const Home = () => {
         })
     }
   )
-
   const onAnalyze = (id: string) => {
-    dispatch({ type: 'SET_ID', id })
     history.push(`/project/${id}`)
   }
 
