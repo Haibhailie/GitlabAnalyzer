@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: clamp(5%, 70px, 15%);
+}
+
+.header {
+  font: var(--font-header-small-poppins);
+}
+
+.subContainer {
+  display: flex;
+  align-items: center;
+}
+
+.dropdown {
+  height: 32px;
+  padding-left: 5px;
+  border-radius: 4px;
+  border: 2px solid var(--color-gray);
+  font: var(--font-body-large-poppins);
+}
+
+.button {
+  display: flex;
+  margin-left: 10px;
+}
