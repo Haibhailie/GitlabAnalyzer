@@ -3,16 +3,16 @@ import useSuspense from '../utils/useSuspense'
 import { useParams } from 'react-router-dom'
 import { onError } from '../utils/suspenseDefaults'
 import { useContext } from 'react'
+import { IProjectData } from '../types'
+import { ProjectContext } from '../context/ProjectContext'
 
 import Loading from '../components/Loading'
 import ErrorComp from '../components/ErrorComp'
 import Selector from '../components/Selector'
 import MemberTable from '../components/MemberTable'
 import ProjectSummary from '../components/ProjectSummary'
-import { IProjectData } from '../types'
 
 import styles from '../css/Project.module.css'
-import { ProjectContext } from '../context/ProjectContext'
 
 export interface IMember {
   id: string

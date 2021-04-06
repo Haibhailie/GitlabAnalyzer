@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-
 import { IMemberData } from '../types'
+
 import { ReactComponent as Go } from '../assets/go.svg'
 
 import styles from '../css/MemberDropdown.module.css'
