@@ -6,16 +6,15 @@ export interface IAnalyzeButtonProps {
   id: string
   message: string
   index?: number
-  onClick: (id: string, index: number) => void
+  onClick: (id: string) => void
   className?: string
   disabled?: boolean
-  isAnalyzing: boolean
+  isAnalyzing: boolean | undefined
   Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
 }
 
 const AnalyzeButton = ({
   id,
-  index,
   message,
   onClick,
   className,
@@ -32,7 +31,7 @@ const AnalyzeButton = ({
       )}
       onClick={event => {
         event.stopPropagation()
-        onClick(id, index ? index : 0)
+        onClick(id)
       }}
       disabled={disabled}
     >

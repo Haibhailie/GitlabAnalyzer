@@ -28,20 +28,23 @@ const Home = () => {
   const history = useHistory()
   const { dispatch } = useContext(ProjectContext)
 
-  const [isAnalyzing, setIsAnalyzing] = useState<boolean[]>([])
-  const [analyzeError, setAnalyzeError] = useState<boolean[]>([])
+  const [analysis, setAnalysis] = useState<
+    Record<string, { isAnalyzing?: boolean; analyzeError?: boolean }>
+  >({})
 
   const { Suspense, data, error } = useSuspense<TProjects, Error>(
     (setData, setError) => {
       jsonFetch<TProjects>('/api/projects')
         .then(data => {
           setData(data)
-          const initialAnalyzing: boolean[] = []
-          data.forEach(() => {
-            initialAnalyzing.push(false)
+          data.forEach(({ id }) => {
+            analysis[id] = {
+              isAnalyzing: false,
+              analyzeError: false,
+            }
           })
-          setIsAnalyzing(initialAnalyzing)
-          setAnalyzeError(initialAnalyzing)
+          setAnalysis({ ...analysis })
+          console.log(analysis)
         })
         .catch(err => {
           if (err.message === '401' || err.message === '400') {
@@ -60,41 +63,38 @@ const Home = () => {
     history.push(`/project/${id}`)
   }
 
-  const updateAnalyzing = (index: number, value: boolean) => {
-    const currentAnalyzing: boolean[] = isAnalyzing
-    currentAnalyzing[index] = value
-    setIsAnalyzing([...currentAnalyzing])
+  const updateAnalyzing = (id: string, value: boolean) => {
+    analysis[id].isAnalyzing = value
+    setAnalysis({ ...analysis })
   }
 
-  const updateAnalyzingError = (index: number, value: boolean) => {
-    const currentAnalyzeError: boolean[] = analyzeError
-    currentAnalyzeError[index] = value
-    setAnalyzeError([...currentAnalyzeError])
+  const updateAnalyzingError = (id: string, value: boolean) => {
+    analysis[id].analyzeError = value
+    setAnalysis({ ...analysis })
   }
 
-  const preAnalyze = (id: string, index: number) => {
-    updateAnalyzingError(index, false)
-    updateAnalyzing(index, true)
+  const preAnalyze = (id: string) => {
+    updateAnalyzingError(id, false)
+    updateAnalyzing(id, true)
 
     jsonFetch(`/api/project/${id}/analyze`, {
       responseIsEmpty: true,
       method: 'PUT',
     })
       .then(res => {
-        const currentAnalyzing: boolean[] = isAnalyzing
-        currentAnalyzing[index] = false
-        setIsAnalyzing([...currentAnalyzing])
+        analysis[id].isAnalyzing = false
+        setAnalysis({ ...analysis })
         if (res === 200) {
           // TODO: update last analyzed
         } else if (res === 401 || res === 400) {
           history.push('/login')
         } else {
-          updateAnalyzingError(index, true)
+          updateAnalyzingError(id, true)
         }
       })
       .catch(() => {
-        updateAnalyzing(index, false)
-        updateAnalyzingError(index, true)
+        updateAnalyzing(id, false)
+        updateAnalyzingError(id, true)
       })
   }
 
@@ -123,10 +123,11 @@ const Home = () => {
                       onClick={preAnalyze}
                       message={lastAnalyzedAt ? 'Re-Analyze' : 'Pre-Analyze'}
                       disabled={
-                        lastActivityAt <= lastAnalyzedAt || isAnalyzing[index]
+                        lastActivityAt <= lastAnalyzedAt ||
+                        analysis[id]?.isAnalyzing
                       }
-                      isAnalyzing={isAnalyzing[index]}
-                      Icon={analyzeError[index] ? errorSmall : reload}
+                      isAnalyzing={analysis[id]?.isAnalyzing}
+                      Icon={analysis[id]?.analyzeError ? errorSmall : reload}
                     />
                   ),
                 }
