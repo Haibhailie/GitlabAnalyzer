@@ -59,7 +59,7 @@ const StatSummary = ({ statData }: IStatSummaryProps) => {
   }
 
   useEffect(() => {
-    return timeoutRef.current && clearTimeout(timeoutRef.current)
+    return () => timeoutRef.current && clearTimeout(timeoutRef.current)
   }, [])
 
   return (
