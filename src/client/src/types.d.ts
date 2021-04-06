@@ -32,6 +32,7 @@ export interface IDiffData {
   diff: string
 }
 
+export type TProjectData = IProjectData[]
 export interface IProjectData {
   id: string | null
   name: string
