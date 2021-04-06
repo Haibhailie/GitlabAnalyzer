@@ -29,7 +29,7 @@ public class ProjectRepository {
     private enum Project {
         documentId("_id"),
         projectId("projectId"),
-        repoUrl("repoUrl"),
+        projectUrl("projectUrl"),
         lastAnalysisTime("lastAnalysisTime"),
         isPublic("isPublic"),
         analysis("analysis"),
@@ -49,8 +49,8 @@ public class ProjectRepository {
         }
     }
 
-    private boolean projectAlreadyCached(int projectId, String repoUrl) {
-        Document project = getPartialProjectDocument(projectId, repoUrl, Project.projectId.key);
+    private boolean projectAlreadyCached(int projectId, String projectUrl) {
+        Document project = getPartialProjectDocument(projectId, projectUrl, Project.projectId.key);
         return (project != null);
     }
 
@@ -60,7 +60,7 @@ public class ProjectRepository {
         long lastAnalysisTime = projectDto.getLastAnalysisTime();
         return new Document(Project.projectId.key, new ObjectId().toString())
                     .append(Project.projectId.key, projectId)
-                    .append(Project.repoUrl.key, repoUrl)
+                    .append(Project.projectUrl.key, repoUrl)
                     .append(Project.lastAnalysisTime.key, lastAnalysisTime)
                     .append(Project.isPublic.key, isPublic);
     }
@@ -81,7 +81,7 @@ public class ProjectRepository {
 
     private Document getPartialProjectDocument(int projectId, String repoUrl, String projectionKey) {
         return projectsCollection.find(and(eq(Project.projectId.key, projectId),
-                eq(Project.repoUrl.key, repoUrl)))
+                eq(Project.projectUrl.key, repoUrl)))
                 .projection(include(projectionKey)).first();
     }
 }

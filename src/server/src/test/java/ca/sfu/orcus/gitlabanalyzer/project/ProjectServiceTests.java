@@ -116,7 +116,7 @@ public class ProjectServiceTests {
 
     private void initializeProjectMembers(int projectId) {
         List<MemberDto> memberDtos = new ArrayList<>();
-        when(memberService.getAllMembers(gitLabApi, projectId)).thenReturn(memberDtos);
+        when(memberService.getAllMembers(jwt, projectId)).thenReturn(memberDtos);
     }
 
     private void initializeProjectBranches(int projectId) throws GitLabApiException {
@@ -126,7 +126,7 @@ public class ProjectServiceTests {
 
     private ProjectExtendedDto getExpectedProjectExtendedDto(int projectId) throws GitLabApiException {
         Project project = gitLabApi.getProjectApi().getProject(projectId, true);
-        List<MemberDto> memberDtos = memberService.getAllMembers(gitLabApi, projectId);
+        List<MemberDto> memberDtos = memberService.getAllMembers(jwt, projectId);
         List<Branch> branches = gitLabApi.getRepositoryApi().getBranches(projectId);
 
         return new ProjectExtendedDto(project, memberDtos, branches.size());

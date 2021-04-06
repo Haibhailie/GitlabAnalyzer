@@ -62,17 +62,17 @@ public class ProjectService {
     public ProjectExtendedDto getProject(String jwt, int projectId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
-            return getProject(gitLabApi, projectId);
+            List<MemberDto> memberDtos = memberService.getAllMembers(jwt, projectId);
+            return getProject(gitLabApi, projectId, memberDtos);
         } else {
             return null;
         }
     }
 
-    private ProjectExtendedDto getProject(GitLabApi gitLabApi, int projectId) {
+    private ProjectExtendedDto getProject(GitLabApi gitLabApi, int projectId, List<MemberDto> memberDtos) {
         try {
             Project project = gitLabApi.getProjectApi().getProject(projectId, true);
             long numBranches = gitLabApi.getRepositoryApi().getBranches(projectId).size();
-            List<MemberDto> memberDtos = memberService.getAllMembers(gitLabApi, projectId);
             return new ProjectExtendedDto(project, memberDtos, numBranches);
         } catch (GitLabApiException e) {
             return null;
