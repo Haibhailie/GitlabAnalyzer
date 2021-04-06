@@ -53,7 +53,6 @@ const SideNavDropdown = ({
   children,
   startOpened,
 }: ISideNavDropdownProps) => {
-  console.log(startOpened)
   return (
     <Dropdown
       header={<p className={styles.item}>{label}</p>}
