@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;

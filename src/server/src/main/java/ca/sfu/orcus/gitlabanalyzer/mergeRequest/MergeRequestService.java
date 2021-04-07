@@ -2,7 +2,6 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
@@ -86,7 +85,7 @@ public class MergeRequestService {
         List<FileDto> fileScores = setMergeRequestScores(jwt, gitLabApi, projectId, mr.getId());
         List<MergeRequestCommitsDto> mrCommits = new ArrayList<>();
         List<Commit> commits = gitLabApi.getMergeRequestApi().getCommits(projectId, mr.getId());
-        double sumOfCommitsScore = getSumOfCommitsScore(gitLabApi, projectId, commits, mrCommits);
+        double sumOfCommitsScore = getSumOfCommitsScore(jwt, gitLabApi, projectId, commits, mrCommits);
 
         MergeRequestDto presentMergeRequest = new MergeRequestDto(gitLabApi, projectId, mr, fileScores, sumOfCommitsScore, mrCommits);
         filteredMergeRequests.add(presentMergeRequest);
@@ -97,40 +96,12 @@ public class MergeRequestService {
     }
 
     public List<FileDto> getMergeRequestScore(String jwt, MergeRequest mergeRequestChanges) {
-        setMultipliersFromConfig(jwt);
-
         // regex to split lines by new line and store in generatedDiffList
         String[] diffString = DiffStringParser.parseDiff(mergeRequestChanges.getChanges()).split("\\r?\\n");
         List<String> diffsList = Arrays.asList(diffString);
 
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
-        return diffScoreCalculator.fileScoreCalculator(diffsList, addLOCFactor, deleteLOCFactor, syntaxChangeFactor, blankLOCFactor, spacingChangeFactor);
-    }
-
-    private void setMultipliersFromConfig(String jwt) {
-        try {
-            Optional<ConfigDto> configDto = configService.getCurrentConfig(jwt);
-            if (configDto.isPresent()) {
-                List<ConfigDto.GeneralTypeScoreDto> list = configDto.get().getGeneralScores();
-                for (ConfigDto.GeneralTypeScoreDto g : list) {
-                    switch (g.getType()) {
-                        case "addLoc" -> addLOCFactor = g.getValue();
-                        case "deleteLoc" -> deleteLOCFactor = g.getValue();
-                        case "syntax" -> syntaxChangeFactor = g.getValue();
-                        case "blank" -> blankLOCFactor = g.getValue();
-                        case "spacing" -> spacingChangeFactor = g.getValue();
-                        default -> throw new IllegalStateException("Unexpected type: " + g.getType());
-                    }
-                }
-            }
-        } catch (GitLabApiException e) {
-            // default multipliers
-            addLOCFactor = 1;
-            deleteLOCFactor = 0.2;
-            syntaxChangeFactor = 0.2;
-            blankLOCFactor = 0;
-            spacingChangeFactor = 0;
-        }
+        return diffScoreCalculator.fileScoreCalculator(jwt, configService, diffsList);
     }
 
     public List<CommitDto> getAllCommitsFromMergeRequest(String jwt, int projectId, int mergeRequestId) {
@@ -175,13 +146,12 @@ public class MergeRequestService {
         }
     }
 
-    public double getSumOfCommitsScore(GitLabApi gitLabApi, int projectId, List<Commit> commits, List<MergeRequestCommitsDto> commitsInfoInMergeRequest) throws GitLabApiException {
-        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
+    public double getSumOfCommitsScore(String jwt, GitLabApi gitLabApi, int projectId, List<Commit> commits, List<MergeRequestCommitsDto> commitsInfoInMergeRequest) throws GitLabApiException {
         double sumOfCommitsScore = 0;
         for (Commit c : commits) {
             Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
             if (presentCommit.getStats() != null) {
-                List<FileDto> presentCommitFiles = scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, presentCommit.getShortId()));
+                List<FileDto> presentCommitFiles = commitService.getCommitScore(jwt, gitLabApi.getCommitsApi().getDiff(projectId, presentCommit.getShortId()));
                 for (FileDto fileIterator : presentCommitFiles) {
                     sumOfCommitsScore += fileIterator.getTotalScore();
                     commitsInfoInMergeRequest.add(new MergeRequestCommitsDto(fileIterator.getFileScore(), fileIterator.getLinesOfCodeChanges()));

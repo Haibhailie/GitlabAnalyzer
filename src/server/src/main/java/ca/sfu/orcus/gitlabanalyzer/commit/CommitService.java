@@ -60,40 +60,12 @@ public class CommitService {
     }
 
     public List<FileDto> getCommitScore(String jwt, List<Diff> diffs) {
-        setMultipliersFromConfig(jwt);
-
         // regex to split lines by new line and store in generatedDiffList
         String[] diffArray = DiffStringParser.parseDiff(diffs).split("\\r?\\n");
         List<String> diffsList = Arrays.asList(diffArray);
 
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
-        return diffScoreCalculator.fileScoreCalculator(diffsList, addLOCFactor, deleteLOCFactor, syntaxChangeFactor, blankLOCFactor, spacingChangeFactor);
-    }
-
-    private void setMultipliersFromConfig(String jwt) {
-        try {
-            Optional<ConfigDto> configDto = configService.getCurrentConfig(jwt);
-            if (configDto.isPresent()) {
-                List<ConfigDto.GeneralTypeScoreDto> list = configDto.get().getGeneralScores();
-                for (ConfigDto.GeneralTypeScoreDto g : list) {
-                    switch (g.getType()) {
-                        case "addLoc" -> addLOCFactor = g.getValue();
-                        case "deleteLoc" -> deleteLOCFactor = g.getValue();
-                        case "syntax" -> syntaxChangeFactor = g.getValue();
-                        case "blank" -> blankLOCFactor = g.getValue();
-                        case "spacing" -> spacingChangeFactor = g.getValue();
-                        default -> throw new IllegalStateException("Unexpected type: " + g.getType());
-                    }
-                }
-            }
-        } catch (GitLabApiException e) {
-            // default multipliers
-            addLOCFactor = 1;
-            deleteLOCFactor = 0.2;
-            syntaxChangeFactor = 0.2;
-            blankLOCFactor = 0;
-            spacingChangeFactor = 0;
-        }
+        return diffScoreCalculator.fileScoreCalculator(jwt, configService, diffsList);
     }
 
     public List<CommitDto> returnAllCommitsOfAMember(String jwt, GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
