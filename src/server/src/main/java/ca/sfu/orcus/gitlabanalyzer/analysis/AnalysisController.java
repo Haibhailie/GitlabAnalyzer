@@ -26,6 +26,8 @@ public class AnalysisController {
                                @PathVariable("projectId") int projectId,
                                HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
+            // TODO: This check is redundant since it is also performed when we do
+            //  gitLabApiWrapper.getGitLabApiFor(jwt)
             tryAnalyzingProject(jwt, projectId, response);
         } else {
             response.setStatus(SC_UNAUTHORIZED);
@@ -36,7 +38,7 @@ public class AnalysisController {
         try {
             analysisService.analyzeProject(jwt, projectId);
             response.setStatus(SC_OK);
-        } catch (GitLabApiException e) {
+        } catch (GitLabApiException | NullPointerException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
     }
