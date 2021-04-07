@@ -6,7 +6,7 @@ import { onError } from '../utils/suspenseDefaults'
 import { UserConfigContext } from '../context/UserConfigContext'
 import { ThemeProvider, Tooltip } from '@material-ui/core'
 import tooltipTheme from '../themes/tooltipTheme'
-import { ICommentData, TCommentData } from '../types'
+import { TCommentData } from '../types'
 
 import Table from '../components/Table'
 import CommentAccordion from '../components/CommentAccordion'
