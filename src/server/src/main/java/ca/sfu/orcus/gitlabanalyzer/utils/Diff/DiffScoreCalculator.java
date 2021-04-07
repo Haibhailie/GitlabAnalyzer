@@ -162,12 +162,12 @@ public class DiffScoreCalculator {
                 List<ConfigDto.GeneralTypeScoreDto> list = configDto.get().getGeneralScores();
                 for (ConfigDto.GeneralTypeScoreDto g : list) {
                     switch (g.getType()) {
-                        case "addLoc" -> addLOCFactor = g.getValue();
-                        case "deleteLoc" -> deleteLOCFactor = g.getValue();
-                        case "syntax" -> syntaxChangeFactor = g.getValue();
-                        case "blank" -> blankLOCFactor = g.getValue();
-                        case "spacing" -> spacingChangeFactor = g.getValue();
-                        default -> throw new IllegalStateException("Unexpected type: " + g.getType());
+                      case "addLoc" -> addLOCFactor = g.getValue();
+                      case "deleteLoc" -> deleteLOCFactor = g.getValue();
+                      case "syntax" -> syntaxChangeFactor = g.getValue();
+                      case "blank" -> blankLOCFactor = g.getValue();
+                      case "spacing" -> spacingChangeFactor = g.getValue();
+                      default -> throw new IllegalStateException("Unexpected type: " + g.getType());
                     }
                 }
             }
