@@ -6,13 +6,22 @@ import styles from '../css/MemberDropdown.module.css'
 
 export interface IMemberDropdownProps {
   data: TMemberData
-  selected: string
+  defaultSelected: string
+  committerEmail: string
 }
 
-const MemberDropdown = ({ data, selected }: IMemberDropdownProps) => {
+const MemberDropdown = ({
+  data,
+  defaultSelected,
+  committerEmail,
+}: IMemberDropdownProps) => {
   return (
     <FormControl variant="outlined" style={{ minWidth: 300 }}>
-      <Select autoWidth={false} defaultValue={selected}>
+      <Select
+        autoWidth={false}
+        defaultValue={defaultSelected}
+        id={committerEmail}
+      >
         {data?.map(({ displayName, id, username }) => {
           return (
             <MenuItem key={id} value={id}>
@@ -20,7 +29,7 @@ const MemberDropdown = ({ data, selected }: IMemberDropdownProps) => {
             </MenuItem>
           )
         })}
-        <MenuItem value="-1">Ignore committer</MenuItem>
+        <MenuItem value="ignore">Ignore committer</MenuItem>
       </Select>
     </FormControl>
   )

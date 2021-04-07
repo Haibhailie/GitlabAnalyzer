@@ -17,6 +17,9 @@
 
 .formContainer {
   width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .table {
@@ -47,6 +50,7 @@
   display: flex;
   align-items: center;
   font: var(--font-body-medium-poppins);
+  width: 100px;
   height: 40px;
   padding: 0px 30px;
   margin: 20px 0px;

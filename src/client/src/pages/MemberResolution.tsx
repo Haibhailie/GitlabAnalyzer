@@ -15,6 +15,14 @@ export interface ICommitterData {
   memberDto: IMemberData
 }
 
+const saveMemberResolution = (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault()
+  console.log('submitted')
+
+  const data = event.target
+  console.log(data)
+}
+
 const MemberResolution = () => {
   const { id } = useParams<{ id: string }>()
   const testCommitterData = [
@@ -86,7 +94,10 @@ const MemberResolution = () => {
       >
         <div className={styles.container}>
           <h1 className={styles.header}>Member to Committer Resolution</h1>
-          <form className={styles.formContainer}>
+          <form
+            className={styles.formContainer}
+            onSubmit={saveMemberResolution}
+          >
             <Table
               headers={['Committer', 'Email', 'Member']}
               columnWidths={['2fr', '2fr', '3fr']}
@@ -104,17 +115,18 @@ const MemberResolution = () => {
                     memberDto: memberData ? (
                       <MemberDropdown
                         data={memberData}
-                        selected={memberDto.id}
+                        defaultSelected={memberDto ? memberDto.id : 'ignore'}
+                        committerEmail={email}
                       />
                     ) : null,
                   }
                 }) ?? [{}]
               }
             />
+            <button type="submit" className={styles.button}>
+              Save
+            </button>
           </form>
-          <button type="button" className={styles.button}>
-            Save
-          </button>
         </div>
       </CommitterSuspense>
     </MemberSuspense>
