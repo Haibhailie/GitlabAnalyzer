@@ -13,8 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
-import static javax.servlet.http.HttpServletResponse.SC_OK;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static javax.servlet.http.HttpServletResponse.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
@@ -32,8 +31,18 @@ public class MemberController {
                              HttpServletResponse response,
                              @PathVariable int projectId) {
         List<MemberDto> members = memberService.getAllMembers(jwt, projectId);
-        response.setStatus(members == null ? SC_UNAUTHORIZED : SC_OK);
+        response.setStatus(getResponseCode(members));
         return gson.toJson(members);
+    }
+
+    private int getResponseCode(List<MemberDto> list) {
+        if (list == null) {
+            return SC_UNAUTHORIZED;
+        } else if (list.isEmpty()) {
+            return SC_NOT_FOUND;
+        } else {
+            return SC_OK;
+        }
     }
 
     @GetMapping("/api/project/{projectId}/members/{memberName}/commits")
