@@ -18,6 +18,7 @@
 .expanded {
   max-height: 1000px;
   overflow-y: scroll;
+  transition: max-height 0.5s ease-in-out;
 }
 
 .toggleButton {
@@ -27,11 +28,11 @@
 }
 
 .openIcon {
-  transition: transform 0.4s ease-in-out;
+  transition: transform 0.3s ease-in-out;
   transform: rotate(0deg);
 }
 
 .closedIcon {
-  transition: transform 0.4s ease-in-out;
+  transition: transform 0.3s ease-in-out;
   transform: rotate(-90deg);
 }
