@@ -1,27 +1,28 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class CommitterDtoDb {
     private String email;
-    private List<String> commitIds;
-    private List<Integer> mergeRequestIds;
+    private Set<String> commitIds;
+    private Set<Integer> mergeRequestIds;
 
-    public CommitterDtoDb(String email, List<String> commitIds, List<Integer> mergeRequestIds) {
+    public CommitterDtoDb(String email, Set<String> commitIds, Set<Integer> mergeRequestIds) {
         setEmail(email);
-        setCommitIds(commitIds);
-        setMergeRequestIds(mergeRequestIds);
+        setCommitIds(new HashSet<>(commitIds));
+        setMergeRequestIds(new HashSet<>(mergeRequestIds));
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setCommitIds(List<String> commitIds) {
+    public void setCommitIds(Set<String> commitIds) {
         this.commitIds = commitIds;
     }
 
-    public void setMergeRequestIds(List<Integer> mrIds) {
+    public void setMergeRequestIds(Set<Integer> mrIds) {
         this.mergeRequestIds = mrIds;
     }
 

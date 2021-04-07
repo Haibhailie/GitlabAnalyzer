@@ -4,9 +4,7 @@ import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import org.gitlab4j.api.models.AccessLevel;
 import org.gitlab4j.api.models.Member;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class MemberDtoDb {
     private int id;
@@ -24,12 +22,12 @@ public final class MemberDtoDb {
 
     public MemberDtoDb(Member member) {
         this(member,
-                Collections.emptySet(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList());
+                new HashSet<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>());
     }
 
     public MemberDtoDb(Member member,

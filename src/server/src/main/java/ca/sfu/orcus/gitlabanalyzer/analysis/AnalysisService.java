@@ -128,8 +128,8 @@ public class AnalysisService {
             committerDtos.put(
                     authorEmail,
                     new CommitterDtoDb(authorEmail,
-                            Collections.singletonList(commit.getId()),
-                            Collections.singletonList(mergeRequestId)));
+                            Collections.singleton(commit.getId()),
+                            Collections.singleton(mergeRequestId)));
         }
     }
 
