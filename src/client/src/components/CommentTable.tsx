@@ -6,8 +6,7 @@ import { onError } from '../utils/suspenseDefaults'
 import { UserConfigContext } from '../context/UserConfigContext'
 import { ThemeProvider, Tooltip } from '@material-ui/core'
 import tooltipTheme from '../themes/tooltipTheme'
-
-import { ICommentData } from '../types'
+import { ICommentData, TCommentData } from '../types'
 
 import Table from '../components/Table'
 import CommentAccordion from '../components/CommentAccordion'
@@ -22,33 +21,28 @@ export interface ICommentTableProps {
   memberId: string
 }
 
-const isLongComment = (content: string) => {
-  return content.length > 140
-}
+const isLongComment = (content: string) => content.length > 140
 
 const isInvalidUrl = (url: string) => {
   return url.includes('example')
 }
 
 const formatParentAuthor = (author: string) => {
-  let formattedAuthor: string = author
   if (author === 'self') {
-    formattedAuthor = 'Self'
+    return 'Self'
   } else if (author === '') {
-    formattedAuthor = 'Deleted user'
+    return 'Deleted user'
   }
-  return formattedAuthor
+  return author
 }
 
 const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
-  const { Suspense, data, error } = useSuspense<ICommentData[], Error>(
+  const { Suspense, data, error } = useSuspense<TCommentData>(
     (setData, setError) => {
-      jsonFetcher<ICommentData[]>(
+      jsonFetcher<TCommentData>(
         `/api/project/${projectId}/members/${memberId}/notes`
       )
-        .then(comments => {
-          setData(comments)
-        })
+        .then(setData)
         .catch(onError(setError))
     }
   )

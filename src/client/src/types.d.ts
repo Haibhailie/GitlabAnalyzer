@@ -31,6 +31,7 @@ export interface IDiffData {
   diff: string
 }
 
+export type TCommentData = ICommentData[]
 export interface ICommentData {
   id: string
   wordcount: number
