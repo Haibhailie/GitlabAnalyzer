@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import classNames from '../utils/classNames'
 
 import styles from '../css/Table.module.css'
-
-import { ReactComponent as Gt } from '../assets/greater-than.svg'
+import Dropdown from './Dropdown'
 
 export interface ITableProps {
   classes?: {
@@ -43,21 +42,10 @@ const Table = ({
   onClick,
 }: ITableProps) => {
   const [sortConfig, setSortConfig] = useState({ by: '', asc: true })
-  const [isCollapsed, setCollapsed] = useState(false)
-  const [tableHeight, setTableHeight] = useState(Number.MAX_SAFE_INTEGER)
-
-  useEffect(() => {
-    const heuristicHeight = 100 * data.length
-    setTableHeight(maxHeight ?? heuristicHeight)
-  }, [data, maxHeight])
-
-  useEffect(() => {
-    if (typeof isOpen === 'boolean') setCollapsed(!isOpen)
-  }, [isOpen])
 
   if (typeof data !== 'object') return null
 
-  const sortKeys = Object.keys(data[0])
+  const sortKeys = Object.keys(data[0] ?? {})
 
   const sortDataBy = (columnIndex: number) => {
     const columnToSortBy = sortKeys[columnIndex]
@@ -78,10 +66,6 @@ const Table = ({
     })
   }
 
-  const toggleCollapse = () => {
-    setCollapsed(!isCollapsed)
-  }
-
   const dataHeaders = headers ?? sortKeys
   const numColumns = dataHeaders.length
   const gridTemplateColumns = columnWidths
@@ -89,27 +73,23 @@ const Table = ({
     : `repeat(${numColumns}, 1fr)`
 
   return (
-    <div
-      className={classNames(
-        styles.container,
-        classes?.container,
-        isCollapsed && styles.collapsed
-      )}
+    <Dropdown
+      isOpen={!collapsible || isOpen}
+      className={classNames(styles.container, classes?.container)}
+      classes={{ dropdown: styles.dropdown }}
+      header={
+        title && (
+          <div className={classNames(styles.title, classes?.title)}>
+            {title}
+          </div>
+        )
+      }
+      fixedCollapsed={!collapsible}
+      maxHeight={maxHeight}
     >
-      {title && (
-        <div className={classNames(styles.title, classes?.title)}>
-          {title}
-          {collapsible && (
-            <button className={styles.collapseBtn} onClick={toggleCollapse}>
-              <Gt className={styles.collapseImg} />
-            </button>
-          )}
-        </div>
-      )}
       <div
         style={{
           gridTemplateColumns,
-          maxHeight: isCollapsed ? 0 : `${tableHeight}px`,
         }}
         className={classNames(styles.table, classes?.table)}
       >
@@ -151,7 +131,7 @@ const Table = ({
           </div>
         ))}
       </div>
-    </div>
+    </Dropdown>
   )
 }
 
