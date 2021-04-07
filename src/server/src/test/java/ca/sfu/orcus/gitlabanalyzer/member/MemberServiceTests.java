@@ -1,28 +1,31 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
-import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
-import ca.sfu.orcus.gitlabanalyzer.models.*;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestService;
+import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
+import ca.sfu.orcus.gitlabanalyzer.models.CommitMock;
+import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.*;
+import org.gitlab4j.api.models.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceTests {
@@ -32,7 +35,7 @@ public class MemberServiceTests {
 
     // Class to be tested
     @InjectMocks
-    private MemberService memberService;
+    private MemberServiceDirect memberService;
 
     private GitLabApi gitLabApi;
     private final String jwt = "jwt";
