@@ -78,7 +78,7 @@ public final class ConfigDto {
     }
 
     public static final class GeneralTypeScoreDto {
-        public enum scoreFactors { // not used yet because its use needs to be coordinated with frontend
+        public enum scoreFactors { // not used yet for 'type' because its use needs to be coordinated with frontend
             ADD_FACTOR,
             DELETE_FACTOR,
             SYNTAX_FACTOR,
