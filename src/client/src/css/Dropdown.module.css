@@ -1,0 +1,51 @@
+.container {
+  /* width: 100%; */
+}
+
+.headerBtn {
+  /* display: flex; */
+  width: 100%;
+}
+
+.header {
+  width: 100%;
+  position: relative;
+}
+
+.leftArrow .collapseImg {
+  left: 10px;
+}
+
+.collapseImg {
+  width: 12px;
+  height: 14px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: rotate(90deg) translateX(-50%);
+  transition: transform ease-in-out 200ms;
+}
+
+.collapsed .collapseImg {
+  transform: rotate(0deg) translateY(-50%);
+}
+
+.collapse {
+  stroke: #000000;
+}
+
+.header:hover .collapse {
+  stroke: var(--color-primary);
+}
+
+.dropdown {
+  overflow: auto;
+  transition: max-height ease-in-out 200ms;
+}
+
+.fakeChild {
+  position: absolute;
+  z-index: -9999;
+  left: -9999999px;
+  display: block;
+}
