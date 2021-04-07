@@ -15,7 +15,7 @@ public class ProjectDto {
         setName(project.getName());
         setRole(role);
         setLastActivityTime(project.getLastActivityAt().getTime());
-        setAnalyzed(lastAnalysisTime);
+        setLastAnalysisTime(lastAnalysisTime);
         setWebUrl(project.getWebUrl());
     }
 
@@ -35,8 +35,8 @@ public class ProjectDto {
         this.lastActivityTime = lastActivityTime;
     }
 
-    public void setAnalyzed(long lastAnalyzed) {
-        this.lastAnalysisTime = lastAnalyzed;
+    public void setLastAnalysisTime(long lastAnalysisTime) {
+        this.lastAnalysisTime = lastAnalysisTime;
     }
 
     public void setWebUrl(String webUrl) {
