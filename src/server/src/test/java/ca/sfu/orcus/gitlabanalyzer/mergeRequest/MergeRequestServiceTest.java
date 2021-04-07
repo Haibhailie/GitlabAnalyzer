@@ -12,6 +12,7 @@ import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
 import org.gitlab4j.api.models.MergeRequest;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -87,7 +88,8 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA));
     }
 
-    //@Test
+    @Disabled ("Tested method requires more mocks")
+    @Test
     public void getAllMergeRequestWithoutMemberIDTest() throws GitLabApiException {
         initialMergeRequestTestSetup();
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
@@ -104,7 +106,8 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
     }
 
-    //@Test
+    @Disabled ("Tested method requires more mocks")
+    @Test
     public void getAllMergeRequestWithMemberIDTest() throws GitLabApiException {
         when(gitLabApi.getMergeRequestApi()).thenReturn(mergeRequestApi);
         when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
@@ -123,7 +126,8 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         assertNull(mergeRequestService.returnAllMergeRequests(jwt, gitLabApi, projectId, dateSince, dateUntil, userId));
     }
 
-    //@Test
+    @Disabled ("Tested method requires more mocks")
+    @Test
     public void getAllCommitsFromMergeRequestTest() throws GitLabApiException {
         initialMergeRequestTestSetup();
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
@@ -134,7 +138,8 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         assertEquals(expectedCommitDtoList, commitDtoList);
     }
 
-    //@Test
+    @Disabled ("Tested method requires more mocks")
+    @Test
     public void getAllCommitsFromMergeRequestTestGitLabException() throws GitLabApiException {
         initialMergeRequestTestSetup();
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);

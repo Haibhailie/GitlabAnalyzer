@@ -12,6 +12,7 @@ import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Project;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -59,6 +60,7 @@ public class CommitServiceTests {
         commit = CommitMock.createCommit();
         when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
     }
+
     // Testing the null checks
 
     @Test
@@ -81,7 +83,8 @@ public class CommitServiceTests {
 
     // Testing the CommitService methods
 
-    //@Test
+    @Disabled ("Tested method requires more mocks")
+    @Test
     public void getSingleCommit() throws GitLabApiException {
         initialTestSetup();
 
@@ -93,7 +96,8 @@ public class CommitServiceTests {
         assertEquals(commitDto, expectedCommitDto);
     }
 
-    //@Test
+    @Disabled ("Tested method requires more mocks")
+    @Test
     public void getCommits() throws GitLabApiException {
         initialTestSetup();
         List<Commit> commitList = CommitMock.createTestCommitList();
@@ -125,7 +129,8 @@ public class CommitServiceTests {
         assertEquals(commitDtos, expectedCommitDtos);
     }
 
-    //@Test
+    @Disabled ("Tested method requires more mocks")
+    @Test
     public void testGetSingleCommitDiff() throws GitLabApiException {
         initialTestSetup();
 
