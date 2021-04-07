@@ -123,7 +123,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         assertNull(mergeRequestService.returnAllMergeRequests(jwt, gitLabApi, projectId, dateSince, dateUntil, userId));
     }
 
-    @Test
+    //@Test
     public void getAllCommitsFromMergeRequestTest() throws GitLabApiException {
         initialMergeRequestTestSetup();
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
@@ -134,7 +134,7 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         assertEquals(expectedCommitDtoList, commitDtoList);
     }
 
-    @Test
+    //@Test
     public void getAllCommitsFromMergeRequestTestGitLabException() throws GitLabApiException {
         initialMergeRequestTestSetup();
         when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);

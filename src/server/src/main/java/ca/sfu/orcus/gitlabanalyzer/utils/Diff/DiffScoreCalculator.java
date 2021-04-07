@@ -171,7 +171,7 @@ public class DiffScoreCalculator {
                     }
                 }
             }
-        } catch (GitLabApiException e) {
+        } catch (GitLabApiException | IllegalStateException e) {
             // default multipliers
             addLOCFactor = 1;
             deleteLOCFactor = 0.2;

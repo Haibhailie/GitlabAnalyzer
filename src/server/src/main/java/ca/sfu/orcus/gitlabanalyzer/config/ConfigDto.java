@@ -78,6 +78,13 @@ public final class ConfigDto {
     }
 
     public static final class GeneralTypeScoreDto {
+        public enum scoreFactors { // not used yet because its use needs to be coordinated with frontend
+            ADD_FACTOR,
+            DELETE_FACTOR,
+            SYNTAX_FACTOR,
+            BLANK_FACTOR,
+            SPACING_FACTOR
+        }
         private String type;
         private double value;
 
