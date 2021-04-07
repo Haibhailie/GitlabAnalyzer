@@ -11,14 +11,16 @@ public class NoteDto {
     private Date date;
     private String context;
     private String webUrl;
+    private String parentAuthor;
 
-    public NoteDto(Note presentNote, String webUrl) {
+    public NoteDto(Note presentNote, String webUrl, String parentAuthor) {
         setId(presentNote.getId());
         setWordcount(countWords(presentNote.getBody()));
         setContent(presentNote.getBody());
         setDate(presentNote.getCreatedAt());
         setContext(presentNote.getNoteableType());
         setWebUrl(webUrl);
+        setParentAuthor(parentAuthor);
     }
 
     private int countWords(String str) {
@@ -52,5 +54,9 @@ public class NoteDto {
 
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+    }
+
+    public void setParentAuthor(String parentAuthor) {
+        this.parentAuthor = parentAuthor;
     }
 }

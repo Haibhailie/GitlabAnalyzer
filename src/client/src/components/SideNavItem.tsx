@@ -1,10 +1,9 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import classNames from '../utils/classNames'
+
+import Dropdown from './Dropdown'
 
 import styles from '../css/SideNavItem.module.css'
-
-import { ReactComponent as DropdownIcon } from '../assets/dropdown-large.svg'
 
 interface ISideNavLinkProps {
   Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
@@ -36,23 +35,18 @@ const SideNavDropdown = ({
   children,
   startOpened,
 }: ISideNavDropdownProps) => {
-  const [isOpen, setOpen] = useState(startOpened)
-
-  const toggleOpen = () => {
-    setOpen(!isOpen)
-  }
-
   return (
-    <>
-      <button onClick={toggleOpen} className={styles.btn}>
-        <span className={classNames(styles.dropdown, !isOpen && styles.closed)}>
+    <Dropdown
+      startOpened={startOpened}
+      header={
+        <span className={styles.dropdown}>
           <Icon className={styles.icon} />
           <p className={styles.label}>{label}</p>
-          <DropdownIcon className={classNames(styles.dropdownIcon)} />
         </span>
-      </button>
-      {isOpen && <div className={styles.container}>{children}</div>}
-    </>
+      }
+    >
+      {children}
+    </Dropdown>
   )
 }
 

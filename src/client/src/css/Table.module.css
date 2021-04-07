@@ -13,26 +13,12 @@
   justify-content: space-between;
 }
 
-.collapseBtn {
-  width: 24px;
-  height: 24px;
-}
-
-.collapseImg {
-  width: 12px;
-  height: 14px;
+.dropdown {
   stroke: #ffffff;
-  transform: rotate(90deg);
-  transition: transform ease-in-out 300ms;
-}
-
-.collapsed .collapseImg {
-  transform: rotate(0deg);
 }
 
 .table {
   display: grid;
-  overflow: hidden;
   transition: max-height ease-in-out 300ms;
 }
 
