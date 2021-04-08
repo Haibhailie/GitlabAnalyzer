@@ -88,6 +88,11 @@ public class ProjectRepository {
                 project.getList(Project.memberDocumentRefs.key, String.class);
     }
 
+    // TODO: Implement this
+    public boolean containsMember(int projectId, String projectUrl, int memberId) {
+        return true;
+    }
+
     private Document getPartialProjectDocument(int projectId, String repoUrl, String projectionKey) {
         return projectsCollection.find(and(eq(Project.projectId.key, projectId),
                 eq(Project.projectUrl.key, repoUrl)))

@@ -17,24 +17,22 @@ import java.util.Optional;
 @Service
 public class CommitterService {
     private final CommitterRepository committerRepo;
-    private final MemberRepository memberRepo;
     private final ProjectRepository projectRepo;
     private final GitLabApiWrapper gitLabApiWrapper;
 
     @Autowired
     public CommitterService(@Qualifier("mockCommitterRepo") CommitterRepository committerRepo,
-                            MemberRepository memberRepo,
                             ProjectRepository projectRepo,
                             GitLabApiWrapper gitLabApiWrapper) {
         this.committerRepo = committerRepo;
-        this.memberRepo = memberRepo;
         this.projectRepo = projectRepo;
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
     public Optional<List<CommitterDto>> getCommittersInProject(String jwt, int projectId) throws GitLabApiException {
         int memberId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
-        if (userHasAccessToProject(memberId, projectId)) {
+        Optional<String> projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId);
+        if (projectUrl.isPresent() && userHasAccessToProject(memberId, projectId, projectUrl.get())) {
             return committerRepo.getCommitterTableForProject(projectId);
         } else {
             return Optional.empty();
@@ -45,17 +43,18 @@ public class CommitterService {
                                      int projectId,
                                      Map<String, Integer> committerToMemberMap) throws GitLabApiException, NotFoundException {
         int memberId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
-        if (memberRepo.projectContainsMember(projectId, memberId)) {
+        Optional<String> projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId);
+        if (projectUrl.isPresent() && userHasAccessToProject(memberId, projectId, projectUrl.get())) {
             committerRepo.updateCommitters(projectId, committerToMemberMap);
         } else {
             throw new NotFoundException("Project not found for user");
         }
     }
 
-    private boolean userHasAccessToProject(int memberId, int projectId) {
+    private boolean userHasAccessToProject(int memberId, int projectId, String projectUrl) {
         try {
             return projectRepo.projectIsPublic(projectId,
-                    VariableDecoderUtil.decode("GITLAB_URL")) || memberRepo.projectContainsMember(projectId, memberId);
+                    VariableDecoderUtil.decode("GITLAB_URL")) || projectRepo.containsMember(projectId, projectUrl, memberId);
         } catch (NotFoundException e) {
             return false;
         }

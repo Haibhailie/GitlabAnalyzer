@@ -32,7 +32,7 @@ public class MemberRepository {
         memberUrl("memberUrl"),
         committerEmails("committerEmails"),
         commitsToMaster("commitsToMaster"),
-        mergeRequestIds("mergeRequestIds"), // TODO: Document ids?
+        mergeRequestIds("mergeRequestIds"),
         notes("notes");
 
         public String key;
@@ -111,9 +111,5 @@ public class MemberRepository {
         String role = memberDoc.getString(Member.role.key);
         String memberUrl = memberDoc.getString(Member.memberUrl.key);
         return new MemberDto(displayName, id, username, role, memberUrl);
-    }
-
-    public boolean projectContainsMember(int projectId, int memberId) {
-        return true;
     }
 }
