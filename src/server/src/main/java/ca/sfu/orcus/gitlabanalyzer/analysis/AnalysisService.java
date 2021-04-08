@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import javax.ws.rs.NotAuthorizedException;
 import java.util.*;
 
 @Service
@@ -25,10 +26,10 @@ public class AnalysisService {
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
-    public void analyzeProject(String jwt, int projectId) throws GitLabApiException, NullPointerException {
+    public void analyzeProject(String jwt, int projectId) throws GitLabApiException, NullPointerException, NotAuthorizedException {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
-            throw new GitLabApiException("Could not get GitLabApi object");
+            throw new NotAuthorizedException("Current user unauthorized");
         }
 
         analyzeProject(gitLabApi, projectId);
