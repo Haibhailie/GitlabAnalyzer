@@ -52,10 +52,6 @@ public class AnalysisService {
         Project project = gitLabApi.getProjectApi().getProject(projectId);
         ProjectDtoDb projectDto = getProjectDto(gitLabApi, project, new ArrayList<>(committerToCommitterDtoMap.values()));
 
-        // TODO: Do we need this or simply pass the webUrl + mergeRequestDtos to the caching method?
-        ProjectMergeRequestsDtoDb projectMergeRequestsDto =
-                getProjectMergeRequestsDto(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
-
         // TODO: cacheProjectDto(projectDto) (key: projectUrl + projectId)
         //          - cacheCommitterDtos() inside projectDto
         analysisRepository.cacheProjectDto(projectDto);
@@ -187,10 +183,6 @@ public class AnalysisService {
         Member currentMember = gitLabApi.getProjectApi().getMember(projectId, currentUserId);
         int currentAccessLevel = currentMember.getAccessLevel().value;
         return MemberUtils.getMemberRoleFromAccessLevel(currentAccessLevel);
-    }
-
-    private ProjectMergeRequestsDtoDb getProjectMergeRequestsDto(String webUrl, List<MergeRequestDtoDb> mergeRequestDtos) {
-        return new ProjectMergeRequestsDtoDb(webUrl, mergeRequestDtos);
     }
 
     private void addMergeRequestDocumentIdsToMemberDtos(Map<Integer, MemberDtoDb> memberToMemberDtoMap,
