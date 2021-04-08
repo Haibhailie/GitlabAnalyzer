@@ -39,7 +39,7 @@ public class MemberController {
         if (list == null) {
             return SC_UNAUTHORIZED;
         } else if (list.isEmpty()) {
-            return SC_NOT_FOUND;
+            return SC_INTERNAL_SERVER_ERROR;
         } else {
             return SC_OK;
         }
