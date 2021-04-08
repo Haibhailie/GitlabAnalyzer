@@ -1,73 +1,149 @@
-import { useParams } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useParams, useHistory } from 'react-router-dom'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
-import { IMemberData, TMemberData } from '../types'
+import {
+  TCommitterData,
+  TMemberData,
+  TMemberCommitterMap,
+  IMemberCommitterMap,
+} from '../types'
 
 import Table from '../components/Table'
-import MemberDropdown from '../components/MemberDropdown'
+import MemberSelect from '../components/MemberSelect'
 
 import styles from '../css/MemberResolution.module.css'
 
-export interface ICommitterData {
-  email: string
-  name: string
-  memberDto: IMemberData
-}
-
-const saveMemberResolution = (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault()
-  console.log('submitted')
-
-  const data = event.target
-  console.log(data)
-}
-
 const MemberResolution = () => {
   const { id } = useParams<{ id: string }>()
+  const history = useHistory()
+  const [formData, setFormData] = useState<TMemberCommitterMap>([])
+  const [errorMsg, setErrorMsg] = useState('')
+
   const testCommitterData = [
     {
       name: 'Ali Khamesy',
       email: 'akhamesy@sfu.ca',
       memberDto: {
+        displayName: 'Ali Khamesy',
         id: '7',
         username: 'akhamesy',
-        displayName: 'Ali Khamesy',
         role: 'MAINTAINER',
+        webUrl: 'http://gitlab.example.com/akhamesy',
       },
     },
     {
       name: 'Grace Luo',
       email: 'grace.r.luo@gmail.com',
       memberDto: {
+        displayName: 'Grace Luo',
         id: '5',
         username: 'gracelu0',
-        displayName: 'Grace Luo',
         role: 'MAINTAINER',
+        webUrl: 'http://gitlab.example.com/gracelu0',
       },
     },
     {
       name: 'Grace Luo',
       email: 'gla74@sfu.ca',
       memberDto: {
-        id: '5',
-        username: 'gracelu0',
         displayName: 'Grace Luo',
+        id: '6',
+        username: 'gla74',
         role: 'MAINTAINER',
+        webUrl: 'http://gitlab.example.com/gracelu0',
+      },
+    },
+    {
+      name: 'Dummy User',
+      email: 'dummy@sfu.ca',
+      memberDto: {
+        displayName: 'Dummy User',
+        id: '8',
+        username: 'dummyUsername',
+        role: 'MAINTAINER',
+        webUrl: 'http://gitlab.example.com/dummyUsername',
       },
     },
   ]
+
+  const createCommitterMap = (committers: TCommitterData) => {
+    const memberCommitterMap: TMemberCommitterMap = []
+    committers.forEach(committer => {
+      const map: IMemberCommitterMap = {
+        email: committer.email,
+        memberId: committer.memberDto.id
+          ? parseInt(committer.memberDto.id)
+          : '',
+      }
+      console.log(map)
+      memberCommitterMap.push(map)
+    })
+    console.log(memberCommitterMap)
+    setFormData(memberCommitterMap)
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCommitter = event.target.name
+    const selectedMemberId = event.target.value
+
+    console.log(event.target.name, event.target.value)
+
+    setFormData(
+      formData.map(committer =>
+        committer.email === selectedCommitter
+          ? { ...committer, memberId: selectedMemberId }
+          : committer
+      )
+    )
+  }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    console.log(formData)
+
+    jsonFetcher(`/api/project/${id}/committers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+      responseIsEmpty: true,
+    })
+      .then(res => {
+        if (res === 200) {
+          alert('Member to committer mapping saved!')
+          history.push(`/project/${id}`)
+        } else {
+          switch (res) {
+            case 400:
+              setErrorMsg('Please select an option for each committer')
+              break
+            case 401:
+              setErrorMsg('Invalid Personal Access Token')
+              break
+            case 404:
+              setErrorMsg('Project not found')
+              break
+            case 500:
+              setErrorMsg('An unknown error occurred')
+              break
+            default:
+              break
+          }
+        }
+      })
+      .catch(() => {
+        setErrorMsg('Could not connect to server')
+      })
+  }
 
   const {
     Suspense: MemberSuspense,
     data: memberData,
     error: memberError,
-  } = useSuspense<TMemberData, Error>((setData, setError) => {
+  } = useSuspense<TMemberData>((setData, setError) => {
     jsonFetcher<TMemberData>(`/api/project/${id}/members`)
-      .then(members => {
-        setData(members)
-        console.log(memberData)
-      })
+      .then(setData)
       .catch(onError(setError))
   })
 
@@ -75,10 +151,11 @@ const MemberResolution = () => {
     Suspense: CommitterSuspense,
     data: committerData,
     error: committerError,
-  } = useSuspense<ICommitterData[], Error>((setData, setError) => {
-    jsonFetcher<ICommitterData[]>(`/api/project/${id}/committers`)
+  } = useSuspense<TCommitterData>((setData, setError) => {
+    jsonFetcher<TCommitterData>(`/api/project/${id}/committers`)
       .then(committers => {
         setData(committers)
+        createCommitterMap(testCommitterData)
       })
       .catch(onError(setError))
   })
@@ -94,10 +171,8 @@ const MemberResolution = () => {
       >
         <div className={styles.container}>
           <h1 className={styles.header}>Member to Committer Resolution</h1>
-          <form
-            className={styles.formContainer}
-            onSubmit={saveMemberResolution}
-          >
+          <form className={styles.formContainer} onSubmit={handleSubmit}>
+            {errorMsg && <h3 className={styles.errorAlert}>{errorMsg}</h3>}
             <Table
               headers={['Committer', 'Email', 'Member']}
               columnWidths={['2fr', '2fr', '3fr']}
@@ -113,10 +188,11 @@ const MemberResolution = () => {
                     name,
                     email,
                     memberDto: memberData ? (
-                      <MemberDropdown
+                      <MemberSelect
                         data={memberData}
-                        defaultSelected={memberDto ? memberDto.id : 'ignore'}
+                        defaultSelected={memberDto?.id ?? ''}
                         committerEmail={email}
+                        onChange={handleChange}
                       />
                     ) : null,
                   }

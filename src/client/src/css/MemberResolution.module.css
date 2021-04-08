@@ -60,3 +60,15 @@
   background-color: var(--color-primary);
   color: #ffffff;
 }
+
+.errorAlert {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font: var(--font-body-medium-poppins);
+  color: var(--color-text-red);
+  background-color: var(--color-background-red);
+  width: 100%;
+  border-radius: 5px;
+  height: 40px;
+}
