@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
+import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
@@ -20,26 +21,30 @@ public final class CommitDtoDb {
     private int numDeletions;
     private int total;
     private String diffs;
+    private boolean isIgnored;
+    private List<FileDto> files;
     private double score;
 
     public CommitDtoDb(Commit commit, List<Diff> diffList) {
-        this.setId(commit.getId());
-        this.setTitle(commit.getTitle());
-        this.setMessage(commit.getMessage());
-        this.setAuthorName(commit.getAuthorName());
-        this.setAuthorEmail(commit.getAuthorEmail());
-        this.setDateCommitted(commit.getCommittedDate().getTime());
-        this.setWebUrl(commit.getWebUrl());
+        setId(commit.getId());
+        setTitle(commit.getTitle());
+        setMessage(commit.getMessage());
+        setAuthorName(commit.getAuthorName());
+        setAuthorEmail(commit.getAuthorEmail());
+        setDateCommitted(commit.getCommittedDate().getTime());
+        setWebUrl(commit.getWebUrl());
 
-        this.setNumAdditions(commit.getStats().getAdditions());
-        this.setNumDeletions(commit.getStats().getDeletions());
-        this.setTotal(commit.getStats().getTotal());
+        setNumAdditions(commit.getStats().getAdditions());
+        setNumDeletions(commit.getStats().getDeletions());
+        setTotal(commit.getStats().getTotal());
 
-        this.setDiffs(DiffStringParser.parseDiff(diffList));
+        setDiffs(DiffStringParser.parseDiff(diffList));
+        setIgnored(false);
 
         CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
-        double commitScore = scoreCalculator.getCommitScore(diffList);
-        this.setScore(commitScore);
+        List<FileDto> fileScores = scoreCalculator.getCommitScore(diffList);
+        setFiles(fileScores);
+        setScore(fileScores);
     }
 
     public void setId(String id) {
@@ -86,16 +91,22 @@ public final class CommitDtoDb {
         this.diffs = diffs;
     }
 
-    public void setScore(double score) {
-        this.score = score;
+    public void setIgnored(boolean isIgnored) {
+        this.isIgnored = isIgnored;
     }
 
-    public int getNumAdditions() {
-        return numAdditions;
+    public void setFiles(List<FileDto> files) {
+        this.files = files;
     }
 
-    public int getNumDeletions() {
-        return numDeletions;
+    public void setScore(List<FileDto> files) {
+        for (FileDto file : files) {
+            this.score += file.getTotalScore();
+        }
+    }
+
+    public double getScore() {
+        return score;
     }
 
     @Override
@@ -121,6 +132,8 @@ public final class CommitDtoDb {
                 && this.numDeletions == c.numDeletions
                 && this.total == c.total
                 && this.diffs.equals(c.diffs)
+                && this.isIgnored == c.isIgnored
+                && this.files.equals(c.files)
                 && this.score == c.score);
     }
 }

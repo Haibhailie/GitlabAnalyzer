@@ -5,17 +5,23 @@ import java.util.Set;
 
 public final class CommitterDtoDb {
     private String email;
+    private String name;
     private Set<String> commitIds;
     private Set<Integer> mergeRequestIds;
 
-    public CommitterDtoDb(String email, Set<String> commitIds, Set<Integer> mergeRequestIds) {
+    public CommitterDtoDb(String email, String name, Set<String> commitIds, Set<Integer> mergeRequestIds) {
         setEmail(email);
+        setName(name);
         setCommitIds(new HashSet<>(commitIds));
         setMergeRequestIds(new HashSet<>(mergeRequestIds));
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setCommitIds(Set<String> commitIds) {
@@ -47,6 +53,7 @@ public final class CommitterDtoDb {
         CommitterDtoDb c = (CommitterDtoDb) o;
 
         return (this.email.equals(c.email)
+                && this.name.equals(c.name)
                 && this.commitIds.equals(c.commitIds)
                 && this.mergeRequestIds.equals(c.mergeRequestIds));
     }

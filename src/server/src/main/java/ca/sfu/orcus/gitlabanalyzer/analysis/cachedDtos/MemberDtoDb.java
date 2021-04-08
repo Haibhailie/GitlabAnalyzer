@@ -14,28 +14,28 @@ public final class MemberDtoDb {
     private String webUrl;
 
     private Set<String> committers;
-    private List<Integer> commitsOnOwnMrs;
-    private List<Integer> commitsOnOtherMrs;
-    private List<Integer> commitsToMaster;
-    private List<Integer> mergeRequestIds;
+    private Set<Integer> commitsOnOwnMrs;
+    private Set<Integer> commitsOnOtherMrs;
+    private Set<Integer> commitsToMaster;
+    private Set<Integer> mergeRequestIds;
     private List<NoteDtoDb> notes;
 
     public MemberDtoDb(Member member) {
         this(member,
                 new HashSet<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
+                new HashSet<>(),
+                new HashSet<>(),
+                new HashSet<>(),
+                new HashSet<>(),
                 new ArrayList<>());
     }
 
     public MemberDtoDb(Member member,
                        Set<String> committers,
-                       List<Integer> commitsOnOwnMrs,
-                       List<Integer> commitsOnOtherMrs,
-                       List<Integer> commitsToMaster,
-                       List<Integer> mergeRequestIds,
+                       Set<Integer> commitsOnOwnMrs,
+                       Set<Integer> commitsOnOtherMrs,
+                       Set<Integer> commitsToMaster,
+                       Set<Integer> mergeRequestIds,
                        List<NoteDtoDb> notes) {
         setId(member.getId());
         setName(member.getName());
@@ -75,19 +75,19 @@ public final class MemberDtoDb {
         this.committers = committers;
     }
 
-    public void setCommitsOnOwnMrs(List<Integer> commitsOnOwnMrs) {
+    public void setCommitsOnOwnMrs(Set<Integer> commitsOnOwnMrs) {
         this.commitsOnOwnMrs = commitsOnOwnMrs;
     }
 
-    public void setCommitsOnOtherMrs(List<Integer> commitsOnOtherMrs) {
+    public void setCommitsOnOtherMrs(Set<Integer> commitsOnOtherMrs) {
         this.commitsOnOtherMrs = commitsOnOtherMrs;
     }
 
-    public void setCommitsToMaster(List<Integer> commitsToMaster) {
+    public void setCommitsToMaster(Set<Integer> commitsToMaster) {
         this.commitsToMaster = commitsToMaster;
     }
 
-    public void setMergeRequestIds(List<Integer> mergeRequestIds) {
+    public void setMergeRequestIds(Set<Integer> mergeRequestIds) {
         this.mergeRequestIds = mergeRequestIds;
     }
 
@@ -119,7 +119,7 @@ public final class MemberDtoDb {
                 && this.name.equals(m.name)
                 && this.username.equals(m.username)
                 && this.role.equals(m.role)
-                && this.webUrl.equals(webUrl)
+                && this.webUrl.equals(m.webUrl)
                 && this.committers.equals(m.committers)
                 && this.commitsOnOtherMrs.equals(m.commitsOnOwnMrs)
                 && this.commitsOnOtherMrs.equals(m.commitsOnOtherMrs)

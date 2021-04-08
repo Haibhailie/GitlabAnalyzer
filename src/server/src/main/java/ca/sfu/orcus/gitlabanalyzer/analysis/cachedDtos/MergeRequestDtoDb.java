@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
+import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestScoreCalculator;
 import org.gitlab4j.api.models.MergeRequest;
 
@@ -14,18 +15,17 @@ public final class MergeRequestDtoDb {
     private long mergedAt;
     private String webUrl;
 
-    private int numAdditions;
-    private int numDeletions;
     private List<CommitDtoDb> commits;
     private Set<String> committers;
-    private double score;
+    private double sumOfCommitsScore;
+    private boolean isIgnored;
+    private List<FileDto> files;
 
     public MergeRequestDtoDb(MergeRequest mergeRequest,
-                             int numAdditions,
-                             int numDeletions,
                              List<CommitDtoDb> commits,
                              Set<String> committers,
-                             MergeRequest mergeRequestChanges) {
+                             MergeRequest mergeRequestChanges,
+                             double mergeRequestScore) {
         setId(mergeRequest.getIid());
         setTitle(mergeRequest.getTitle());
         setAuthor(mergeRequest.getAuthor().getName());
@@ -33,14 +33,13 @@ public final class MergeRequestDtoDb {
         setMergedAt(mergeRequest.getMergedAt().getTime());
         setWebUrl(mergeRequest.getWebUrl());
 
-        setNumAdditions(numAdditions);
-        setNumDeletions(numDeletions);
         setCommits(commits);
         setCommitters(committers);
+        setSumOfCommitsScore(mergeRequestScore);
+        setIgnored(false);
 
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
-        double mergeRequestScore = scoreCalculator.getMergeRequestScore(mergeRequestChanges);
-        setScore(mergeRequestScore);
+        setFiles(scoreCalculator.getMergeRequestScore(mergeRequestChanges));
     }
 
     public void setId(int id) {
@@ -67,14 +66,6 @@ public final class MergeRequestDtoDb {
         this.webUrl = webUrl;
     }
 
-    public void setNumAdditions(int numAdditions) {
-        this.numAdditions = numAdditions;
-    }
-
-    public void setNumDeletions(int numDeletions) {
-        this.numDeletions = numDeletions;
-    }
-
     public void setCommits(List<CommitDtoDb> commits) {
         this.commits = commits;
     }
@@ -83,8 +74,16 @@ public final class MergeRequestDtoDb {
         this.committers = committers;
     }
 
-    public void setScore(double score) {
-        this.score = score;
+    public void setSumOfCommitsScore(double sumOfCommitsScore) {
+        this.sumOfCommitsScore = sumOfCommitsScore;
+    }
+
+    public void setIgnored(boolean isIgnored) {
+        this.isIgnored = isIgnored;
+    }
+
+    public void setFiles(List<FileDto> files) {
+        this.files = files;
     }
 
     public Set<String> getCommitters() {
@@ -109,10 +108,10 @@ public final class MergeRequestDtoDb {
                 && this.description.equals(m.description)
                 && this.mergedAt == m.mergedAt
                 && this.webUrl.equals(m.webUrl)
-                && this.score == m.score
-                && this.numAdditions == m.numAdditions
-                && this.numDeletions == m.numDeletions
                 && this.commits.equals(m.commits)
-                && this.committers.equals(m.committers));
+                && this.committers.equals(m.committers)
+                && this.sumOfCommitsScore == m.sumOfCommitsScore
+                && this.isIgnored == m.isIgnored
+                && this.files.equals(m.files));
     }
 }

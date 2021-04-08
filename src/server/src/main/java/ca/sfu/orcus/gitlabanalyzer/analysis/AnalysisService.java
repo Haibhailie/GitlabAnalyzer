@@ -32,25 +32,24 @@ public class AnalysisService {
     }
 
     public void analyzeProject(GitLabApi gitLabApi, Integer projectId) throws GitLabApiException, NullPointerException {
-        Map<String, CommitterDtoDb> committerDtos = new HashMap<>(); // committerEmail -> committerDto
-        Map<Integer, MemberDtoDb> memberDtos = initializeMemberDtos(gitLabApi, projectId); // memberId -> memberDto
-
+        Map<String, CommitterDtoDb> committerToCommitterDtoMap = new HashMap<>(); // committerEmail -> committerDto
+        Map<Integer, MemberDtoDb> memberToMemberDtoMap = initializeMemberDtos(gitLabApi, projectId); // memberId -> memberDto
         List<MergeRequestDtoDb> mergeRequestDtos = new ArrayList<>();
 
         for (MergeRequest mr : getAllMergeRequests(gitLabApi, projectId)) {
-            addMergeRequestIdToMemberDto(memberDtos, mr);
+            addMergeRequestIdToMemberDto(memberToMemberDtoMap, mr);
 
-            MergeRequestDtoDb mergeRequestDto = getMergeRequestDto(gitLabApi, mr, committerDtos);
+            MergeRequestDtoDb mergeRequestDto = getMergeRequestDto(gitLabApi, mr, committerToCommitterDtoMap);
             mergeRequestDtos.add(mergeRequestDto);
 
-            addMergeRequestNotesToMemberDtos(gitLabApi, memberDtos, mr);
+            addMergeRequestNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, mr);
         }
 
-        addIssueNotesToMemberDtos(gitLabApi, memberDtos, projectId);
+        addIssueNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, projectId);
 
-        // TODO: cacheCommitterDtos()
-        // TODO: cacheMemberDtos()
-        // TODO: cacheMergeRequestDtos()
+        // TODO: cacheCommitterDtos() (inside projectDto)
+        // TODO: cacheMemberDtos() (inside projectDto)
+        // TODO: cacheMergeRequestDtos() (projectId + projectUrl)
     }
 
     private Map<Integer, MemberDtoDb> initializeMemberDtos(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
@@ -70,19 +69,17 @@ public class AnalysisService {
 
     private void addMergeRequestIdToMemberDto(Map<Integer, MemberDtoDb> memberDtos, MergeRequest mr) {
         Integer authorId = mr.getAuthor().getId();
-        MemberDtoDb memberDtoDb = memberDtos.get(authorId);
-        memberDtoDb.addMergeRequestId(mr.getIid());
-        // memberDtos.get(authorId).addMergeRequestId(mr.getIid());
+        memberDtos.get(authorId).addMergeRequestId(mr.getIid());
     }
 
     private MergeRequestDtoDb getMergeRequestDto(GitLabApi gitLabApi,
                                                  MergeRequest mergeRequest,
-                                                 Map<String, CommitterDtoDb> committerDtos) throws GitLabApiException {
+                                                 Map<String, CommitterDtoDb> committerToCommitterDtoMap)
+            throws GitLabApiException {
         List<CommitDtoDb> commitDtos = new ArrayList<>();
         Set<String> committers = new HashSet<>();
 
-        int numAdditions = 0;
-        int numDeletions = 0;
+        double mergeRequestScore = 0;
 
         Integer projectId = mergeRequest.getProjectId();
         Integer mergeRequestId = mergeRequest.getIid();
@@ -91,18 +88,16 @@ public class AnalysisService {
             Commit detailedCommit = getDetailedCommit(gitLabApi, projectId, c);
 
             committers.add(detailedCommit.getAuthorEmail());
-            addCommitIdAndMrIdToCommitterDto(committerDtos, detailedCommit, mergeRequestId);
+            addCommitIdAndMrIdToCommitterDto(committerToCommitterDtoMap, detailedCommit, mergeRequestId);
 
             CommitDtoDb commitDto = getCommitDto(gitLabApi, projectId, detailedCommit);
-
-            numAdditions += commitDto.getNumAdditions();
-            numDeletions += commitDto.getNumDeletions();
+            mergeRequestScore += commitDto.getScore();
 
             commitDtos.add(commitDto);
         }
 
         MergeRequest mrChanges = gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId);
-        return new MergeRequestDtoDb(mergeRequest, numAdditions, numDeletions, commitDtos, committers, mrChanges);
+        return new MergeRequestDtoDb(mergeRequest, commitDtos, committers, mrChanges, mergeRequestScore);
     }
 
     private List<Commit> getMergeRequestCommits(GitLabApi gitLabApi, MergeRequest mergeRequest)
@@ -119,6 +114,7 @@ public class AnalysisService {
                                                   Commit commit,
                                                   Integer mergeRequestId) {
         String authorEmail = commit.getAuthorEmail();
+        String authorName = commit.getAuthorName();
 
         if (committerDtos.containsKey(authorEmail)) {
             CommitterDtoDb committerDto = committerDtos.get(authorEmail);
@@ -127,7 +123,9 @@ public class AnalysisService {
         } else {
             committerDtos.put(
                     authorEmail,
-                    new CommitterDtoDb(authorEmail,
+                    new CommitterDtoDb(
+                            authorEmail,
+                            authorName,
                             Collections.singleton(commit.getId()),
                             Collections.singleton(mergeRequestId)));
         }
@@ -143,14 +141,15 @@ public class AnalysisService {
                                                   Map<Integer, MemberDtoDb> memberDtos,
                                                   MergeRequest mr) throws GitLabApiException {
         List<Note> mergeRequestNotes = gitLabApi.getNotesApi().getMergeRequestNotes(mr.getProjectId(), mr.getIid());
-        addNotesToMemberDtos(memberDtos, mergeRequestNotes, mr.getWebUrl());
+        addNotesToMemberDtos(memberDtos, mergeRequestNotes, mr.getWebUrl(), mr.getAuthor());
     }
 
-    private void addNotesToMemberDtos(Map<Integer, MemberDtoDb> memberDtos, List<Note> notes, String webUrl) {
+    private void addNotesToMemberDtos(Map<Integer, MemberDtoDb> memberDtos, List<Note> notes, String webUrl, Author parentAuthor) {
         for (Note n : notes) {
             if (!n.getSystem()) {
                 Integer authorId = n.getAuthor().getId();
-                NoteDtoDb noteDto = new NoteDtoDb(n, webUrl);
+                NoteDtoDb noteDto = new NoteDtoDb(n, webUrl,
+                        (parentAuthor.getId().equals(authorId) ? "Self" : parentAuthor.getName()));
                 memberDtos.get(authorId).addNote(noteDto);
             }
         }
@@ -162,7 +161,7 @@ public class AnalysisService {
         List<Issue> issues = gitLabApi.getIssuesApi().getIssues(projectId);
         for (Issue i : issues) {
             List<Note> issueNotes = gitLabApi.getNotesApi().getIssueNotes(projectId, i.getIid());
-            addNotesToMemberDtos(memberDtos, issueNotes, i.getWebUrl());
+            addNotesToMemberDtos(memberDtos, issueNotes, i.getWebUrl(), i.getAuthor());
         }
     }
 }

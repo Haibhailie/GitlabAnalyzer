@@ -1,25 +1,24 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
 import org.gitlab4j.api.models.Note;
-import org.springframework.data.annotation.Id;
-
-import java.util.Date;
 
 public final class NoteDtoDb {
     private int id;
-    private String body;
+    private String content;
     private int wordCount;
-    private Date date;
+    private long date;
     private String context;
     private String webUrl;
+    private String parentAuthor;
 
-    public NoteDtoDb(Note note, String webUrl) {
+    public NoteDtoDb(Note note, String webUrl, String parentAuthor) {
         setId(note.getId());
-        setBody(note.getBody());
+        setContent(note.getBody());
         setWordCount(countWords(note.getBody()));
-        setDate(note.getCreatedAt());
+        setDate(note.getCreatedAt().getTime());
         setContext(note.getNoteableType());
         setWebUrl(webUrl);
+        setParentAuthor(parentAuthor);
     }
 
     private int countWords(String str) {
@@ -35,15 +34,15 @@ public final class NoteDtoDb {
         this.id = id;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public void setWordCount(int wordCount) {
         this.wordCount = wordCount;
     }
 
-    public void setDate(Date date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -53,6 +52,10 @@ public final class NoteDtoDb {
 
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+    }
+
+    public void setParentAuthor(String parentAuthor) {
+        this.parentAuthor = parentAuthor;
     }
 
     @Override
@@ -68,10 +71,11 @@ public final class NoteDtoDb {
         NoteDtoDb n = (NoteDtoDb) o;
 
         return (this.id == n.id
-                && this.body.equals(n.body)
+                && this.content.equals(n.content)
                 && this.wordCount == n.wordCount
-                && this.date.equals(n.date)
+                && this.date == n.date
                 && this.context.equals(n.context)
-                && this.webUrl.equals(n.webUrl));
+                && this.webUrl.equals(n.webUrl)
+                && this.parentAuthor.equals(n.parentAuthor));
     }
 }
