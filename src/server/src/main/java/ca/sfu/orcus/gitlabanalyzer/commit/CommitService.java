@@ -102,7 +102,6 @@ public class CommitService {
                 }
             }
             return orphanMergeRequestByMemberName;
-
         } catch (GitLabApiException e) {
             return  null;
         }
