@@ -11,20 +11,20 @@ import java.util.Date;
 import java.util.List;
 
 public class CommitDto {
-    private String title;//
-    private String author;//
-    private String authorEmail;//
-    private String id;//
+    private String title;
+    private String author;
+    private String authorEmail;
+    private String id;
     private Date dateCommitted;
-    private long time;//
-    private String message;//
-    private int numAdditions;//
-    private int numDeletions;//
-    private int total;//
-    private String diffs;//
-    private boolean isIgnored;//
-    private List<FileDto> files;//
-    private String webUrl;//
+    private long time;
+    private String message;
+    private int numAdditions;
+    private int numDeletions;
+    private int total;
+    private String diffs;
+    private boolean isIgnored;
+    private List<FileDto> files;
+    private String webUrl;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
         setTitle(commit.getTitle());
