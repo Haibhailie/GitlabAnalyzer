@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -23,12 +24,16 @@ public class MemberRepository {
 
     private enum Member {
         documentId("_id"),
-        memberId("memberId"),
         projectUrl("projectUrl"),
+        memberId("memberId"),
         displayName("displayName"),
         username("username"),
         role("role"),
-        memberUrl("memberUrl");
+        memberUrl("memberUrl"),
+        committerEmails("committerEmails"),
+        commitsToMaster("commitsToMaster"),
+        mergeRequestIds("mergeRequestIds"),
+        notes("notes");
 
         public String key;
 
@@ -43,9 +48,9 @@ public class MemberRepository {
         memberCollection = database.getCollection(VariableDecoderUtil.decode("MEMBERS_COLLECTION"));
     }
 
-    public List<String> cacheAllMembers(List<MemberDto> allMembers, String projectUrl) {
+    public List<String> cacheAllMembers(List<MemberDtoDb> allMembers, String projectUrl) {
         List<String> documentIds = new ArrayList<>();
-        for (MemberDto member : allMembers) {
+        for (MemberDtoDb member : allMembers) {
             if (!memberIsAlreadyCached(member, projectUrl)) {
                 String documentId = cacheMember(member, projectUrl);
                 documentIds.add(documentId);
@@ -54,28 +59,32 @@ public class MemberRepository {
         return documentIds;
     }
 
-    private boolean memberIsAlreadyCached(MemberDto member, String projectUrl) {
+    private boolean memberIsAlreadyCached(MemberDtoDb member, String projectUrl) {
         Document memberDoc = memberCollection.find(and(eq(Member.memberId.key, member.getId()),
                                                     eq(Member.projectUrl.key, projectUrl)))
                                                     .projection(include(Member.memberId.key)).first();
         return (memberDoc != null);
     }
 
-    private String cacheMember(MemberDto member, String projectUrl) {
+    private String cacheMember(MemberDtoDb member, String projectUrl) {
         String documentId = new ObjectId().toString();
         Document memberDocument = generateMemberDocument(member, documentId, projectUrl);
         memberCollection.insertOne(memberDocument);
         return documentId;
     }
 
-    private Document generateMemberDocument(MemberDto member, String documentId, String projectUrl) {
+    private Document generateMemberDocument(MemberDtoDb member, String documentId, String projectUrl) {
         return new Document(Member.documentId.key, documentId)
-                    .append(Member.memberId.key, member.getId())
                     .append(Member.projectUrl.key, projectUrl)
+                    .append(Member.memberId.key, member.getId())
                     .append(Member.displayName.key, member.getDisplayName())
                     .append(Member.username.key, member.getUsername())
                     .append(Member.role.key, member.getRole())
-                    .append(Member.memberUrl.key, member.getWebUrl());
+                    .append(Member.memberUrl.key, member.getWebUrl())
+                    .append(Member.committerEmails.key, member.getCommitterEmails())
+                    .append(Member.commitsToMaster.key, member.getCommitsToMaster())
+                    .append(Member.mergeRequestIds.key, member.getMergeRequestIds())
+                    .append(Member.notes.key, member.getNotes());
     }
 
     public List<MemberDto> getMembers(List<String> documentIds) {
@@ -102,9 +111,5 @@ public class MemberRepository {
         String role = memberDoc.getString(Member.role.key);
         String memberUrl = memberDoc.getString(Member.memberUrl.key);
         return new MemberDto(displayName, id, username, role, memberUrl);
-    }
-
-    public boolean projectContainsMember(int projectId, int memberId) {
-        return true;
     }
 }
