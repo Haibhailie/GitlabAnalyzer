@@ -87,6 +87,42 @@ public final class MemberDtoDb {
         this.notes.add(note);
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public Set<String> getCommitterEmails() {
+        return committerEmails;
+    }
+
+    public Set<Integer> getCommitsToMaster() {
+        return commitsToMaster;
+    }
+
+    public Set<Integer> getMergeRequestIds() {
+        return mergeRequestIds;
+    }
+
+    public List<NoteDtoDb> getNotes() {
+        return notes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
