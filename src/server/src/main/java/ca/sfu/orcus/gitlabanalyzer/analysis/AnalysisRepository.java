@@ -27,6 +27,4 @@ public class AnalysisRepository {
                                                                 List<MergeRequestDtoDb> mergeRequestDtos) {
         return Collections.emptyList();
     }
-
-
 }
