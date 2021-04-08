@@ -11,6 +11,8 @@ import org.gitlab4j.api.models.Visibility;
 import org.springframework.stereotype.Repository;
 
 import javax.ws.rs.NotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -29,7 +31,7 @@ public class ProjectRepository {
     private enum Project {
         documentId("_id"),
         projectId("projectId"),
-        repoUrl("repoUrl"),
+        projectUrl("projectUrl"),
         lastAnalysisTime("lastAnalysisTime"),
         isPublic("isPublic"),
         analysis("analysis"),
@@ -58,15 +60,15 @@ public class ProjectRepository {
         int projectId = projectDto.getId();
         String repoUrl = projectDto.getWebUrl();
         long lastAnalysisTime = projectDto.getLastAnalysisTime();
-        return new Document(Project.projectId.key, new ObjectId().toString())
+        return new Document(Project.documentId.key, new ObjectId().toString())
                     .append(Project.projectId.key, projectId)
-                    .append(Project.repoUrl.key, repoUrl)
+                    .append(Project.projectUrl.key, repoUrl)
                     .append(Project.lastAnalysisTime.key, lastAnalysisTime)
                     .append(Project.isPublic.key, isPublic);
     }
 
-    public boolean projectIsPublic(int projectId, String repoUrl) throws NotFoundException {
-        Document project = getPartialProjectDocument(projectId, repoUrl, Project.isPublic.key);
+    public boolean projectIsPublic(int projectId, String projectUrl) throws NotFoundException {
+        Document project = getPartialProjectDocument(projectId, projectUrl, Project.isPublic.key);
 
         if (project == null) {
             throw new NotFoundException("Project is not in database");
@@ -74,14 +76,21 @@ public class ProjectRepository {
         return project.getBoolean(Project.isPublic.key);
     }
 
-    public long getLastAnalysisTimeForProject(int projectId, String repoUrl) {
-        Document project = getPartialProjectDocument(projectId, repoUrl, Project.lastAnalysisTime.key);
+    public long getLastAnalysisTimeForProject(int projectId, String projectUrl) {
+        Document project = getPartialProjectDocument(projectId, projectUrl, Project.lastAnalysisTime.key);
         return project == null ? 0 : project.getLong(Project.lastAnalysisTime.key);
+    }
+
+    public List<String> getMemberDocIds(int projectId, String projectUrl) {
+        Document project = getPartialProjectDocument(projectId, projectUrl, Project.memberDocumentRefs.key);
+        List<String> memberDocIds = project.getList(Project.memberDocumentRefs.key, String.class);
+        return memberDocIds == null ? new ArrayList<>() :
+                project.getList(Project.memberDocumentRefs.key, String.class);
     }
 
     private Document getPartialProjectDocument(int projectId, String repoUrl, String projectionKey) {
         return projectsCollection.find(and(eq(Project.projectId.key, projectId),
-                eq(Project.repoUrl.key, repoUrl)))
+                eq(Project.projectUrl.key, repoUrl)))
                 .projection(include(projectionKey)).first();
     }
 }

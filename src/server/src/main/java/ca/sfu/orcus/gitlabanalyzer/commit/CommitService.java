@@ -45,7 +45,15 @@ public class CommitService {
         }
     }
 
-    public List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
+    public List<CommitDto> getCommitsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
+        return returnAllCommits(gitLabApi, projectId, since, until, memberName);
+    }
+
+    private List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
         if (gitLabApi == null) {
             return null;
         }
