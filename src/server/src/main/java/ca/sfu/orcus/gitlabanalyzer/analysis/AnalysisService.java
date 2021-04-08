@@ -32,7 +32,7 @@ public class AnalysisService {
         analyzeProject(gitLabApi, projectId);
     }
 
-    public void analyzeProject(GitLabApi gitLabApi, Integer projectId) throws GitLabApiException, NullPointerException {
+    private void analyzeProject(GitLabApi gitLabApi, Integer projectId) throws GitLabApiException, NullPointerException {
         Map<String, CommitterDtoDb> committerToCommitterDtoMap = new HashMap<>(); // committerEmail -> committerDto
         Map<Integer, MemberDtoDb> memberToMemberDtoMap = initializeMemberDtos(gitLabApi, projectId); // memberId -> memberDto
         List<MergeRequestDtoDb> mergeRequestDtos = new ArrayList<>();
