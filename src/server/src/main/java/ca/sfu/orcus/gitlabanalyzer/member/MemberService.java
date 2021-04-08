@@ -77,7 +77,7 @@ public class MemberService {
         if (gitLabApi == null) {
             return null;
         }
-        return commitService.getOrphanMergeRequestByMemberName(gitLabApi, projectId, since, until, memberName);
+        return mergeRequestService.getOrphanMergeRequestByMemberName(gitLabApi, projectId, since, until, memberName);
     }
 
     public List<CommitDto> getOrphanCommitsFromOrphanMergeRequestByMemberName(String jwt, int projectId, int mergeRequestId, String memberName) {
@@ -87,5 +87,4 @@ public class MemberService {
         }
         return mergeRequestService.getOrphanCommitsFromOrphanMergeRequestByMemberName(gitLabApi, projectId, mergeRequestId, memberName);
     }
-
 }

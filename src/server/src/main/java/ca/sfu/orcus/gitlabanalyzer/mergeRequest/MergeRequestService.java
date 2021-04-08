@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.*;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
@@ -11,19 +12,19 @@ import org.gitlab4j.api.models.MergeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class MergeRequestService {
     private final MergeRequestRepository mergeRequestRepository;
     private final GitLabApiWrapper gitLabApiWrapper;
+    private final CommitService commitService;
 
     @Autowired
-    public MergeRequestService(MergeRequestRepository mergeRequestRepository, GitLabApiWrapper gitLabApiWrapper) {
+    public MergeRequestService(MergeRequestRepository mergeRequestRepository, GitLabApiWrapper gitLabApiWrapper, CommitService commitService) {
         this.mergeRequestRepository = mergeRequestRepository;
         this.gitLabApiWrapper = gitLabApiWrapper;
+        this.commitService = commitService;
     }
 
     public List<MergeRequestDto> getAllMergeRequests(String jwt, int projectId, Date since, Date until) {
@@ -110,6 +111,26 @@ public class MergeRequestService {
         }
     }
 
+    public List<MergeRequestDto> getOrphanMergeRequestByMemberName(GitLabApi gitLabApi, int projectId, Date since, Date until, String memberName) {
+        try {
+            List<MergeRequestDto> orphanMergeRequestByMemberName = new ArrayList<>();
+            List<CommitDto> allCommitsByMemberName = commitService.returnAllCommits(gitLabApi, projectId, since, until, memberName);
+            Set<Integer> addedMergeRequests = new HashSet<>();
+            for (CommitDto c : allCommitsByMemberName) {
+                List<MergeRequest> relatedMergeRequests = gitLabApi.getCommitsApi().getMergeRequests(projectId, c.getId());
+                for (MergeRequest mr : relatedMergeRequests) {
+                    if (!memberName.equalsIgnoreCase(mr.getAuthor().getName()) && !addedMergeRequests.contains(mr.getIid())) {
+                        addedMergeRequests.add(mr.getIid());
+                        orphanMergeRequestByMemberName.add(new MergeRequestDto(gitLabApi, projectId, mr));
+                    }
+                }
+            }
+            return orphanMergeRequestByMemberName;
+        } catch (GitLabApiException e) {
+            return  null;
+        }
+    }
+
     public List<CommitDto> getOrphanCommitsFromOrphanMergeRequestByMemberName(GitLabApi gitLabApi, int projectId, int mergeRequestId, String memberName) {
         List<CommitDto> allCommits = returnAllCommitsFromMergeRequest(gitLabApi, projectId, mergeRequestId);
         List<CommitDto> orphanCommits = new ArrayList<>();
@@ -120,5 +141,4 @@ public class MergeRequestService {
         }
         return orphanCommits;
     }
-
 }

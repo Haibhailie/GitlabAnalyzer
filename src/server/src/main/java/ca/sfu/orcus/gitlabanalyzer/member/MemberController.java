@@ -83,8 +83,8 @@ public class MemberController {
                                                        @PathVariable int projectId,
                                                        @PathVariable int mergerequestId,
                                                        @PathVariable String memberName) {
-        List<CommitDto> orphanCommitsForOrphanMergeRequestByMemberName = memberService.getOrphanCommitsFromOrphanMergeRequestByMemberName(jwt, projectId, mergerequestId, memberName);
-        response.setStatus(orphanCommitsForOrphanMergeRequestByMemberName == null ? SC_UNAUTHORIZED : SC_OK);
-        return gson.toJson(orphanCommitsForOrphanMergeRequestByMemberName);
+        List<CommitDto> orphanCommits = memberService.getOrphanCommitsFromOrphanMergeRequestByMemberName(jwt, projectId, mergerequestId, memberName);
+        response.setStatus(orphanCommits == null ? SC_UNAUTHORIZED : SC_OK);
+        return gson.toJson(orphanCommits);
     }
 }

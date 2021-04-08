@@ -86,24 +86,4 @@ public class CommitService {
         CommitDto commitDto = getSingleCommit(jwt, projectId, sha);
         return commitDto.getDiffs();
     }
-
-    public List<MergeRequestDto> getOrphanMergeRequestByMemberName(GitLabApi gitLabApi, int projectId, Date since, Date until, String memberName) {
-        try {
-            List<MergeRequestDto> orphanMergeRequestByMemberName = new ArrayList<>();
-            List<CommitDto> allCommitsByMemberName = returnAllCommits(gitLabApi, projectId, since, until, memberName);
-            Set<Integer> addedMergeRequests = new HashSet<>();
-            for (CommitDto c : allCommitsByMemberName) {
-                List<MergeRequest> relatedMergeRequests = gitLabApi.getCommitsApi().getMergeRequests(projectId, c.getId());
-                for (MergeRequest mr : relatedMergeRequests) {
-                    if (!memberName.equalsIgnoreCase(mr.getAuthor().getName()) && !addedMergeRequests.contains(mr.getIid())) {
-                        addedMergeRequests.add(mr.getIid());
-                        orphanMergeRequestByMemberName.add(new MergeRequestDto(gitLabApi, projectId, mr));
-                    }
-                }
-            }
-            return orphanMergeRequestByMemberName;
-        } catch (GitLabApiException e) {
-            return  null;
-        }
-    }
 }
