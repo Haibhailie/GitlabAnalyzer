@@ -8,14 +8,14 @@ import java.util.*;
 
 public final class MemberDtoDb {
     private int id;
-    private String name;
+    private String displayName;
     private String username;
     private String role;
     private String webUrl;
 
     private Set<String> committers;
-    private Set<Integer> commitsOnOwnMrs;
-    private Set<Integer> commitsOnOtherMrs;
+    private Set<Integer> commitsOnOwnMrs; // TODO: Is this needed? Should this be replaced with a score?
+    private Set<Integer> commitsOnOtherMrs; // TODO: Is this needed? Should this be replace with a score?
     private Set<Integer> commitsToMaster;
     private Set<Integer> mergeRequestIds;
     private List<NoteDtoDb> notes;
@@ -38,7 +38,7 @@ public final class MemberDtoDb {
                        Set<Integer> mergeRequestIds,
                        List<NoteDtoDb> notes) {
         setId(member.getId());
-        setName(member.getName());
+        setDisplayName(member.getName());
         setUsername(member.getUsername());
         setRole(member.getAccessLevel());
         setWebUrl(member.getWebUrl());
@@ -55,8 +55,8 @@ public final class MemberDtoDb {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public void setUsername(String username) {
@@ -116,7 +116,7 @@ public final class MemberDtoDb {
         MemberDtoDb m = (MemberDtoDb) o;
 
         return (this.id == m.id
-                && this.name.equals(m.name)
+                && this.displayName.equals(m.displayName)
                 && this.username.equals(m.username)
                 && this.role.equals(m.role)
                 && this.webUrl.equals(m.webUrl)

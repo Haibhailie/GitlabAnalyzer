@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Set;
 
 public final class MergeRequestDtoDb {
-    private int id;
+    private int mergeRequestId;
     private String title;
     private String author;
     private String description;
-    private long mergedAt;
+    private long time;
     private String webUrl;
 
+    // TODO: Do we need commitsInfoInMergeRequest member variable now since we already have all the commits?
     private List<CommitDtoDb> commits;
     private Set<String> committers;
     private double sumOfCommitsScore;
@@ -25,25 +26,25 @@ public final class MergeRequestDtoDb {
                              List<CommitDtoDb> commits,
                              Set<String> committers,
                              MergeRequest mergeRequestChanges,
-                             double mergeRequestScore) {
-        setId(mergeRequest.getIid());
+                             double sumOfCommitsScore) {
+        setMergeRequestId(mergeRequest.getIid());
         setTitle(mergeRequest.getTitle());
         setAuthor(mergeRequest.getAuthor().getName());
         setDescription(mergeRequest.getDescription());
-        setMergedAt(mergeRequest.getMergedAt().getTime());
+        setTime(mergeRequest.getMergedAt().getTime());
         setWebUrl(mergeRequest.getWebUrl());
 
         setCommits(commits);
         setCommitters(committers);
-        setSumOfCommitsScore(mergeRequestScore);
+        setSumOfCommitsScore(sumOfCommitsScore);
         setIgnored(false);
 
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setFiles(scoreCalculator.getMergeRequestScore(mergeRequestChanges));
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMergeRequestId(int mergeRequestId) {
+        this.mergeRequestId = mergeRequestId;
     }
 
     public void setTitle(String title) {
@@ -58,8 +59,8 @@ public final class MergeRequestDtoDb {
         this.description = description;
     }
 
-    public void setMergedAt(long mergedAt) {
-        this.mergedAt = mergedAt;
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public void setWebUrl(String webUrl) {
@@ -86,10 +87,6 @@ public final class MergeRequestDtoDb {
         this.files = files;
     }
 
-    public Set<String> getCommitters() {
-        return committers;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -102,11 +99,11 @@ public final class MergeRequestDtoDb {
 
         MergeRequestDtoDb m = (MergeRequestDtoDb) o;
 
-        return (this.id == m.id
+        return (this.mergeRequestId == m.mergeRequestId
                 && this.title.equals(m.title)
                 && this.author.equals(m.author)
                 && this.description.equals(m.description)
-                && this.mergedAt == m.mergedAt
+                && this.time == m.time
                 && this.webUrl.equals(m.webUrl)
                 && this.commits.equals(m.commits)
                 && this.committers.equals(m.committers)

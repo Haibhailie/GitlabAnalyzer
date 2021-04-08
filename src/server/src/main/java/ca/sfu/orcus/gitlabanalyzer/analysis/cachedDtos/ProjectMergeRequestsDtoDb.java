@@ -1,22 +1,14 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
-import org.gitlab4j.api.models.Project;
-
 import java.util.List;
 
 public final class ProjectMergeRequestsDtoDb {
-    private int id;
     private String webUrl;
     private List<MergeRequestDtoDb> mergeRequests;
 
-    public ProjectMergeRequestsDtoDb(Project project, List<MergeRequestDtoDb> mergeRequests) {
-        setId(project.getId());
-        setWebUrl(project.getWebUrl());
+    public ProjectMergeRequestsDtoDb(String webUrl, List<MergeRequestDtoDb> mergeRequests) {
+        setWebUrl(webUrl);
         setMergeRequests(mergeRequests);
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setWebUrl(String webUrl) {
@@ -39,8 +31,7 @@ public final class ProjectMergeRequestsDtoDb {
 
         ProjectMergeRequestsDtoDb p = (ProjectMergeRequestsDtoDb) o;
 
-        return (this.id == p.id
-                && this.webUrl.equals(p.webUrl)
+        return (this.webUrl.equals(p.webUrl)
                 && this.mergeRequests.equals(p.mergeRequests));
     }
 }

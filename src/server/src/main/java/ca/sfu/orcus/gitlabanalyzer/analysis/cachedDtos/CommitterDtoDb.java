@@ -8,6 +8,7 @@ public final class CommitterDtoDb {
     private String name;
     private Set<String> commitIds;
     private Set<Integer> mergeRequestIds;
+    // TODO: Add some MemberDto information
 
     public CommitterDtoDb(String email, String name, Set<String> commitIds, Set<Integer> mergeRequestIds) {
         setEmail(email);

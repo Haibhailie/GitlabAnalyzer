@@ -12,9 +12,9 @@ public final class CommitDtoDb {
     private String id;
     private String title;
     private String message;
-    private String authorName;
+    private String author;
     private String authorEmail;
-    private long dateCommitted;
+    private long time;
     private String webUrl;
 
     private int numAdditions;
@@ -29,9 +29,9 @@ public final class CommitDtoDb {
         setId(commit.getId());
         setTitle(commit.getTitle());
         setMessage(commit.getMessage());
-        setAuthorName(commit.getAuthorName());
+        setAuthor(commit.getAuthorName());
         setAuthorEmail(commit.getAuthorEmail());
-        setDateCommitted(commit.getCommittedDate().getTime());
+        setTime(commit.getCommittedDate().getTime());
         setWebUrl(commit.getWebUrl());
 
         setNumAdditions(commit.getStats().getAdditions());
@@ -59,16 +59,16 @@ public final class CommitDtoDb {
         this.message = message;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public void setAuthorEmail(String authorEmail) {
         this.authorEmail = authorEmail;
     }
 
-    public void setDateCommitted(long dateCommitted) {
-        this.dateCommitted = dateCommitted;
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public void setWebUrl(String webUrl) {
@@ -124,9 +124,9 @@ public final class CommitDtoDb {
         return (this.id.equals(c.id)
                 && this.title.equals(c.title)
                 && this.message.equals(c.message)
-                && this.authorName.equals(c.authorName)
+                && this.author.equals(c.author)
                 && this.authorEmail.equals(c.authorEmail)
-                && this.dateCommitted == c.dateCommitted
+                && this.time == c.time
                 && this.webUrl.equals(c.webUrl)
                 && this.numAdditions == c.numAdditions
                 && this.numDeletions == c.numDeletions

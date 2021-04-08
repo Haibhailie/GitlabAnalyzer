@@ -14,24 +14,24 @@ import java.util.List;
 import java.util.Set;
 
 public class MergeRequestDto {
-    private int mergeRequestId;
-    private String title;
+    private int mergeRequestId;//
+    private String title;//
     private boolean hasConflicts;
     private boolean isOpen;
     private int userId;
     private String assignedTo;
-    private String author;
-    private String description;
+    private String author;//
+    private String description;//
     private String sourceBranch;
     private String targetBranch;
-    private List<String> committers;
+    private List<String> committers;//
     private List<Participant> participants;
-    private long time;
-    boolean isIgnored;
-    private List<FileDto> files;
-    private double sumOfCommitsScore;
+    private long time;//
+    boolean isIgnored;//
+    private List<FileDto> files;//
+    private double sumOfCommitsScore;//
     private List<MergeRequestCommitsDto> commitsInfoInMergeRequest = new ArrayList<>();
-    private String webUrl;
+    private String webUrl;//
 
     public MergeRequestDto(GitLabApi gitLabApi, int projectId, MergeRequest presentMergeRequest) throws GitLabApiException {
         int mergeRequestId = presentMergeRequest.getIid();

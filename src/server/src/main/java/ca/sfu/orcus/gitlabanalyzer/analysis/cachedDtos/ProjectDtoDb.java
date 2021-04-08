@@ -12,15 +12,10 @@ public class ProjectDtoDb {
     private long lastAnalysisTime;
     private String webUrl;
     private List<CommitterDtoDb> committers;
-    private List<MemberDtoDb> members;
 
     // TODO: Store currentConfig used for scoring
 
-    public ProjectDtoDb(Project project,
-                        String role,
-                        long lastAnalysisTime,
-                        List<CommitterDtoDb> committers,
-                        List<MemberDtoDb> members) {
+    public ProjectDtoDb(Project project, String role, long lastAnalysisTime, List<CommitterDtoDb> committers) {
         setId(project.getId());
         setName(project.getName());
         setRole(role);
@@ -28,7 +23,6 @@ public class ProjectDtoDb {
         setLastAnalysisTime(lastAnalysisTime);
         setWebUrl(project.getWebUrl());
         setCommitters(committers);
-        setMembers(members);
     }
 
     public void setId(int id) {
@@ -59,10 +53,6 @@ public class ProjectDtoDb {
         this.committers = committers;
     }
 
-    public void setMembers(List<MemberDtoDb> members) {
-        this.members = members;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -81,7 +71,6 @@ public class ProjectDtoDb {
                 && this.lastActivityTime == p.lastActivityTime
                 && this.lastAnalysisTime == p.lastAnalysisTime
                 && this.webUrl.equals(p.webUrl)
-                && this.members.equals(p.members)
                 && this.committers.equals(p.committers));
     }
 }

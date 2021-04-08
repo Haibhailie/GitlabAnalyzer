@@ -32,7 +32,6 @@ public class AnalysisService {
         analyzeProject(gitLabApi, projectId);
     }
 
-    @SuppressWarnings("checkstyle:CommentsIndentation")
     public void analyzeProject(GitLabApi gitLabApi, Integer projectId) throws GitLabApiException, NullPointerException {
         Map<String, CommitterDtoDb> committerToCommitterDtoMap = new HashMap<>(); // committerEmail -> committerDto
         Map<Integer, MemberDtoDb> memberToMemberDtoMap = initializeMemberDtos(gitLabApi, projectId); // memberId -> memberDto
@@ -50,16 +49,15 @@ public class AnalysisService {
         addIssueNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, projectId);
 
         Project project = gitLabApi.getProjectApi().getProject(projectId);
-        ProjectDtoDb projectDto = getProjectDto(gitLabApi, project,
-                new ArrayList<>(committerToCommitterDtoMap.values()),
-                new ArrayList<>(memberToMemberDtoMap.values()));
+        ProjectDtoDb projectDto = getProjectDto(gitLabApi, project, new ArrayList<>(committerToCommitterDtoMap.values()));
 
-        ProjectMergeRequestsDtoDb projectMergeRequestsDto = getProjectMergeRequestsDto(project, mergeRequestDtos);
+        // TODO: Do we need this or simply pass the webUrl + mergeRequestDtos to the caching method?
+        ProjectMergeRequestsDtoDb projectMergeRequestsDto = getProjectMergeRequestsDto(project.getWebUrl(), mergeRequestDtos);
 
-        // TODO: cacheProjectDto()
-        //          - cacheCommitterDtos() (inside projectDto)
-        //          - cacheMemberDtos() (inside projectDto)
-        // TODO: cacheMergeRequestDtos() (projectId + projectUrl)
+        // TODO: cacheProjectDto(projectDto) (key: projectUrl + projectId)
+        //          - cacheCommitterDtos() inside projectDto
+        // TODO: cacheMemberDtos(projectUrl, new ArrayList<>(memberToMemberDtoMap.values)) (key: projectUrl + memberId)
+        // TODO: cacheMergeRequestDtos(projectUrl, mergeRequestDtos) (key: projectUrl + mergeRequestId)
     }
 
     private Map<Integer, MemberDtoDb> initializeMemberDtos(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
@@ -88,7 +86,7 @@ public class AnalysisService {
         List<CommitDtoDb> commitDtos = new ArrayList<>();
         Set<String> committers = new HashSet<>();
 
-        double mergeRequestScore = 0;
+        double sumOfCommitsScore = 0;
 
         Integer projectId = mergeRequest.getProjectId();
         Integer mergeRequestId = mergeRequest.getIid();
@@ -100,13 +98,13 @@ public class AnalysisService {
             addCommitIdAndMrIdToCommitterDto(committerToCommitterDtoMap, detailedCommit, mergeRequestId);
 
             CommitDtoDb commitDto = getCommitDto(gitLabApi, projectId, detailedCommit);
-            mergeRequestScore += commitDto.getScore();
+            sumOfCommitsScore += commitDto.getScore();
 
             commitDtos.add(commitDto);
         }
 
         MergeRequest mrChanges = gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId);
-        return new MergeRequestDtoDb(mergeRequest, commitDtos, committers, mrChanges, mergeRequestScore);
+        return new MergeRequestDtoDb(mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore);
     }
 
     private List<Commit> getMergeRequestCommits(GitLabApi gitLabApi, MergeRequest mergeRequest)
@@ -174,12 +172,10 @@ public class AnalysisService {
         }
     }
 
-    private ProjectDtoDb getProjectDto(GitLabApi gitLabApi,
-                                       Project project,
-                                       List<CommitterDtoDb> committers,
-                                       List<MemberDtoDb> members) throws GitLabApiException {
+    private ProjectDtoDb getProjectDto(GitLabApi gitLabApi, Project project, List<CommitterDtoDb> committers)
+            throws GitLabApiException {
         String role = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
-        return new ProjectDtoDb(project, role, new Date().getTime(), committers, members);
+        return new ProjectDtoDb(project, role, new Date().getTime(), committers);
     }
 
     private String getAuthenticatedMembersRoleInProject(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
@@ -189,7 +185,7 @@ public class AnalysisService {
         return MemberUtils.getMemberRoleFromAccessLevel(currentAccessLevel);
     }
 
-    private ProjectMergeRequestsDtoDb getProjectMergeRequestsDto(Project project, List<MergeRequestDtoDb> mergeRequestDtos) {
-        return new ProjectMergeRequestsDtoDb(project, mergeRequestDtos);
+    private ProjectMergeRequestsDtoDb getProjectMergeRequestsDto(String webUrl, List<MergeRequestDtoDb> mergeRequestDtos) {
+        return new ProjectMergeRequestsDtoDb(webUrl, mergeRequestDtos);
     }
 }
