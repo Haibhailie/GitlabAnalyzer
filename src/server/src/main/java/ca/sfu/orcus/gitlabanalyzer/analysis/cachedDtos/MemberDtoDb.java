@@ -13,7 +13,7 @@ public final class MemberDtoDb {
     private String username;
     private String role;
     private String webUrl;
-
+    private Set<Integer> mergeRequestIds;
     private Set<String> committerEmails;
     private Set<Integer> commitsToMaster;
     private Set<ObjectId> mergeRequestDocIds;
