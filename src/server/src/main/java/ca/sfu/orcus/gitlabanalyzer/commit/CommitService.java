@@ -9,9 +9,7 @@ import org.gitlab4j.api.models.MergeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CommitService {
@@ -89,13 +87,13 @@ public class CommitService {
         return commitDto.getDiffs();
     }
 
-    public List<MergeRequestDto> getOrphanMergeRequestsByMemberName(GitLabApi gitLabApi, int projectId, Date since, Date until, String memberName) {
+    public List<MergeRequestDto> getOrphanMergeRequestByMemberName(GitLabApi gitLabApi, int projectId, Date since, Date until, String memberName) {
         try {
             List<MergeRequestDto> orphanMergeRequestByMemberName = new ArrayList<>();
             List<CommitDto> allCommitsByMemberName = returnAllCommits(gitLabApi, projectId, since, until, memberName);
-            List<Integer> addedMergeRequests = new ArrayList<>();
+            Set<Integer> addedMergeRequests = new HashSet<>();
             for (CommitDto c : allCommitsByMemberName) {
-                List<MergeRequest> relatedMergeRequests = gitLabApi.getCommitsApi().getMergeRequests(projectId, c.getSha());
+                List<MergeRequest> relatedMergeRequests = gitLabApi.getCommitsApi().getMergeRequests(projectId, c.getId());
                 for (MergeRequest mr : relatedMergeRequests) {
                     if (!memberName.equalsIgnoreCase(mr.getAuthor().getName()) && !addedMergeRequests.contains(mr.getIid())) {
                         addedMergeRequests.add(mr.getIid());
@@ -109,5 +107,4 @@ public class CommitService {
             return  null;
         }
     }
-
 }

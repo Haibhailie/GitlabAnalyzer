@@ -109,7 +109,7 @@ public class CommitDto {
         return diffs;
     }
 
-    public String getSha() {
+    public String getId() {
         return id;
     }
 
