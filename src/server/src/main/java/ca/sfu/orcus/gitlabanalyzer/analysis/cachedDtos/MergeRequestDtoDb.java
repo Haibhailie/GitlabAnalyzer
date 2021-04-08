@@ -11,6 +11,7 @@ public final class MergeRequestDtoDb {
     private int mergeRequestId;
     private String title;
     private String author;
+    private int authorId;
     private String description;
     private long time;
     private String webUrl;
@@ -30,6 +31,7 @@ public final class MergeRequestDtoDb {
         setMergeRequestId(mergeRequest.getIid());
         setTitle(mergeRequest.getTitle());
         setAuthor(mergeRequest.getAuthor().getName());
+        setAuthorId(mergeRequest.getAuthor().getId());
         setDescription(mergeRequest.getDescription());
         setTime(mergeRequest.getMergedAt().getTime());
         setWebUrl(mergeRequest.getWebUrl());
@@ -53,6 +55,10 @@ public final class MergeRequestDtoDb {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
     }
 
     public void setDescription(String description) {
@@ -87,6 +93,10 @@ public final class MergeRequestDtoDb {
         this.files = files;
     }
 
+    public int getAuthorId() {
+        return authorId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -102,6 +112,7 @@ public final class MergeRequestDtoDb {
         return (this.mergeRequestId == m.mergeRequestId
                 && this.title.equals(m.title)
                 && this.author.equals(m.author)
+                && this.authorId == m.authorId
                 && this.description.equals(m.description)
                 && this.time == m.time
                 && this.webUrl.equals(m.webUrl)

@@ -3,11 +3,13 @@ package ca.sfu.orcus.gitlabanalyzer.analysis;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.*;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
+import org.bson.types.ObjectId;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -35,13 +37,11 @@ public class AnalysisService {
     private void analyzeProject(GitLabApi gitLabApi, Integer projectId) throws GitLabApiException, NullPointerException {
         Map<String, CommitterDtoDb> committerToCommitterDtoMap = new HashMap<>(); // committerEmail -> committerDto
         Map<Integer, MemberDtoDb> memberToMemberDtoMap = initializeMemberDtos(gitLabApi, projectId); // memberId -> memberDto
-        List<MergeRequestDtoDb> mergeRequestDtos = new ArrayList<>();
+        Map<Integer, MergeRequestDtoDb> mrIdToMrDtoMap = new HashMap<>();
 
         for (MergeRequest mr : getAllMergeRequests(gitLabApi, projectId)) {
-            addMergeRequestIdToMemberDto(memberToMemberDtoMap, mr);
-
             MergeRequestDtoDb mergeRequestDto = getMergeRequestDto(gitLabApi, mr, committerToCommitterDtoMap);
-            mergeRequestDtos.add(mergeRequestDto);
+            mrIdToMrDtoMap.put(mr.getIid(), mergeRequestDto);
 
             addMergeRequestNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, mr);
         }
@@ -52,12 +52,20 @@ public class AnalysisService {
         ProjectDtoDb projectDto = getProjectDto(gitLabApi, project, new ArrayList<>(committerToCommitterDtoMap.values()));
 
         // TODO: Do we need this or simply pass the webUrl + mergeRequestDtos to the caching method?
-        ProjectMergeRequestsDtoDb projectMergeRequestsDto = getProjectMergeRequestsDto(project.getWebUrl(), mergeRequestDtos);
+        ProjectMergeRequestsDtoDb projectMergeRequestsDto =
+                getProjectMergeRequestsDto(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
 
         // TODO: cacheProjectDto(projectDto) (key: projectUrl + projectId)
         //          - cacheCommitterDtos() inside projectDto
+        analysisRepository.cacheProjectDto(projectDto);
+
         // TODO: cacheMemberDtos(projectUrl, new ArrayList<>(memberToMemberDtoMap.values)) (key: projectUrl + memberId)
+        analysisRepository.cacheMemberDtos(project.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
+
         // TODO: cacheMergeRequestDtos(projectUrl, mergeRequestDtos) (key: projectUrl + mergeRequestId)
+        List<Pair<Integer, ObjectId>> mrIdsToDocIds =
+                analysisRepository.cacheMergeRequestsDtos(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
+        addMergeRequestDocumentIdsToMemberDtos(memberToMemberDtoMap, mrIdToMrDtoMap, mrIdsToDocIds);
     }
 
     private Map<Integer, MemberDtoDb> initializeMemberDtos(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
@@ -73,11 +81,6 @@ public class AnalysisService {
 
     private List<MergeRequest> getAllMergeRequests(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
         return gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
-    }
-
-    private void addMergeRequestIdToMemberDto(Map<Integer, MemberDtoDb> memberDtos, MergeRequest mr) {
-        Integer authorId = mr.getAuthor().getId();
-        memberDtos.get(authorId).addMergeRequestId(mr.getIid());
     }
 
     private MergeRequestDtoDb getMergeRequestDto(GitLabApi gitLabApi,
@@ -187,5 +190,15 @@ public class AnalysisService {
 
     private ProjectMergeRequestsDtoDb getProjectMergeRequestsDto(String webUrl, List<MergeRequestDtoDb> mergeRequestDtos) {
         return new ProjectMergeRequestsDtoDb(webUrl, mergeRequestDtos);
+    }
+
+    private void addMergeRequestDocumentIdsToMemberDtos(Map<Integer, MemberDtoDb> memberToMemberDtoMap,
+                                                        Map<Integer, MergeRequestDtoDb> mrIdToMrDtoMap,
+                                                        List<Pair<Integer, ObjectId>> mrIdsToDocIds) {
+        for (Pair<Integer, ObjectId> mrIdToDocId : mrIdsToDocIds) {
+            Integer mrId = mrIdToDocId.getFirst();
+            Integer memberId = mrIdToMrDtoMap.get(mrId).getAuthorId();
+            memberToMemberDtoMap.get(memberId).addMergeRequestDocId(mrIdToDocId.getSecond());
+        }
     }
 }
