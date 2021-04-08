@@ -1,4 +1,4 @@
-import { IProjectData } from '../pages/Project'
+import { IProjectData } from '../types'
 
 import ActivityGraph from './ActivityGraph'
 

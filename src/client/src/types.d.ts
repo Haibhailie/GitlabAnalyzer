@@ -25,8 +25,20 @@ export interface IMemberData {
   username: string
   displayName: string
   role: string
+  webUrl: string
 }
 
 export interface IDiffData {
   diff: string
+}
+
+export type TProjectData = IProjectData[]
+export interface IProjectData {
+  id: string | null
+  name: string
+  members: TMemberData
+  numBranches: number
+  numCommits: number
+  repoSize: number
+  createdAt: number
 }

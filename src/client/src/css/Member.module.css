@@ -1,3 +1,11 @@
+.containerHeader {
+  display: flex;
+  height: 80px;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .container {
   min-height: calc(100% - 100px);
   overflow-x: hidden;
@@ -12,7 +20,7 @@
 
 .header {
   font: var(--font-header-large-poppins);
-  margin: 50px 0px 0px;
+  margin: 0px 0px;
 }
 
 .subheader {
