@@ -12,6 +12,7 @@ import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +32,6 @@ import static org.mockito.Mockito.when;
 public class MemberServiceTests {
     @Mock private GitLabApiWrapper gitLabApiWrapper;
     @Mock private MergeRequestService mergeRequestService;
-    @Mock private CommitService commitService;
 
     // Class to be tested
     @InjectMocks
@@ -57,18 +57,6 @@ public class MemberServiceTests {
         assertNull(memberService.getAllMembers(jwt, projectId));
     }
 
-    @Test
-    public void getMergeRequestsByMemberIDWithNullGitLabApi() {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
-        assertNull(memberService.getMergeRequestsByMemberId(jwt, projectId, since, until, MemberMock.defaultId));
-    }
-
-    @Test
-    public void getCommitsByMemberNameWithNullGitLabApi() {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(null);
-        assertNull(memberService.getCommitsByMemberName(jwt, projectId, since, until, MemberMock.defaultDisplayName));
-    }
-
     // Testing the MemberService methods
     @Test
     public void getAllMembersTest() throws GitLabApiException {
@@ -86,34 +74,6 @@ public class MemberServiceTests {
         }
 
         assertEquals(memberDtos, expectedMemberDtos);
-    }
-
-    @Test
-    public void getCommitsByMemberNameTest() {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-
-        List<CommitDto> commitDtos = new ArrayList<>();
-
-        String displayName = MemberMock.defaultDisplayName;
-        when(commitService.returnAllCommits(gitLabApi, projectId, since, until, displayName)).thenReturn(commitDtos);
-
-        List<CommitDto> commitsByMemberName = memberService.getCommitsByMemberName(jwt, projectId, since, until, displayName);
-
-        assertEquals(commitsByMemberName, commitDtos);
-    }
-
-    @Test
-    public void getMergeRequestsByMemberIdTest() {
-        when(gitLabApiWrapper.getGitLabApiFor(jwt)).thenReturn(gitLabApi);
-
-        List<MergeRequestDto> mergeRequestDtos = new ArrayList<>();
-
-        int memberId = MemberMock.defaultId;
-        when(mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId)).thenReturn(mergeRequestDtos);
-
-        List<MergeRequestDto> mergeRequestByMemberId = memberService.getMergeRequestsByMemberId(jwt, projectId, since, until, memberId);
-
-        assertEquals(mergeRequestByMemberId, mergeRequestDtos);
     }
 
     @Test

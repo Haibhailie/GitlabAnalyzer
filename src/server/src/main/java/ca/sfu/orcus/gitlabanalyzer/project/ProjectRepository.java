@@ -60,7 +60,7 @@ public class ProjectRepository {
         int projectId = projectDto.getId();
         String repoUrl = projectDto.getWebUrl();
         long lastAnalysisTime = projectDto.getLastAnalysisTime();
-        return new Document(Project.projectId.key, new ObjectId().toString())
+        return new Document(Project.documentId.key, new ObjectId().toString())
                     .append(Project.projectId.key, projectId)
                     .append(Project.projectUrl.key, repoUrl)
                     .append(Project.lastAnalysisTime.key, lastAnalysisTime)

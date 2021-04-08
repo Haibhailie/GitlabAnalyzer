@@ -1,10 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestService;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
@@ -12,22 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service("direct")
 public class MemberServiceDirect implements MemberService {
     private final GitLabApiWrapper gitLabApiWrapper;
-    private final MergeRequestService mergeRequestService;
-    private final CommitService commitService;
 
     @Autowired
-    public MemberServiceDirect(GitLabApiWrapper gitLabApiWrapper,
-                               MergeRequestService mergeRequestService,
-                               CommitService commitService) {
+    public MemberServiceDirect(GitLabApiWrapper gitLabApiWrapper) {
         this.gitLabApiWrapper = gitLabApiWrapper;
-        this.mergeRequestService = mergeRequestService;
-        this.commitService = commitService;
     }
 
     public List<MemberDto> getAllMembers(String jwt, int projectId) {
@@ -54,21 +43,5 @@ public class MemberServiceDirect implements MemberService {
             filteredAllMembers.add(presentMember);
         }
         return filteredAllMembers;
-    }
-
-    public List<CommitDto> getCommitsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
-            return null;
-        }
-        return commitService.returnAllCommits(gitLabApi, projectId, since, until, memberName);
-    }
-
-    public List<MergeRequestDto> getMergeRequestsByMemberId(String jwt, int projectId, Date since, Date until, int memberId) {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi == null) {
-            return null;
-        }
-        return mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId);
     }
 }

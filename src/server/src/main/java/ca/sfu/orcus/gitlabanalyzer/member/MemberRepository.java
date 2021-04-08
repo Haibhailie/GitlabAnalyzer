@@ -44,7 +44,6 @@ public class MemberRepository {
     }
 
     public List<String> cacheAllMembers(List<MemberDto> allMembers, String projectUrl) {
-        System.out.println("caching members...");
         List<String> documentIds = new ArrayList<>();
         for (MemberDto member : allMembers) {
             if (!memberIsAlreadyCached(member, projectUrl)) {
