@@ -79,10 +79,10 @@ const useSuspense = <DataType, ErrorType = Error>(
       }
       return (
         <>
-          {Fallback}
           <div key="preventTreeUpdate" style={{ display: 'none' }}>
             {LoadedComp}
           </div>
+          {Fallback}
         </>
       )
     } else if (suspenseRef.status === 'ERROR' && Error) {
