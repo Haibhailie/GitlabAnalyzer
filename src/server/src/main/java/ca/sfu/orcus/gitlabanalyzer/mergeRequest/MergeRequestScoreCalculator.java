@@ -21,7 +21,6 @@ public class MergeRequestScoreCalculator {
         // regex to split lines by new line and store in generatedDiffList
         String[] diffString = DiffStringParser.parseDiff(mergeRequestChanges.getChanges()).split("\\r?\\n");
         List<String> diffsList = Arrays.asList(diffString);
-
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
         return diffScoreCalculator.fileScoreCalculator(diffsList, addLOCFactor, deleteLOCFactor, syntaxChangeFactor, blankLOCFactor, spacingChangeFactor);
     }
