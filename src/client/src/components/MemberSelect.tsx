@@ -4,7 +4,7 @@ import styles from '../css/MemberSelect.module.css'
 
 export interface IMemberSelectProps {
   data: TMemberData
-  defaultSelected: string | undefined
+  defaultSelected: string
   committerEmail: string
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }

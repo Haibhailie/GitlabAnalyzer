@@ -20,56 +20,11 @@ const MemberResolution = () => {
   const history = useHistory()
   const [formData, setFormData] = useState<TMemberCommitterMap>([])
   const [errorMsg, setErrorMsg] = useState('')
-
-  const testCommitterData = [
-    {
-      name: 'Ali Khamesy',
-      email: 'akhamesy@sfu.ca',
-      memberDto: {
-        displayName: 'Ali Khamesy',
-        id: '7',
-        username: 'akhamesy',
-        role: 'MAINTAINER',
-        webUrl: 'http://gitlab.example.com/akhamesy',
-      },
-    },
-    {
-      name: 'Grace Luo',
-      email: 'grace.r.luo@gmail.com',
-      memberDto: {
-        displayName: 'Grace Luo',
-        id: '5',
-        username: 'gracelu0',
-        role: 'MAINTAINER',
-        webUrl: 'http://gitlab.example.com/gracelu0',
-      },
-    },
-    {
-      name: 'Grace Luo',
-      email: 'gla74@sfu.ca',
-      memberDto: {
-        displayName: 'Grace Luo',
-        id: '6',
-        username: 'gla74',
-        role: 'MAINTAINER',
-        webUrl: 'http://gitlab.example.com/gracelu0',
-      },
-    },
-    {
-      name: 'Dummy User',
-      email: 'dummy@sfu.ca',
-      memberDto: {
-        displayName: 'Dummy User',
-        id: '8',
-        username: 'dummyUsername',
-        role: 'MAINTAINER',
-        webUrl: 'http://gitlab.example.com/dummyUsername',
-      },
-    },
-  ]
+  const [memberIds, setMemberIds] = useState<string[]>([])
 
   const createCommitterMap = (committers: TCommitterData) => {
     const memberCommitterMap: TMemberCommitterMap = []
+
     committers.forEach(committer => {
       const map: IMemberCommitterMap = {
         email: committer.email,
@@ -77,37 +32,55 @@ const MemberResolution = () => {
           ? parseInt(committer.memberDto.id)
           : '',
       }
-      console.log(map)
       memberCommitterMap.push(map)
     })
-    console.log(memberCommitterMap)
-    setFormData(memberCommitterMap)
+    return memberCommitterMap
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCommitter = event.target.name
-    const selectedMemberId = event.target.value
+    const selectedMemberId =
+      event.target.value === ''
+        ? event.target.value
+        : parseInt(event.target.value)
 
-    console.log(event.target.name, event.target.value)
+    const updatedCommitter = {
+      email: selectedCommitter,
+      memberId: selectedMemberId,
+    }
 
-    setFormData(
-      formData.map(committer =>
-        committer.email === selectedCommitter
-          ? { ...committer, memberId: selectedMemberId }
-          : committer
-      )
-    )
+    const updatedMap = [...formData]
+    const index = updatedMap.findIndex(c => c.email === selectedCommitter)
+    if (index === -1) {
+      updatedMap.push(updatedCommitter)
+    } else {
+      updatedMap[index] = updatedCommitter
+    }
+
+    setFormData(updatedMap)
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log(formData)
+    const submittedMap = [...formData]
+
+    const committerMap: TMemberCommitterMap = []
+
+    submittedMap.forEach(committer => {
+      if (
+        committer.memberId !== '' &&
+        isProjectMember(committer.memberId.toString())
+      ) {
+        committerMap.push(committer)
+      }
+    })
 
     jsonFetcher(`/api/project/${id}/committers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(committerMap),
       responseIsEmpty: true,
+      credentials: 'include',
     })
       .then(res => {
         if (res === 200) {
@@ -128,6 +101,7 @@ const MemberResolution = () => {
               setErrorMsg('An unknown error occurred')
               break
             default:
+              setErrorMsg('An unknown error occurred')
               break
           }
         }
@@ -137,13 +111,21 @@ const MemberResolution = () => {
       })
   }
 
+  const isProjectMember = (id: string) => {
+    return memberIds.includes(id)
+  }
+
   const {
     Suspense: MemberSuspense,
     data: memberData,
     error: memberError,
   } = useSuspense<TMemberData>((setData, setError) => {
     jsonFetcher<TMemberData>(`/api/project/${id}/members`)
-      .then(setData)
+      .then(members => {
+        setData(members)
+        const ids = members.map(member => member.id.toString())
+        setMemberIds(ids)
+      })
       .catch(onError(setError))
   })
 
@@ -155,7 +137,8 @@ const MemberResolution = () => {
     jsonFetcher<TCommitterData>(`/api/project/${id}/committers`)
       .then(committers => {
         setData(committers)
-        createCommitterMap(testCommitterData)
+        const memberCommitterMap = createCommitterMap(committers)
+        setFormData(memberCommitterMap)
       })
       .catch(onError(setError))
   })
@@ -183,14 +166,14 @@ const MemberResolution = () => {
                 data: styles.tdata,
               }}
               data={
-                testCommitterData?.map(({ name, email, memberDto }) => {
+                committerData?.map(({ name, email, memberDto }) => {
                   return {
                     name,
                     email,
                     memberDto: memberData ? (
                       <MemberSelect
                         data={memberData}
-                        defaultSelected={memberDto?.id ?? ''}
+                        defaultSelected={memberDto.id}
                         committerEmail={email}
                         onChange={handleChange}
                       />
@@ -199,9 +182,7 @@ const MemberResolution = () => {
                 }) ?? [{}]
               }
             />
-            <button type="submit" className={styles.button}>
-              Save
-            </button>
+            <input type="submit" className={styles.button} value="Save" />
           </form>
         </div>
       </CommitterSuspense>
