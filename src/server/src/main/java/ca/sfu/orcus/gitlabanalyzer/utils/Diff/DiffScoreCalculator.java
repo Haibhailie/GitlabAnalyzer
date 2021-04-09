@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.mongodb.util.BsonUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,14 +22,18 @@ public class DiffScoreCalculator {
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
         generatedDiffList = diffStrings;
-
         int lineNumber = -1;
+
         for (String line : generatedDiffList) {
             lineNumber++;
-            if (line.startsWith("---") || line.startsWith("+++")) {
+            if (line.startsWith("---REMOVED")) {
+                //Log already checked line
+            } else if (line.startsWith("---")
+                    || line.startsWith("+++")
+                    || line.startsWith("diff --git")) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
             } else if (line.startsWith("@@")) {
-                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.LINE_NUMBER_SPECIFICATION));
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
             } else if (line.startsWith("+")) {
                 if (line.substring(1).length() > 0) {
                     numLineAdditions++;
@@ -39,16 +44,16 @@ public class DiffScoreCalculator {
                 }
             } else if (line.startsWith("-")) {
                 if (checkSyntaxChanges(lineNumber, line)) {
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_SYNTAX));
-                    break;
+                    //Log syntax changed line
                 }
                 if (checkSpacingChanges(lineNumber, line)) {
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
-                    break;
+                    //Log spacing changed line
                 } else {
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.DELETION));
                     numLineDeletions++;
                 }
+            } else {
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.UNCHANGED));
             }
         }
         return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
@@ -57,12 +62,14 @@ public class DiffScoreCalculator {
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
         for (int i = lineNumber; i < generatedDiffList.size(); i++) {
             String presentLine = generatedDiffList.get(i);
-            if (!presentLine.startsWith("-")) {
+            if (presentLine.startsWith("+")) {
                 //Checking the level of similarity between the two lines (if difference > half the original line, then
                 //it's considered a new addition, else a syntax change)
                 if (StringUtils.difference(testingLine, presentLine).length() > (testingLine.length()) * lineSimilarityFactor) {
                     numSyntaxChanges++;
-                    generatedDiffList.set(i, "---");
+                    fileDiffs.add(new FileDiffDto(testingLine, FileDiffDto.DiffLineType.DELETION_SYNTAX));
+                    fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_SYNTAX));
+                    generatedDiffList.set(i, "---REMOVED");
                     return true;
                 }
             }
@@ -73,11 +80,13 @@ public class DiffScoreCalculator {
     private boolean checkSpacingChanges(int lineNumber, String testingLine) {
         for (int i = lineNumber; i < generatedDiffList.size(); i++) {
             String presentLine = generatedDiffList.get(i);
-            if (!presentLine.startsWith("-")) {
+            if (presentLine.startsWith("+")) {
                 //Checks if the difference between two lines is just blank spaces/spacing changes
                 if (StringUtils.difference(testingLine, presentLine).isBlank()) {
                     numSpacingChanges++;
-                    generatedDiffList.set(i, "---");
+                    fileDiffs.add(new FileDiffDto(testingLine, FileDiffDto.DiffLineType.DELETION_BLANK));
+                    fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_BLANK));
+                    generatedDiffList.set(i, "---REMOVED");
                     return true;
                 }
             }
@@ -91,7 +100,6 @@ public class DiffScoreCalculator {
                 return i;
             }
         }
-
         return diffsList.size();
     }
 
