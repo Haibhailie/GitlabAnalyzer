@@ -44,9 +44,11 @@ public class DiffScoreCalculator {
                 }
             } else if (line.startsWith("-")) {
                 if (checkSyntaxChanges(lineNumber, line)) {
+                    continue;
                     //Log syntax changed line
                 }
                 if (checkSpacingChanges(lineNumber, line)) {
+                    continue;
                     //Log spacing changed line
                 } else {
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.DELETION));
