@@ -7,9 +7,10 @@ public class FileDiffDto {
         ADDITION,
         ADDITION_SYNTAX,
         ADDITION_BLANK,
-        ADDITION_SPACING,
         DELETION,
-        LINE_NUMBER_SPECIFICATION
+        DELETION_SYNTAX,
+        DELETION_BLANK,
+        UNCHANGED
     }
 
     String diffLine;
