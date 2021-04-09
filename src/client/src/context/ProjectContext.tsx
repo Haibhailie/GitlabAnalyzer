@@ -1,12 +1,9 @@
 import { createContext, useReducer } from 'react'
-
-export interface IProjectData {
-  id: string | null
-}
+import { IProjectData } from '../types'
 
 export type IProjectReducerAction = {
-  type: 'SET_ID'
-  id: string | null
+  type: 'SET_PROJECT'
+  project: IProjectData | undefined
 }
 
 export type IProjectReducer = (
@@ -19,17 +16,27 @@ export interface IContext {
   dispatch: React.Dispatch<IProjectReducerAction>
 }
 
+const initialState: IProjectData = {
+  id: null,
+  name: '',
+  members: [],
+  numBranches: 0,
+  numCommits: 0,
+  repoSize: 0,
+  createdAt: 0,
+}
+
 export const ProjectContext = createContext<IContext>({
-  project: { id: null },
+  project: initialState,
   dispatch: (value: IProjectReducerAction) => console.log(value),
 })
 
-const reducer: IProjectReducer = (state, { type, id }) => {
+const reducer: IProjectReducer = (state, { type, project }) => {
   switch (type) {
-    case 'SET_ID':
+    case 'SET_PROJECT':
       return {
         ...state,
-        id,
+        ...project,
       }
     default:
       return state
@@ -41,7 +48,7 @@ const ProjectProvider = ({
 }: {
   children: JSX.Element[] | JSX.Element
 }) => {
-  const [project, dispatch] = useReducer(reducer, { id: null })
+  const [project, dispatch] = useReducer(reducer, initialState)
   return (
     <ProjectContext.Provider value={{ project, dispatch }}>
       {children}

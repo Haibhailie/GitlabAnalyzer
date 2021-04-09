@@ -25,6 +25,7 @@ export interface IMemberData {
   username: string
   displayName: string
   role: string
+  webUrl: string
 }
 
 export type TCommitterData = ICommitterData[]
@@ -42,4 +43,15 @@ export interface IMemberCommitterMap {
 
 export interface IDiffData {
   diff: string
+}
+
+export type TProjectData = IProjectData[]
+export interface IProjectData {
+  id: string | null
+  name: string
+  members: TMemberData
+  numBranches: number
+  numCommits: number
+  repoSize: number
+  createdAt: number
 }

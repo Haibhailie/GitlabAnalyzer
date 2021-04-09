@@ -2,6 +2,9 @@ import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { useParams } from 'react-router-dom'
 import { onError } from '../utils/suspenseDefaults'
+import { useContext } from 'react'
+import { IProjectData } from '../types'
+import { ProjectContext } from '../context/ProjectContext'
 
 import Loading from '../components/Loading'
 import ErrorComp from '../components/ErrorComp'
@@ -19,23 +22,16 @@ export interface IMember {
   role: string
 }
 
-export interface IProjectData {
-  id: string
-  name: string
-  members: IMember[]
-  numBranches: number
-  numCommits: number
-  repoSize: number
-  createdAt: number
-}
-
 const Project = () => {
   const { id } = useParams<{ id: string }>()
-
+  const { dispatch } = useContext(ProjectContext)
   const { Suspense, data: project, error } = useSuspense<IProjectData, Error>(
     (setData, setError) => {
       jsonFetcher<IProjectData>(`/api/project/${id}`)
-        .then(data => setData(data))
+        .then(data => {
+          dispatch({ type: 'SET_PROJECT', project: data })
+          setData(data)
+        })
         .catch(onError(setError))
     }
   )
