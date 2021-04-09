@@ -3,7 +3,6 @@ package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.mongodb.util.BsonUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,11 +42,13 @@ public class DiffScoreCalculator {
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 }
             } else if (line.startsWith("-")) {
-                if (checkSyntaxChanges(lineNumber, line)) {
-                    //Log syntax changed line
-                }
                 if (checkSpacingChanges(lineNumber, line)) {
+                    System.out.println(line);
+                    continue;
                     //Log spacing changed line
+                } else if (checkSyntaxChanges(lineNumber, line)) {
+                    continue;
+                    //Log syntax changed line
                 } else {
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.DELETION));
                     numLineDeletions++;
@@ -81,8 +82,11 @@ public class DiffScoreCalculator {
         for (int i = lineNumber; i < generatedDiffList.size(); i++) {
             String presentLine = generatedDiffList.get(i);
             if (presentLine.startsWith("+")) {
+                System.out.println("SPACING TESTING THE FOLLOWING 2 LINES:");
+                System.out.println(testingLine.substring(1).trim());
+                System.out.println(presentLine.substring(1).trim());
                 //Checks if the difference between two lines is just blank spaces/spacing changes
-                if (StringUtils.difference(testingLine, presentLine).isBlank()) {
+                if (checkStringDifferencesForBlankSpace(testingLine.substring(1), presentLine.substring(1))) {
                     numSpacingChanges++;
                     fileDiffs.add(new FileDiffDto(testingLine, FileDiffDto.DiffLineType.DELETION_BLANK));
                     fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_BLANK));
@@ -92,6 +96,10 @@ public class DiffScoreCalculator {
             }
         }
         return false;
+    }
+
+    private boolean checkStringDifferencesForBlankSpace(String str1, String str2) {
+        return str1.replaceAll("\\s+", "").trim().equals(str2.replaceAll("\\s+", "").trim());
     }
 
     private int findDiffStartIndex(List<String> diffsList, int startIndex) {
