@@ -5,7 +5,6 @@ import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DiffScoreCalculator {
@@ -124,6 +123,9 @@ public class DiffScoreCalculator {
                 fileCount++;
                 fileDiffLines.add(i);
             }
+            if (diffsList.get(i).contains("No newline at end of file")) {
+                diffsList.set(i, "");
+            }
         }
         fileDiffLines.add(diffsList.size());
 
@@ -159,6 +161,7 @@ public class DiffScoreCalculator {
                     blankAdditions,
                     syntaxChanges,
                     spacingChanges));
+
             fileDtos.get(i).setFileDiffDtos(diffScoreDtos.get(i).getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i + 1)));
         }
         return fileDtos;
