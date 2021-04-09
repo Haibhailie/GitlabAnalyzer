@@ -1,10 +1,8 @@
-import { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSuspense from '../utils/useSuspense'
 import jsonFetch from '../utils/jsonFetcher'
 import { NETWORK_ERROR, SERVER_ERROR } from '../utils/constants'
 import dateConverter from '../utils/dateConverter'
-import { ProjectContext } from '../context/ProjectContext'
 
 import Table from '../components/Table'
 import Loading from '../components/Loading'
@@ -23,7 +21,6 @@ export type TProjects = {
 
 const Home = () => {
   const history = useHistory()
-  const { dispatch } = useContext(ProjectContext)
   const { Suspense, data, error } = useSuspense<TProjects, Error>(
     (setData, setError) => {
       jsonFetch<TProjects>('/api/projects')
@@ -41,9 +38,7 @@ const Home = () => {
         })
     }
   )
-
   const onAnalyze = (id: string) => {
-    dispatch({ type: 'SET_ID', id })
     history.push(`/project/${id}`)
   }
 

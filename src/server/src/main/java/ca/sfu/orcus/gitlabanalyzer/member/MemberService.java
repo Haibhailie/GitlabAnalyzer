@@ -71,4 +71,20 @@ public class MemberService {
         return mergeRequestService.returnAllMergeRequests(gitLabApi, projectId, since, until, memberId);
 
     }
+
+    public List<MergeRequestDto> getOrphanMergeRequestByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
+        return mergeRequestService.getOrphanMergeRequestByMemberName(gitLabApi, projectId, since, until, memberName);
+    }
+
+    public List<CommitDto> getOrphanCommitsFromOrphanMergeRequestByMemberName(String jwt, int projectId, int mergeRequestId, String memberName) {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
+        return mergeRequestService.getOrphanCommitsFromOrphanMergeRequestByMemberName(gitLabApi, projectId, mergeRequestId, memberName);
+    }
 }

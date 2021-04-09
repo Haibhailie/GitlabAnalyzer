@@ -5,7 +5,6 @@ import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DiffScoreCalculator {
@@ -21,14 +20,18 @@ public class DiffScoreCalculator {
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
         generatedDiffList = diffStrings;
-
         int lineNumber = -1;
+
         for (String line : generatedDiffList) {
             lineNumber++;
-            if (line.startsWith("---") || line.startsWith("+++")) {
+            if (line.startsWith("---REMOVED")) {
+                //Log already checked line
+            } else if (line.startsWith("---")
+                    || line.startsWith("+++")
+                    || line.startsWith("diff --git")) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
             } else if (line.startsWith("@@")) {
-                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.LINE_NUMBER_SPECIFICATION));
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
             } else if (line.startsWith("+")) {
                 if (line.substring(1).length() > 0) {
                     numLineAdditions++;
@@ -38,17 +41,18 @@ public class DiffScoreCalculator {
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 }
             } else if (line.startsWith("-")) {
-                if (checkSyntaxChanges(lineNumber, line)) {
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_SYNTAX));
-                    break;
-                }
                 if (checkSpacingChanges(lineNumber, line)) {
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
-                    break;
+                    continue;
+                    //Log spacing changed line
+                } else if (checkSyntaxChanges(lineNumber, line)) {
+                    continue;
+                    //Log syntax changed line
                 } else {
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.DELETION));
                     numLineDeletions++;
                 }
+            } else {
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.UNCHANGED));
             }
         }
         return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
@@ -57,12 +61,14 @@ public class DiffScoreCalculator {
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
         for (int i = lineNumber; i < generatedDiffList.size(); i++) {
             String presentLine = generatedDiffList.get(i);
-            if (!presentLine.startsWith("-")) {
+            if (presentLine.startsWith("+")) {
                 //Checking the level of similarity between the two lines (if difference > half the original line, then
                 //it's considered a new addition, else a syntax change)
                 if (StringUtils.difference(testingLine, presentLine).length() > (testingLine.length()) * lineSimilarityFactor) {
                     numSyntaxChanges++;
-                    generatedDiffList.set(i, "---");
+                    fileDiffs.add(new FileDiffDto(testingLine, FileDiffDto.DiffLineType.DELETION_SYNTAX));
+                    fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_SYNTAX));
+                    generatedDiffList.set(i, "---REMOVED");
                     return true;
                 }
             }
@@ -73,11 +79,13 @@ public class DiffScoreCalculator {
     private boolean checkSpacingChanges(int lineNumber, String testingLine) {
         for (int i = lineNumber; i < generatedDiffList.size(); i++) {
             String presentLine = generatedDiffList.get(i);
-            if (!presentLine.startsWith("-")) {
+            if (presentLine.startsWith("+")) {
                 //Checks if the difference between two lines is just blank spaces/spacing changes
-                if (StringUtils.difference(testingLine, presentLine).isBlank()) {
+                if (checkStringDifferencesForBlankSpace(testingLine.substring(1), presentLine.substring(1))) {
                     numSpacingChanges++;
-                    generatedDiffList.set(i, "---");
+                    fileDiffs.add(new FileDiffDto(testingLine, FileDiffDto.DiffLineType.DELETION_BLANK));
+                    fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_BLANK));
+                    generatedDiffList.set(i, "---REMOVED");
                     return true;
                 }
             }
@@ -85,13 +93,16 @@ public class DiffScoreCalculator {
         return false;
     }
 
-    private int findDiffStartIndex(List<String> diffsList, int startIndex) {
+    private boolean checkStringDifferencesForBlankSpace(String str1, String str2) {
+        return str1.replaceAll("\\s+", "").trim().equals(str2.replaceAll("\\s+", "").trim());
+    }
+
+    private int findNextFileInDiff(List<String> diffsList, int startIndex) {
         for (int i = startIndex; i < diffsList.size(); i++) {
             if (diffsList.get(i).startsWith("diff --")) {
                 return i;
             }
         }
-
         return diffsList.size();
     }
 
@@ -104,15 +115,24 @@ public class DiffScoreCalculator {
                                              double spacingFactor) {
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
-        int diffStart = findDiffStartIndex(diffsList, 0);
-        while (diffStart < diffsList.size()) {
-            int nextDiffStart = findDiffStartIndex(diffsList, diffStart + 1);
-            List<String> diffList = diffsList.subList(diffStart, nextDiffStart - 1);
 
-            fileDtos.add(new FileDto(convertToString(diffList), getFileNameFromDiff(diffList)));
-            diffScoreDtos.add(generateDiffScoreDto(diffList));
+        int fileCount = 0;
+        List<Integer> fileDiffLines = new ArrayList<>();
+        for (int i = 0; i < diffsList.size(); i++) {
+            if (diffsList.get(i).startsWith("diff --")) {
+                fileCount++;
+                fileDiffLines.add(i);
+            }
+            if (diffsList.get(i).contains("No newline at end of file")) {
+                diffsList.set(i, "");
+            }
+        }
+        fileDiffLines.add(diffsList.size());
 
-            diffStart = nextDiffStart;
+        for (int i = 0; i < fileCount; i++) {
+            List<String> fileDiffs = diffsList.subList(fileDiffLines.get(i), fileDiffLines.get(i + 1));
+            fileDtos.add(new FileDto(getFileNameFromDiff(fileDiffs)));
+            diffScoreDtos.add(generateDiffScoreDto(fileDiffs));
         }
 
         for (int i = 0; i < diffScoreDtos.size(); i++) {
@@ -142,8 +162,7 @@ public class DiffScoreCalculator {
                     syntaxChanges,
                     spacingChanges));
 
-            fileDtos.get(i).setFileDiffDtos(diffScoreDtos.get(i).getFileDiffs());
-
+            fileDtos.get(i).setFileDiffDtos(diffScoreDtos.get(i).getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i + 1)));
         }
         return fileDtos;
     }
@@ -161,8 +180,4 @@ public class DiffScoreCalculator {
         return parseDiffList(diffList);
     }
 
-    private String[] convertToString(List<String> stringList) {
-        Object[] objectList = stringList.toArray();
-        return Arrays.copyOf(objectList, objectList.length, String[].class);
-    }
 }
