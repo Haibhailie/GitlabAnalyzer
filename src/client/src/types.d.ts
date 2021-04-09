@@ -32,7 +32,6 @@ export interface IDiffData {
   diff: string
 }
 
-<<<<<<< HEAD
 export type TCommentData = ICommentData[]
 export interface ICommentData {
   id: string
@@ -42,7 +41,8 @@ export interface ICommentData {
   context: string
   webUrl: string
   parentAuthor: string
-=======
+}
+
 export type TProjectData = IProjectData[]
 export interface IProjectData {
   id: string | null
@@ -52,5 +52,4 @@ export interface IProjectData {
   numCommits: number
   repoSize: number
   createdAt: number
->>>>>>> origin/master
 }
