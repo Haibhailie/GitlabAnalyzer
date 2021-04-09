@@ -9,13 +9,13 @@ import {
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
-import { TCommitData, TMergeData } from '../types'
+import { ICommitData, IMergeData, TCommitData, TMergeData } from '../types'
 import dateConverter from '../utils/dateConverter'
 import { noop } from 'lodash'
 import classNames from '../utils/classNames'
 
 import Table from '../components/Table'
-import Diff from '../components/Diff'
+import Diff, { IDiffProps } from '../components/Diff'
 
 import styles from '../css/MergeRequests.module.css'
 
@@ -67,10 +67,7 @@ const IgnoreBox = ({
 
 const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
   const [selectedMr, setSelectedMr] = useState<string>()
-  const [selectedDiff, setSelectedDiff] = useState<{
-    type: 'mergerequest' | 'commit'
-    id: string
-  }>()
+  const [selectedDiff, setSelectedDiff] = useState<IDiffProps>()
   const [commits, setCommits] = useState<TCommitData>()
   const tableData = useRef<{ mrs?: TTableData; commits?: TTableData }>()
 
@@ -135,13 +132,10 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
     }
   }, [selectedMr])
 
-  const viewDiffOf = (type: 'mergerequest' | 'commit', id?: string) => {
-    if (id !== undefined)
-      setSelectedDiff(
-        id === selectedDiff?.id && type === selectedDiff?.type
-          ? undefined
-          : { type, id }
-      )
+  const viewDiffOf = (diffProps: IDiffProps) => {
+    setSelectedDiff(
+      Object.is(diffProps.data, selectedDiff?.data) ? undefined : diffProps
+    )
   }
 
   return (
@@ -156,11 +150,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
         )}
       >
         <div className={styles.diff}>
-          <Diff
-            projectId={projectId}
-            source={selectedDiff?.type}
-            id={selectedDiff?.id}
-          />
+          {selectedDiff && <Diff {...selectedDiff} />}
         </div>
         <div className={styles.tables}>
           <Table
@@ -169,9 +159,18 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
             headers={['Date', 'Title', '', 'Score', 'Ignore?']}
             columnWidths={['3fr', '6fr', '3fr', '1fr', '1fr']}
             onClick={(e, i) => {
-              viewDiffOf('mergerequest', mergeRequests?.[i].mergeRequestId)
+              const { files, mergeRequestId, commitsInfoInMergeRequest } =
+                mergeRequests?.[i] ?? {}
+              viewDiffOf({
+                data: files,
+                type: 'MR',
+                id: `#${mergeRequestId}`,
+                commits: commitsInfoInMergeRequest,
+              })
             }}
             data={tableData.current?.mrs ?? []}
+            maxHeight={400}
+            startOpened={true}
           />
           <Table
             {...sharedTableProps}
@@ -180,7 +179,12 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
             headers={['Date', 'Title', 'Score', 'Ignore?']}
             columnWidths={['3fr', '9fr', '1fr', '1fr']}
             onClick={(e, i) => {
-              viewDiffOf('commit', commits?.[i].id)
+              const { id, files } = commits?.[i] ?? {}
+              viewDiffOf({
+                data: files,
+                type: 'Commit',
+                id: '' + id,
+              })
             }}
             data={tableData.current?.commits ?? []}
           />

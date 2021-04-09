@@ -36,17 +36,16 @@
 
 .container {
   display: flex;
-  overflow: hidden;
+  /* overflow: hidden; */
   position: relative;
-  height: 750px;
 }
 
 .diff {
   position: absolute;
-  width: 500px;
+  width: 800px;
   height: 700px;
   transition: all ease-in-out 400ms;
-  right: -500px;
+  right: -800px;
 }
 
 .showDiff .diff {
@@ -57,11 +56,12 @@
   margin-right: 0;
   transition: all ease-in-out 400ms;
   width: 100%;
+  height: fit-content;
 }
 
 .showDiff .tables {
-  margin-right: 550px;
-  width: calc(100% - 550px);
+  margin-right: 850px;
+  width: calc(100% - 850px);
 }
 
 .tableContainer:last-child {

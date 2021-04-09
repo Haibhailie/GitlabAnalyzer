@@ -1,36 +1,72 @@
-import { IDiffData } from '../types'
-import jsonFetcher from '../utils/jsonFetcher'
-import { onError } from '../utils/suspenseDefaults'
-import useSuspense from '../utils/useSuspense'
+import { TCommitDiffs, TFileData, TLineType } from '../types'
+
+import Dropdown from './Dropdown'
 
 import styles from '../css/Diff.module.css'
 
 export interface IDiffProps {
-  id?: string
-  source?: 'mergerequest' | 'commit'
-  projectId?: string
+  data?: TFileData
+  type: 'MR' | 'Commit'
+  id: string
+  commits?: TCommitDiffs
 }
 
-const Diff = ({ source, id, projectId }: IDiffProps) => {
-  const { Suspense, error } = useSuspense<IDiffData>(
-    (setData, setError) => {
-      if (source && id && projectId) {
-        jsonFetcher<IDiffData>(`/api/project/${projectId}/${source}/${id}/diff`)
-          .then(setData)
-          .catch(onError(setError))
-      } else {
-        setError(new Error("Woops! We couldn't find this diff..."))
-      }
-    },
-    [source, id, projectId]
-  )
+const getLineClassName = (lineType: TLineType) => {
+  if (lineType.startsWith('ADDITION')) {
+    return `${styles.line} ${styles.addition}`
+  } else if (lineType.startsWith('DELETION')) {
+    return `${styles.line} ${styles.deletion}`
+  } else {
+    return `${styles.line} ${styles.unchanged}`
+  }
+}
+
+const Diff = ({ data, type, id, commits }: IDiffProps) => {
+  console.log(data)
+
   return (
     <div className={styles.container}>
-      <Suspense fallback="Getting diff..." error={error?.message}>
-        <div className={styles.scrollContainer}>
-          The diff will show up here :)
+      <div className={styles.header}>
+        <div>
+          {type} {id}
         </div>
-      </Suspense>
+        <div>
+          {type} score: {data?.[0].fileScore.scoreAdditions}
+        </div>
+        {commits && (
+          <div>Commit score: {commits[0].fileScore.scoreAdditions}</div>
+        )}
+      </div>
+      <div className={styles.scrollContainer}>
+        <div className={styles.files}>
+          {data?.map(({ name, fileScore, linesOfCodeChanges, fileDiffs }) => (
+            <Dropdown
+              key={name}
+              header={
+                <div className={styles.fileHeader}>
+                  <span>{name}</span>
+                  <span>{fileScore.totalScore}</span>
+                  <span>{linesOfCodeChanges.numAdditions}</span>
+                  <span>{linesOfCodeChanges.numDeletions}</span>
+                </div>
+              }
+              arrowOnLeft={true}
+            >
+              <div>
+                {fileDiffs.map(
+                  ({ lineType, diffLine }) =>
+                    lineType !== 'HEADER' &&
+                    lineType !== 'LINE_NUMBER_SPECIFICATION' && (
+                      <div className={getLineClassName(lineType)}>
+                        {diffLine}
+                      </div>
+                    )
+                )}
+              </div>
+            </Dropdown>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
