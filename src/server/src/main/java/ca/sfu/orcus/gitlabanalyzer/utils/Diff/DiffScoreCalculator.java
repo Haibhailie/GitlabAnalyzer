@@ -20,7 +20,6 @@ public class DiffScoreCalculator {
     private List<String> generatedDiffList = new ArrayList<>();
     List<FileDiffDto> fileDiffs = new ArrayList<>();
 
-
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
         generatedDiffList = diffStrings;
         int lineNumber = -1;
@@ -29,9 +28,9 @@ public class DiffScoreCalculator {
             lineNumber++;
             if (line.startsWith("---REMOVED")) {
                 //Log already checked line
-            } else if (line.startsWith("---") ||
-                    line.startsWith("+++") ||
-                    line.startsWith("diff --git")) {
+            } else if (line.startsWith("---")
+                    || line.startsWith("+++")
+                    || line.startsWith("diff --git")) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
             } else if (line.startsWith("@@")) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
@@ -101,7 +100,6 @@ public class DiffScoreCalculator {
                 return i;
             }
         }
-
         return diffsList.size();
     }
 
