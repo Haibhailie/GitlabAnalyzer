@@ -159,7 +159,7 @@ public class DiffScoreCalculator {
                     blankAdditions,
                     syntaxChanges,
                     spacingChanges));
-            fileDtos.get(i).setFileDiffDtos(diffScoreDtos.get(i).getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i+1)));
+            fileDtos.get(i).setFileDiffDtos(diffScoreDtos.get(i).getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i + 1)));
         }
         return fileDtos;
     }

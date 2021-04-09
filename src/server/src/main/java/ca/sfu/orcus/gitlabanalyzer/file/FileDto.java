@@ -70,7 +70,7 @@ public class FileDto {
         return linesOfCodeChanges;
     }
 
-    public String getFileName(){
+    public String getFileName() {
         return name;
     }
 
