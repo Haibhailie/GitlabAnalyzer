@@ -13,7 +13,6 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,8 +112,6 @@ public class MemberRepository {
         member.setUsername(memberDoc.getString(Member.username.key));
         member.setRole(MemberUtils.getAccessLevelFromMemberRole(memberDoc.getString(Member.role.key)));
         member.setWebUrl(memberDoc.getString(Member.memberUrl.key));
-        member.setCommitterEmails(new HashSet<>(memberDoc.getList(Member.committerEmails.key, String.class)));
-        member.setMergeRequestDocIds(new HashSet<>(memberDoc.getList(Member.mergeRequestDocIds.key, ObjectId.class)));
         member.setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>(){}.getClass()));
         return member;
     }
