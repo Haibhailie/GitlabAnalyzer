@@ -133,8 +133,9 @@ public class AnalysisService {
                     new CommitterDtoDb(
                             authorEmail,
                             authorName,
-                            Collections.singleton(commit.getId()),
-                            Collections.singleton(mergeRequestId)));
+                            new HashSet<>(Collections.singletonList(commit.getId())),
+                            new HashSet<>(Collections.singletonList(mergeRequestId)),
+                            new MemberDtoDb()));
         }
     }
 

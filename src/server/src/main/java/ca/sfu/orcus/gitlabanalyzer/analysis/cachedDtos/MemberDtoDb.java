@@ -19,6 +19,18 @@ public final class MemberDtoDb {
     private Set<ObjectId> mergeRequestDocIds;
     private List<NoteDtoDb> notes;
 
+    public MemberDtoDb() {
+        setId(-1);
+        setDisplayName("-");
+        setUsername("-");
+        setRole("-");
+        setWebUrl("-");
+        setCommitterEmails(new HashSet<>());
+        setCommitsToMaster(new HashSet<>());
+        setMergeRequestDocIds(new HashSet<>());
+        setNotes(new ArrayList<>());
+    }
+
     public MemberDtoDb(Member member) {
         this(member,
                 new HashSet<>(),
@@ -35,7 +47,10 @@ public final class MemberDtoDb {
         setId(member.getId());
         setDisplayName(member.getName());
         setUsername(member.getUsername());
-        setRole(member.getAccessLevel());
+
+        AccessLevel accessLevel = member.getAccessLevel();
+        setRole(accessLevel == null ? "GUEST" : MemberUtils.getMemberRoleFromAccessLevel(accessLevel.value));
+
         setWebUrl(member.getWebUrl());
 
         setCommitterEmails(committerEmails);
@@ -56,8 +71,8 @@ public final class MemberDtoDb {
         this.username = username;
     }
 
-    public void setRole(AccessLevel accessLevel) {
-        this.role = (accessLevel == null) ? "GUEST" : MemberUtils.getMemberRoleFromAccessLevel(accessLevel.value);
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public void setWebUrl(String webUrl) {

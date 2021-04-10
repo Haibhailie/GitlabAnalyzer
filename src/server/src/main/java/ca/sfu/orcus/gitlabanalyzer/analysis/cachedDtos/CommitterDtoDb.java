@@ -8,13 +8,14 @@ public final class CommitterDtoDb {
     private String name;
     private Set<String> commitIds;
     private Set<Integer> mergeRequestIds;
-    // TODO: Add some MemberDto information
+    private MemberDtoDb member;
 
-    public CommitterDtoDb(String email, String name, Set<String> commitIds, Set<Integer> mergeRequestIds) {
+    public CommitterDtoDb(String email, String name, Set<String> commitIds, Set<Integer> mergeRequestIds, MemberDtoDb member) {
         setEmail(email);
         setName(name);
         setCommitIds(new HashSet<>(commitIds));
         setMergeRequestIds(new HashSet<>(mergeRequestIds));
+        setMember(member);
     }
 
     public void setEmail(String email) {
@@ -31,6 +32,10 @@ public final class CommitterDtoDb {
 
     public void setMergeRequestIds(Set<Integer> mrIds) {
         this.mergeRequestIds = mrIds;
+    }
+
+    public void setMember(MemberDtoDb member) {
+        this.member = member;
     }
 
     public void addCommitId(String commitId) {
@@ -56,6 +61,7 @@ public final class CommitterDtoDb {
         return (this.email.equals(c.email)
                 && this.name.equals(c.name)
                 && this.commitIds.equals(c.commitIds)
-                && this.mergeRequestIds.equals(c.mergeRequestIds));
+                && this.mergeRequestIds.equals(c.mergeRequestIds)
+                && this.member.equals(c.member));
     }
 }
