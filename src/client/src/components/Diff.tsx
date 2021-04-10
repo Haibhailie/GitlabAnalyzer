@@ -1,4 +1,5 @@
 import { TCommitDiffs, TFileData, TLineType } from '../types'
+import { LONG_STRING_LEN } from '../utils/constants'
 
 import Dropdown from './Dropdown'
 
@@ -9,6 +10,7 @@ export interface IDiffProps {
   type: 'MR' | 'Commit'
   id: string
   commits?: TCommitDiffs
+  title: string
 }
 
 const getLineClassName = (lineType: TLineType) => {
@@ -21,38 +23,58 @@ const getLineClassName = (lineType: TLineType) => {
   }
 }
 
-const Diff = ({ data, type, id, commits }: IDiffProps) => {
-  console.log(data)
-
+const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
+  // TODO: Get score data from context or get that in MergeRequests and pass in. Use it in header.
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div>
-          {type} {id}
+        <div className={styles.stats}>
+          <div>
+            {type} {id}
+          </div>
+          <div>
+            {type} score: {data?.[0].fileScore.totalScore}
+          </div>
+          {commits && (
+            <div>Commit score: {commits[0].fileScore.totalScore}</div>
+          )}
         </div>
-        <div>
-          {type} score: {data?.[0].fileScore.scoreAdditions}
-        </div>
-        {commits && (
-          <div>Commit score: {commits[0].fileScore.scoreAdditions}</div>
-        )}
+        <Dropdown
+          fixedCollapsed={title.length < LONG_STRING_LEN}
+          className={styles.message}
+          header={<div className={styles.messageHeader}>{title}</div>}
+        >
+          <div className={styles.title}>{title}</div>
+        </Dropdown>
       </div>
-      <div className={styles.scrollContainer}>
-        <div className={styles.files}>
-          {data?.map(({ name, fileScore, linesOfCodeChanges, fileDiffs }) => (
-            <Dropdown
-              key={name}
-              header={
-                <div className={styles.fileHeader}>
-                  <span>{name}</span>
-                  <span>{fileScore.totalScore}</span>
-                  <span>{linesOfCodeChanges.numAdditions}</span>
-                  <span>{linesOfCodeChanges.numDeletions}</span>
+      <div className={styles.files}>
+        {data?.map(({ name, fileScore, linesOfCodeChanges, fileDiffs }) => (
+          <Dropdown
+            // TODO: use fileId instead of name for key.
+            key={name}
+            className={styles.file}
+            arrowOnLeft
+            startOpened
+            header={
+              <div className={styles.fileHeader}>
+                <span className={styles.fileName}>{name}</span>
+                <div className={styles.fileScore}>
+                  <span className={styles.score}>
+                    {/* TODO: Score breakdown tooltip*/}
+                    score: {fileScore.totalScore.toFixed(1)}
+                  </span>
+                  <span className={styles.additions}>
+                    +{linesOfCodeChanges.numAdditions}
+                  </span>
+                  <span className={styles.deletions}>
+                    -{linesOfCodeChanges.numDeletions}
+                  </span>
                 </div>
-              }
-              arrowOnLeft={true}
-            >
-              <div>
+              </div>
+            }
+          >
+            <div className={styles.diffVerticalScroll}>
+              <div className={styles.diff}>
                 {fileDiffs.map(
                   ({ lineType, diffLine }) =>
                     lineType !== 'HEADER' &&
@@ -63,9 +85,9 @@ const Diff = ({ data, type, id, commits }: IDiffProps) => {
                     )
                 )}
               </div>
-            </Dropdown>
-          ))}
-        </div>
+            </div>
+          </Dropdown>
+        ))}
       </div>
     </div>
   )

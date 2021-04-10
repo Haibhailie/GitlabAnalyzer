@@ -36,32 +36,28 @@
 
 .container {
   display: flex;
-  /* overflow: hidden; */
   position: relative;
 }
 
 .diff {
   position: absolute;
-  width: 800px;
-  height: 700px;
-  transition: all ease-in-out 400ms;
+  width: calc(100% - 425px);
+  transition: right ease-in-out 400ms;
   right: -800px;
 }
 
 .showDiff .diff {
-  right: 0;
+  right: 0px;
 }
 
 .tables {
-  margin-right: 0;
-  transition: all ease-in-out 400ms;
-  width: 100%;
+  transition: width ease-in-out 400ms;
+  width: min(100%, 1200px);
   height: fit-content;
 }
 
 .showDiff .tables {
-  margin-right: 850px;
-  width: calc(100% - 850px);
+  width: 400px;
 }
 
 .tableContainer:last-child {

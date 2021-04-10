@@ -9,7 +9,7 @@ import {
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
-import { ICommitData, IMergeData, TCommitData, TMergeData } from '../types'
+import { TCommitData, TMergeData } from '../types'
 import dateConverter from '../utils/dateConverter'
 import { noop } from 'lodash'
 import classNames from '../utils/classNames'
@@ -78,18 +78,10 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
       )
         .then(merges => {
           const mrTableData: TTableData = []
-          merges.forEach(({ time, title, mergeRequestId, score }) => {
+          merges.forEach(({ time, title, score }) => {
             mrTableData.push({
-              date: dateConverter(time),
+              date: dateConverter(time, true),
               title: title,
-              view: (
-                <button
-                  onClick={eventStopper(() => setSelectedMr(mergeRequestId))}
-                  className={styles.viewBtn}
-                >
-                  View commits
-                </button>
-              ),
               score: score,
               ignore: <IgnoreBox onChange={noop} />,
             })
@@ -101,7 +93,8 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
           setData(merges)
         })
         .catch(onError(setError))
-    }
+    },
+    [projectId, memberId]
   )
 
   useEffect(() => {
@@ -114,7 +107,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
 
           commits.forEach(({ score, time, title }) => {
             commitTableData.push({
-              date: dateConverter(time),
+              date: dateConverter(time, true),
               title,
               score,
               ignore: <IgnoreBox onChange={noop} />,
@@ -156,35 +149,47 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
           <Table
             {...sharedTableProps}
             title="Merge Requests"
-            headers={['Date', 'Title', '', 'Score', 'Ignore?']}
-            columnWidths={['3fr', '6fr', '3fr', '1fr', '1fr']}
+            headers={['Date', 'Title', 'Score', 'Ignore?']}
+            columnWidths={['6fr', '6fr', '1fr', '1fr']}
             onClick={(e, i) => {
-              const { files, mergeRequestId, commitsInfoInMergeRequest } =
-                mergeRequests?.[i] ?? {}
-              viewDiffOf({
-                data: files,
-                type: 'MR',
-                id: `#${mergeRequestId}`,
-                commits: commitsInfoInMergeRequest,
-              })
+              if (mergeRequests?.[i]) {
+                const {
+                  files,
+                  mergeRequestId,
+                  commitsInfoInMergeRequest,
+                  title,
+                } = mergeRequests[i]
+                console.log(mergeRequests[i])
+                setSelectedMr(mergeRequestId)
+                viewDiffOf({
+                  data: files,
+                  type: 'MR',
+                  id: `#${mergeRequestId}`,
+                  commits: commitsInfoInMergeRequest,
+                  title,
+                })
+              }
             }}
             data={tableData.current?.mrs ?? []}
             maxHeight={400}
-            startOpened={true}
+            startOpened
           />
           <Table
             {...sharedTableProps}
             isOpen={commits !== undefined}
             title={`Commits for MR ${selectedMr ?? ''}`}
             headers={['Date', 'Title', 'Score', 'Ignore?']}
-            columnWidths={['3fr', '9fr', '1fr', '1fr']}
+            columnWidths={['6fr', '6fr', '1fr', '1fr']}
             onClick={(e, i) => {
-              const { id, files } = commits?.[i] ?? {}
-              viewDiffOf({
-                data: files,
-                type: 'Commit',
-                id: '' + id,
-              })
+              if (commits?.[i]) {
+                const { id, files, message } = commits[i]
+                viewDiffOf({
+                  data: files,
+                  type: 'Commit',
+                  id: id,
+                  title: message,
+                })
+              }
             }}
             data={tableData.current?.commits ?? []}
           />

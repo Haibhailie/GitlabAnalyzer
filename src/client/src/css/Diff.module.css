@@ -7,10 +7,36 @@
 
 .header {
   width: calc(100% - 24px);
-  display: flex;
-  justify-content: space-between;
   background-color: var(--color-background-gray);
-  padding: 12px;
+  padding: 20px 12px;
+  margin-bottom: 15px;
+}
+
+.stats {
+  display: flex;
+  font: var(--font-body-medium-poppins);
+  font-weight: 600;
+}
+
+.stats > *:not(:first-child) {
+  margin-left: 50px;
+}
+
+.messageHeader {
+  text-align: left;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: calc(100% - 40px);
+  margin-right: 40px;
+}
+
+.message {
+  margin-top: 15px;
+}
+
+.title {
+  overflow-x: auto;
 }
 
 .scrollContainer {
@@ -19,30 +45,70 @@
   overflow: auto;
 }
 
-.files {
-  min-width: fit-content;
+.file {
+  margin-bottom: 30px;
+  width: calc(100% - 2px);
+  border: 1px solid var(--color-light-gray);
+}
+
+.file:last-of-type {
+  margin-bottom: 0;
+}
+
+.fileHeader,
+.fileScore {
+  display: flex;
+  align-items: center;
 }
 
 .fileHeader {
   background-color: var(--color-background-gray);
-  display: flex;
-  width: calc(100% - 40px);
-  padding-left: 40px;
-  justify-content: flex-start;
+  width: calc(100% - 60px);
+  padding: 10px 20px 10px 40px;
+  justify-content: space-between;
 }
 
-.scrollContainer {
-  overflow: auto;
+.fileName {
+  font: var(--font-body-small-mulish);
+}
+
+.score {
+  margin-right: 20px;
+  font: var(--font-body-small-mulish);
+  font-weight: 700;
+}
+
+.additions {
+  font: var(--font-body-small-mulish);
+  color: var(--color-text-green);
+  margin-right: 10px;
+}
+
+.deletions {
+  font: var(--font-body-small-mulish);
+  color: var(--color-text-red);
+}
+
+.diffVerticalScroll {
   width: 100%;
-  height: fit-content;
+  overflow-x: auto;
+}
+
+.diff {
+  min-width: fit-content;
 }
 
 .line {
   font-family: 'Roboto Mono', monospace;
   white-space: pre;
   min-width: fit-content;
+  padding: 0 20px;
 }
 
 .addition {
   background-color: var(--color-background-green);
+}
+
+.deletion {
+  background-color: var(--color-background-red);
 }
