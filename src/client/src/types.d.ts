@@ -1,9 +1,12 @@
 export type TLineType =
   | 'HEADER'
   | 'ADDITION'
-  | 'DELETION'
-  | 'LINE_NUMBER_SPECIFICATION'
+  | 'ADDITION_SYNTAX'
   | 'ADDITION_BLANK'
+  | 'DELETION'
+  | 'DELETION_SYNTAX'
+  | 'DELETION_BLANK'
+  | 'UNCHANGED'
 
 export type TDiffData = IDiffData[]
 export interface IDiffData {

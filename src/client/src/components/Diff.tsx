@@ -76,8 +76,7 @@ const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
             <div className={styles.diff}>
               {fileDiffs.map(
                 ({ lineType, diffLine }) =>
-                  lineType !== 'HEADER' &&
-                  lineType !== 'LINE_NUMBER_SPECIFICATION' && (
+                  lineType !== 'HEADER' && (
                     <div className={getLineClassName(lineType)}>{diffLine}</div>
                   )
               )}
