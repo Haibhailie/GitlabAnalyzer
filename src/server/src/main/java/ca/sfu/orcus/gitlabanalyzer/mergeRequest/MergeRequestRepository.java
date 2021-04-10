@@ -28,7 +28,7 @@ public class MergeRequestRepository {
         time("time"),
         webUrl("webUrl"),
         sumOfCommitsScore("sumOfCommitsScore"),
-        committers("committers"),
+        committerNames("committerNames"),
         commits("commits"),
         files("files"),
         isIgnored("isIgnored");
@@ -77,7 +77,7 @@ public class MergeRequestRepository {
                 .append(MergeRequest.description.key, mergeRequest.getDescription())
                 .append(MergeRequest.webUrl.key, mergeRequest.getWebUrl())
                 .append(MergeRequest.sumOfCommitsScore.key, mergeRequest.getSumOfCommitsScore())
-                .append(MergeRequest.committers.key, mergeRequest.getCommitters())
+                .append(MergeRequest.committerNames.key, mergeRequest.getCommitterNames())
                 .append(generateCommitDocuments(mergeRequest))
                 .append(generateFileDocuments(mergeRequest))
                 .append(MergeRequest.isIgnored.key, mergeRequest.isIgnored());

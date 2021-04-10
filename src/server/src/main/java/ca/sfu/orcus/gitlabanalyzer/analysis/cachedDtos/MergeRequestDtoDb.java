@@ -18,14 +18,14 @@ public final class MergeRequestDtoDb {
 
     // TODO: Do we need commitsInfoInMergeRequest member variable now since we already have all the commits?
     private List<CommitDtoDb> commits;
-    private Set<String> committers;
+    private Set<String> committerNames;
     private double sumOfCommitsScore;
     private boolean isIgnored;
     private List<FileDto> files;
 
     public MergeRequestDtoDb(MergeRequest mergeRequest,
                              List<CommitDtoDb> commits,
-                             Set<String> committers,
+                             Set<String> committerNames,
                              MergeRequest mergeRequestChanges,
                              double sumOfCommitsScore) {
         setMergeRequestId(mergeRequest.getIid());
@@ -37,7 +37,7 @@ public final class MergeRequestDtoDb {
         setWebUrl(mergeRequest.getWebUrl());
 
         setCommits(commits);
-        setCommitters(committers);
+        setCommitterNames(committerNames);
         setSumOfCommitsScore(sumOfCommitsScore);
         setIgnored(false);
 
@@ -77,8 +77,8 @@ public final class MergeRequestDtoDb {
         this.commits = commits;
     }
 
-    public void setCommitters(Set<String> committers) {
-        this.committers = committers;
+    public void setCommitterNames(Set<String> committerNames) {
+        this.committerNames = committerNames;
     }
 
     public void setSumOfCommitsScore(double sumOfCommitsScore) {
@@ -125,8 +125,8 @@ public final class MergeRequestDtoDb {
         return commits;
     }
 
-    public Set<String> getCommitters() {
-        return committers;
+    public Set<String> getCommitterNames() {
+        return committerNames;
     }
 
     public double getSumOfCommitsScore() {
@@ -162,7 +162,7 @@ public final class MergeRequestDtoDb {
                 && this.time == m.time
                 && this.webUrl.equals(m.webUrl)
                 && this.commits.equals(m.commits)
-                && this.committers.equals(m.committers)
+                && this.committerNames.equals(m.committerNames)
                 && this.sumOfCommitsScore == m.sumOfCommitsScore
                 && this.isIgnored == m.isIgnored
                 && this.files.equals(m.files));
