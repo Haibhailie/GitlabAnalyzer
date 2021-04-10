@@ -19,6 +19,7 @@ public class DiffScoreCalculator {
     List<FileDiffDto> fileDiffs = new ArrayList<>();
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
+        resetCount();
         generatedDiffList = diffStrings;
         int lineNumber = -1;
 
@@ -56,6 +57,14 @@ public class DiffScoreCalculator {
             }
         }
         return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
+    }
+
+    private void resetCount(){
+        numLineAdditions = 0;
+        numLineDeletions = 0;
+        numBlankAdditions = 0;
+        numSyntaxChanges = 0;
+        numSpacingChanges = 0;
     }
 
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
@@ -97,15 +106,6 @@ public class DiffScoreCalculator {
         return str1.replaceAll("\\s+", "").trim().equals(str2.replaceAll("\\s+", "").trim());
     }
 
-    private int findNextFileInDiff(List<String> diffsList, int startIndex) {
-        for (int i = startIndex; i < diffsList.size(); i++) {
-            if (diffsList.get(i).startsWith("diff --")) {
-                return i;
-            }
-        }
-        return diffsList.size();
-    }
-
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
     public List<FileDto> fileScoreCalculator(List<String> diffsList,
                                              double addFactor,
@@ -143,11 +143,11 @@ public class DiffScoreCalculator {
             int syntaxChanges = diffScoreDtos.get(i).getNumSyntaxChanges();
             int spacingChanges = diffScoreDtos.get(i).getNumSpacingChanges();
 
-            double totalScore = (additions * addFactor)
-                    + deletions * deleteFactor
-                    + blankAdditions * blankFactor
-                    + syntaxChanges * syntaxFactor
-                    + spacingChanges * spacingFactor;
+            double totalScore = (diffScoreDtos.get(i).getNumLineAdditions() * addFactor)
+                    + diffScoreDtos.get(i).getNumLineDeletions() * deleteFactor
+                    + diffScoreDtos.get(i).getNumBlankAdditions() * blankFactor
+                    + diffScoreDtos.get(i).getNumSyntaxChanges() * syntaxFactor
+                    + diffScoreDtos.get(i).getNumSpacingChanges() * spacingFactor;
 
             fileDtos.get(i).setMergeRequestFileScore(new Scores(totalScore,
                     additions,
