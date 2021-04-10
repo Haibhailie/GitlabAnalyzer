@@ -41,17 +41,6 @@ public class CommitterService {
         }
     }
 
-    public void updateCommitterTable(String jwt,
-                                     int projectId,
-                                     Map<String, Integer> committerToMemberMap) throws GitLabApiException, NotFoundException {
-        int memberId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
-        if (memberRepo.projectContainsMember(projectId, memberId)) {
-            committerRepo.updateCommitters(projectId, committerToMemberMap);
-        } else {
-            throw new NotFoundException("Project not found for user");
-        }
-    }
-
     private boolean userHasAccessToProject(int memberId, int projectId) {
         try {
             return projectRepo.projectIsPublic(projectId,
@@ -59,5 +48,29 @@ public class CommitterService {
         } catch (NotFoundException e) {
             return false;
         }
+    }
+
+    public void updateCommitterTable(String jwt,
+                                     int projectId,
+                                     Map<String, Integer> committerToMemberMap) throws GitLabApiException, NotFoundException {
+        int memberId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
+        if (memberRepo.projectContainsMember(projectId, memberId)) {
+            updateCommitterMemberResolution(projectId, committerToMemberMap);
+            committerRepo.updateCommitters(projectId, committerToMemberMap);
+        } else {
+            throw new NotFoundException("Project not found for user");
+        }
+    }
+
+    private void updateCommitterMemberResolution(int projectId, Map<String, Integer> committerToMemberMap) {
+        /**
+         * 1. Get projectUrl
+         * 2. Get the committerDtoDbs for all committers (keys of the map)
+         * 3. For each committer
+         *    - update the MemberDto field
+         *    - for each of the commitIds
+         *      - update the memberId field of the commit
+         */
+        String projectUrl =
     }
 }
