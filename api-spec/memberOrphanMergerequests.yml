@@ -1,0 +1,19 @@
+get:
+  description: 'Get the merge requests(which are not created by the member) the member committed to in the project.'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            $ref: './components/mergerequest.yml'
+    '401':
+      description: Invalid JWT Token.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
+    - $ref: './components/projectId.yml'
+    - name: memberName
+      in: path
+      required: true

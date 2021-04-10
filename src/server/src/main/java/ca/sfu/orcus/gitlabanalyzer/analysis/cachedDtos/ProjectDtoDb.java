@@ -13,8 +13,6 @@ public class ProjectDtoDb {
     private String webUrl;
     private List<CommitterDtoDb> committers;
 
-    // TODO: Store currentConfig used for scoring
-
     public ProjectDtoDb(Project project, String role, long lastAnalysisTime, List<CommitterDtoDb> committers) {
         setId(project.getId());
         setName(project.getName());

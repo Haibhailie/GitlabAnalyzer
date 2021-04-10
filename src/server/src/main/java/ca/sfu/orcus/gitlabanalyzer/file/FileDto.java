@@ -17,10 +17,9 @@ public class FileDto {
     @SerializedName("fileDiffs")
     List<FileDiffDto> fileDiffDtos = new ArrayList<>();
 
-    public FileDto(String[] unifiedDiff, String name) {
+    public FileDto(String name) {
         this.name = name;
         setExtension(name);
-        generateFileDiffDto(unifiedDiff);
     }
 
     public FileDto(String name, List<FileDiffDto> fileDiffDtos, double score, boolean isIgnored) {
@@ -41,12 +40,6 @@ public class FileDto {
 
     public void setFileDiffDtos(List<FileDiffDto> fileDiffDtos) {
         this.fileDiffDtos = fileDiffDtos;
-    }
-
-    private void generateFileDiffDto(String[] unifiedDiff) {
-        for (String line : unifiedDiff) {
-            fileDiffDtos.add(new FileDiffDto(line));
-        }
     }
 
     public void setMergeRequestFileScore(Scores fileScore) {
@@ -75,6 +68,10 @@ public class FileDto {
 
     public LOCDto getLinesOfCodeChanges() {
         return linesOfCodeChanges;
+    }
+
+    public String getFileName() {
+        return name;
     }
 
     @Override

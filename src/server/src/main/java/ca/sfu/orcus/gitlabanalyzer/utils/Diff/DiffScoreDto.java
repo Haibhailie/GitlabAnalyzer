@@ -46,6 +46,10 @@ public class DiffScoreDto {
         return fileDiffs;
     }
 
+    public List<FileDiffDto> getFileDiffs(int i, int j) {
+        return fileDiffs.subList(i, j);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {

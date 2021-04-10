@@ -2,10 +2,12 @@ package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import org.bson.types.ObjectId;
-import org.gitlab4j.api.models.AccessLevel;
 import org.gitlab4j.api.models.Member;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public final class MemberDtoDb {
     private int id;
@@ -15,13 +17,13 @@ public final class MemberDtoDb {
     private String webUrl;
     private Set<Integer> mergeRequestIds;
     private Set<String> committerEmails;
-    private Set<Integer> commitsToMaster;
     private Set<ObjectId> mergeRequestDocIds;
     private List<NoteDtoDb> notes;
 
+    public MemberDtoDb() {}
+
     public MemberDtoDb(Member member) {
         this(member,
-                new HashSet<>(),
                 new HashSet<>(),
                 new HashSet<>(),
                 new ArrayList<>());
@@ -29,17 +31,15 @@ public final class MemberDtoDb {
 
     public MemberDtoDb(Member member,
                        Set<String> committerEmails,
-                       Set<Integer> commitsToMaster,
                        Set<ObjectId> mergeRequestDocIds,
                        List<NoteDtoDb> notes) {
         setId(member.getId());
         setDisplayName(member.getName());
         setUsername(member.getUsername());
-        setRole(member.getAccessLevel());
+        setRole(member.getAccessLevel() == null ? "GUEST" : MemberUtils.getMemberRoleFromAccessLevel(member.getAccessLevel().value));
         setWebUrl(member.getWebUrl());
 
         setCommitterEmails(committerEmails);
-        setCommitsToMaster(commitsToMaster);
         setMergeRequestDocIds(mergeRequestDocIds);
         setNotes(notes);
     }
@@ -56,8 +56,8 @@ public final class MemberDtoDb {
         this.username = username;
     }
 
-    public void setRole(AccessLevel accessLevel) {
-        this.role = (accessLevel == null) ? "GUEST" : MemberUtils.getMemberRoleFromAccessLevel(accessLevel.value);
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public void setWebUrl(String webUrl) {
@@ -66,10 +66,6 @@ public final class MemberDtoDb {
 
     public void setCommitterEmails(Set<String> committerEmails) {
         this.committerEmails = committerEmails;
-    }
-
-    public void setCommitsToMaster(Set<Integer> commitsToMaster) {
-        this.commitsToMaster = commitsToMaster;
     }
 
     public void setMergeRequestDocIds(Set<ObjectId> mergeRequestDocIds) {
@@ -112,12 +108,8 @@ public final class MemberDtoDb {
         return committerEmails;
     }
 
-    public Set<Integer> getCommitsToMaster() {
-        return commitsToMaster;
-    }
-
-    public Set<Integer> getMergeRequestIds() {
-        return mergeRequestIds;
+    public Set<ObjectId> getMergeRequestDocIds() {
+        return mergeRequestDocIds;
     }
 
     public List<NoteDtoDb> getNotes() {
@@ -142,7 +134,6 @@ public final class MemberDtoDb {
                 && this.role.equals(m.role)
                 && this.webUrl.equals(m.webUrl)
                 && this.committerEmails.equals(m.committerEmails)
-                && this.commitsToMaster.equals(m.commitsToMaster)
                 && this.mergeRequestDocIds.equals(m.mergeRequestDocIds)
                 && this.notes.equals(m.notes));
     }

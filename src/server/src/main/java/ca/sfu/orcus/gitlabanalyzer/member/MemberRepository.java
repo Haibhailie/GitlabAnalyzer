@@ -1,12 +1,15 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.NoteDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
+import com.google.gson.Gson;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
@@ -16,11 +19,12 @@ import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Projections.exclude;
 
 @Repository
 public class MemberRepository {
     private final MongoCollection<Document> memberCollection;
+    private static final Gson gson = new Gson();
 
     private enum Member {
         documentId("_id"),
@@ -31,8 +35,7 @@ public class MemberRepository {
         role("role"),
         memberUrl("memberUrl"),
         committerEmails("committerEmails"),
-        commitsToMaster("commitsToMaster"),
-        mergeRequestIds("mergeRequestIds"),
+        mergeRequestDocIds("mergeRequestDocIds"),
         notes("notes");
 
         public String key;
@@ -48,29 +51,26 @@ public class MemberRepository {
         memberCollection = database.getCollection(VariableDecoderUtil.decode("MEMBERS_COLLECTION"));
     }
 
-    public List<String> cacheAllMembers(List<MemberDtoDb> allMembers, String projectUrl) {
+    public List<String> cacheAllMembers(String projectUrl, List<MemberDtoDb> allMembers) {
         List<String> documentIds = new ArrayList<>();
         for (MemberDtoDb member : allMembers) {
-            if (!memberIsAlreadyCached(member, projectUrl)) {
-                String documentId = cacheMember(member, projectUrl);
-                documentIds.add(documentId);
-            }
+            String documentId = cacheMember(member, projectUrl);
+            documentIds.add(documentId);
         }
         return documentIds;
-    }
-
-    private boolean memberIsAlreadyCached(MemberDtoDb member, String projectUrl) {
-        Document memberDoc = memberCollection.find(and(eq(Member.memberId.key, member.getId()),
-                                                    eq(Member.projectUrl.key, projectUrl)))
-                                                    .projection(include(Member.memberId.key)).first();
-        return (memberDoc != null);
     }
 
     private String cacheMember(MemberDtoDb member, String projectUrl) {
         String documentId = new ObjectId().toString();
         Document memberDocument = generateMemberDocument(member, documentId, projectUrl);
-        memberCollection.insertOne(memberDocument);
+        if (memberCollection.findOneAndReplace(getMemberEqualityParameter(projectUrl, member), memberDocument) == null) {
+            memberCollection.insertOne(memberDocument);
+        }
         return documentId;
+    }
+    
+    private Bson getMemberEqualityParameter(String projectUrl, MemberDtoDb member) {
+        return and(eq(Member.projectUrl.key, projectUrl), eq(Member.memberId.key, member.getId()));
     }
 
     private Document generateMemberDocument(MemberDtoDb member, String documentId, String projectUrl) {
@@ -82,34 +82,39 @@ public class MemberRepository {
                     .append(Member.role.key, member.getRole())
                     .append(Member.memberUrl.key, member.getWebUrl())
                     .append(Member.committerEmails.key, member.getCommitterEmails())
-                    .append(Member.commitsToMaster.key, member.getCommitsToMaster())
-                    .append(Member.mergeRequestIds.key, member.getMergeRequestIds())
-                    .append(Member.notes.key, member.getNotes());
+                    .append(Member.mergeRequestDocIds.key, member.getMergeRequestDocIds())
+                    .append(Member.notes.key, gson.toJson(member.getNotes()));
     }
 
-    public List<MemberDto> getMembers(List<String> documentIds) {
-        List<MemberDto> members = new ArrayList<>();
+    public List<MemberDtoDb> getMembers(List<String> documentIds) {
+        List<MemberDtoDb> members = new ArrayList<>();
         for (String documentId : documentIds) {
-            Optional<MemberDto> member = getMember(documentId);
+            Optional<MemberDtoDb> member = getMember(documentId);
             member.ifPresent(members::add);
         }
         return members;
     }
 
-    private Optional<MemberDto> getMember(String documentId) {
-        Document memberDoc = memberCollection.find(eq(Member.documentId.key, documentId)).first();
+    private Optional<MemberDtoDb> getMember(String documentId) {
+        Document memberDoc = memberCollection.find(eq(Member.documentId.key, documentId))
+                .projection(exclude(
+                                Member.committerEmails.key,
+                                Member.mergeRequestDocIds.key))
+                .first();
         return Optional.ofNullable(docToDto(memberDoc));
     }
 
-    private MemberDto docToDto(Document memberDoc) {
+    private MemberDtoDb docToDto(Document memberDoc) {
         if (memberDoc == null) {
             return null;
         }
-        String displayName = memberDoc.getString(Member.displayName.key);
-        int id = memberDoc.getInteger(Member.memberId.key);
-        String username = memberDoc.getString(Member.username.key);
-        String role = memberDoc.getString(Member.role.key);
-        String memberUrl = memberDoc.getString(Member.memberUrl.key);
-        return new MemberDto(displayName, id, username, role, memberUrl);
+        MemberDtoDb member = new MemberDtoDb();
+        member.setId(memberDoc.getInteger(Member.memberId));
+        member.setDisplayName(memberDoc.getString(Member.displayName.key));
+        member.setUsername(memberDoc.getString(Member.username.key));
+        member.setRole(memberDoc.getString(Member.role.key));
+        member.setWebUrl(memberDoc.getString(Member.memberUrl.key));
+        member.setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>(){}.getClass()));
+        return member;
     }
 }

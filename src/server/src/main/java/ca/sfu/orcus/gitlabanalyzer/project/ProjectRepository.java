@@ -35,7 +35,7 @@ public class ProjectRepository {
         lastAnalysisTime("lastAnalysisTime"),
         isPublic("isPublic"),
         analysis("analysis"),
-        memberDocumentRefs("memRefs");
+        memberDocIds("memberDocIds");
 
         public final String key;
 
@@ -82,10 +82,10 @@ public class ProjectRepository {
     }
 
     public List<String> getMemberDocIds(int projectId, String projectUrl) {
-        Document project = getPartialProjectDocument(projectId, projectUrl, Project.memberDocumentRefs.key);
-        List<String> memberDocIds = project.getList(Project.memberDocumentRefs.key, String.class);
+        Document project = getPartialProjectDocument(projectId, projectUrl, Project.memberDocIds.key);
+        List<String> memberDocIds = project.getList(Project.memberDocIds.key, String.class);
         return memberDocIds == null ? new ArrayList<>() :
-                project.getList(Project.memberDocumentRefs.key, String.class);
+                project.getList(Project.memberDocIds.key, String.class);
     }
 
     // TODO: Implement this
