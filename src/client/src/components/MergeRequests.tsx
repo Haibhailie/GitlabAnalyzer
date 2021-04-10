@@ -82,6 +82,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
             mrTableData.push({
               date: dateConverter(time, true),
               title: title,
+              // TODO: left-align .toFixed(1) score.
               score: score,
               ignore: <IgnoreBox onChange={noop} />,
             })
@@ -109,6 +110,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
             commitTableData.push({
               date: dateConverter(time, true),
               title,
+              // TODO: left-align .toFixed(1) score.
               score,
               ignore: <IgnoreBox onChange={noop} />,
             })
