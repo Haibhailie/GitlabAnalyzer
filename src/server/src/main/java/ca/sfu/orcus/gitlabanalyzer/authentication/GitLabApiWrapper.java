@@ -119,6 +119,5 @@ public class GitLabApiWrapper {
         } catch (GitLabApiException e) {
             return Optional.empty();
         }
-
     }
 }

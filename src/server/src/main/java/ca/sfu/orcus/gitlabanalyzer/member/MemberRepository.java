@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.exclude;
 import static com.mongodb.client.model.Projections.include;
 
 @Repository
@@ -98,7 +99,11 @@ public class MemberRepository {
     }
 
     private Optional<MemberDtoDb> getMember(String documentId) {
-        Document memberDoc = memberCollection.find(eq(Member.documentId.key, documentId)).first();
+        Document memberDoc = memberCollection.find(eq(Member.documentId.key, documentId))
+                .projection(exclude(
+                                Member.committerEmails.key,
+                                Member.mergeRequestDocIds.key))
+                .first();
         return Optional.ofNullable(docToDto(memberDoc));
     }
 

@@ -14,8 +14,8 @@ public final class MemberDtoDb {
     private String role;
     private String webUrl;
 
-    private Set<String> committerEmails; // don't need to send
-    private Set<ObjectId> mergeRequestDocIds; // don't need to send
+    private Set<String> committerEmails;
+    private Set<ObjectId> mergeRequestDocIds;
     private List<NoteDtoDb> notes;
 
     public MemberDtoDb() {}
