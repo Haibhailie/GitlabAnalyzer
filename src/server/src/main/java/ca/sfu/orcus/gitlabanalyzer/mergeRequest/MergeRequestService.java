@@ -3,7 +3,6 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
-import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.*;
@@ -24,12 +23,6 @@ public class MergeRequestService {
     private final GitLabApiWrapper gitLabApiWrapper;
     private final ConfigService configService;
     private final CommitService commitService;
-
-    double addLOCFactor;
-    double deleteLOCFactor;
-    double syntaxChangeFactor;
-    double blankLOCFactor;
-    double spacingChangeFactor;
 
     @Autowired
     public MergeRequestService(MergeRequestRepository mergeRequestRepository, GitLabApiWrapper gitLabApiWrapper, ConfigService configService, CommitService commitService) {

@@ -21,12 +21,6 @@ public class CommitService {
     private final GitLabApiWrapper gitLabApiWrapper;
     private final ConfigService configService;
 
-    double addLOCFactor;
-    double deleteLOCFactor;
-    double syntaxChangeFactor;
-    double blankLOCFactor;
-    double spacingChangeFactor;
-
     @Autowired
     public CommitService(CommitRepository commitRepository, GitLabApiWrapper gitLabApiWrapper, ConfigService configService) {
         this.commitRepository = commitRepository;
