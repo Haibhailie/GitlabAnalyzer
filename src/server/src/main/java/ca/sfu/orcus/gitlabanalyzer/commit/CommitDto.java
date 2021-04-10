@@ -109,6 +109,14 @@ public class CommitDto {
         return diffs;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
