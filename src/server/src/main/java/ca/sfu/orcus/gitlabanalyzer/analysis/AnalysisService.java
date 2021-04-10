@@ -56,7 +56,6 @@ public class AnalysisService {
         //          - cacheCommitterDtos() inside projectDto
         analysisRepository.cacheProjectDto(projectDto);
 
-        // TODO: cacheMemberDtos(projectUrl, new ArrayList<>(memberToMemberDtoMap.values)) (key: projectUrl + memberId)
         analysisRepository.cacheMemberDtos(project.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
 
         // TODO: cacheMergeRequestDtos(projectUrl, mergeRequestDtos) (key: projectUrl + mergeRequestId)

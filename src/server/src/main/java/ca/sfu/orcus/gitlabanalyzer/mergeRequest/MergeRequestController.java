@@ -57,4 +57,18 @@ public class MergeRequestController {
         response.setStatus(mergeRequestDiff == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(mergeRequestDiff);
     }
+
+    @GetMapping("/api/project/{projectId}/members/{memberId}/mergerequests")
+    public String getMergeRequestsByMemberID(@CookieValue(value = "sessionId") String jwt,
+                                             HttpServletResponse response,
+                                             @PathVariable int projectId,
+                                             @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
+                                             @RequestParam(required = false, defaultValue = Constants.DEFAULT_UNTIL) long until,
+                                             @PathVariable int memberId) {
+        Date dateSince = DateUtils.getDateSinceOrEarliest(since);
+        Date dateUntil = DateUtils.getDateUntilOrNow(until);
+        List<MergeRequestDto> allMergeRequestsByMemberId = mergeRequestService.getMergeRequestsByMemberId(jwt, projectId, dateSince, dateUntil, memberId);
+        response.setStatus(allMergeRequestsByMemberId == null ? SC_UNAUTHORIZED : SC_OK);
+        return gson.toJson(allMergeRequestsByMemberId);
+    }
 }
