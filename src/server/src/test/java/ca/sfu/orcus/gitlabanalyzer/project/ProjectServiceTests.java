@@ -1,11 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
+import ca.sfu.orcus.gitlabanalyzer.member.*;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
 import ca.sfu.orcus.gitlabanalyzer.models.UserMock;
 import org.gitlab4j.api.GitLabApi;
@@ -32,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class ProjectServiceTests {
     @Mock private ProjectRepository projectRepository;
     @Mock private GitLabApiWrapper gitLabApiWrapper;
-    @Mock private MemberService memberService;
+    @Mock private MemberServiceDirect memberService;
 
     @InjectMocks
     private ProjectService projectService;

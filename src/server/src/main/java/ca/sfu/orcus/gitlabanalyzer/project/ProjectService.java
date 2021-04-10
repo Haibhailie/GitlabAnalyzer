@@ -2,7 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.project;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
+import ca.sfu.orcus.gitlabanalyzer.member.MemberServiceDirect;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.GitLabApi;
@@ -10,7 +10,6 @@ import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
 import org.gitlab4j.api.models.Project;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,12 +19,12 @@ import java.util.List;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final GitLabApiWrapper gitLabApiWrapper;
-    private final MemberService memberService;
+    private final MemberServiceDirect memberService;
 
     @Autowired
     public ProjectService(ProjectRepository projectRepository,
                           GitLabApiWrapper gitLabApiWrapper,
-                          @Qualifier("direct") MemberService memberService) {
+                          MemberServiceDirect memberService) {
         this.projectRepository = projectRepository;
         this.gitLabApiWrapper = gitLabApiWrapper;
         this.memberService = memberService;

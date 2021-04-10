@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.project.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service("cached")
-public class MemberServiceCached implements MemberService {
+@Service
+public class MemberServiceCached {
     GitLabApiWrapper gitLabApiWrapper;
     ProjectRepository projectRepo;
     MemberRepository memberRepo;
@@ -21,8 +22,7 @@ public class MemberServiceCached implements MemberService {
         this.memberRepo = memberRepo;
     }
 
-    @Override
-    public List<MemberDto> getAllMembers(String jwt, int projectId) {
+    public List<MemberDtoDb> getAllMembers(String jwt, int projectId) {
         Optional<String> projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId);
         if (projectUrl.isEmpty()) {
             return null;

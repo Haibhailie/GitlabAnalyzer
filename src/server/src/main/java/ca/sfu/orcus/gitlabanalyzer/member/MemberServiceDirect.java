@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service("direct")
-public class MemberServiceDirect implements MemberService {
+@Service
+public class MemberServiceDirect {
     private final GitLabApiWrapper gitLabApiWrapper;
 
     @Autowired

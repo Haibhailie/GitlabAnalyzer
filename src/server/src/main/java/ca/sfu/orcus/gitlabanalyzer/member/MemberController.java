@@ -2,7 +2,6 @@ package ca.sfu.orcus.gitlabanalyzer.member;
 
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,11 +12,11 @@ import static javax.servlet.http.HttpServletResponse.*;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class MemberController {
-    private final MemberService memberService;
+    private final MemberServiceDirect memberService;
     private static final Gson gson = new Gson();
 
     @Autowired
-    public MemberController(@Qualifier("direct") MemberService memberService) {
+    public MemberController(MemberServiceDirect memberService) {
         this.memberService = memberService;
     }
 
