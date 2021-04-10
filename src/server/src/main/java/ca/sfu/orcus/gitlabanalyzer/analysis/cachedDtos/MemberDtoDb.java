@@ -116,8 +116,8 @@ public final class MemberDtoDb {
         return commitsToMaster;
     }
 
-    public Set<Integer> getMergeRequestIds() {
-        return mergeRequestIds;
+    public Set<ObjectId> getMergeRequestDocIds() {
+        return mergeRequestDocIds;
     }
 
     public List<NoteDtoDb> getNotes() {

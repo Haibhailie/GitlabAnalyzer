@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.member;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
+import com.google.gson.Gson;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -21,6 +22,7 @@ import static com.mongodb.client.model.Projections.include;
 @Repository
 public class MemberRepository {
     private final MongoCollection<Document> memberCollection;
+    private static final Gson gson = new Gson();
 
     private enum Member {
         documentId("_id"),
@@ -32,7 +34,7 @@ public class MemberRepository {
         memberUrl("memberUrl"),
         committerEmails("committerEmails"),
         commitsToMaster("commitsToMaster"),
-        mergeRequestIds("mergeRequestIds"),
+        mergeRequestDocIds("mergeRequestDocIds"),
         notes("notes");
 
         public String key;
@@ -48,7 +50,7 @@ public class MemberRepository {
         memberCollection = database.getCollection(VariableDecoderUtil.decode("MEMBERS_COLLECTION"));
     }
 
-    public List<String> cacheAllMembers(List<MemberDtoDb> allMembers, String projectUrl) {
+    public List<String> cacheAllMembers(String projectUrl, List<MemberDtoDb> allMembers) {
         List<String> documentIds = new ArrayList<>();
         for (MemberDtoDb member : allMembers) {
             if (!memberIsAlreadyCached(member, projectUrl)) {
@@ -83,8 +85,8 @@ public class MemberRepository {
                     .append(Member.memberUrl.key, member.getWebUrl())
                     .append(Member.committerEmails.key, member.getCommitterEmails())
                     .append(Member.commitsToMaster.key, member.getCommitsToMaster())
-                    .append(Member.mergeRequestIds.key, member.getMergeRequestIds())
-                    .append(Member.notes.key, member.getNotes());
+                    .append(Member.mergeRequestDocIds.key, member.getMergeRequestDocIds())
+                    .append(Member.notes.key, gson.toJson(member.getNotes()));
     }
 
     public List<MemberDto> getMembers(List<String> documentIds) {
