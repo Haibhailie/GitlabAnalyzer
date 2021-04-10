@@ -59,7 +59,7 @@ public class DiffScoreCalculator {
         return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
     }
 
-    private void resetCount(){
+    private void resetCount() {
         numLineAdditions = 0;
         numLineDeletions = 0;
         numBlankAdditions = 0;
