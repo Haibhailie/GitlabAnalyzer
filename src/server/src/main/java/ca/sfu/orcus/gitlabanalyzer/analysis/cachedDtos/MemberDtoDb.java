@@ -2,10 +2,12 @@ package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import org.bson.types.ObjectId;
-import org.gitlab4j.api.models.AccessLevel;
 import org.gitlab4j.api.models.Member;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public final class MemberDtoDb {
     private int id;
@@ -34,7 +36,7 @@ public final class MemberDtoDb {
         setId(member.getId());
         setDisplayName(member.getName());
         setUsername(member.getUsername());
-        setRole(member.getAccessLevel());
+        setRole(member.getAccessLevel() == null ? "GUEST" : MemberUtils.getMemberRoleFromAccessLevel(member.getAccessLevel().value));
         setWebUrl(member.getWebUrl());
 
         setCommitterEmails(committerEmails);
@@ -54,8 +56,8 @@ public final class MemberDtoDb {
         this.username = username;
     }
 
-    public void setRole(AccessLevel accessLevel) {
-        this.role = (accessLevel == null) ? "GUEST" : MemberUtils.getMemberRoleFromAccessLevel(accessLevel.value);
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public void setWebUrl(String webUrl) {

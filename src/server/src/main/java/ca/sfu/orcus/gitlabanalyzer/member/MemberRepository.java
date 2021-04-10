@@ -115,7 +115,7 @@ public class MemberRepository {
         member.setId(memberDoc.getInteger(Member.memberId));
         member.setDisplayName(memberDoc.getString(Member.displayName.key));
         member.setUsername(memberDoc.getString(Member.username.key));
-        member.setRole(MemberUtils.getAccessLevelFromMemberRole(memberDoc.getString(Member.role.key)));
+        member.setRole(memberDoc.getString(Member.role.key));
         member.setWebUrl(memberDoc.getString(Member.memberUrl.key));
         member.setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>(){}.getClass()));
         return member;
