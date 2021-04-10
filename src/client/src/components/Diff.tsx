@@ -4,6 +4,7 @@ import { LONG_STRING_LEN } from '../utils/constants'
 import Dropdown from './Dropdown'
 
 import styles from '../css/Diff.module.css'
+import IgnoreBox from './IgnoreBox'
 
 export interface IDiffProps {
   data?: TFileData
@@ -58,6 +59,9 @@ const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
             <div className={styles.fileHeader}>
               <span className={styles.fileName}>{name}</span>
               <div className={styles.fileScore}>
+                <span className={styles.ignore}>
+                  Ignore: <IgnoreBox className={styles.ignoreBox} />
+                </span>
                 <span className={styles.score}>
                   {/* TODO: Score breakdown tooltip*/}
                   score: {fileScore.totalScore.toFixed(1)}

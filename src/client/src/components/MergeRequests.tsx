@@ -1,11 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  HTMLProps,
-  MouseEventHandler,
-  MouseEvent,
-} from 'react'
+import { useEffect, useRef, useState } from 'react'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
@@ -16,6 +9,7 @@ import classNames from '../utils/classNames'
 
 import Table from '../components/Table'
 import Diff, { IDiffProps } from '../components/Diff'
+import IgnoreBox from '../components/IgnoreBox'
 
 import styles from '../css/MergeRequests.module.css'
 
@@ -27,7 +21,6 @@ export interface IMergeRequestsProps {
 type TTableData = {
   date: string
   title: string
-  view?: JSX.Element
   score: number
   ignore: JSX.Element
 }[]
@@ -43,27 +36,6 @@ const sharedTableProps = {
     row: styles.row,
   },
 }
-
-const eventStopper = (onClick?: (event: MouseEvent) => void) => {
-  const handler: MouseEventHandler = event => {
-    event.stopPropagation()
-    onClick?.(event)
-  }
-  return handler
-}
-
-const IgnoreBox = ({
-  onClick,
-  className,
-  ...props
-}: HTMLProps<HTMLInputElement>) => (
-  <input
-    {...props}
-    onClick={eventStopper(e => onClick?.(e as MouseEvent<HTMLInputElement>))}
-    type="checkbox"
-    className={classNames(styles.ignore, className)}
-  />
-)
 
 const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
   const [selectedMr, setSelectedMr] = useState<string>()
