@@ -35,7 +35,6 @@ public class MemberRepository {
         role("role"),
         memberUrl("memberUrl"),
         committerEmails("committerEmails"),
-        commitsToMaster("commitsToMaster"),
         mergeRequestDocIds("mergeRequestDocIds"),
         notes("notes");
 
@@ -86,7 +85,6 @@ public class MemberRepository {
                     .append(Member.role.key, member.getRole())
                     .append(Member.memberUrl.key, member.getWebUrl())
                     .append(Member.committerEmails.key, member.getCommitterEmails())
-                    .append(Member.commitsToMaster.key, member.getCommitsToMaster())
                     .append(Member.mergeRequestDocIds.key, member.getMergeRequestDocIds())
                     .append(Member.notes.key, gson.toJson(member.getNotes()));
     }
@@ -116,7 +114,6 @@ public class MemberRepository {
         member.setRole(MemberUtils.getAccessLevelFromMemberRole(memberDoc.getString(Member.role.key)));
         member.setWebUrl(memberDoc.getString(Member.memberUrl.key));
         member.setCommitterEmails(new HashSet<>(memberDoc.getList(Member.committerEmails.key, String.class)));
-        member.setCommitsToMaster(new HashSet<>(memberDoc.getList(Member.commitsToMaster.key, Integer.class)));
         member.setMergeRequestDocIds(new HashSet<>(memberDoc.getList(Member.mergeRequestDocIds.key, ObjectId.class)));
         member.setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>(){}.getClass()));
         return member;
