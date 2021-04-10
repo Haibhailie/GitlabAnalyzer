@@ -6,7 +6,7 @@ public final class NoteDtoDb {
     private int id;
     private String content;
     private int wordCount;
-    private long date; // TODO: This was a Date before, should it be a long?
+    private long date;
     private String context;
     private String webUrl;
     private String parentAuthor;

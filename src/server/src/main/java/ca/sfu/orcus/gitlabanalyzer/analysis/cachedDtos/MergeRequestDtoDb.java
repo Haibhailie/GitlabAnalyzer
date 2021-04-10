@@ -16,7 +16,6 @@ public final class MergeRequestDtoDb {
     private long time;
     private String webUrl;
 
-    // TODO: Do we need commitsInfoInMergeRequest member variable now since we already have all the commits?
     private List<CommitDtoDb> commits;
     private Set<String> committers;
     private double sumOfCommitsScore;
