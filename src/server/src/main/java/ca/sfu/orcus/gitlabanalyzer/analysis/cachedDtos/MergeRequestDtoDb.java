@@ -97,6 +97,47 @@ public final class MergeRequestDtoDb {
         return authorId;
     }
 
+    public int getMergeRequestId() {
+        return mergeRequestId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public List<CommitDtoDb> getCommits() {
+        return commits;
+    }
+
+    public Set<String> getCommitters() {
+        return committers;
+    }
+
+    public double getSumOfCommitsScore() {
+        return sumOfCommitsScore;
+    }
+
+    public boolean isIgnored() {
+        return isIgnored;
+    }
+
+    public List<FileDto> getFiles() {
+        return files;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
