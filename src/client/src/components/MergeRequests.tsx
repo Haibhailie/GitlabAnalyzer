@@ -133,8 +133,6 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
                   commitsInfoInMergeRequest,
                   title,
                 } = mergeRequests[i]
-                console.log(mergeRequests[i])
-                setSelectedMr(mergeRequestId)
                 viewDiffOf({
                   data: files,
                   type: 'MR',

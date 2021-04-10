@@ -64,6 +64,7 @@
 .ignore {
   display: flex;
   align-items: center;
+  font: var(--font-body-small-mulish);
 }
 
 .ignoreBox {
