@@ -9,6 +9,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +20,6 @@ import java.util.Optional;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.exclude;
-import static com.mongodb.client.model.Projections.include;
 
 @Repository
 public class MemberRepository {
@@ -54,26 +54,23 @@ public class MemberRepository {
     public List<String> cacheAllMembers(String projectUrl, List<MemberDtoDb> allMembers) {
         List<String> documentIds = new ArrayList<>();
         for (MemberDtoDb member : allMembers) {
-            if (!memberIsAlreadyCached(member, projectUrl)) {
-                String documentId = cacheMember(member, projectUrl);
-                documentIds.add(documentId);
-            }
+            String documentId = cacheMember(member, projectUrl);
+            documentIds.add(documentId);
         }
         return documentIds;
-    }
-
-    private boolean memberIsAlreadyCached(MemberDtoDb member, String projectUrl) {
-        Document memberDoc = memberCollection.find(and(eq(Member.memberId.key, member.getId()),
-                                                    eq(Member.projectUrl.key, projectUrl)))
-                                                    .projection(include(Member.memberId.key)).first();
-        return (memberDoc != null);
     }
 
     private String cacheMember(MemberDtoDb member, String projectUrl) {
         String documentId = new ObjectId().toString();
         Document memberDocument = generateMemberDocument(member, documentId, projectUrl);
-        memberCollection.insertOne(memberDocument);
+        if (memberCollection.findOneAndReplace(getMemberEqualityParameter(projectUrl, member), memberDocument) == null) {
+            memberCollection.insertOne(memberDocument);
+        }
         return documentId;
+    }
+    
+    private Bson getMemberEqualityParameter(String projectUrl, MemberDtoDb member) {
+        return and(eq(Member.projectUrl.key, projectUrl), eq(Member.memberId.key, member.getId()));
     }
 
     private Document generateMemberDocument(MemberDtoDb member, String documentId, String projectUrl) {
