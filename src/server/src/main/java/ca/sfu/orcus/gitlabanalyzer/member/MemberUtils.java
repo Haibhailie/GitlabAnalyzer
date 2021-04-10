@@ -34,7 +34,7 @@ public final class MemberUtils {
         return AccessLevelToRoleMap.getOrDefault(accessLevel, "Invalid access");
     }
 
-    public static AccessLevel getAccessLevelToMemberRole(String accessLevel) {
+    public static AccessLevel getAccessLevelFromMemberRole(String accessLevel) {
         return RoleToAccessLevel.getOrDefault(accessLevel, AccessLevel.INVALID);
     }
 }

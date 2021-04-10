@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.NoteDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.google.gson.Gson;
 import com.mongodb.client.MongoClient;
@@ -12,6 +13,7 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,29 +91,34 @@ public class MemberRepository {
                     .append(Member.notes.key, gson.toJson(member.getNotes()));
     }
 
-    public List<MemberDto> getMembers(List<String> documentIds) {
-        List<MemberDto> members = new ArrayList<>();
+    public List<MemberDtoDb> getMembers(List<String> documentIds) {
+        List<MemberDtoDb> members = new ArrayList<>();
         for (String documentId : documentIds) {
-            Optional<MemberDto> member = getMember(documentId);
+            Optional<MemberDtoDb> member = getMember(documentId);
             member.ifPresent(members::add);
         }
         return members;
     }
 
-    private Optional<MemberDto> getMember(String documentId) {
+    private Optional<MemberDtoDb> getMember(String documentId) {
         Document memberDoc = memberCollection.find(eq(Member.documentId.key, documentId)).first();
         return Optional.ofNullable(docToDto(memberDoc));
     }
 
-    private MemberDto docToDto(Document memberDoc) {
+    private MemberDtoDb docToDto(Document memberDoc) {
         if (memberDoc == null) {
             return null;
         }
-        String displayName = memberDoc.getString(Member.displayName.key);
-        int id = memberDoc.getInteger(Member.memberId.key);
-        String username = memberDoc.getString(Member.username.key);
-        String role = memberDoc.getString(Member.role.key);
-        String memberUrl = memberDoc.getString(Member.memberUrl.key);
-        return new MemberDto(displayName, id, username, role, memberUrl);
+        MemberDtoDb member = new MemberDtoDb();
+        member.setId(memberDoc.getInteger(Member.memberId));
+        member.setDisplayName(memberDoc.getString(Member.displayName.key));
+        member.setUsername(memberDoc.getString(Member.username.key));
+        member.setRole(MemberUtils.getAccessLevelFromMemberRole(memberDoc.getString(Member.role.key)));
+        member.setWebUrl(memberDoc.getString(Member.memberUrl.key));
+        member.setCommitterEmails(new HashSet<>(memberDoc.getList(Member.committerEmails.key, String.class)));
+        member.setCommitsToMaster(new HashSet<>(memberDoc.getList(Member.commitsToMaster.key, Integer.class)));
+        member.setMergeRequestDocIds(new HashSet<>(memberDoc.getList(Member.mergeRequestDocIds.key, ObjectId.class)));
+        member.setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>(){}.getClass()));
+        return member;
     }
 }

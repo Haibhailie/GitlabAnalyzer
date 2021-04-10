@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
+import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import org.bson.types.ObjectId;
 import org.gitlab4j.api.models.AccessLevel;
@@ -18,6 +19,8 @@ public final class MemberDtoDb {
     private Set<Integer> commitsToMaster;
     private Set<ObjectId> mergeRequestDocIds;
     private List<NoteDtoDb> notes;
+
+    public MemberDtoDb() {}
 
     public MemberDtoDb(Member member) {
         this(member,
