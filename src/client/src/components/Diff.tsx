@@ -47,48 +47,44 @@ const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
           <div className={styles.title}>{title}</div>
         </Dropdown>
       </div>
-      <div className={styles.files}>
-        {data?.map(({ name, fileScore, linesOfCodeChanges, fileDiffs }) => (
-          <Dropdown
-            // TODO: use fileId instead of name for key.
-            key={name}
-            className={styles.file}
-            arrowOnLeft
-            startOpened
-            header={
-              <div className={styles.fileHeader}>
-                <span className={styles.fileName}>{name}</span>
-                <div className={styles.fileScore}>
-                  <span className={styles.score}>
-                    {/* TODO: Score breakdown tooltip*/}
-                    score: {fileScore.totalScore.toFixed(1)}
-                  </span>
-                  <span className={styles.additions}>
-                    +{linesOfCodeChanges.numAdditions}
-                  </span>
-                  <span className={styles.deletions}>
-                    -{linesOfCodeChanges.numDeletions}
-                  </span>
-                </div>
-              </div>
-            }
-          >
-            <div className={styles.diffVerticalScroll}>
-              <div className={styles.diff}>
-                {fileDiffs.map(
-                  ({ lineType, diffLine }) =>
-                    lineType !== 'HEADER' &&
-                    lineType !== 'LINE_NUMBER_SPECIFICATION' && (
-                      <div className={getLineClassName(lineType)}>
-                        {diffLine}
-                      </div>
-                    )
-                )}
+      {data?.map(({ name, fileScore, linesOfCodeChanges, fileDiffs }) => (
+        <Dropdown
+          // TODO: use fileId instead of name for key.
+          key={name}
+          className={styles.file}
+          arrowOnLeft
+          startOpened
+          header={
+            <div className={styles.fileHeader}>
+              <span className={styles.fileName}>{name}</span>
+              <div className={styles.fileScore}>
+                <span className={styles.score}>
+                  {/* TODO: Score breakdown tooltip*/}
+                  score: {fileScore.totalScore.toFixed(1)}
+                </span>
+                <span className={styles.additions}>
+                  +{linesOfCodeChanges.numAdditions}
+                </span>
+                <span className={styles.deletions}>
+                  -{linesOfCodeChanges.numDeletions}
+                </span>
               </div>
             </div>
-          </Dropdown>
-        ))}
-      </div>
+          }
+        >
+          <div className={styles.diffVerticalScroll}>
+            <div className={styles.diff}>
+              {fileDiffs.map(
+                ({ lineType, diffLine }) =>
+                  lineType !== 'HEADER' &&
+                  lineType !== 'LINE_NUMBER_SPECIFICATION' && (
+                    <div className={getLineClassName(lineType)}>{diffLine}</div>
+                  )
+              )}
+            </div>
+          </div>
+        </Dropdown>
+      ))}
     </div>
   )
 }
