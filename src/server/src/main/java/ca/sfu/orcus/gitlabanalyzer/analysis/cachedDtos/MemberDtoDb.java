@@ -2,10 +2,12 @@ package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import org.bson.types.ObjectId;
-import org.gitlab4j.api.models.AccessLevel;
 import org.gitlab4j.api.models.Member;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public final class MemberDtoDb {
     private int id;
@@ -15,7 +17,6 @@ public final class MemberDtoDb {
     private String webUrl;
 
     private Set<String> committerEmails;
-    private Set<Integer> commitsToMaster;
     private Set<ObjectId> mergeRequestDocIds;
     private List<NoteDtoDb> notes;
 
@@ -26,7 +27,6 @@ public final class MemberDtoDb {
         setRole("-");
         setWebUrl("-");
         setCommitterEmails(new HashSet<>());
-        setCommitsToMaster(new HashSet<>());
         setMergeRequestDocIds(new HashSet<>());
         setNotes(new ArrayList<>());
     }
@@ -35,26 +35,21 @@ public final class MemberDtoDb {
         this(member,
                 new HashSet<>(),
                 new HashSet<>(),
-                new HashSet<>(),
                 new ArrayList<>());
     }
 
     public MemberDtoDb(Member member,
                        Set<String> committerEmails,
-                       Set<Integer> commitsToMaster,
                        Set<ObjectId> mergeRequestDocIds,
                        List<NoteDtoDb> notes) {
         setId(member.getId());
         setDisplayName(member.getName());
         setUsername(member.getUsername());
 
-        AccessLevel accessLevel = member.getAccessLevel();
-        setRole(accessLevel == null ? "GUEST" : MemberUtils.getMemberRoleFromAccessLevel(accessLevel.value));
-
+        setRole(member.getAccessLevel() == null ? "GUEST" : MemberUtils.getMemberRoleFromAccessLevel(member.getAccessLevel().value));
         setWebUrl(member.getWebUrl());
 
         setCommitterEmails(committerEmails);
-        setCommitsToMaster(commitsToMaster);
         setMergeRequestDocIds(mergeRequestDocIds);
         setNotes(notes);
     }
@@ -83,10 +78,6 @@ public final class MemberDtoDb {
         this.committerEmails = committerEmails;
     }
 
-    public void setCommitsToMaster(Set<Integer> commitsToMaster) {
-        this.commitsToMaster = commitsToMaster;
-    }
-
     public void setMergeRequestDocIds(Set<ObjectId> mergeRequestDocIds) {
         this.mergeRequestDocIds = mergeRequestDocIds;
     }
@@ -101,6 +92,38 @@ public final class MemberDtoDb {
 
     public void addNote(NoteDtoDb note) {
         this.notes.add(note);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public Set<String> getCommitterEmails() {
+        return committerEmails;
+    }
+
+    public Set<ObjectId> getMergeRequestDocIds() {
+        return mergeRequestDocIds;
+    }
+
+    public List<NoteDtoDb> getNotes() {
+        return notes;
     }
 
     @Override
@@ -121,7 +144,6 @@ public final class MemberDtoDb {
                 && this.role.equals(m.role)
                 && this.webUrl.equals(m.webUrl)
                 && this.committerEmails.equals(m.committerEmails)
-                && this.commitsToMaster.equals(m.commitsToMaster)
                 && this.mergeRequestDocIds.equals(m.mergeRequestDocIds)
                 && this.notes.equals(m.notes));
     }
