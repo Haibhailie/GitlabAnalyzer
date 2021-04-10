@@ -20,14 +20,16 @@ public class MergeRequestRepository {
 
     private enum MergeRequest {
         documentId("mergeRequestId"),
+        projectUrl("projectUrl"),
         title("title"),
         author("author"),
+        authorId("authorId"),
         description("description"),
         time("time"),
         webUrl("webUrl"),
         sumOfCommitsScore("sumOfCommitsScore"),
-        commits("commits"),
         committers("committers"),
+        commits("commits"),
         files("files"),
         isIgnored("isIgnored");
 
@@ -44,7 +46,7 @@ public class MergeRequestRepository {
         mergeRequestCollection = database.getCollection(VariableDecoderUtil.decode("MERGE_REQUEST_COLLECTION"));
     }
 
-    public List<String> cacheAllMergeRequests(List<MergeRequestDtoDb> mergeRequestDtoDbs, String projectUrl){
+    public List<String> cacheAllMergeRequests(List<MergeRequestDtoDb> mergeRequestDtoDbs, String projectUrl) {
         List<String> documentIds = new ArrayList<>();
         for (MergeRequestDtoDb presentMergeRequest : mergeRequestDtoDbs) {
             if (!mergeRequestAlreadyCached(presentMergeRequest, projectUrl)) {
@@ -55,17 +57,31 @@ public class MergeRequestRepository {
         return documentIds;
     }
 
-    private boolean mergeRequestAlreadyCached(MergeRequestDtoDb mergeRequest, String projectUrl){
+    /*private boolean mergeRequestAlreadyCached(MergeRequestDtoDb mergeRequest, String projectUrl) {
         Document mergeRequestDoc = mergeRequestCollection.find()
-    }
+    }*/
 
-    private String cacheMergeRequest(MergeRequestDtoDb mergeRequest, String projectUrl){
+    private String cacheMergeRequest(MergeRequestDtoDb mergeRequest, String projectUrl) {
         String documentId = new ObjectId().toString();
         Document mergeRequestDocument = generateMergeRequestDocument(mergeRequest, documentId, projectUrl);
         mergeRequestCollection.insertOne(mergeRequestDocument);
         return documentId;
     }
 
+    private Document generateMergeRequestDocument(MergeRequestDtoDb mergeRequest, String documentId, String projectUrl) {
+        return new Document(MergeRequest.documentId.key, documentId)
+                .append(MergeRequest.projectUrl.key, projectUrl)
+                .append(MergeRequest.title.key, mergeRequest.getTitle())
+                .append(MergeRequest.author.key, mergeRequest.getAuthor())
+                .append(MergeRequest.authorId.key, mergeRequest.getAuthorId())
+                .append(MergeRequest.description.key, mergeRequest.getDescription())
+                .append(MergeRequest.webUrl.key, mergeRequest.getWebUrl())
+                .append(MergeRequest.sumOfCommitsScore.key, mergeRequest.getSumOfCommitsScore())
+                .append(MergeRequest.committers.key, mergeRequest.getCommitters())
+                .append(generateCommitDocuments(mergeRequest))
+                .append(generateFileDocuments(mergeRequest))
+                .append(MergeRequest.isIgnored.key, mergeRequest.isIgnored());
+    }
 
 
 }

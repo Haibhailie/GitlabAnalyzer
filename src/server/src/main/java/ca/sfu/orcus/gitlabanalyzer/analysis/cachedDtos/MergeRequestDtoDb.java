@@ -105,6 +105,10 @@ public final class MergeRequestDtoDb {
         return title;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
     public String getDescription() {
         return description;
     }
