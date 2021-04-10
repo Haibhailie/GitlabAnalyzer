@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.NotAuthorizedException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -25,19 +26,11 @@ public class AnalysisController {
     public void analyzeProject(@CookieValue(value = "sessionId") String jwt,
                                @PathVariable("projectId") int projectId,
                                HttpServletResponse response) {
-        if (authService.jwtIsValid(jwt)) {
-            // TODO: This check is redundant since it is also performed when we do
-            //  gitLabApiWrapper.getGitLabApiFor(jwt)
-            tryAnalyzingProject(jwt, projectId, response);
-        } else {
-            response.setStatus(SC_UNAUTHORIZED);
-        }
-    }
-
-    private void tryAnalyzingProject(String jwt, int projectId, HttpServletResponse response) {
         try {
             analysisService.analyzeProject(jwt, projectId);
             response.setStatus(SC_OK);
+        } catch (NotAuthorizedException e) {
+            response.setStatus(SC_UNAUTHORIZED);
         } catch (GitLabApiException | NullPointerException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }

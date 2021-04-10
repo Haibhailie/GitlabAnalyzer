@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
+import org.bson.types.ObjectId;
 import org.gitlab4j.api.models.AccessLevel;
 import org.gitlab4j.api.models.Member;
 
@@ -15,7 +16,7 @@ public final class MemberDtoDb {
 
     private Set<String> committerEmails;
     private Set<Integer> commitsToMaster;
-    private Set<Integer> mergeRequestIds;
+    private Set<ObjectId> mergeRequestDocIds;
     private List<NoteDtoDb> notes;
 
     public MemberDtoDb(Member member) {
@@ -29,7 +30,7 @@ public final class MemberDtoDb {
     public MemberDtoDb(Member member,
                        Set<String> committerEmails,
                        Set<Integer> commitsToMaster,
-                       Set<Integer> mergeRequestIds,
+                       Set<ObjectId> mergeRequestDocIds,
                        List<NoteDtoDb> notes) {
         setId(member.getId());
         setDisplayName(member.getName());
@@ -39,7 +40,7 @@ public final class MemberDtoDb {
 
         setCommitterEmails(committerEmails);
         setCommitsToMaster(commitsToMaster);
-        setMergeRequestIds(mergeRequestIds);
+        setMergeRequestDocIds(mergeRequestDocIds);
         setNotes(notes);
     }
 
@@ -71,16 +72,16 @@ public final class MemberDtoDb {
         this.commitsToMaster = commitsToMaster;
     }
 
-    public void setMergeRequestIds(Set<Integer> mergeRequestIds) {
-        this.mergeRequestIds = mergeRequestIds;
+    public void setMergeRequestDocIds(Set<ObjectId> mergeRequestDocIds) {
+        this.mergeRequestDocIds = mergeRequestDocIds;
     }
 
     public void setNotes(List<NoteDtoDb> comments) {
         this.notes = comments;
     }
 
-    public void addMergeRequestId(Integer mergeRequestId) {
-        this.mergeRequestIds.add(mergeRequestId);
+    public void addMergeRequestDocId(ObjectId mergeRequestDocId) {
+        this.mergeRequestDocIds.add(mergeRequestDocId);
     }
 
     public void addNote(NoteDtoDb note) {
@@ -142,7 +143,7 @@ public final class MemberDtoDb {
                 && this.webUrl.equals(m.webUrl)
                 && this.committerEmails.equals(m.committerEmails)
                 && this.commitsToMaster.equals(m.commitsToMaster)
-                && this.mergeRequestIds.equals(m.mergeRequestIds)
+                && this.mergeRequestDocIds.equals(m.mergeRequestDocIds)
                 && this.notes.equals(m.notes));
     }
 }
