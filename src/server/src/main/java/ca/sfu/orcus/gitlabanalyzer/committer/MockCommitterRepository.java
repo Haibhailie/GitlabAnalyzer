@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+// TODO: When this is deleted, remember to move MemberMock back into the test package
+
 @Repository("mockCommitterRepo")
 public class MockCommitterRepository implements CommitterRepository {
 

@@ -1,11 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
+import ca.sfu.orcus.gitlabanalyzer.member.*;
 import ca.sfu.orcus.gitlabanalyzer.mocks.GitLabApiMock;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberMock;
 import ca.sfu.orcus.gitlabanalyzer.models.ProjectMock;
 import ca.sfu.orcus.gitlabanalyzer.models.UserMock;
 import org.gitlab4j.api.GitLabApi;
@@ -32,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class ProjectServiceTests {
     @Mock private ProjectRepository projectRepository;
     @Mock private GitLabApiWrapper gitLabApiWrapper;
-    @Mock private MemberService memberService;
+    @Mock private MemberServiceDirect memberService;
 
     @InjectMocks
     private ProjectService projectService;
@@ -116,7 +113,7 @@ public class ProjectServiceTests {
 
     private void initializeProjectMembers(int projectId) {
         List<MemberDto> memberDtos = new ArrayList<>();
-        when(memberService.getAllMembers(gitLabApi, projectId)).thenReturn(memberDtos);
+        when(memberService.getAllMembers(jwt, projectId)).thenReturn(memberDtos);
     }
 
     private void initializeProjectBranches(int projectId) throws GitLabApiException {
@@ -126,7 +123,7 @@ public class ProjectServiceTests {
 
     private ProjectExtendedDto getExpectedProjectExtendedDto(int projectId) throws GitLabApiException {
         Project project = gitLabApi.getProjectApi().getProject(projectId, true);
-        List<MemberDto> memberDtos = memberService.getAllMembers(gitLabApi, projectId);
+        List<MemberDto> memberDtos = memberService.getAllMembers(jwt, projectId);
         List<Branch> branches = gitLabApi.getRepositoryApi().getBranches(projectId);
 
         return new ProjectExtendedDto(project, memberDtos, branches.size());
