@@ -1,5 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
+import org.gitlab4j.api.models.AccessLevel;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public final class MemberUtils {
@@ -17,7 +20,21 @@ public final class MemberUtils {
             50, "OWNER"
     );
 
+    private static final Map<String, AccessLevel> RoleToAccessLevel = invertMap();
+
+    private static Map<String, AccessLevel> invertMap() {
+        Map<String, AccessLevel> inverted = new HashMap<>();
+        for (Map.Entry<Integer, String> entry : AccessLevelToRoleMap.entrySet()) {
+            inverted.put(entry.getValue(), AccessLevel.forValue(entry.getKey()));
+        }
+        return inverted;
+    }
+
     public static String getMemberRoleFromAccessLevel(Integer accessLevel) {
         return AccessLevelToRoleMap.getOrDefault(accessLevel, "Invalid access");
+    }
+
+    public static AccessLevel getAccessLevelToMemberRole(String accessLevel) {
+        return RoleToAccessLevel.getOrDefault(accessLevel, AccessLevel.INVALID);
     }
 }
