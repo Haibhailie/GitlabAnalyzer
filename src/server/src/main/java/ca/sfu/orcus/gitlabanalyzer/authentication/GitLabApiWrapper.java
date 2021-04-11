@@ -4,6 +4,7 @@ import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Project;
 import org.gitlab4j.api.models.User;
 import org.springframework.stereotype.Component;
 
@@ -104,5 +105,19 @@ public class GitLabApiWrapper {
     public int getGitLabUserIdFromJwt(String jwt) throws GitLabApiException {
         GitLabApi gitLabApi = getGitLabApiFor(jwt);
         return gitLabApi.getUserApi().getCurrentUser().getId();
+    }
+
+    public Optional<String> getProjectUrl(String jwt, int projectId) {
+        GitLabApi gitLabApi = getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return Optional.empty();
+        }
+
+        try {
+            Project project = gitLabApi.getProjectApi().getProject(projectId);
+            return Optional.of(project.getWebUrl());
+        } catch (GitLabApiException e) {
+            return Optional.empty();
+        }
     }
 }

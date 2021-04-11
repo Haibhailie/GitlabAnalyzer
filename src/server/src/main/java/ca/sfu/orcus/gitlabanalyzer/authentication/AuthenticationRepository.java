@@ -21,6 +21,21 @@ public class AuthenticationRepository {
         this.collection = database.getCollection(VariableDecoderUtil.decode("USERS_COLLECTION"));
     }
 
+    // BSON document keys for documents to be stored in Users collection
+    private enum User {
+        id("_id"),
+        type("type"),
+        pat("pat"),
+        authToken("authToken"),
+        jwt("jwt");
+
+        public final String key;
+
+        User(String key) {
+            this.key = key;
+        }
+    }
+
     public void addNewUserByPat(AuthenticationUser newUser) {
         collection.insertOne(generateUserPatDoc(newUser));
     }
@@ -30,51 +45,51 @@ public class AuthenticationRepository {
     }
 
     private Document generateUserPatDoc(AuthenticationUser newUser) {
-        return new Document("_id", new ObjectId())
-                .append("type", "pat")
-                .append("pat", newUser.getPat())
-                .append("jwt", newUser.getJwt());
+        return new Document(User.id.key, new ObjectId())
+                .append(User.type.key, "pat")
+                .append(User.pat.key, newUser.getPat())
+                .append(User.jwt.key, newUser.getJwt());
     }
 
     private Document generateUserAuthTokenDoc(AuthenticationUser newUser) {
-        return new Document("_id", new ObjectId())
-                .append("type", "authToken")
-                .append("authToken", newUser.getAuthToken())
-                .append("jwt", newUser.getJwt());
+        return new Document(User.id.key, new ObjectId())
+                .append(User.type.key, "authToken")
+                .append(User.authToken.key, newUser.getAuthToken())
+                .append(User.jwt.key, newUser.getJwt());
     }
 
     public boolean containsJwt(String jwt) {
-        Document user = collection.find(eq("jwt", jwt)).first();
+        Document user = collection.find(eq(User.jwt.key, jwt)).first();
         return (user != null);
     }
 
     public String getPatFor(String jwt) {
-        Document user = collection.find(eq("jwt", jwt)).first();
-        return user.getString("pat");
+        Document user = collection.find(eq(User.jwt.key, jwt)).first();
+        return user.getString(User.pat.key);
     }
 
     public String getAuthTokenFor(String jwt) {
-        Document user = collection.find(eq("jwt", jwt)).first();
-        return user.getString("authToken");
+        Document user = collection.find(eq(User.jwt.key, jwt)).first();
+        return user.getString(User.authToken.key);
     }
 
     public boolean containsPat(String pat) {
-        Document user = collection.find(eq("pat", pat)).first();
+        Document user = collection.find(eq(User.pat.key, pat)).first();
         return (user != null);
     }
 
     public String getJwtForPat(String pat) {
-        Document user = collection.find(eq("pat", pat)).first();
-        return user.getString("jwt");
+        Document user = collection.find(eq(User.pat.key, pat)).first();
+        return user.getString(User.jwt.key);
     }
 
     public boolean containsAuthToken(String authToken) {
-        Document user = collection.find(eq("authToken", authToken)).first();
+        Document user = collection.find(eq(User.authToken.key, authToken)).first();
         return (user != null);
     }
 
     public String getJwtForAuthToken(String authToken) {
-        Document user = collection.find(eq("authToken", authToken)).first();
-        return user.getString("jwt");
+        Document user = collection.find(eq(User.authToken.key, authToken)).first();
+        return user.getString(User.jwt.key);
     }
 }

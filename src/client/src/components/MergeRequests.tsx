@@ -165,26 +165,24 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
         <div className={styles.tables}>
           <Table
             {...sharedTableProps}
-            maxHeight={selectedMr === undefined ? 400 : 200}
             title="Merge Requests"
             headers={['Date', 'Title', '', 'Score', 'Ignore?']}
             columnWidths={['3fr', '6fr', '3fr', '1fr', '1fr']}
             onClick={(e, i) => {
               viewDiffOf('mergerequest', mergeRequests?.[i].mergeRequestId)
             }}
-            data={tableData.current?.mrs ?? [{}]}
+            data={tableData.current?.mrs ?? []}
           />
           <Table
             {...sharedTableProps}
             isOpen={commits !== undefined}
-            maxHeight={400}
             title={`Commits for MR ${selectedMr ?? ''}`}
             headers={['Date', 'Title', 'Score', 'Ignore?']}
             columnWidths={['3fr', '9fr', '1fr', '1fr']}
             onClick={(e, i) => {
               viewDiffOf('commit', commits?.[i].id)
             }}
-            data={tableData.current?.commits ?? [{}]}
+            data={tableData.current?.commits ?? []}
           />
         </div>
       </div>

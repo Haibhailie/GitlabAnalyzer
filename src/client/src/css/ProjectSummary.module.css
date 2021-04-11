@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   height: 538px;
 }
@@ -31,20 +31,4 @@
   margin-bottom: 5px;
   margin-left: 10px;
   font: var(--font-body-large-poppins);
-}
-
-.statsContainer {
-  display: flex;
-  width: 100%;
-  border: 1px solid var(--color-light-gray);
-  border-radius: 5px;
-  height: auto;
-}
-
-.graph {
-  width: 70%;
-}
-
-.stats {
-  width: 30%;
 }

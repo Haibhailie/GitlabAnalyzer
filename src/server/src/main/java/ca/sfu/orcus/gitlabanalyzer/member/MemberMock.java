@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.models;
+package ca.sfu.orcus.gitlabanalyzer.member;
 
 import org.gitlab4j.api.models.AccessLevel;
 import org.gitlab4j.api.models.Commit;

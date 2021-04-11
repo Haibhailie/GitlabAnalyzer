@@ -1,10 +1,9 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSuspense from '../utils/useSuspense'
 import jsonFetch from '../utils/jsonFetcher'
 import { NETWORK_ERROR, SERVER_ERROR } from '../utils/constants'
 import dateConverter from '../utils/dateConverter'
-import { ProjectContext } from '../context/ProjectContext'
 
 import Table from '../components/Table'
 import Loading from '../components/Loading'
@@ -20,13 +19,12 @@ export type TProjects = {
   id: string
   name: string
   role: string
-  lastActivityAt: number
-  lastAnalyzedAt: number
+  lastActivityTime: number
+  lastAnalysisTime: number
 }[]
 
 const Home = () => {
   const history = useHistory()
-  const { dispatch } = useContext(ProjectContext)
 
   const [analysis, setAnalysis] = useState<
     Record<string, { isAnalyzing?: boolean; analyzeError?: boolean }>
@@ -37,6 +35,7 @@ const Home = () => {
       jsonFetch<TProjects>('/api/projects')
         .then(data => {
           setData(data)
+          console.log(data)
           data.forEach(({ id }) => {
             analysis[id] = {
               isAnalyzing: false,
@@ -56,9 +55,7 @@ const Home = () => {
         })
     }
   )
-
   const onAnalyze = (id: string) => {
-    dispatch({ type: 'SET_ID', id })
     history.push(`/project/${id}`)
   }
 
@@ -76,7 +73,7 @@ const Home = () => {
     updateAnalyzingError(id, false)
     updateAnalyzing(id, true)
 
-    jsonFetch(`/api/project/${id}/analyze`, {
+    jsonFetch(`/api/${id}/analyze`, {
       responseIsEmpty: true,
       method: 'PUT',
     })
@@ -107,22 +104,25 @@ const Home = () => {
         {data && (
           <Table
             data={data?.map(
-              ({ id, name, lastAnalyzedAt, lastActivityAt, role }, index) => {
+              (
+                { id, name, lastAnalysisTime, lastActivityTime, role },
+                index
+              ) => {
                 return {
                   name,
                   role,
-                  lastActivityAt: dateConverter(lastActivityAt, true),
-                  lastAnalyzedAt: lastAnalyzedAt
-                    ? dateConverter(lastAnalyzedAt, true)
+                  lastActivityTime: dateConverter(lastActivityTime, true),
+                  lastAnalyzedAt: lastAnalysisTime
+                    ? dateConverter(lastAnalysisTime, true)
                     : 'N/A',
                   action: (
                     <AnalyzeButton
                       id={id}
                       index={index}
                       onClick={preAnalyze}
-                      message={lastAnalyzedAt ? 'Re-Analyze' : 'Pre-Analyze'}
+                      message={lastAnalysisTime ? 'Re-Analyze' : 'Pre-Analyze'}
                       disabled={
-                        lastActivityAt <= lastAnalyzedAt ||
+                        lastActivityTime <= lastAnalysisTime ||
                         analysis[id]?.isAnalyzing
                       }
                       isAnalyzing={analysis[id]?.isAnalyzing}

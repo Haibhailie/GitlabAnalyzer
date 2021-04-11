@@ -1,0 +1,11 @@
+type: array
+items:
+  type: object
+  required:
+    - email
+    - memberId
+  properties:
+    email:
+      type: string
+    memberId:
+      type: integer
