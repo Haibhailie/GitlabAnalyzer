@@ -49,10 +49,6 @@ const Project = () => {
           </div>
           <div className={styles.memberContainer}>
             <MemberTable projectId={id} projectName={project?.name ?? ''} />
-            <Button
-              message="Member to Committer Resolution"
-              destPath={`/project/${id}/memberResolution`}
-            />
           </div>
         </Selector>
       </div>
