@@ -62,14 +62,22 @@ public class CommitterService {
     }
 
     private void updateCommitterMemberResolution(int projectId, Map<String, Integer> committerToMemberMap) {
-        /**
+        /*
          * 1. Get projectUrl
          * 2. Get the committerDtoDbs for all committers (keys of the map)
          * 3. For each committer
          *    - update the MemberDto field
          *    - for each of the commitIds
          *      - update the memberId field of the commit
-         */
-        String projectUrl = null;
+         * 4. Update committerEmails in MemberDto
+         * 5. Update isSolo field in MR
+         *
+         for (Map.Entry<String, Integer> entry : committerToMemberMap.entrySet()) {
+            committerRepo.updateCommitterMember(entry.getKey(), entry.getValue());
+            List<String> commitIds = committerRepo.getCommitIdsForCommitter(entry.getKey());
+            for (String commitId : commitIds) {
+                committerRepo.updateCommitMemberId(commitId, entry.getValue());
+            }
+        }*/
     }
 }
