@@ -2,30 +2,44 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MergeRequestDtoDb;
-import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
-import ca.sfu.orcus.gitlabanalyzer.utils.Diff.LOCDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitRepository;
+import ca.sfu.orcus.gitlabanalyzer.file.FileRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
-import com.mongodb.client.*;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.include;
 
 @Repository
 public class MergeRequestRepository {
-
     private final MongoCollection<Document> mergeRequestCollection;
-    CommitRepository commitRepository = new CommitRepository();
-    FileRepository fileRepository = new FileRepository();
+    private final CommitRepository commitRepo;
+    private final FileRepository fileRepo;
+
+    public MergeRequestRepository(CommitRepository commitRepo, FileRepository fileRepo) {
+        MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
+        MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
+        mergeRequestCollection = database.getCollection(VariableDecoderUtil.decode("MERGE_REQUESTS_COLLECTION"));
+
+        this.commitRepo = commitRepo;
+        this.fileRepo = fileRepo;
+    }
 
     private enum MergeRequest {
+        documentId("_id"),
         mergeRequestId("mergeRequestId"),
         projectUrl("projectUrl"),
         title("title"),
@@ -39,17 +53,12 @@ public class MergeRequestRepository {
         commits("commits"),
         files("files"),
         isIgnored("isIgnored");
+
         public String key;
 
         MergeRequest(String key) {
             this.key = key;
         }
-    }
-
-    public MergeRequestRepository() {
-        MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
-        MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
-        mergeRequestCollection = database.getCollection(VariableDecoderUtil.decode("MERGE_REQUESTS_COLLECTION"));
     }
 
     public List<String> cacheAllMergeRequests(String projectUrl, List<MergeRequestDtoDb> mergeRequestDtoDbs) {
@@ -71,7 +80,6 @@ public class MergeRequestRepository {
         } else {
             return cacheMergeRequestDocument(mergeRequest, projectUrl);
         }
-        return documentId;
     }
 
     private void replaceMergeRequestDocument(String documentId, MergeRequestDtoDb mergeRequest, String projectUrl) {
@@ -100,8 +108,8 @@ public class MergeRequestRepository {
                 .append(MergeRequest.webUrl.key, mergeRequest.getWebUrl())
                 .append(MergeRequest.sumOfCommitsScore.key, mergeRequest.getSumOfCommitsScore())
                 .append(MergeRequest.committerNames.key, mergeRequest.getCommitterNames())
-                .append(MergeRequest.commits.key, commitRepository.getCommitDocuments(mergeRequest.getCommits()))
-                .append(MergeRequest.files.key, fileRepository.getFileDocuments(mergeRequest.getFiles()))
+                .append(MergeRequest.commits.key, commitRepo.getCommitDocuments(mergeRequest.getCommits()))
+                .append(MergeRequest.files.key, fileRepo.getFileDocuments(mergeRequest.getFiles()))
                 .append(MergeRequest.isIgnored.key, mergeRequest.isIgnored());
     }
 
@@ -135,7 +143,7 @@ public class MergeRequestRepository {
         mergeRequest.setIgnored(doc.getBoolean(MergeRequest.isIgnored.key));
         mergeRequest.setCommitterNames(new HashSet<>(doc.getList(MergeRequest.committerNames.key, String.class)));
         mergeRequest.setCommits(getCommitsFromCachedMergeRequest(doc));
-        mergeRequest.setFiles(fileRepository.getFilesFromCache(doc));
+        mergeRequest.setFiles(fileRepo.getFilesFromCache(doc));
         return mergeRequest;
     }
 
@@ -143,7 +151,7 @@ public class MergeRequestRepository {
         List<Document> commitDocuments = doc.getList(MergeRequest.commits.key, Document.class);
         List<CommitDtoDb> commits = new ArrayList<>();
         for (Document presentDocument : commitDocuments) {
-            commits.add(commitRepository.getCommitFromDocument(presentDocument));
+            commits.add(commitRepo.getCommitFromDocument(presentDocument));
         }
         return commits;
     }

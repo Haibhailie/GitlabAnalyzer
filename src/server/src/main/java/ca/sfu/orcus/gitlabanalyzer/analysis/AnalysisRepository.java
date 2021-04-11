@@ -16,8 +16,9 @@ public class AnalysisRepository {
     private final MergeRequestRepository mergeRequestRepo;
 
     @Autowired
-    public AnalysisRepository(MemberRepository memberRepo) {
+    public AnalysisRepository(MemberRepository memberRepo, MergeRequestRepository mergeRequestRepo) {
         this.memberRepo = memberRepo;
+        this.mergeRequestRepo = mergeRequestRepo;
     }
     
     public void cacheProjectDto(ProjectDtoDb projectDto) {

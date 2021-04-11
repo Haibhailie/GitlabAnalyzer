@@ -12,11 +12,11 @@ import java.util.List;
 
 @Repository
 public class CommitRepository {
-
+    FileRepository fileRepo;
     private static final Gson gson = new Gson();
-    FileRepository fileRepository = new FileRepository();
 
-    public CommitRepository() {
+    public CommitRepository(FileRepository fileRepo) {
+        this.fileRepo = fileRepo;
     }
 
     private enum Commit {
@@ -65,7 +65,7 @@ public class CommitRepository {
                 .append(Commit.total.key, commit.getTotal())
                 .append(Commit.diffs.key, commit.getDiffs())
                 .append(Commit.score.key, commit.getScore())
-                .append(Commit.files.key, fileRepository.getFileDocuments(commit.getFiles()))
+                .append(Commit.files.key, fileRepo.getFileDocuments(commit.getFiles()))
                 .append(Commit.isIgnored.key, commit.isIgnored());
     }
 
@@ -84,7 +84,7 @@ public class CommitRepository {
         commit.setDiffs(doc.getString(Commit.diffs.key));
         commit.setScore(doc.getDouble(Commit.score.key));
         commit.setIgnored(doc.getBoolean(Commit.isIgnored.key));
-        commit.setFiles(fileRepository.getFilesFromCache(doc));
+        commit.setFiles(fileRepo.getFilesFromCache(doc));
         return commit;
     }
 }

@@ -12,7 +12,6 @@ import java.util.List;
 
 @Repository
 public class FileRepository {
-
     private static final Gson gson = new Gson();
 
     private enum File {
