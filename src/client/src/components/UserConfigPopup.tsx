@@ -5,6 +5,8 @@ import Selector from './Selector'
 import Modal from './Modal'
 import Table from './Table'
 
+import { ReactComponent as Delete } from '../assets/delete.svg'
+
 import styles from '../css/UserConfigPopup.module.css'
 
 interface IUserConfigPopup {
@@ -79,13 +81,30 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
           </div>
           <div className={styles.selectorContainer}>
             <Table
-              excludeHeaders
-              columnWidths={['6fr', '3fr', '1fr']}
+              headers={[
+                'File Extention',
+                'Comment Start',
+                'Comment End',
+                'Multiline Comment',
+                'Weights',
+                '',
+                '',
+              ]}
+              columnWidths={['3fr', '3fr', '3fr', '4fr', '3fr', '1fr', '1fr']}
               classes={{ data: styles.skinnyRow, table: styles.table }}
               data={fileScores.map((score, i) => {
                 return {
                   type: score.fileExtension,
-                  input: (
+                  commentStart: (
+                    <input type="text" className={styles.generalInput} />
+                  ),
+                  commentEnd: (
+                    <input type="text" className={styles.generalInput} />
+                  ),
+                  multilineComment: (
+                    <input type="text" className={styles.generalInput} />
+                  ),
+                  weights: (
                     <input
                       type="number"
                       step="0.2"
@@ -95,6 +114,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                     />
                   ),
                   units: 'pts',
+                  delete: <Delete />,
                 }
               })}
             />
