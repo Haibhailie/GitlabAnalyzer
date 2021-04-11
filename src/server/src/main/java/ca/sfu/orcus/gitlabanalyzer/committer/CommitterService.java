@@ -1,7 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.committer;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
 import ca.sfu.orcus.gitlabanalyzer.project.ProjectRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.GitLabApiException;
