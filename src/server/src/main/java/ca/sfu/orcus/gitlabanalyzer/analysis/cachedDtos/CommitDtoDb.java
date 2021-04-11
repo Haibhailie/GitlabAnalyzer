@@ -10,7 +10,6 @@ import java.util.List;
 
 public final class CommitDtoDb {
     private String id;
-    private String title;
     private String message;
     private String author;
     private String authorEmail;
@@ -27,7 +26,6 @@ public final class CommitDtoDb {
 
     public CommitDtoDb(Commit commit, List<Diff> diffList) {
         setId(commit.getId());
-        setTitle(commit.getTitle());
         setMessage(commit.getMessage());
         setAuthor(commit.getAuthorName());
         setAuthorEmail(commit.getAuthorEmail());
@@ -47,15 +45,11 @@ public final class CommitDtoDb {
         setScore(fileScores);
     }
 
-    public CommitDtoDb() {}
+    public CommitDtoDb() {
+    }
 
     public CommitDtoDb setId(String id) {
         this.id = id;
-        return this;
-    }
-
-    public CommitDtoDb setTitle(String title) {
-        this.title = title;
         return this;
     }
 
@@ -134,10 +128,6 @@ public final class CommitDtoDb {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public String getMessage() {
         return message;
     }
@@ -195,7 +185,6 @@ public final class CommitDtoDb {
         CommitDtoDb c = (CommitDtoDb) o;
 
         return (this.id.equals(c.id)
-                && this.title.equals(c.title)
                 && this.message.equals(c.message)
                 && this.author.equals(c.author)
                 && this.authorEmail.equals(c.authorEmail)

@@ -52,7 +52,6 @@ public class CommitRepository {
     private Document generateCommitDocument(CommitDtoDb commit) {
         return new Document(Commit.documentId.key, new ObjectId().toString())
                 .append(Commit.commitId.key, commit.getId())
-                .append(Commit.title.key, commit.getTitle())
                 .append(Commit.message.key, commit.getMessage())
                 .append(Commit.author.key, commit.getAuthor())
                 .append(Commit.authorEmail.key, commit.getAuthorEmail())
@@ -70,7 +69,6 @@ public class CommitRepository {
     public CommitDtoDb getCommitFromDocument(Document doc) {
         return new CommitDtoDb()
                 .setId(doc.getString(Commit.commitId.key))
-                .setTitle(doc.getString(Commit.title.key))
                 .setMessage(doc.getString(Commit.message.key))
                 .setAuthor(doc.getString(Commit.author.key))
                 .setAuthorEmail(doc.getString(Commit.authorEmail.key))
