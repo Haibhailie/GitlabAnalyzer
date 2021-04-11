@@ -7,9 +7,11 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 
 import static com.mongodb.client.model.Filters.and;
@@ -43,17 +45,32 @@ public class ProjectRepository {
         }
     }
 
-    public void cacheProjectSkeleton(ProjectDtoDb project) {
-        if (!projectIsAlreadyCached(project.getId(), project.getWebUrl())) {
-            project.setLastAnalysisTime(0);
-            project.setCommitters(new ArrayList<>());
-            Document projectSkeleton = generateProjectDocument(project, new ObjectId().toString());
-            projectsCollection.insertOne(projectSkeleton);
+    public void cacheProject(ProjectDtoDb project) {
+        Document existingProject = getPartialProjectDocument(project.getId(), project.getWebUrl(), Project.documentId.key);
+        if (existingProject != null) {
+            String documentId = existingProject.getString(Project.documentId.key);
+            replaceProjectDocument(documentId, project);
+        } else {
+            cacheNewProject(project);
         }
     }
 
-    private boolean projectIsAlreadyCached(int projectId, String repoUrl) {
-        Document project = getPartialProjectDocument(projectId, repoUrl, Project.projectId.key);
+    private void replaceProjectDocument(String documentId, ProjectDtoDb project) {
+        Document projectDoc = generateProjectDocument(project, documentId);
+        projectsCollection.replaceOne(getProjectEqualityParameter(project.getId(), project.getWebUrl()), projectDoc);
+    }
+
+    private void cacheNewProject(ProjectDtoDb project) {
+        Document projectDoc = generateProjectDocument(project, new ObjectId().toString());
+        projectsCollection.insertOne(projectDoc);
+    }
+
+    private Bson getProjectEqualityParameter(int projectId, String projectUrl) {
+        return and(eq(Project.projectId.key, projectId), eq(Project.projectUrl.key, projectUrl));
+    }
+
+    private boolean projectIsAlreadyCached(int projectId, String projectUrl) {
+        Document project = getPartialProjectDocument(projectId, projectUrl, Project.projectId.key);
         return (project != null);
     }
 

@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.AnalysisService;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
@@ -16,14 +17,17 @@ import java.util.List;
 
 @Service
 public class ProjectService {
-    private final ProjectRepository projectRepository;
+    private final ProjectRepository projectRepo;
     private final GitLabApiWrapper gitLabApiWrapper;
+    private final AnalysisService analysisService;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository,
-                          GitLabApiWrapper gitLabApiWrapper) {
-        this.projectRepository = projectRepository;
+    public ProjectService(ProjectRepository projectRepo,
+                          GitLabApiWrapper gitLabApiWrapper,
+                          AnalysisService analysisService) {
+        this.projectRepo = projectRepo;
         this.gitLabApiWrapper = gitLabApiWrapper;
+        this.analysisService = analysisService;
     }
 
     public List<ProjectDtoDb> getAllProjects(String jwt) {
@@ -40,9 +44,8 @@ public class ProjectService {
             ArrayList<ProjectDtoDb> projectDtos = new ArrayList<>();
             List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
             for (Project p : projects) {
-                ProjectDtoDb projectDto = createProjectSkeletonDto(gitLabApi, p);
+                ProjectDtoDb projectDto = createProjectDto(gitLabApi, p);
                 projectDtos.add(projectDto);
-                projectRepository.cacheProjectSkeleton(projectDto);
             }
             return projectDtos;
         } catch (GitLabApiException e) {
@@ -50,9 +53,9 @@ public class ProjectService {
         }
     }
 
-    private ProjectDtoDb createProjectSkeletonDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
+    private ProjectDtoDb createProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
         String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
-        long lastAnalysisTime = projectRepository.getLastAnalysisTimeForProject(project.getId(),
+        long lastAnalysisTime = projectRepo.getLastAnalysisTimeForProject(project.getId(),
                 VariableDecoderUtil.decode("GITLAB_URL"));
         return new ProjectDtoDb(project, memberRole, lastAnalysisTime, new ArrayList<>());
     }
@@ -62,5 +65,11 @@ public class ProjectService {
         Member currentMember = gitLabApi.getProjectApi().getMember(projectId, currentUserId);
         int currentAccessLevel = currentMember.getAccessLevel().value;
         return MemberUtils.getMemberRoleFromAccessLevel(currentAccessLevel);
+    }
+
+    public ProjectDtoDb getProject(String jwt, int projectId) {
+        if (!projectRepo.isAnalyzed(projectId)) {
+            analysisService.analyzeProject(jwt, projectId);
+        }
     }
 }

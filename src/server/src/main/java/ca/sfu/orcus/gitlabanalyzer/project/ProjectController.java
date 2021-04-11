@@ -29,4 +29,14 @@ public class ProjectController {
         response.setStatus(projects == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(projects);
     }
+
+    @GetMapping(path = "/api/project/{projectId}")
+    public String getProject(@CookieValue(value = "sessionId") String jwt,
+                             @PathVariable("projectId") int projectId,
+                             HttpServletResponse response) {
+        ProjectDtoDb project = projectService.getProject(jwt, projectId);
+        response.setStatus(project == null ? SC_UNAUTHORIZED : SC_OK);
+        return gson.toJson(project);
+    }
+
 }
