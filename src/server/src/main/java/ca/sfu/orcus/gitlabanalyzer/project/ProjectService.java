@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -67,9 +68,40 @@ public class ProjectService {
         return MemberUtils.getMemberRoleFromAccessLevel(currentAccessLevel);
     }
 
-    public ProjectDtoDb getProject(String jwt, int projectId) {
-        if (!projectRepo.isAnalyzed(projectId)) {
-            analysisService.analyzeProject(jwt, projectId);
+    public Optional<ProjectDtoDb> getProject(String jwt, int projectId) {
+        Optional<String> projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId);
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (projectUrl.isEmpty() || gitLabApi == null) {
+            return Optional.empty();
         }
+
+        return getProject(gitLabApi, projectId, projectUrl.get());
+
+    }
+
+    private Optional<ProjectDtoDb> getProject(GitLabApi gitLabApi, int projectId, String projectUrl) {
+        try {
+            Project project = gitLabApi.getProjectApi().getProject(projectId);
+            if (projectRepo.projectIsAlreadyCached(projectId, projectUrl)) {
+                return getProjectFromRepo(gitLabApi, project);
+            } else {
+                return Optional.of(createProjectDto(gitLabApi, project));
+            }
+        } catch (GitLabApiException e) {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<ProjectDtoDb> getProjectFromRepo(GitLabApi gitLabApi, Project project) throws GitLabApiException {
+        Optional<ProjectDtoDb> projectOptional = projectRepo.getProject(project.getId(), project.getWebUrl());
+        if (projectOptional.isPresent()) {
+            ProjectDtoDb projectDto = projectOptional.get();
+            projectDto.setRole(getAuthenticatedMembersRoleInProject(gitLabApi, project.getId()));
+            projectDto.setLastActivityTime(project.getLastActivityAt().getTime());
+            return Optional.of(projectDto);
+        } else {
+            return projectOptional;
+        }
+
     }
 }

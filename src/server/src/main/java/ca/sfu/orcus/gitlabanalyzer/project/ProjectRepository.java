@@ -1,7 +1,9 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
+import com.google.gson.Gson;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.print.Doc;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -21,6 +24,7 @@ import static com.mongodb.client.model.Projections.include;
 @Repository
 public class ProjectRepository {
     private final MongoCollection<Document> projectsCollection;
+    private static final Gson gson = new Gson();
 
     public ProjectRepository() {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
@@ -69,7 +73,7 @@ public class ProjectRepository {
         return and(eq(Project.projectId.key, projectId), eq(Project.projectUrl.key, projectUrl));
     }
 
-    private boolean projectIsAlreadyCached(int projectId, String projectUrl) {
+    public boolean projectIsAlreadyCached(int projectId, String projectUrl) {
         Document project = getPartialProjectDocument(projectId, projectUrl, Project.projectId.key);
         return (project != null);
     }
@@ -81,7 +85,7 @@ public class ProjectRepository {
                     .append(Project.lastAnalysisTime.key, project.getLastAnalysisTime())
                     .append(Project.createdAt.key, project.getCreatedAt())
                     .append(Project.projectUrl.key, project.getWebUrl())
-                    .append(Project.committers.key, project.getCommitters());
+                    .append(Project.committers.key, gson.toJson(project.getCommitters()));
     }
 
     public long getLastAnalysisTimeForProject(int projectId, String projectUrl) {
@@ -93,5 +97,24 @@ public class ProjectRepository {
         return projectsCollection.find(and(eq(Project.projectId.key, projectId),
                 eq(Project.projectUrl.key, repoUrl)))
                 .projection(include(projectionKey)).first();
+    }
+
+    public Optional<ProjectDtoDb> getProject(int projectId, String projectUrl) {
+        Document projectDoc = projectsCollection.find(getProjectEqualityParameter(projectId, projectUrl)).first();
+        return Optional.ofNullable(docToDto(projectDoc));
+    }
+
+    private ProjectDtoDb docToDto(Document projectDoc) {
+        if (projectDoc == null) {
+            return null;
+        }
+        ProjectDtoDb projectDto = new ProjectDtoDb();
+        projectDto.setId(projectDoc.getInteger(Project.projectId.key));
+        projectDto.setName(projectDoc.getString(Project.projectName.key));
+        projectDto.setWebUrl(projectDoc.getString(Project.projectUrl.key));
+        projectDto.setLastAnalysisTime(projectDoc.getLong(Project.lastAnalysisTime.key));
+        projectDto.setCreatedAt(projectDoc.getLong(Project.createdAt.key));
+        projectDto.setCommitters(gson.fromJson(projectDoc.getString(Project.committers.key), new ArrayList<CommitterDtoDb>() {}.getClass()));
+        return projectDto;
     }
 }

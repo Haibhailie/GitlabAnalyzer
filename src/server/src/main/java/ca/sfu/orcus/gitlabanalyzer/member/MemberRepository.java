@@ -117,7 +117,7 @@ public class MemberRepository {
             return null;
         }
         return new MemberDtoDb()
-                .setId(memberDoc.getInteger(Member.memberId))
+                .setId(memberDoc.getInteger(Member.memberId.key))
                 .setDisplayName(memberDoc.getString(Member.displayName.key))
                 .setUsername(memberDoc.getString(Member.username.key))
                 .setRole(memberDoc.getString(Member.role.key))
