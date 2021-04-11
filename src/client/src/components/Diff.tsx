@@ -1,36 +1,93 @@
-import { IDiffData } from '../types'
-import jsonFetcher from '../utils/jsonFetcher'
-import { onError } from '../utils/suspenseDefaults'
-import useSuspense from '../utils/useSuspense'
+import { TCommitDiffs, TFileData, TLineType } from '../types'
+import { LONG_STRING_LEN } from '../utils/constants'
+
+import Dropdown from './Dropdown'
+import IgnoreBox from './IgnoreBox'
 
 import styles from '../css/Diff.module.css'
 
 export interface IDiffProps {
-  id?: string
-  source?: 'mergerequest' | 'commit'
-  projectId?: string
+  data?: TFileData
+  type: 'MR' | 'Commit'
+  id: string
+  commits?: TCommitDiffs
+  title: string
 }
 
-const Diff = ({ source, id, projectId }: IDiffProps) => {
-  const { Suspense, error } = useSuspense<IDiffData>(
-    (setData, setError) => {
-      if (source && id && projectId) {
-        jsonFetcher<IDiffData>(`/api/project/${projectId}/${source}/${id}/diff`)
-          .then(setData)
-          .catch(onError(setError))
-      } else {
-        setError(new Error("Woops! We couldn't find this diff..."))
-      }
-    },
-    [source, id, projectId]
-  )
+const getLineClassName = (lineType: TLineType) => {
+  if (lineType.startsWith('ADDITION')) {
+    return `${styles.line} ${styles.addition}`
+  } else if (lineType.startsWith('DELETION')) {
+    return `${styles.line} ${styles.deletion}`
+  } else {
+    return `${styles.line} ${styles.unchanged}`
+  }
+}
+
+const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
+  // TODO: Get score data from context or get that in MergeRequests and pass in. Use it in header.
   return (
     <div className={styles.container}>
-      <Suspense fallback="Getting diff..." error={error?.message}>
-        <div className={styles.scrollContainer}>
-          The diff will show up here :)
+      <div className={styles.header}>
+        <div className={styles.stats}>
+          <div>
+            {type} {id}
+          </div>
+          <div>
+            {type} score: {data?.[0].fileScore.totalScore}
+          </div>
+          {commits && (
+            <div>Commit score: {commits[0].fileScore.totalScore}</div>
+          )}
         </div>
-      </Suspense>
+        <Dropdown
+          fixedCollapsed={title.length < LONG_STRING_LEN}
+          className={styles.message}
+          header={<div className={styles.messageHeader}>{title}</div>}
+        >
+          <div className={styles.title}>{title}</div>
+        </Dropdown>
+      </div>
+      {data?.map(({ name, fileScore, linesOfCodeChanges, fileDiffs }) => (
+        <Dropdown
+          // TODO: use fileId instead of name for key.
+          key={name}
+          className={styles.file}
+          arrowOnLeft
+          startOpened
+          header={
+            <div className={styles.fileHeader}>
+              <span className={styles.fileName}>{name}</span>
+              <div className={styles.fileScore}>
+                <span className={styles.ignore}>
+                  Ignore: <IgnoreBox className={styles.ignoreBox} />
+                </span>
+                <span className={styles.score}>
+                  {/* TODO: Score breakdown tooltip*/}
+                  score: {fileScore.totalScore.toFixed(1)}
+                </span>
+                <span className={styles.additions}>
+                  +{linesOfCodeChanges.numAdditions}
+                </span>
+                <span className={styles.deletions}>
+                  -{linesOfCodeChanges.numDeletions}
+                </span>
+              </div>
+            </div>
+          }
+        >
+          <div className={styles.diffVerticalScroll}>
+            <div className={styles.diff}>
+              {fileDiffs.map(
+                ({ lineType, diffLine }) =>
+                  lineType !== 'HEADER' && (
+                    <div className={getLineClassName(lineType)}>{diffLine}</div>
+                  )
+              )}
+            </div>
+          </div>
+        </Dropdown>
+      ))}
     </div>
   )
 }
