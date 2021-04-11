@@ -15,7 +15,7 @@ public final class MemberDtoDb {
     private String username;
     private String role;
     private String webUrl;
-    private Set<Integer> mergeRequestIds;
+
     private Set<String> committerEmails;
     private Set<ObjectId> mergeRequestDocIds;
     private List<NoteDtoDb> notes;

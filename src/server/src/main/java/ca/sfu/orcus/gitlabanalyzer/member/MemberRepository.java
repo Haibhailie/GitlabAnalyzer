@@ -73,6 +73,18 @@ public class MemberRepository {
         }
     }
 
+    private void replaceMemberDocument(String oldDocumentId, MemberDtoDb member, String projectUrl) {
+        Document newMemberDocument = generateMemberDocument(member, oldDocumentId, projectUrl);
+        memberCollection.replaceOne(getMemberEqualityParameter(projectUrl, member), newMemberDocument);
+    }
+
+    private String cacheMemberDocument(MemberDtoDb member, String projectUrl) {
+        String documentId = new ObjectId().toString();
+        Document memberDocument = generateMemberDocument(member, documentId, projectUrl);
+        memberCollection.insertOne(memberDocument);
+        return documentId;
+    }
+
     private Bson getMemberEqualityParameter(String projectUrl, MemberDtoDb member) {
         return and(eq(Member.projectUrl.key, projectUrl), eq(Member.memberId.key, member.getId()));
     }
