@@ -150,7 +150,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
           <Table
             {...sharedTableProps}
             isOpen={commits !== undefined}
-            title={`Commits for MR ${selectedMr ?? ''}`}
+            title={`Commits for MR #${selectedMr ?? ''}`}
             headers={['Date', 'Title', 'Score', 'Ignore?']}
             columnWidths={['6fr', '6fr', '1fr', '1fr']}
             onClick={(e, i) => {
