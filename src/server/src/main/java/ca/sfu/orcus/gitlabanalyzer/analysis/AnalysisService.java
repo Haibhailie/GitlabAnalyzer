@@ -100,6 +100,7 @@ public class AnalysisService {
                                                  Map<String, CommitterDtoDb> committerToCommitterDtoMap) throws GitLabApiException {
         List<CommitDtoDb> commitDtos = new ArrayList<>();
         Set<String> committers = new HashSet<>();
+        boolean isSolo = true;
 
         double sumOfCommitsScore = 0;
 
@@ -108,6 +109,9 @@ public class AnalysisService {
 
         for (Commit c : getMergeRequestCommits(gitLabApi, mergeRequest)) {
             Commit detailedCommit = getDetailedCommit(gitLabApi, projectId, c);
+
+            //TODO: check if author names are the best form of comparison between MR and Commit authors
+            isSolo = c.getAuthorName().equals(mergeRequest.getAuthor().getName());
 
             committers.add(detailedCommit.getAuthorEmail());
             addCommitIdAndMrIdToCommitterDto(committerToCommitterDtoMap, detailedCommit, mergeRequestId);
@@ -119,7 +123,7 @@ public class AnalysisService {
         }
 
         MergeRequest mrChanges = gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId);
-        return new MergeRequestDtoDb(mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore);
+        return new MergeRequestDtoDb(mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore, isSolo);
     }
 
     private List<Commit> getMergeRequestCommits(GitLabApi gitLabApi, MergeRequest mergeRequest)

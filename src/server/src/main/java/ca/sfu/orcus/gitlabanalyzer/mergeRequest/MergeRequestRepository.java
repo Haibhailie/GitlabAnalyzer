@@ -52,7 +52,8 @@ public class MergeRequestRepository {
         committerNames("committerNames"),
         sumOfCommitsScore("sumOfCommitsScore"),
         isIgnored("isIgnored"),
-        files("files");
+        files("files"),
+        isSolo("isSolo");
 
         public String key;
 
@@ -103,6 +104,7 @@ public class MergeRequestRepository {
                 .append(MergeRequest.mergeRequestId.key, mergeRequest.getMergeRequestId())
                 .append(MergeRequest.projectUrl.key, projectUrl)
                 .append(MergeRequest.title.key, mergeRequest.getTitle())
+                .append(MergeRequest.isSolo.key, mergeRequest.isSolo())
                 .append(MergeRequest.author.key, mergeRequest.getAuthor())
                 .append(MergeRequest.userId.key, mergeRequest.getUserId())
                 .append(MergeRequest.description.key, mergeRequest.getDescription())
@@ -146,7 +148,8 @@ public class MergeRequestRepository {
                 .setCommitterNames(new HashSet<>(doc.getList(MergeRequest.committerNames.key, String.class)))
                 .setSumOfCommitsScore(doc.getDouble(MergeRequest.sumOfCommitsScore.key))
                 .setIgnored(doc.getBoolean(MergeRequest.isIgnored.key))
-                .setFiles(fileRepo.getFilesFromCache(doc));
+                .setFiles(fileRepo.getFilesFromCache(doc))
+                .setSolo(doc.getBoolean(MergeRequest.isIgnored.key));
     }
 
     private List<CommitDtoDb> getCommitsFromCachedMergeRequest(Document doc) {

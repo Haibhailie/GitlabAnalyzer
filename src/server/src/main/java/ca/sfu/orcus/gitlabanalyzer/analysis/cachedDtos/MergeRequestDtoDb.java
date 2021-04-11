@@ -15,6 +15,7 @@ public final class MergeRequestDtoDb {
     private String description;
     private long time;
     private String webUrl;
+    private boolean isSolo;
 
     private List<CommitDtoDb> commits;
     private Set<String> committerNames;
@@ -22,13 +23,15 @@ public final class MergeRequestDtoDb {
     private boolean isIgnored;
     private List<FileDto> files;
 
-    public MergeRequestDtoDb() {}
+    public MergeRequestDtoDb() {
+    }
 
     public MergeRequestDtoDb(MergeRequest mergeRequest,
                              List<CommitDtoDb> commits,
                              Set<String> committerNames,
                              MergeRequest mergeRequestChanges,
-                             double sumOfCommitsScore) {
+                             double sumOfCommitsScore,
+                             boolean isSolo) {
         setMergeRequestId(mergeRequest.getIid());
         setTitle(mergeRequest.getTitle());
         setAuthor(mergeRequest.getAuthor().getName());
@@ -36,6 +39,7 @@ public final class MergeRequestDtoDb {
         setDescription(mergeRequest.getDescription());
         setTime(mergeRequest.getMergedAt().getTime());
         setWebUrl(mergeRequest.getWebUrl());
+        setSolo(isSolo);
 
         setCommits(commits);
         setCommitterNames(committerNames);
@@ -104,6 +108,15 @@ public final class MergeRequestDtoDb {
     public MergeRequestDtoDb setFiles(List<FileDto> files) {
         this.files = files;
         return this;
+    }
+
+    public MergeRequestDtoDb setSolo(boolean isSolo) {
+        this.isSolo = isSolo;
+        return this;
+    }
+
+    public boolean isSolo() {
+        return isSolo;
     }
 
     public int getUserId() {
