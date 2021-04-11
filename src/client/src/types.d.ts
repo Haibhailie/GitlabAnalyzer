@@ -32,7 +32,7 @@ export type TCommitterData = ICommitterData[]
 export interface ICommitterData {
   email: string
   name: string
-  memberDto: IMemberData
+  member: IMemberData
 }
 
 export type TMemberCommitterMap = IMemberCommitterMap[]

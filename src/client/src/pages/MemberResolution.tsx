@@ -15,53 +15,6 @@ import MemberSelect from '../components/MemberSelect'
 
 import styles from '../css/MemberResolution.module.css'
 
-const testCommitterData = [
-  {
-    name: 'Ali Khamesy',
-    email: 'akhamesy@sfu.ca',
-    memberDto: {
-      displayName: 'Ali Khamesy',
-      id: '7',
-      username: 'akhamesy',
-      role: 'MAINTAINER',
-      webUrl: 'http://gitlab.example.com/akhamesy',
-    },
-  },
-  {
-    name: 'Grace Luo',
-    email: 'grace.r.luo@gmail.com',
-    memberDto: {
-      displayName: 'Grace Luo',
-      id: '5',
-      username: 'gracelu0',
-      role: 'MAINTAINER',
-      webUrl: 'http://gitlab.example.com/gracelu0',
-    },
-  },
-  {
-    name: 'Grace Luo',
-    email: 'gla74@sfu.ca',
-    memberDto: {
-      displayName: 'Grace Luo',
-      id: '18',
-      username: 'gla74',
-      role: 'MAINTAINER',
-      webUrl: 'http://gitlab.example.com/gla74',
-    },
-  },
-  {
-    name: 'Dummy User',
-    email: 'dummy@sfu.ca',
-    memberDto: {
-      displayName: 'Dummy User',
-      id: '',
-      username: 'dummyUsername',
-      role: 'MAINTAINER',
-      webUrl: 'http://gitlab.example.com/dummyUsername',
-    },
-  },
-]
-
 const MemberResolution = () => {
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
@@ -75,9 +28,7 @@ const MemberResolution = () => {
     committers.forEach(committer => {
       const map: IMemberCommitterMap = {
         email: committer.email,
-        memberId: committer.memberDto.id
-          ? parseInt(committer.memberDto.id)
-          : '',
+        memberId: committer.member.id ? parseInt(committer.member.id) : '',
       }
       memberCommitterMap.push(map)
     })
@@ -121,8 +72,6 @@ const MemberResolution = () => {
         committerMap.push(committer)
       }
     })
-
-    console.log(submittedMap)
 
     jsonFetcher(`/api/project/${id}/committers`, {
       method: 'POST',
@@ -174,69 +123,67 @@ const MemberResolution = () => {
         setData(members)
         const ids = members.map(member => member.id.toString())
         setMemberIds(ids)
-        const memberCommitterMap = createCommitterMap(testCommitterData)
-        setFormData(memberCommitterMap)
       })
       .catch(onError(setError))
   })
 
-  // const {
-  //   Suspense: CommitterSuspense,
-  //   data: committerData,
-  //   error: committerError,
-  // } = useSuspense<TCommitterData>((setData, setError) => {
-  //   jsonFetcher<TCommitterData>(`/api/project/${id}/committers`)
-  //     .then(committers => {
-  //       setData(committers)
-  //       const memberCommitterMap = createCommitterMap(committers)
-  //       setFormData(memberCommitterMap)
-  //     })
-  //     .catch(onError(setError))
-  // })
+  const {
+    Suspense: CommitterSuspense,
+    data: committerData,
+    error: committerError,
+  } = useSuspense<TCommitterData>((setData, setError) => {
+    jsonFetcher<TCommitterData>(`/api/project/${id}/committers`)
+      .then(committers => {
+        setData(committers)
+        const memberCommitterMap = createCommitterMap(committers)
+        setFormData(memberCommitterMap)
+      })
+      .catch(onError(setError))
+  })
 
   return (
     <MemberSuspense
       fallback="Getting project members..."
       error={memberError?.message ?? 'Unknown Error'}
     >
-      {/* <CommitterSuspense
+      <CommitterSuspense
         fallback="Getting project committers..."
         error={committerError?.message ?? 'Unknown Error'}
-      > */}
-      <div className={styles.container}>
-        <h1 className={styles.header}>Member to Committer Resolution</h1>
-        <form className={styles.formContainer} onSubmit={handleSubmit}>
-          {errorMsg && <h3 className={styles.errorAlert}>{errorMsg}</h3>}
-          <Table
-            headers={['Committer', 'Email', 'Member']}
-            columnWidths={['2fr', '2fr', '3fr']}
-            classes={{
-              container: styles.tableContainer,
-              table: styles.table,
-              header: styles.theader,
-              data: styles.tdata,
-            }}
-            data={
-              testCommitterData?.map(({ name, email, memberDto }) => {
-                return {
-                  name,
-                  email,
-                  memberDto: memberData ? (
-                    <MemberSelect
-                      data={memberData}
-                      defaultSelected={memberDto.id}
-                      committerEmail={email}
-                      onChange={handleChange}
-                    />
-                  ) : null,
-                }
-              }) ?? [{}]
-            }
-          />
-          <input type="submit" className={styles.button} value="Save" />
-        </form>
-      </div>
-      {/* </CommitterSuspense> */}
+      >
+        <div className={styles.container}>
+          <h1 className={styles.header}>Member to Committer Resolution</h1>
+          <form className={styles.formContainer} onSubmit={handleSubmit}>
+            {errorMsg && <h3 className={styles.errorAlert}>{errorMsg}</h3>}
+            <Table
+              headers={['Committer', 'Email', 'Member']}
+              columnWidths={['2fr', '2fr', '3fr']}
+              classes={{
+                container: styles.tableContainer,
+                table: styles.table,
+                header: styles.theader,
+                data: styles.tdata,
+              }}
+              data={
+                committerData?.map(({ name, email, member }) => {
+                  return {
+                    name,
+                    email,
+                    member: memberData ? (
+                      <MemberSelect
+                        data={memberData}
+                        defaultSelected={member.id}
+                        committerEmail={email}
+                        onChange={handleChange}
+                      />
+                    ) : null,
+                  }
+                }) ?? [{}]
+              }
+            />
+            <input type="submit" className={styles.button} value="Save" />
+          </form>
+        </div>
+      </CommitterSuspense>
     </MemberSuspense>
   )
 }
