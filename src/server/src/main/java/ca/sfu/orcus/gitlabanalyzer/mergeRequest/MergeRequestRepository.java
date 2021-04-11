@@ -23,22 +23,8 @@ import static com.mongodb.client.model.Filters.eq;
 public class MergeRequestRepository {
 
     private final MongoCollection<Document> mergeRequestCollection;
-    private static final Gson gson = new Gson();
-
-    private enum File {
-        documentId("_id"),
-        name("name"),
-        extension("extension"),
-        fileScore("fileScore"),
-        linesOfCodeChanges("linesOfCodeChanges"),
-        isIgnored("isIgnored");
-
-        public String key;
-
-        File(String key) {
-            this.key = key;
-        }
-    }
+    CommitRepository commitRepository = new CommitRepository();
+    FileRepository fileRepository = new FileRepository();
 
     private enum MergeRequest {
         mergeRequestId("mergeRequestId"),
@@ -59,31 +45,6 @@ public class MergeRequestRepository {
         MergeRequest(String key) {
             this.key = key;
         }
-    }
-
-    private enum Commit {
-        documentId("_id"),
-        commitId("commitId"),
-        title("title"),
-        message("message"),
-        author("author"),
-        authorEmail("authorEmail"),
-        time("time"),
-        webUrl("webUrl"),
-        numAdditions("numAdditions"),
-        numDeletions("numDeletions"),
-        total("numTotal"),
-        diffs("diffs"),
-        isIgnored("isIgnored"),
-        files("files"),
-        score("score");
-
-        public String key;
-
-        Commit(String key) {
-            this.key = key;
-        }
-
     }
 
     public MergeRequestRepository() {
@@ -140,44 +101,9 @@ public class MergeRequestRepository {
                 .append(MergeRequest.webUrl.key, mergeRequest.getWebUrl())
                 .append(MergeRequest.sumOfCommitsScore.key, mergeRequest.getSumOfCommitsScore())
                 .append(MergeRequest.committerNames.key, mergeRequest.getCommitterNames())
-                .append(MergeRequest.commits.key, getCommitDocuments(mergeRequest.getCommits()))
-                .append(MergeRequest.files.key, getFileDocuments(mergeRequest.getFiles()))
+                .append(MergeRequest.commits.key, commitRepository.getCommitDocuments(mergeRequest.getCommits()))
+                .append(MergeRequest.files.key, fileRepository.getFileDocuments(mergeRequest.getFiles()))
                 .append(MergeRequest.isIgnored.key, mergeRequest.isIgnored());
-    }
-
-    private Document generateCommitDocument(CommitDtoDb commit) {
-        return new Document(Commit.documentId.key, new ObjectId().toString())
-                .append(Commit.commitId.key, commit.getId())
-                .append(Commit.title.key, commit.getTitle())
-                .append(Commit.message.key, commit.getMessage())
-                .append(Commit.author.key, commit.getAuthor())
-                .append(Commit.authorEmail.key, commit.getAuthorEmail())
-                .append(Commit.time.key, commit.getTime())
-                .append(Commit.webUrl.key, commit.getWebUrl())
-                .append(Commit.numAdditions.key, commit.getNumAdditions())
-                .append(Commit.numDeletions.key, commit.getNumDeletions())
-                .append(Commit.total.key, commit.getTotal())
-                .append(Commit.diffs.key, commit.getDiffs())
-                .append(Commit.score.key, commit.getScore())
-                .append(Commit.files.key, getFileDocuments(commit.getFiles()))
-                .append(Commit.isIgnored.key, commit.isIgnored());
-    }
-
-    private List<Document> getFileDocuments(List<FileDto> files) {
-        List<Document> fileDocument = new ArrayList<>();
-        for (FileDto presentFile : files) {
-            fileDocument.add(generateFileDocuments(presentFile));
-        }
-        return fileDocument;
-    }
-
-    private Document generateFileDocuments(FileDto file) {
-        return new Document(File.documentId.key, new ObjectId().toString())
-                .append(File.name.key, file.getFileName())
-                .append(File.extension.key, file.getFileExtension())
-                .append(File.fileScore.key, gson.toJson(file.getFileScore()))
-                .append(File.linesOfCodeChanges.key, gson.toJson(file.getLinesOfCodeChanges()))
-                .append(File.isIgnored.key, file.isIgnored());
     }
 
     public List<MergeRequestDtoDb> getMergeRequests(List<String> mergeRequestIds) {
@@ -210,7 +136,7 @@ public class MergeRequestRepository {
         mergeRequest.setIgnored(doc.getBoolean(MergeRequest.isIgnored.key));
         mergeRequest.setCommitterNames(new HashSet<>(doc.getList(MergeRequest.committerNames.key, String.class)));
         mergeRequest.setCommits(getCommitsFromCachedMergeRequest(doc));
-        mergeRequest.setFiles(getFilesFromCache(doc));
+        mergeRequest.setFiles(fileRepository.getFilesFromCache(doc));
         return mergeRequest;
     }
 
@@ -218,46 +144,10 @@ public class MergeRequestRepository {
         List<Document> commitDocuments = doc.getList(MergeRequest.commits.key, Document.class);
         List<CommitDtoDb> commits = new ArrayList<>();
         for (Document presentDocument : commitDocuments) {
-            commits.add(getCommitFromDocument(presentDocument));
+            commits.add(commitRepository.getCommitFromDocument(presentDocument));
         }
         return commits;
     }
 
-    private CommitDtoDb getCommitFromDocument(Document doc) {
-        CommitDtoDb commit = new CommitDtoDb();
-        commit.setId(doc.getString(Commit.commitId.key));
-        commit.setTitle(doc.getString(Commit.title.key));
-        commit.setMessage(doc.getString(Commit.message.key));
-        commit.setAuthor(doc.getString(Commit.author.key));
-        commit.setAuthorEmail(doc.getString(Commit.authorEmail.key));
-        commit.setTime(doc.getLong(Commit.time.key));
-        commit.setWebUrl(doc.getString(Commit.webUrl.key));
-        commit.setNumAdditions(doc.getInteger(Commit.numAdditions.key));
-        commit.setNumDeletions(doc.getInteger(Commit.numDeletions.key));
-        commit.setTotal(doc.getInteger(Commit.total.key));
-        commit.setDiffs(doc.getString(Commit.diffs.key));
-        commit.setScore(doc.getDouble(Commit.score.key));
-        commit.setIgnored(doc.getBoolean(Commit.isIgnored.key));
-        commit.setFiles(getFilesFromCache(doc));
-        return commit;
-    }
-
-    private List<FileDto> getFilesFromCache(Document doc) {
-        List<Document> fileDocuments = doc.getList(MergeRequest.files.key, Document.class);
-        List<FileDto> files = new ArrayList<>();
-        for (Document presentDocument : fileDocuments) {
-            files.add(getFileFromDocument(presentDocument));
-        }
-        return files;
-    }
-
-    private FileDto getFileFromDocument(Document doc) {
-        FileDto fileDto = new FileDto(doc.getString(File.name.key));
-        fileDto.setExtension(doc.getString(File.extension.key));
-        fileDto.setTotalScore(gson.fromJson(doc.getString(File.fileScore.key), Scores.class));
-        fileDto.setLinesOfCodeChanges(gson.fromJson(doc.getString(File.linesOfCodeChanges.key), LOCDto.class));
-        fileDto.setIgnored(doc.getBoolean(File.isIgnored));
-        return fileDto;
-    }
 }
 
