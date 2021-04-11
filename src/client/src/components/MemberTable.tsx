@@ -8,7 +8,7 @@ import { TCommitterData, TMemberData } from '../types'
 import Table from '../components/Table'
 import AnalyzeButton from '../components/AnalyzeButton'
 import Modal from '../components/Modal'
-import Button from '../components/Button'
+import LinkButton from '../components/LinkButton'
 
 import styles from '../css/MemberTable.module.css'
 
@@ -104,24 +104,16 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
     }
   }
 
-  const isProjectMember = (id: string) => {
-    return memberIds.includes(id)
-  }
+  const isProjectMember = (id: string) => memberIds.includes(id)
 
-  const onAnalyze = (id: string) => {
+  const onAnalyze = (id: string) =>
     history.push(`/project/${projectId}/member/${id}`)
-  }
 
-  const isResolutionOptional = () => {
-    return (
-      resolutionStatus !== ResolutionStatus.REQUIRED &&
-      resolutionStatus !== ResolutionStatus.ALL_IGNORED
-    )
-  }
+  const isResolutionOptional = () =>
+    resolutionStatus !== ResolutionStatus.REQUIRED &&
+    resolutionStatus !== ResolutionStatus.ALL_IGNORED
 
-  const toggleModal = () => {
-    setShowModal(!showModal)
-  }
+  const toggleModal = () => setShowModal(!showModal)
 
   return (
     <Suspense
@@ -136,10 +128,9 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
           <Modal close={isResolutionOptional() ? toggleModal : undefined}>
             <img src={alertIcon} className={styles.icon} />
             <div className={styles.modalMsgContainer}>{modalMsg}</div>
-            <Button
-              message="Resolve committers"
-              destPath={`/project/${projectId}/memberResolution`}
-            />
+            <LinkButton destPath={`/project/${projectId}/memberResolution`}>
+              Resolve committers
+            </LinkButton>
           </Modal>
         )}
 
@@ -172,10 +163,9 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
             }) ?? [{}]
           }
         />
-        <Button
-          message="Member to Committer Resolution"
-          destPath={`/project/${projectId}/memberResolution`}
-        />
+        <LinkButton destPath={`/project/${projectId}/memberResolution`}>
+          Member to Committer Resolution
+        </LinkButton>
       </CommitterSuspense>
     </Suspense>
   )

@@ -23,15 +23,14 @@ const MemberSelect = ({
       onChange={onChange}
     >
       <option value="">Ignore committer</option>
-      {data?.map(({ displayName, id, username }) => {
-        return (
+      {data?.map(
+        ({ displayName, id, username }) =>
           id && (
             <option key={username} value={id}>
               {displayName} @{username}
             </option>
           )
-        )
-      })}
+      )}
     </select>
   )
 }

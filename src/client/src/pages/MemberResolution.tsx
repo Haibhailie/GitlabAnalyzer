@@ -3,12 +3,7 @@ import { useParams, useHistory } from 'react-router-dom'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
-import {
-  TCommitterData,
-  TMemberData,
-  TMemberCommitterMap,
-  IMemberCommitterMap,
-} from '../types'
+import { TMemberCommitterMap, TCommitterData, TMemberData } from '../types'
 
 import Table from '../components/Table'
 import MemberSelect from '../components/MemberSelect'
@@ -18,19 +13,17 @@ import styles from '../css/MemberResolution.module.css'
 const MemberResolution = () => {
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
-  const [formData, setFormData] = useState<TMemberCommitterMap>([])
+  const [formData, setFormData] = useState<Record<string, number | string>>({})
   const [errorMsg, setErrorMsg] = useState('')
   const [memberIds, setMemberIds] = useState<string[]>([])
 
   const createCommitterMap = (committers: TCommitterData) => {
-    const memberCommitterMap: TMemberCommitterMap = []
+    const memberCommitterMap: Record<string, number | string> = {}
 
     committers.forEach(committer => {
-      const map: IMemberCommitterMap = {
-        email: committer.email,
-        memberId: committer.member.id ? parseInt(committer.member.id) : '',
-      }
-      memberCommitterMap.push(map)
+      memberCommitterMap[committer.email] = committer.member.id
+        ? parseInt(committer.member.id)
+        : ''
     })
     return memberCommitterMap
   }
@@ -42,43 +35,36 @@ const MemberResolution = () => {
         ? event.target.value
         : parseInt(event.target.value)
 
-    const updatedCommitter = {
-      email: selectedCommitter,
-      memberId: selectedMemberId,
-    }
+    const updatedMap = { ...formData }
 
-    const updatedMap = [...formData]
-    const index = updatedMap.findIndex(c => c.email === selectedCommitter)
-    if (index === -1) {
-      updatedMap.push(updatedCommitter)
-    } else {
-      updatedMap[index] = updatedCommitter
-    }
+    updatedMap[selectedCommitter] = selectedMemberId
 
     setFormData(updatedMap)
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const submittedMap = [...formData]
+    const submittedMap = { ...formData }
 
-    const committerMap: TMemberCommitterMap = []
-
-    submittedMap.forEach(committer => {
+    for (const committer in submittedMap) {
       if (
-        committer.memberId !== '' &&
-        isProjectMember(committer.memberId.toString())
+        submittedMap[committer] === '' ||
+        !isProjectMember(submittedMap[committer].toString())
       ) {
-        committerMap.push(committer)
+        delete submittedMap[committer]
       }
-    })
+    }
+
+    const committerMap: TMemberCommitterMap = Object.entries(submittedMap).map(
+      ([email, memberId]) => {
+        return { email, memberId }
+      }
+    )
 
     jsonFetcher(`/api/project/${id}/committers`, {
       method: 'POST',
       body: JSON.stringify(committerMap),
-      headers: { 'Content-Type': 'application/json' },
       responseIsEmpty: true,
-      credentials: 'include',
     })
       .then(res => {
         if (res === 200) {
@@ -96,8 +82,6 @@ const MemberResolution = () => {
               setErrorMsg('Project not found')
               break
             case 500:
-              setErrorMsg('An unknown error occurred')
-              break
             default:
               setErrorMsg('An unknown error occurred')
               break
@@ -109,9 +93,7 @@ const MemberResolution = () => {
       })
   }
 
-  const isProjectMember = (id: string) => {
-    return memberIds.includes(id)
-  }
+  const isProjectMember = (id: string) => memberIds.includes(id)
 
   const {
     Suspense: MemberSuspense,

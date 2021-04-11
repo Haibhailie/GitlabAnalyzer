@@ -3,12 +3,14 @@
   border-radius: 8px;
   color: #ffffff;
   background-color: var(--color-primary);
+  font: var(--font-body-medium-poppins);
   display: flex;
   align-items: center;
-  font: var(--font-body-medium-poppins);
+  justify-content: center;
   height: 40px;
   padding: 0px 12px;
   margin: auto;
+  width: fit-content;
 }
 
 .button:hover {
