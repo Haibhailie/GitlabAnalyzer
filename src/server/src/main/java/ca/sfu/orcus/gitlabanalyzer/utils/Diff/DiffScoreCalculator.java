@@ -155,7 +155,7 @@ public class DiffScoreCalculator {
                     + syntaxChanges * syntaxFactor
                     + spacingChanges * spacingFactor;
 
-            fileDtos.get(i).setMergeRequestFileScore(new Scores(totalScore,
+            fileDtos.get(i).setTotalScore(new Scores(totalScore,
                     additions,
                     deletions,
                     blankAdditions,
