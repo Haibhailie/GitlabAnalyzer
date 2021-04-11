@@ -2,7 +2,6 @@ package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.file.FileRepository;
-import com.google.gson.Gson;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,6 @@ import java.util.List;
 @Repository
 public class CommitRepository {
     FileRepository fileRepo;
-    private static final Gson gson = new Gson();
 
     public CommitRepository(FileRepository fileRepo) {
         this.fileRepo = fileRepo;
@@ -70,21 +68,20 @@ public class CommitRepository {
     }
 
     public CommitDtoDb getCommitFromDocument(Document doc) {
-        CommitDtoDb commit = new CommitDtoDb();
-        commit.setId(doc.getString(Commit.commitId.key));
-        commit.setTitle(doc.getString(Commit.title.key));
-        commit.setMessage(doc.getString(Commit.message.key));
-        commit.setAuthor(doc.getString(Commit.author.key));
-        commit.setAuthorEmail(doc.getString(Commit.authorEmail.key));
-        commit.setTime(doc.getLong(Commit.time.key));
-        commit.setWebUrl(doc.getString(Commit.webUrl.key));
-        commit.setNumAdditions(doc.getInteger(Commit.numAdditions.key));
-        commit.setNumDeletions(doc.getInteger(Commit.numDeletions.key));
-        commit.setTotal(doc.getInteger(Commit.total.key));
-        commit.setDiffs(doc.getString(Commit.diffs.key));
-        commit.setScore(doc.getDouble(Commit.score.key));
-        commit.setIgnored(doc.getBoolean(Commit.isIgnored.key));
-        commit.setFiles(fileRepo.getFilesFromCache(doc));
-        return commit;
+        return new CommitDtoDb()
+                .setId(doc.getString(Commit.commitId.key))
+                .setTitle(doc.getString(Commit.title.key))
+                .setMessage(doc.getString(Commit.message.key))
+                .setAuthor(doc.getString(Commit.author.key))
+                .setAuthorEmail(doc.getString(Commit.authorEmail.key))
+                .setTime(doc.getLong(Commit.time.key))
+                .setWebUrl(doc.getString(Commit.webUrl.key))
+                .setNumAdditions(doc.getInteger(Commit.numAdditions.key))
+                .setNumDeletions(doc.getInteger(Commit.numDeletions.key))
+                .setTotal(doc.getInteger(Commit.total.key))
+                .setDiffs(doc.getString(Commit.diffs.key))
+                .setIgnored(doc.getBoolean(Commit.isIgnored.key))
+                .setFiles(fileRepo.getFilesFromCache(doc))
+                .setScore(doc.getDouble(Commit.score.key));
     }
 }

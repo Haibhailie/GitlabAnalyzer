@@ -48,11 +48,11 @@ public class MergeRequestRepository {
         description("description"),
         time("time"),
         webUrl("webUrl"),
-        sumOfCommitsScore("sumOfCommitsScore"),
-        committerNames("committerNames"),
         commits("commits"),
-        files("files"),
-        isIgnored("isIgnored");
+        committerNames("committerNames"),
+        sumOfCommitsScore("sumOfCommitsScore"),
+        isIgnored("isIgnored"),
+        files("files");
 
         public String key;
 
@@ -106,12 +106,13 @@ public class MergeRequestRepository {
                 .append(MergeRequest.author.key, mergeRequest.getAuthor())
                 .append(MergeRequest.authorId.key, mergeRequest.getAuthorId())
                 .append(MergeRequest.description.key, mergeRequest.getDescription())
+                .append(MergeRequest.time.key, mergeRequest.getTime())
                 .append(MergeRequest.webUrl.key, mergeRequest.getWebUrl())
-                .append(MergeRequest.sumOfCommitsScore.key, mergeRequest.getSumOfCommitsScore())
-                .append(MergeRequest.committerNames.key, mergeRequest.getCommitterNames())
                 .append(MergeRequest.commits.key, commitRepo.getCommitDocuments(mergeRequest.getCommits()))
-                .append(MergeRequest.files.key, fileRepo.getFileDocuments(mergeRequest.getFiles()))
-                .append(MergeRequest.isIgnored.key, mergeRequest.isIgnored());
+                .append(MergeRequest.committerNames.key, mergeRequest.getCommitterNames())
+                .append(MergeRequest.sumOfCommitsScore.key, mergeRequest.getSumOfCommitsScore())
+                .append(MergeRequest.isIgnored.key, mergeRequest.isIgnored())
+                .append(MergeRequest.files.key, fileRepo.getFileDocuments(mergeRequest.getFiles()));
     }
 
     public List<MergeRequestDtoDb> getMergeRequests(List<String> mergeRequestIds) {
@@ -132,20 +133,20 @@ public class MergeRequestRepository {
         if (doc == null) {
             return null;
         }
-        MergeRequestDtoDb mergeRequest = new MergeRequestDtoDb();
-        mergeRequest.setMergeRequestId(doc.getInteger(MergeRequest.mergeRequestId.key));
-        mergeRequest.setTitle(doc.getString(MergeRequest.title.key));
-        mergeRequest.setAuthor(doc.getString(MergeRequest.author.key));
-        mergeRequest.setAuthorId(doc.getInteger(MergeRequest.authorId.key));
-        mergeRequest.setDescription(doc.getString(MergeRequest.description.key));
-        mergeRequest.setTime(doc.getLong(MergeRequest.time.key));
-        mergeRequest.setWebUrl(doc.getString(MergeRequest.webUrl.key));
-        mergeRequest.setSumOfCommitsScore(doc.getDouble(MergeRequest.sumOfCommitsScore.key));
-        mergeRequest.setIgnored(doc.getBoolean(MergeRequest.isIgnored.key));
-        mergeRequest.setCommitterNames(new HashSet<>(doc.getList(MergeRequest.committerNames.key, String.class)));
-        mergeRequest.setCommits(getCommitsFromCachedMergeRequest(doc));
-        mergeRequest.setFiles(fileRepo.getFilesFromCache(doc));
-        return mergeRequest;
+
+        return new MergeRequestDtoDb()
+                .setMergeRequestId(doc.getInteger(MergeRequest.mergeRequestId.key))
+                .setTitle(doc.getString(MergeRequest.title.key))
+                .setAuthor(doc.getString(MergeRequest.author.key))
+                .setAuthorId(doc.getInteger(MergeRequest.authorId.key))
+                .setDescription(doc.getString(MergeRequest.description.key))
+                .setTime(doc.getLong(MergeRequest.time.key))
+                .setWebUrl(doc.getString(MergeRequest.webUrl.key))
+                .setCommits(getCommitsFromCachedMergeRequest(doc))
+                .setCommitterNames(new HashSet<>(doc.getList(MergeRequest.committerNames.key, String.class)))
+                .setSumOfCommitsScore(doc.getDouble(MergeRequest.sumOfCommitsScore.key))
+                .setIgnored(doc.getBoolean(MergeRequest.isIgnored.key))
+                .setFiles(fileRepo.getFilesFromCache(doc));
     }
 
     private List<CommitDtoDb> getCommitsFromCachedMergeRequest(Document doc) {

@@ -124,14 +124,12 @@ public class MemberRepository {
         if (memberDoc == null) {
             return null;
         }
-        MemberDtoDb member = new MemberDtoDb();
-        member.setId(memberDoc.getInteger(Member.memberId));
-        member.setDisplayName(memberDoc.getString(Member.displayName.key));
-        member.setUsername(memberDoc.getString(Member.username.key));
-        member.setRole(memberDoc.getString(Member.role.key));
-        member.setWebUrl(memberDoc.getString(Member.memberUrl.key));
-        member.setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>() {
-        }.getClass()));
-        return member;
+        return new MemberDtoDb()
+                .setId(memberDoc.getInteger(Member.memberId))
+                .setDisplayName(memberDoc.getString(Member.displayName.key))
+                .setUsername(memberDoc.getString(Member.username.key))
+                .setRole(memberDoc.getString(Member.role.key))
+                .setWebUrl(memberDoc.getString(Member.memberUrl.key))
+                .setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>() {}.getClass()));
     }
 }

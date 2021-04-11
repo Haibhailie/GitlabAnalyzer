@@ -9,7 +9,6 @@ import org.gitlab4j.api.models.Diff;
 import java.util.List;
 
 public final class CommitDtoDb {
-
     private String id;
     private String title;
     private String message;
@@ -48,70 +47,83 @@ public final class CommitDtoDb {
         setScore(fileScores);
     }
 
-    public CommitDtoDb() {
+    public CommitDtoDb() {}
 
-    }
-
-    public void setId(String id) {
+    public CommitDtoDb setId(String id) {
         this.id = id;
+        return this;
     }
 
-    public void setTitle(String title) {
+    public CommitDtoDb setTitle(String title) {
         this.title = title;
+        return this;
     }
 
-    public void setMessage(String message) {
+    public CommitDtoDb setMessage(String message) {
         this.message = message;
+        return this;
     }
 
-    public void setAuthor(String author) {
+    public CommitDtoDb setAuthor(String author) {
         this.author = author;
+        return this;
     }
 
-    public void setAuthorEmail(String authorEmail) {
+    public CommitDtoDb setAuthorEmail(String authorEmail) {
         this.authorEmail = authorEmail;
+        return this;
     }
 
-    public void setTime(long time) {
+    public CommitDtoDb setTime(long time) {
         this.time = time;
+        return this;
     }
 
-    public void setWebUrl(String webUrl) {
+    public CommitDtoDb setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+        return this;
     }
 
-    public void setNumAdditions(int numAdditions) {
+    public CommitDtoDb setNumAdditions(int numAdditions) {
         this.numAdditions = numAdditions;
+        return this;
     }
 
-    public void setNumDeletions(int numDeletions) {
+    public CommitDtoDb setNumDeletions(int numDeletions) {
         this.numDeletions = numDeletions;
+        return this;
     }
 
-    public void setTotal(int total) {
+    public CommitDtoDb setTotal(int total) {
         this.total = total;
+        return this;
     }
 
-    public void setDiffs(String diffs) {
+    public CommitDtoDb setDiffs(String diffs) {
         this.diffs = diffs;
+        return this;
     }
 
-    public void setIgnored(boolean isIgnored) {
+    public CommitDtoDb setIgnored(boolean isIgnored) {
         this.isIgnored = isIgnored;
+        return this;
     }
 
-    public void setFiles(List<FileDto> files) {
+    public CommitDtoDb setFiles(List<FileDto> files) {
         this.files = files;
+        return this;
     }
 
-    public void setScore(double score) {
+    public CommitDtoDb setScore(double score) {
         this.score = score;
+        return this;
     }
 
-    public void setScore(List<FileDto> files) {
+    public CommitDtoDb setScore(List<FileDto> files) {
         for (FileDto file : files) {
             this.score += file.getTotalScore();
         }
+        return this;
     }
 
     public double getScore() {

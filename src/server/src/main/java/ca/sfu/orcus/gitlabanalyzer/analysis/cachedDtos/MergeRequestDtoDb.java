@@ -22,8 +22,7 @@ public final class MergeRequestDtoDb {
     private boolean isIgnored;
     private List<FileDto> files;
 
-    public MergeRequestDtoDb() {
-    }
+    public MergeRequestDtoDb() {}
 
     public MergeRequestDtoDb(MergeRequest mergeRequest,
                              List<CommitDtoDb> commits,
@@ -47,52 +46,64 @@ public final class MergeRequestDtoDb {
         setFiles(scoreCalculator.getMergeRequestScore(mergeRequestChanges));
     }
 
-    public void setMergeRequestId(int mergeRequestId) {
+    public MergeRequestDtoDb setMergeRequestId(int mergeRequestId) {
         this.mergeRequestId = mergeRequestId;
+        return this;
     }
 
-    public void setTitle(String title) {
+    public MergeRequestDtoDb setTitle(String title) {
         this.title = title;
+        return this;
     }
 
-    public void setAuthor(String author) {
+    public MergeRequestDtoDb setAuthor(String author) {
         this.author = author;
+        return this;
     }
 
-    public void setAuthorId(int authorId) {
+    public MergeRequestDtoDb setAuthorId(int authorId) {
         this.authorId = authorId;
+        return this;
     }
 
-    public void setDescription(String description) {
+    public MergeRequestDtoDb setDescription(String description) {
         this.description = description;
+        return this;
     }
 
-    public void setTime(long time) {
+    public MergeRequestDtoDb setTime(long time) {
         this.time = time;
+        return this;
     }
 
-    public void setWebUrl(String webUrl) {
+    public MergeRequestDtoDb setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+        return this;
     }
 
-    public void setCommits(List<CommitDtoDb> commits) {
+    public MergeRequestDtoDb setCommits(List<CommitDtoDb> commits) {
         this.commits = commits;
+        return this;
     }
 
-    public void setCommitterNames(Set<String> committerNames) {
+    public MergeRequestDtoDb setCommitterNames(Set<String> committerNames) {
         this.committerNames = committerNames;
+        return this;
     }
 
-    public void setSumOfCommitsScore(double sumOfCommitsScore) {
+    public MergeRequestDtoDb setSumOfCommitsScore(double sumOfCommitsScore) {
         this.sumOfCommitsScore = sumOfCommitsScore;
+        return this;
     }
 
-    public void setIgnored(boolean isIgnored) {
+    public MergeRequestDtoDb setIgnored(boolean isIgnored) {
         this.isIgnored = isIgnored;
+        return this;
     }
 
-    public void setFiles(List<FileDto> files) {
+    public MergeRequestDtoDb setFiles(List<FileDto> files) {
         this.files = files;
+        return this;
     }
 
     public int getAuthorId() {
