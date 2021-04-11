@@ -3,6 +3,8 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MergeRequestDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.LOCDto;
+import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.google.gson.Gson;
 import com.mongodb.client.*;
@@ -84,7 +86,7 @@ public class MergeRequestRepository {
     public MergeRequestRepository() {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
-        mergeRequestCollection = database.getCollection(VariableDecoderUtil.decode("MERGE_REQUEST_COLLECTION"));
+        mergeRequestCollection = database.getCollection(VariableDecoderUtil.decode("MERGE_REQUESTS_COLLECTION"));
     }
 
     public List<String> cacheAllMergeRequests(String projectUrl, List<MergeRequestDtoDb> mergeRequestDtoDbs) {
@@ -191,12 +193,55 @@ public class MergeRequestRepository {
         mergeRequest.setSumOfCommitsScore(doc.getDouble(MergeRequest.sumOfCommitsScore.key));
         mergeRequest.setIgnored(doc.getBoolean(MergeRequest.isIgnored.key));
         mergeRequest.setCommitterNames(new HashSet<>(doc.getList(MergeRequest.committerNames.key, String.class)));
-
-        mergeRequest.setCommits(doc.getList(MergeRequest.commits.key, CommitDtoDb.class));
-        mergeRequest.setFiles(doc.getList(MergeRequest.files.key, FileDto.class));
-
+        mergeRequest.setCommits(getCommitsFromCachedMergeRequest(doc));
+        mergeRequest.setFiles(getFilesFromCache(doc));
         return mergeRequest;
     }
 
+    private List<CommitDtoDb> getCommitsFromCachedMergeRequest(Document doc) {
+        List<Document> commitDocuments = doc.getList(MergeRequest.commits.key, Document.class);
+        List<CommitDtoDb> commits = new ArrayList<>();
+        for (Document presentDocument : commitDocuments) {
+            commits.add(getCommitFromDocument(presentDocument));
+        }
+        return commits;
+    }
+
+    private CommitDtoDb getCommitFromDocument(Document doc) {
+        CommitDtoDb commit = new CommitDtoDb();
+        commit.setId(doc.getString(Commit.commitId.key));
+        commit.setTitle(doc.getString(Commit.title.key));
+        commit.setMessage(doc.getString(Commit.message.key));
+        commit.setAuthor(doc.getString(Commit.author.key));
+        commit.setAuthorEmail(doc.getString(Commit.authorEmail.key));
+        commit.setTime(doc.getLong(Commit.time.key));
+        commit.setWebUrl(doc.getString(Commit.webUrl.key));
+        commit.setNumAdditions(doc.getInteger(Commit.numAdditions.key));
+        commit.setNumDeletions(doc.getInteger(Commit.numDeletions.key));
+        commit.setTotal(doc.getInteger(Commit.total.key));
+        commit.setDiffs(doc.getString(Commit.diffs.key));
+        commit.setScore(doc.getDouble(Commit.score.key));
+        commit.setIgnored(doc.getBoolean(Commit.isIgnored.key));
+        commit.setFiles(getFilesFromCache(doc));
+        return commit;
+    }
+
+    private List<FileDto> getFilesFromCache(Document doc) {
+        List<Document> fileDocuments = doc.getList("files", Document.class);
+        List<FileDto> files = new ArrayList<>();
+        for (Document presentDocument : fileDocuments) {
+            files.add(getFileFromDocument(presentDocument));
+        }
+        return files;
+    }
+
+    private FileDto getFileFromDocument(Document doc){
+        FileDto fileDto = new FileDto(doc.getString(File.name.key));
+        fileDto.setExtension(doc.getString(File.extension.key));
+        fileDto.setTotalScore(doc.get(File.fileScore.key, Scores.class));
+        fileDto.setLinesOfCodeChanges(doc.get(File.linesOfCodeChanges.key, LOCDto.class));
+        fileDto.setIgnored(doc.getBoolean(File.isIgnored));
+        return fileDto;
+    }
 }
 

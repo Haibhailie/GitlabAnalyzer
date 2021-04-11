@@ -36,7 +36,6 @@ public class AnalysisRepository {
         return mergeRequestRepo.cacheAllMergeRequests(projectUrl, mergeRequests);
     }
 
-
     // Cache all merge request DTOs and return a list of mappings from mergeRequestId -> documentId
     public List<Pair<Integer, ObjectId>> cacheMergeRequestsDtos(String projectUrl,
                                                                 List<MergeRequestDtoDb> mergeRequestDtos) {

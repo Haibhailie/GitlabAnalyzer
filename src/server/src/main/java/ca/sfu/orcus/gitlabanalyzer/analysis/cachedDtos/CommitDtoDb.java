@@ -48,6 +48,10 @@ public final class CommitDtoDb {
         setScore(fileScores);
     }
 
+    public CommitDtoDb() {
+
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -98,6 +102,10 @@ public final class CommitDtoDb {
 
     public void setFiles(List<FileDto> files) {
         this.files = files;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
     }
 
     public void setScore(List<FileDto> files) {
