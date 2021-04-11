@@ -11,7 +11,6 @@ import ErrorComp from '../components/ErrorComp'
 import Selector from '../components/Selector'
 import MemberTable from '../components/MemberTable'
 import ProjectSummary from '../components/ProjectSummary'
-import Button from '../components/Button'
 
 import styles from '../css/Project.module.css'
 

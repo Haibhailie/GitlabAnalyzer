@@ -52,7 +52,7 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
       jsonFetcher<TCommitterData>(`/api/project/${projectId}/committers`)
         .then(committers => {
           setData(committers)
-          const status = checkResolutionStatus(committers)
+          const status = checkResolutionStatus()
           setResolutionStatus(status)
           switch (resolutionStatus) {
             case ResolutionStatus.REQUIRED:
@@ -83,19 +83,19 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
     [resolutionStatus]
   )
 
-  const checkResolutionStatus = (committerMap: TCommitterData) => {
-    if (committerMap.length === 0) {
+  const checkResolutionStatus = () => {
+    if (committerData?.length === 0) {
       return ResolutionStatus.REQUIRED
     }
 
     let numIgnoredCommitters = 0
-    committerMap.forEach(committer => {
+    committerData?.forEach(committer => {
       if (!isProjectMember(committer.member.id.toString())) {
         numIgnoredCommitters += 1
       }
     })
 
-    if (numIgnoredCommitters === committerMap.length) {
+    if (numIgnoredCommitters === committerData?.length) {
       return ResolutionStatus.ALL_IGNORED
     } else if (numIgnoredCommitters > 0) {
       return ResolutionStatus.RECOMMENDED
