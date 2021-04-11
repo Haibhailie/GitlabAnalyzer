@@ -9,6 +9,7 @@ import org.gitlab4j.api.models.Diff;
 import java.util.List;
 
 public final class CommitDtoDb {
+
     private String id;
     private String title;
     private String message;
@@ -108,6 +109,59 @@ public final class CommitDtoDb {
     public double getScore() {
         return score;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getAuthorEmail() {
+        return authorEmail;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public int getNumAdditions() {
+        return numAdditions;
+    }
+
+    public int getNumDeletions() {
+        return numDeletions;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public String getDiffs() {
+        return diffs;
+    }
+
+    public boolean isIgnored() {
+        return isIgnored;
+    }
+
+    public List<FileDto> getFiles() {
+        return files;
+    }
+
 
     @Override
     public boolean equals(Object o) {

@@ -20,7 +20,12 @@ public class FileDto {
     public FileDto(String name) {
         this.name = name;
         setExtension(name);
-    }
+    }/*
+    name("name"),
+    extension("extension"),
+    fileScore("fileScore"),
+    linesOfCodeChanges("linesOfCodeChanges"),
+    isIgnored("isIgnored");*/
 
     public FileDto(String name, List<FileDiffDto> fileDiffDtos, double score, boolean isIgnored) {
         this.name = name;
@@ -58,6 +63,10 @@ public class FileDto {
         isIgnored = ignored;
     }
 
+    public boolean isIgnored() {
+        return isIgnored;
+    }
+
     public double getTotalScore() {
         return fileScore.getTotalScore();
     }
@@ -71,6 +80,14 @@ public class FileDto {
     }
 
     public String getFileName() {
+        return name;
+    }
+
+    public String getFileExtension() {
+        return extension;
+    }
+
+    public String getName() {
         return name;
     }
 

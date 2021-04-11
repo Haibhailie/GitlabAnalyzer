@@ -68,22 +68,22 @@ public class MemberRepository {
         }
         return documentId;
     }
-    
+
     private Bson getMemberEqualityParameter(String projectUrl, MemberDtoDb member) {
         return and(eq(Member.projectUrl.key, projectUrl), eq(Member.memberId.key, member.getId()));
     }
 
     private Document generateMemberDocument(MemberDtoDb member, String documentId, String projectUrl) {
         return new Document(Member.documentId.key, documentId)
-                    .append(Member.projectUrl.key, projectUrl)
-                    .append(Member.memberId.key, member.getId())
-                    .append(Member.displayName.key, member.getDisplayName())
-                    .append(Member.username.key, member.getUsername())
-                    .append(Member.role.key, member.getRole())
-                    .append(Member.memberUrl.key, member.getWebUrl())
-                    .append(Member.committerEmails.key, member.getCommitterEmails())
-                    .append(Member.mergeRequestDocIds.key, member.getMergeRequestDocIds())
-                    .append(Member.notes.key, gson.toJson(member.getNotes()));
+                .append(Member.projectUrl.key, projectUrl)
+                .append(Member.memberId.key, member.getId())
+                .append(Member.displayName.key, member.getDisplayName())
+                .append(Member.username.key, member.getUsername())
+                .append(Member.role.key, member.getRole())
+                .append(Member.memberUrl.key, member.getWebUrl())
+                .append(Member.committerEmails.key, member.getCommitterEmails())
+                .append(Member.mergeRequestDocIds.key, member.getMergeRequestDocIds())
+                .append(Member.notes.key, gson.toJson(member.getNotes()));
     }
 
     public List<MemberDtoDb> getMembers(List<String> documentIds) {
@@ -98,8 +98,8 @@ public class MemberRepository {
     private Optional<MemberDtoDb> getMember(String documentId) {
         Document memberDoc = memberCollection.find(eq(Member.documentId.key, documentId))
                 .projection(exclude(
-                                Member.committerEmails.key,
-                                Member.mergeRequestDocIds.key))
+                        Member.committerEmails.key,
+                        Member.mergeRequestDocIds.key))
                 .first();
         return Optional.ofNullable(docToDto(memberDoc));
     }
@@ -114,7 +114,8 @@ public class MemberRepository {
         member.setUsername(memberDoc.getString(Member.username.key));
         member.setRole(memberDoc.getString(Member.role.key));
         member.setWebUrl(memberDoc.getString(Member.memberUrl.key));
-        member.setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>(){}.getClass()));
+        member.setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>() {
+        }.getClass()));
         return member;
     }
 }

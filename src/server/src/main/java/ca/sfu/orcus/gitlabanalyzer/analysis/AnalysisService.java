@@ -58,7 +58,7 @@ public class AnalysisService {
 
         analysisRepository.cacheMemberDtos(project.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
 
-        // TODO: cacheMergeRequestDtos(projectUrl, mergeRequestDtos) (key: projectUrl + mergeRequestId)
+        analysisRepository.cacheMergeRequestDtos(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values())); //(key: projectUrl + mergeRequestId)
         List<Pair<Integer, ObjectId>> mrIdsToDocIds =
                 analysisRepository.cacheMergeRequestsDtos(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
         addMergeRequestDocumentIdsToMemberDtos(memberToMemberDtoMap, mrIdToMrDtoMap, mrIdsToDocIds);

@@ -4,6 +4,7 @@ import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MergeRequestDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -15,6 +16,7 @@ import java.util.List;
 @Repository
 public class AnalysisRepository {
     private final MemberRepository memberRepo;
+    private final MergeRequestRepository mergeRequestRepo;
 
     @Autowired
     public AnalysisRepository(MemberRepository memberRepo) {
@@ -29,6 +31,11 @@ public class AnalysisRepository {
     public List<String> cacheMemberDtos(String projectUrl, List<MemberDtoDb> memberDtos) {
         return memberRepo.cacheAllMembers(projectUrl, memberDtos);
     }
+
+    public List<String> cacheMergeRequestDtos(String projectUrl, List<MergeRequestDtoDb> mergeRequests) {
+        return mergeRequestRepo.cacheAllMergeRequests(projectUrl, mergeRequests);
+    }
+
 
     // Cache all merge request DTOs and return a list of mappings from mergeRequestId -> documentId
     public List<Pair<Integer, ObjectId>> cacheMergeRequestsDtos(String projectUrl,
