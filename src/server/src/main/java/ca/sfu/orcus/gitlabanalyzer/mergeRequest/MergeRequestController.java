@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.Constants;
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
 import com.google.gson.Gson;
@@ -19,12 +20,14 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 public class MergeRequestController {
     private final MergeRequestService mergeRequestService;
     private final MergeRequestRepository mergeRequestRepository;
+    private final GitLabApiWrapper gitLabApiWrapper;
     private static final Gson gson = new Gson();
 
     @Autowired
-    public MergeRequestController(MergeRequestService mergeRequestService, MergeRequestRepository mergeRequestRepository) {
+    public MergeRequestController(MergeRequestService mergeRequestService, MergeRequestRepository mergeRequestRepository, GitLabApiWrapper gitLabApiWrapper) {
         this.mergeRequestService = mergeRequestService;
         this.mergeRequestRepository = mergeRequestRepository;
+        this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
     @GetMapping("/api/project/{projectId}/mergerequests")
@@ -74,60 +77,48 @@ public class MergeRequestController {
         return gson.toJson(allMergeRequestsByMemberId);
     }
 
-    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/ignore/true")
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/ignore/{doIgnore}")
     public void ignoreMergeRequest(@CookieValue(value = "sessionId") String jwt,
                                    HttpServletResponse response,
                                    @PathVariable int projectId,
-                                   @PathVariable int mergerequestId) {
-        mergeRequestRepository.ignoreMergeRequest(jwt, projectId, mergerequestId, true);
+                                   @PathVariable int mergerequestId,
+                                   @PathVariable boolean doIgnore) {
+        String projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId).orElse("test");
+        mergeRequestRepository.ignoreMergeRequest(projectUrl, mergerequestId, doIgnore);
         response.setStatus(200);
     }
 
-    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/ignore/false")
-    public void unignoreMergeRequest(@CookieValue(value = "sessionId") String jwt,
-                                   HttpServletResponse response,
-                                   @PathVariable int projectId,
-                                   @PathVariable int mergerequestId) {
-        mergeRequestRepository.ignoreMergeRequest(jwt, projectId, mergerequestId, false);
-        response.setStatus(200);
-    }
-
-    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/file/{fileId}/ignore/true")
-    public void ignoreFile(@CookieValue(value = "sessionId") String jwt,
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/file/{fileId}/ignore/{doIgnore}")
+    public void ignoreMergeRequestFile(@CookieValue(value = "sessionId") String jwt,
                              HttpServletResponse response,
                              @PathVariable int projectId,
                              @PathVariable int mergerequestId,
-                             @PathVariable String fileId) {
+                             @PathVariable String fileId,
+                             @PathVariable boolean doIgnore) {
 
     }
 
-    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/file/{fileId}/ignore/false")
-    public void unignoreFile(@CookieValue(value = "sessionId") String jwt,
-                             HttpServletResponse response,
-                             @PathVariable int projectId,
-                             @PathVariable int mergerequestId,
-                             @PathVariable String fileId) {
-
-    }
-
-    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commit/{commitId}/ignore/true")
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commit/{commitId}/ignore/{doIgnore}")
     public void ignoreCommit(@CookieValue(value = "sessionId") String jwt,
                            HttpServletResponse response,
                            @PathVariable int projectId,
                            @PathVariable int mergerequestId,
-                           @PathVariable String commitId) {
-        mergeRequestRepository.ignoreCommit(jwt, projectId, mergerequestId, commitId, true);
+                           @PathVariable String commitId,
+                           @PathVariable boolean doIgnore) {
+        String projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId).orElse("test");
+        mergeRequestRepository.ignoreCommit(projectUrl, mergerequestId, commitId, doIgnore);
         response.setStatus(200);
     }
 
-    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commit/{commitId}/ignore/false")
-    public void unignoreCommit(@CookieValue(value = "sessionId") String jwt,
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commit/{commitId}/file/{fileId}/ignore/{doIgnore}")
+    public void ignoreCommitFile(@CookieValue(value = "sessionId") String jwt,
                              HttpServletResponse response,
                              @PathVariable int projectId,
                              @PathVariable int mergerequestId,
-                             @PathVariable String commitId) {
-        mergeRequestRepository.ignoreCommit(jwt, projectId, mergerequestId, commitId, false);
-        response.setStatus(200);
+                             @PathVariable String commitId,
+                             @PathVariable String fileId,
+                             @PathVariable boolean doIgnore) {
+
     }
 
 }

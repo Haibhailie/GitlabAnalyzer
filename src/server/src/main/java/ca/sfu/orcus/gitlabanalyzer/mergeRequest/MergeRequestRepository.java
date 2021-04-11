@@ -163,8 +163,7 @@ public class MergeRequestRepository {
         return commits;
     }
 
-    public void ignoreMergeRequest(String jwt, int projectId, int mergeRequestId, boolean ignoreValue) {
-        String projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId).orElse("test");
+    public void ignoreMergeRequest(String projectUrl, int mergeRequestId, boolean ignoreValue) {
         mergeRequestCollection.updateOne(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), set(MergeRequest.isIgnored.key, ignoreValue));
 
         // (ignoreValue == true)
@@ -183,8 +182,7 @@ public class MergeRequestRepository {
 //        mergeRequestCollection.updateOne(searchQuery, updateQuery);
     }
 
-    public void ignoreCommit(String jwt, int projectId, int mergeRequestId, String commitId, boolean ignoreValue) {
-        String projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId).orElse("test");
+    public void ignoreCommit(String projectUrl, int mergeRequestId, String commitId, boolean ignoreValue) {
         mergeRequestCollection.updateOne(
                 and(
                         getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
