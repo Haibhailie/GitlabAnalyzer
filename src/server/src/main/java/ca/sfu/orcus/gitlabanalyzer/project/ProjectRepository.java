@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -7,12 +8,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.gitlab4j.api.models.Visibility;
 import org.springframework.stereotype.Repository;
 
-import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -31,11 +29,12 @@ public class ProjectRepository {
     private enum Project {
         documentId("_id"),
         projectId("projectId"),
+        projectName("projectName"),
         projectUrl("projectUrl"),
         lastAnalysisTime("lastAnalysisTime"),
-        isPublic("isPublic"),
+        createdAt("createdAt"),
         analysis("analysis"),
-        memberDocIds("memberDocIds");
+        committers("committers");
 
         public final String key;
 
@@ -44,9 +43,11 @@ public class ProjectRepository {
         }
     }
 
-    public void cacheProjectSkeleton(ProjectDto projectDto, Visibility visibility) {
-        if (!projectIsAlreadyCached(projectDto.getId(), projectDto.getWebUrl())) {
-            Document projectSkeleton = generateProjectDocument(projectDto, (visibility == Visibility.PUBLIC));
+    public void cacheProjectSkeleton(ProjectDtoDb project) {
+        if (!projectIsAlreadyCached(project.getId(), project.getWebUrl())) {
+            project.setLastAnalysisTime(0);
+            project.setCommitters(new ArrayList<>());
+            Document projectSkeleton = generateProjectDocument(project, new ObjectId().toString());
             projectsCollection.insertOne(projectSkeleton);
         }
     }
@@ -56,41 +57,19 @@ public class ProjectRepository {
         return (project != null);
     }
 
-    private Document generateProjectDocument(ProjectDto projectDto, boolean isPublic) {
-        int projectId = projectDto.getId();
-        String repoUrl = projectDto.getWebUrl();
-        long lastAnalysisTime = projectDto.getLastAnalysisTime();
-        return new Document(Project.documentId.key, new ObjectId().toString())
-                    .append(Project.projectId.key, projectId)
-                    .append(Project.projectUrl.key, repoUrl)
-                    .append(Project.lastAnalysisTime.key, lastAnalysisTime)
-                    .append(Project.isPublic.key, isPublic);
-    }
-
-    public boolean projectIsPublic(int projectId, String projectUrl) throws NotFoundException {
-        Document project = getPartialProjectDocument(projectId, projectUrl, Project.isPublic.key);
-
-        if (project == null) {
-            throw new NotFoundException("Project is not in database");
-        }
-        return project.getBoolean(Project.isPublic.key);
+    private Document generateProjectDocument(ProjectDtoDb project, String documentId) {
+        return new Document(Project.documentId.key, documentId)
+                    .append(Project.projectId.key, project.getId())
+                    .append(Project.projectName.key, project.getName())
+                    .append(Project.lastAnalysisTime.key, project.getLastAnalysisTime())
+                    .append(Project.createdAt.key, project.getCreatedAt())
+                    .append(Project.projectUrl.key, project.getWebUrl())
+                    .append(Project.committers.key, project.getCommitters());
     }
 
     public long getLastAnalysisTimeForProject(int projectId, String projectUrl) {
         Document project = getPartialProjectDocument(projectId, projectUrl, Project.lastAnalysisTime.key);
         return project == null ? 0 : project.getLong(Project.lastAnalysisTime.key);
-    }
-
-    public List<String> getMemberDocIds(int projectId, String projectUrl) {
-        Document project = getPartialProjectDocument(projectId, projectUrl, Project.memberDocIds.key);
-        List<String> memberDocIds = project.getList(Project.memberDocIds.key, String.class);
-        return memberDocIds == null ? new ArrayList<>() :
-                project.getList(Project.memberDocIds.key, String.class);
-    }
-
-    // TODO: Implement this
-    public boolean containsMember(int projectId, String projectUrl, int memberId) {
-        return true;
     }
 
     private Document getPartialProjectDocument(int projectId, String repoUrl, String projectionKey) {

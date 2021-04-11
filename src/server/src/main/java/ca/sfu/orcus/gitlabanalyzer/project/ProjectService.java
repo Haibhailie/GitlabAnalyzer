@@ -1,8 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberServiceDirect;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.GitLabApi;
@@ -19,18 +18,15 @@ import java.util.List;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final GitLabApiWrapper gitLabApiWrapper;
-    private final MemberServiceDirect memberService;
 
     @Autowired
     public ProjectService(ProjectRepository projectRepository,
-                          GitLabApiWrapper gitLabApiWrapper,
-                          MemberServiceDirect memberService) {
+                          GitLabApiWrapper gitLabApiWrapper) {
         this.projectRepository = projectRepository;
         this.gitLabApiWrapper = gitLabApiWrapper;
-        this.memberService = memberService;
     }
 
-    public List<ProjectDto> getAllProjects(String jwt) {
+    public List<ProjectDtoDb> getAllProjects(String jwt) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
             return getAllProjects(gitLabApi);
@@ -39,14 +35,14 @@ public class ProjectService {
         }
     }
 
-    private ArrayList<ProjectDto> getAllProjects(GitLabApi gitLabApi) {
+    private ArrayList<ProjectDtoDb> getAllProjects(GitLabApi gitLabApi) {
         try {
-            ArrayList<ProjectDto> projectDtos = new ArrayList<>();
+            ArrayList<ProjectDtoDb> projectDtos = new ArrayList<>();
             List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
             for (Project p : projects) {
-                ProjectDto projectDto = getProjectDto(gitLabApi, p);
+                ProjectDtoDb projectDto = createProjectSkeletonDto(gitLabApi, p);
                 projectDtos.add(projectDto);
-                projectRepository.cacheProjectSkeleton(projectDto, p.getVisibility());
+                projectRepository.cacheProjectSkeleton(projectDto);
             }
             return projectDtos;
         } catch (GitLabApiException e) {
@@ -54,31 +50,11 @@ public class ProjectService {
         }
     }
 
-    private ProjectDto getProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
+    private ProjectDtoDb createProjectSkeletonDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
         String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
         long lastAnalysisTime = projectRepository.getLastAnalysisTimeForProject(project.getId(),
                 VariableDecoderUtil.decode("GITLAB_URL"));
-        return new ProjectDto(project, memberRole, lastAnalysisTime);
-    }
-
-    public ProjectExtendedDto getProject(String jwt, int projectId) {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi != null) {
-            List<MemberDto> memberDtos = memberService.getAllMembers(jwt, projectId);
-            return getProject(gitLabApi, projectId, memberDtos);
-        } else {
-            return null;
-        }
-    }
-
-    private ProjectExtendedDto getProject(GitLabApi gitLabApi, int projectId, List<MemberDto> memberDtos) {
-        try {
-            Project project = gitLabApi.getProjectApi().getProject(projectId, true);
-            long numBranches = gitLabApi.getRepositoryApi().getBranches(projectId).size();
-            return new ProjectExtendedDto(project, memberDtos, numBranches);
-        } catch (GitLabApiException e) {
-            return null;
-        }
+        return new ProjectDtoDb(project, memberRole, lastAnalysisTime, new ArrayList<>());
     }
 
     private String getAuthenticatedMembersRoleInProject(GitLabApi gitLabApi, int projectId) throws GitLabApiException {

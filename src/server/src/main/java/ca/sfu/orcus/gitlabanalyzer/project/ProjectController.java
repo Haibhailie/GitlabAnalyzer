@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.google.gson.Gson;
@@ -24,17 +25,8 @@ public class ProjectController {
     @GetMapping(path = "/api/projects")
     public String getAllProjects(@CookieValue(value = "sessionId") String jwt,
                                  HttpServletResponse response) {
-        List<ProjectDto> projects = projectService.getAllProjects(jwt);
+        List<ProjectDtoDb> projects = projectService.getAllProjects(jwt);
         response.setStatus(projects == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(projects);
-    }
-
-    @GetMapping(path = "/api/project/{projectId}")
-    public String getProject(@CookieValue(value = "sessionId") String jwt,
-                             @PathVariable("projectId") int projectId,
-                             HttpServletResponse response) {
-        ProjectExtendedDto project = projectService.getProject(jwt, projectId);
-        response.setStatus(project == null ? SC_UNAUTHORIZED : SC_OK);
-        return gson.toJson(project);
     }
 }

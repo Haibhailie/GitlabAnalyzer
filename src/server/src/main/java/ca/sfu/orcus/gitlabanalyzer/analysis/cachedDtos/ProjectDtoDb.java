@@ -10,6 +10,7 @@ public class ProjectDtoDb {
     private String role;
     private long lastActivityTime;
     private long lastAnalysisTime;
+    private long createdAt;
     private String webUrl;
     private List<CommitterDtoDb> committers;
 
@@ -19,6 +20,7 @@ public class ProjectDtoDb {
         setRole(role);
         setLastActivityTime(project.getLastActivityAt().getTime());
         setLastAnalysisTime(lastAnalysisTime);
+        setCreatedAt(project.getCreatedAt().getTime());
         setWebUrl(project.getWebUrl());
         setCommitters(committers);
     }
@@ -49,6 +51,42 @@ public class ProjectDtoDb {
 
     public void setCommitters(List<CommitterDtoDb> committers) {
         this.committers = committers;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public long getLastActivityTime() {
+        return lastActivityTime;
+    }
+
+    public long getLastAnalysisTime() {
+        return lastAnalysisTime;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public List<CommitterDtoDb> getCommitters() {
+        return committers;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
     }
 
     @Override
