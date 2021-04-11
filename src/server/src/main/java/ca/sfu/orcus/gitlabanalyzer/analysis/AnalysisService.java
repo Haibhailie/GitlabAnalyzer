@@ -61,25 +61,6 @@ public class AnalysisService {
         analysisRepository.cacheMemberDtos(project.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
     }
 
-    private void updateCommitterMemberResolution(int projectId, String projectUrl, Map<String, Integer> committerToMemberMap) {
-        /*
-         * 1. Get projectUrl
-         * 2. Get the committerDtoDbs for all committers (keys of the map)
-         * 3. For each committer
-         *    - update the MemberDto field
-         *    - for each of the commitIds
-         *      - update the memberId field of the commit
-         * 4. Update committerEmails in MemberDto
-         *
-         for (Map.Entry<String, Integer> entry : committerToMemberMap.entrySet()) {
-            committerRepo.updateCommitterMember(entry.getKey(), entry.getValue());
-            List<String> commitIds = committerRepo.getCommitIdsForCommitter(entry.getKey());
-            for (String commitId : commitIds) {
-                committerRepo.updateCommitMemberId(commitId, entry.getValue());
-            }
-        }*/
-    }
-
     private Map<Integer, MemberDtoDb> initializeMemberDtos(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
         Map<Integer, MemberDtoDb> memberDtos = new HashMap<>();
 
