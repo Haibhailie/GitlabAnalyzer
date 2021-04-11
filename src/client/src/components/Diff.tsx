@@ -2,9 +2,9 @@ import { TCommitDiffs, TFileData, TLineType } from '../types'
 import { LONG_STRING_LEN } from '../utils/constants'
 
 import Dropdown from './Dropdown'
+import IgnoreBox from './IgnoreBox'
 
 import styles from '../css/Diff.module.css'
-import IgnoreBox from './IgnoreBox'
 
 export interface IDiffProps {
   data?: TFileData
