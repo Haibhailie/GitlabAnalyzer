@@ -7,10 +7,11 @@ import { UserConfigContext } from '../context/UserConfigContext'
 import { ThemeProvider, Tooltip } from '@material-ui/core'
 import tooltipTheme from '../themes/tooltipTheme'
 import { TCommentData } from '../types'
+import { LONG_COMMENT_LEN } from '../utils/constants'
 
 import Table from '../components/Table'
-import CommentAccordion from '../components/CommentAccordion'
 import ExternalLink from '../components/ExternalLink'
+import Dropdown from '../components/Dropdown'
 
 import styles from '../css/CommentTable.module.css'
 
@@ -21,7 +22,7 @@ export interface ICommentTableProps {
   memberId: string
 }
 
-const isLongComment = (content: string) => content.length > 140
+const isLongComment = (content: string) => content.length > LONG_COMMENT_LEN
 
 const isInvalidUrl = (url: string) => {
   return url.includes('example')
@@ -81,7 +82,7 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
             'By',
             'GitLab link',
           ]}
-          columnWidths={['1fr', '6fr', '0.8fr', '1fr', '0.8fr', '0.8fr']}
+          columnWidths={['1fr', '5fr', '0.8fr', '1fr', '0.8fr', '0.8fr']}
           classes={{
             container: styles.tableContainer,
             table: styles.table,
@@ -94,10 +95,19 @@ const CommentTable = ({ projectId, memberId }: ICommentTableProps) => {
               ({ wordcount, content, date, context, webUrl, parentAuthor }) => {
                 return {
                   date: dateConverter(date, true),
-                  content: isLongComment(content) ? (
-                    <CommentAccordion comment={content} />
-                  ) : (
-                    content
+                  content: (
+                    <div className={styles.commentContainer}>
+                      <Dropdown
+                        arrowOnLeft
+                        fixedCollapsed={!isLongComment(content)}
+                        className={styles.comment}
+                        header={
+                          <div className={styles.commentHeader}>{content}</div>
+                        }
+                      >
+                        <div className={styles.commentBody}>{content}</div>
+                      </Dropdown>
+                    </div>
                   ),
                   wordcount,
                   context:

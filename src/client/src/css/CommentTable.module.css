@@ -22,3 +22,16 @@
 .theader {
   background-color: var(--color-background-gray);
 }
+
+.commentHeader {
+  margin-left: 40px;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 600px;
+}
+
+.commentBody {
+  overflow-x: auto;
+  margin: 10px 0 0 40px;
+}
