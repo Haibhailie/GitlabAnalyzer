@@ -31,29 +31,28 @@ public class FileRepository {
     }
 
     public List<FileDto> getFilesFromCache(Document doc) {
-        List<Document> fileDocuments = doc.getList(File.files.key, Document.class);
+        List<Document> fileDocument = doc.getList(File.files.key, Document.class);
         List<FileDto> files = new ArrayList<>();
-        for (Document presentDocument : fileDocuments) {
-            files.add(getFileFromDocument(presentDocument));
+        for (Document d : fileDocument) {
+            files.add(getFileFromDocument(d));
         }
         return files;
     }
 
     private FileDto getFileFromDocument(Document doc) {
-        FileDto fileDto = new FileDto(doc.getString(File.name.key));
-        fileDto.setExtension(doc.getString(File.extension.key));
-        fileDto.setTotalScore(gson.fromJson(doc.getString(File.fileScore.key), Scores.class));
-        fileDto.setLinesOfCodeChanges(gson.fromJson(doc.getString(File.linesOfCodeChanges.key), LOCDto.class));
-        fileDto.setIgnored(doc.getBoolean(File.isIgnored));
-        return fileDto;
+        return new FileDto(doc.getString(File.name.key))
+                .setExtension(doc.getString(File.extension.key))
+                .setTotalScore(gson.fromJson(doc.getString(File.fileScore.key), Scores.class))
+                .setLinesOfCodeChanges(gson.fromJson(doc.getString(File.linesOfCodeChanges.key), LOCDto.class))
+                .setIgnored(doc.getBoolean(File.isIgnored));
     }
 
     public List<Document> getFileDocuments(List<FileDto> files) {
-        List<Document> fileDocument = new ArrayList<>();
-        for (FileDto presentFile : files) {
-            fileDocument.add(generateFileDocuments(presentFile));
+        List<Document> filesDocument = new ArrayList<>();
+        for (FileDto f : files) {
+            filesDocument.add(generateFileDocuments(f));
         }
-        return fileDocument;
+        return filesDocument;
     }
 
     public Document generateFileDocuments(FileDto file) {

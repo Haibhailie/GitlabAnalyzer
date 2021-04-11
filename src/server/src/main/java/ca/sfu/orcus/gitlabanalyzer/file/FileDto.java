@@ -30,32 +30,38 @@ public class FileDto {
         this.setTotalScore(score);
     }
 
-    public void setExtension(String name) {
+    public FileDto setExtension(String name) {
         if (name.contains(".")) {
-            extension = name.substring(name.indexOf(".") + 1);
+            this.extension = name.substring(name.indexOf(".") + 1);
         } else {
-            extension = "Unknown";
+            this.extension = "Unknown";
         }
+        return this;
     }
 
-    public void setFileDiffDtos(List<FileDiffDto> fileDiffDtos) {
+    public FileDto setFileDiffDtos(List<FileDiffDto> fileDiffDtos) {
         this.fileDiffDtos = fileDiffDtos;
+        return this;
     }
 
-    public void setTotalScore(Scores fileScore) {
+    public FileDto setTotalScore(Scores fileScore) {
         this.fileScore = fileScore;
+        return this;
     }
 
-    public void setTotalScore(double totalScore) {
+    public FileDto setTotalScore(double totalScore) {
         fileScore.setTotalScore(totalScore);
+        return this;
     }
 
-    public void setLinesOfCodeChanges(LOCDto linesOfCodeChanges) {
+    public FileDto setLinesOfCodeChanges(LOCDto linesOfCodeChanges) {
         this.linesOfCodeChanges = linesOfCodeChanges;
+        return this;
     }
 
-    public void setIgnored(boolean ignored) {
+    public FileDto setIgnored(boolean ignored) {
         isIgnored = ignored;
+        return this;
     }
 
     public boolean isIgnored() {

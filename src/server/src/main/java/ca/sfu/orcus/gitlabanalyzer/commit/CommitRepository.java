@@ -42,11 +42,11 @@ public class CommitRepository {
     }
 
     public List<Document> getCommitDocuments(List<CommitDtoDb> commits) {
-        List<Document> commitsDocument = new ArrayList<>();
-        for (CommitDtoDb presentCommit : commits) {
-            commitsDocument.add(generateCommitDocument(presentCommit));
+        List<Document> commitDocument = new ArrayList<>();
+        for (CommitDtoDb c : commits) {
+            commitDocument.add(generateCommitDocument(c));
         }
-        return commitsDocument;
+        return commitDocument;
     }
 
     private Document generateCommitDocument(CommitDtoDb commit) {

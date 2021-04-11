@@ -100,6 +100,9 @@ public class MergeRequestRepository {
     }
 
     private Document generateMergeRequestDocument(MergeRequestDtoDb mergeRequest, String documentId, String projectUrl) {
+        List<Document> commitDocuments = commitRepo.getCommitDocuments(mergeRequest.getCommits());
+        List<Document> fileDocuments = fileRepo.getFileDocuments(mergeRequest.getFiles());
+
         return new Document(MergeRequest.documentId.key, documentId)
                 .append(MergeRequest.mergeRequestId.key, mergeRequest.getMergeRequestId())
                 .append(MergeRequest.projectUrl.key, projectUrl)
@@ -110,11 +113,11 @@ public class MergeRequestRepository {
                 .append(MergeRequest.description.key, mergeRequest.getDescription())
                 .append(MergeRequest.time.key, mergeRequest.getTime())
                 .append(MergeRequest.webUrl.key, mergeRequest.getWebUrl())
-                .append(MergeRequest.commits.key, commitRepo.getCommitDocuments(mergeRequest.getCommits()))
+                .append(MergeRequest.commits.key, commitDocuments)
                 .append(MergeRequest.committerNames.key, mergeRequest.getCommitterNames())
                 .append(MergeRequest.sumOfCommitsScore.key, mergeRequest.getSumOfCommitsScore())
                 .append(MergeRequest.isIgnored.key, mergeRequest.isIgnored())
-                .append(MergeRequest.files.key, fileRepo.getFileDocuments(mergeRequest.getFiles()));
+                .append(MergeRequest.files.key, fileDocuments);
     }
 
     public List<MergeRequestDtoDb> getMergeRequests(List<String> mergeRequestIds) {
