@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MergeRequestDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
+import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.LOCDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
@@ -25,6 +26,7 @@ public class MergeRequestRepository {
     private static final Gson gson = new Gson();
 
     private enum File {
+        documentId("_id"),
         name("name"),
         extension("extension"),
         fileScore("fileScore"),
@@ -60,6 +62,7 @@ public class MergeRequestRepository {
     }
 
     private enum Commit {
+        documentId("_id"),
         commitId("commitId"),
         title("title"),
         message("message"),
@@ -99,11 +102,27 @@ public class MergeRequestRepository {
     }
 
     private String cacheMergeRequest(MergeRequestDtoDb mergeRequest, String projectUrl) {
+        Document existingDocument = mergeRequestCollection.find(getMergeRequestEqualityParameter(projectUrl, mergeRequest))
+                .projection(include(MergeRequest.documentId.key)).first();
+        if (existingDocument != null) {
+            String documentId = existingDocument.getString(MergeRequest.documentId.key);
+            replaceMergeRequestDocument(documentId, mergeRequest, projectUrl);
+            return documentId;
+        } else {
+            return cacheMergeRequestDocument(mergeRequest, projectUrl);
+        }
+        return documentId;
+    }
+
+    private void replaceMergeRequestDocument(String documentId, MergeRequestDtoDb mergeRequest, String projectUrl) {
+        Document mergeRequestDocument = generateMergeRequestDocument(mergeRequest, documentId, projectUrl);
+        mergeRequestCollection.replaceOne(getMergeRequestEqualityParameter(projectUrl, mergeRequest), mergeRequestDocument);
+    }
+
+    private String cacheMergeRequestDocument(MergeRequestDtoDb mergeRequest, String projectUrl) {
         String documentId = new ObjectId().toString();
         Document mergeRequestDocument = generateMergeRequestDocument(mergeRequest, documentId, projectUrl);
-        if (mergeRequestCollection.findOneAndReplace(getMergeRequestEqualityParameter(projectUrl, mergeRequest), mergeRequestDocument) == null) {
-            mergeRequestCollection.insertOne(mergeRequestDocument);
-        }
+        mergeRequestCollection.insertOne(mergeRequestDocument);
         return documentId;
     }
 
@@ -127,8 +146,8 @@ public class MergeRequestRepository {
     }
 
     private Document generateCommitDocument(CommitDtoDb commit) {
-        Document commitsDocument = new Document();
-        commitsDocument.append(Commit.commitId.key, commit.getId())
+        return new Document(Commit.documentId.key, new ObjectId().toString())
+                .append(Commit.commitId.key, commit.getId())
                 .append(Commit.title.key, commit.getTitle())
                 .append(Commit.message.key, commit.getMessage())
                 .append(Commit.author.key, commit.getAuthor())
@@ -142,8 +161,6 @@ public class MergeRequestRepository {
                 .append(Commit.score.key, commit.getScore())
                 .append(Commit.files.key, getFileDocuments(commit.getFiles()))
                 .append(Commit.isIgnored.key, commit.isIgnored());
-
-        return commitsDocument;
     }
 
     private List<Document> getFileDocuments(List<FileDto> files) {
@@ -155,13 +172,12 @@ public class MergeRequestRepository {
     }
 
     private Document generateFileDocuments(FileDto file) {
-        Document fileDocument = new Document();
-        fileDocument.append(File.name.key, file.getFileName())
+        return new Document(File.documentId.key, new ObjectId().toString())
+                .append(File.name.key, file.getFileName())
                 .append(File.extension.key, file.getFileExtension())
-                .append(File.fileScore.key, file.getFileScore())
-                .append(File.linesOfCodeChanges.key, file.getLinesOfCodeChanges())
+                .append(File.fileScore.key, gson.toJson(file.getFileScore()))
+                .append(File.linesOfCodeChanges.key, gson.toJson(file.getLinesOfCodeChanges()))
                 .append(File.isIgnored.key, file.isIgnored());
-        return fileDocument;
     }
 
     public List<MergeRequestDtoDb> getMergeRequests(List<String> mergeRequestIds) {
@@ -227,7 +243,7 @@ public class MergeRequestRepository {
     }
 
     private List<FileDto> getFilesFromCache(Document doc) {
-        List<Document> fileDocuments = doc.getList("files", Document.class);
+        List<Document> fileDocuments = doc.getList(MergeRequest.files.key, Document.class);
         List<FileDto> files = new ArrayList<>();
         for (Document presentDocument : fileDocuments) {
             files.add(getFileFromDocument(presentDocument));
@@ -235,11 +251,11 @@ public class MergeRequestRepository {
         return files;
     }
 
-    private FileDto getFileFromDocument(Document doc){
+    private FileDto getFileFromDocument(Document doc) {
         FileDto fileDto = new FileDto(doc.getString(File.name.key));
         fileDto.setExtension(doc.getString(File.extension.key));
-        fileDto.setTotalScore(doc.get(File.fileScore.key, Scores.class));
-        fileDto.setLinesOfCodeChanges(doc.get(File.linesOfCodeChanges.key, LOCDto.class));
+        fileDto.setTotalScore(gson.fromJson(doc.getString(File.fileScore.key), Scores.class));
+        fileDto.setLinesOfCodeChanges(gson.fromJson(doc.getString(File.linesOfCodeChanges.key), LOCDto.class));
         fileDto.setIgnored(doc.getBoolean(File.isIgnored));
         return fileDto;
     }
