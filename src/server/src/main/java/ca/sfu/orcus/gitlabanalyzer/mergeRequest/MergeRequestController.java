@@ -18,11 +18,13 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class MergeRequestController {
     private final MergeRequestService mergeRequestService;
+    private final MergeRequestRepository mergeRequestRepository;
     private static final Gson gson = new Gson();
 
     @Autowired
-    public MergeRequestController(MergeRequestService mergeRequestService) {
+    public MergeRequestController(MergeRequestService mergeRequestService, MergeRequestRepository mergeRequestRepository) {
         this.mergeRequestService = mergeRequestService;
+        this.mergeRequestRepository = mergeRequestRepository;
     }
 
     @GetMapping("/api/project/{projectId}/mergerequests")
@@ -77,7 +79,8 @@ public class MergeRequestController {
                                    HttpServletResponse response,
                                    @PathVariable int projectId,
                                    @PathVariable int mergerequestId) {
-
+        mergeRequestRepository.ignoreMergeRequest(jwt, projectId, mergerequestId, true);
+        response.setStatus(200);
     }
 
     @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/ignore/false")
@@ -85,7 +88,8 @@ public class MergeRequestController {
                                    HttpServletResponse response,
                                    @PathVariable int projectId,
                                    @PathVariable int mergerequestId) {
-
+        mergeRequestRepository.ignoreMergeRequest(jwt, projectId, mergerequestId, false);
+        response.setStatus(200);
     }
 
     @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/file/{fileId}/ignore/true")
@@ -112,7 +116,8 @@ public class MergeRequestController {
                            @PathVariable int projectId,
                            @PathVariable int mergerequestId,
                            @PathVariable String commitId) {
-
+        mergeRequestRepository.ignoreCommit(jwt, projectId, mergerequestId, commitId, true);
+        response.setStatus(200);
     }
 
     @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commit/{commitId}/ignore/false")
@@ -121,7 +126,8 @@ public class MergeRequestController {
                              @PathVariable int projectId,
                              @PathVariable int mergerequestId,
                              @PathVariable String commitId) {
-
+        mergeRequestRepository.ignoreCommit(jwt, projectId, mergerequestId, commitId, false);
+        response.setStatus(200);
     }
 
 }

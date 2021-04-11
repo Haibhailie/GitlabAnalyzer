@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MergeRequestDtoDb;
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitRepository;
 import ca.sfu.orcus.gitlabanalyzer.file.FileRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
@@ -14,10 +15,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -34,6 +32,7 @@ public class MergeRequestRepository {
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
         mergeRequestCollection = database.getCollection(VariableDecoderUtil.decode("MERGE_REQUESTS_COLLECTION"));
 
+        this.gitLabApiWrapper = gitLabApiWrapper;
         this.commitRepo = commitRepo;
         this.fileRepo = fileRepo;
     }
@@ -85,7 +84,7 @@ public class MergeRequestRepository {
 
     private void replaceMergeRequestDocument(String documentId, MergeRequestDtoDb mergeRequest, String projectUrl) {
         Document mergeRequestDocument = generateMergeRequestDocument(mergeRequest, documentId, projectUrl);
-        mergeRequestCollection.replaceOne(getMergeRequestEqualityParameter(projectUrl, mergeRequest), mergeRequestDocument);
+        mergeRequestCollection.replaceOne(getMergeRequestEqualityParameter(projectUrl, mergeRequest.getMergeRequestId()), mergeRequestDocument);
     }
 
     private String cacheMergeRequestDocument(MergeRequestDtoDb mergeRequest, String projectUrl) {
@@ -164,5 +163,57 @@ public class MergeRequestRepository {
         return commits;
     }
 
+    public void ignoreMergeRequest(String jwt, int projectId, int mergeRequestId, boolean ignoreValue) {
+        String projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId).orElse("test");
+        mergeRequestCollection.updateOne(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), set(MergeRequest.isIgnored.key, ignoreValue));
+
+        // (ignoreValue == true)
+        // Ignore all files in the MR diff (displacement)
+        // Ignore all commits and the files inside of those commits
+
+        // (ignoreValue == false)
+        // Unignore the MR
+
+//        BasicDBObject searchQuery = new BasicDBObject();
+//        searchQuery.append(MergeRequest.mergeRequestId.key, mergeRequestId);
+//
+//        BasicDBObject updateQuery = new BasicDBObject();
+//        updateQuery.append("$set", new BasicDBObject().append(MergeRequest.isIgnored.key, ignoreValue));
+
+//        mergeRequestCollection.updateOne(searchQuery, updateQuery);
+    }
+
+    public void ignoreCommit(String jwt, int projectId, int mergeRequestId, String commitId, boolean ignoreValue) {
+        String projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId).orElse("test");
+        mergeRequestCollection.updateOne(
+                and(
+                        getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                        eq("commits.commitId", commitId)),
+                set("commits.$.isIgnored", ignoreValue));
+
+        // "commits.$[isIgnored]"
+
+        // (ignoreValue == true)
+        // Ignore the files inside of the commit
+
+        // (ignoreValue == false)
+        // Unignore the parent MR
+        // Unignore the files inside of the commit
+    }
+
+    public void ignoreFile() {
+        // (ignoreValue == true)
+        // Ignore the file
+
+        // (ignoreValue == false)
+        // CommitFile: Unignore the file, the parent commit, the parent MR
+        // MergeRequestFile: Unignore the file, the parent MR
+
+        //         MR
+        //    /          \
+        // Commits      Files (Displacement)
+        //    |
+        //  Files (Distance)
+    }
 }
 
