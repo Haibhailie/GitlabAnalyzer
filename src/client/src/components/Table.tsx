@@ -22,6 +22,7 @@ export interface ITableProps {
   collapsible?: boolean
   isOpen?: boolean
   maxHeight?: number
+  startOpened?: boolean
   onClick?: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number
@@ -39,6 +40,7 @@ const Table = ({
   collapsible,
   isOpen,
   maxHeight,
+  startOpened,
   onClick,
 }: ITableProps) => {
   const [sortConfig, setSortConfig] = useState({ by: '', asc: true })
@@ -86,6 +88,7 @@ const Table = ({
       }
       fixedCollapsed={!collapsible}
       maxHeight={maxHeight}
+      startOpened={startOpened}
     >
       <div
         style={{
