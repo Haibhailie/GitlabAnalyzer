@@ -205,7 +205,7 @@ public class AnalysisService {
                                                         List<Pair<Integer, ObjectId>> mrIdsToDocIds) {
         for (Pair<Integer, ObjectId> mrIdToDocId : mrIdsToDocIds) {
             Integer mrId = mrIdToDocId.getFirst();
-            Integer memberId = mrIdToMrDtoMap.get(mrId).getAuthorId();
+            Integer memberId = mrIdToMrDtoMap.get(mrId).getUserId();
             memberToMemberDtoMap.get(memberId).addMergeRequestDocId(mrIdToDocId.getSecond());
         }
     }

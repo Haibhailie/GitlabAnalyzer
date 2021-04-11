@@ -11,7 +11,7 @@ public final class MergeRequestDtoDb {
     private int mergeRequestId;
     private String title;
     private String author;
-    private int authorId;
+    private int userId; // TODO: Change it to authorId or memberId on both BE and FE
     private String description;
     private long time;
     private String webUrl;
@@ -32,7 +32,7 @@ public final class MergeRequestDtoDb {
         setMergeRequestId(mergeRequest.getIid());
         setTitle(mergeRequest.getTitle());
         setAuthor(mergeRequest.getAuthor().getName());
-        setAuthorId(mergeRequest.getAuthor().getId());
+        setUserId(mergeRequest.getAuthor().getId());
         setDescription(mergeRequest.getDescription());
         setTime(mergeRequest.getMergedAt().getTime());
         setWebUrl(mergeRequest.getWebUrl());
@@ -61,8 +61,8 @@ public final class MergeRequestDtoDb {
         return this;
     }
 
-    public MergeRequestDtoDb setAuthorId(int authorId) {
-        this.authorId = authorId;
+    public MergeRequestDtoDb setUserId(int userId) {
+        this.userId = userId;
         return this;
     }
 
@@ -106,8 +106,8 @@ public final class MergeRequestDtoDb {
         return this;
     }
 
-    public int getAuthorId() {
-        return authorId;
+    public int getUserId() {
+        return userId;
     }
 
     public int getMergeRequestId() {
@@ -169,7 +169,7 @@ public final class MergeRequestDtoDb {
         return (this.mergeRequestId == m.mergeRequestId
                 && this.title.equals(m.title)
                 && this.author.equals(m.author)
-                && this.authorId == m.authorId
+                && this.userId == m.userId
                 && this.description.equals(m.description)
                 && this.time == m.time
                 && this.webUrl.equals(m.webUrl)

@@ -44,7 +44,7 @@ public class MergeRequestRepository {
         projectUrl("projectUrl"),
         title("title"),
         author("author"),
-        authorId("authorId"),
+        userId("userId"),
         description("description"),
         time("time"),
         webUrl("webUrl"),
@@ -104,7 +104,7 @@ public class MergeRequestRepository {
                 .append(MergeRequest.projectUrl.key, projectUrl)
                 .append(MergeRequest.title.key, mergeRequest.getTitle())
                 .append(MergeRequest.author.key, mergeRequest.getAuthor())
-                .append(MergeRequest.authorId.key, mergeRequest.getAuthorId())
+                .append(MergeRequest.userId.key, mergeRequest.getUserId())
                 .append(MergeRequest.description.key, mergeRequest.getDescription())
                 .append(MergeRequest.time.key, mergeRequest.getTime())
                 .append(MergeRequest.webUrl.key, mergeRequest.getWebUrl())
@@ -138,7 +138,7 @@ public class MergeRequestRepository {
                 .setMergeRequestId(doc.getInteger(MergeRequest.mergeRequestId.key))
                 .setTitle(doc.getString(MergeRequest.title.key))
                 .setAuthor(doc.getString(MergeRequest.author.key))
-                .setAuthorId(doc.getInteger(MergeRequest.authorId.key))
+                .setUserId(doc.getInteger(MergeRequest.userId.key))
                 .setDescription(doc.getString(MergeRequest.description.key))
                 .setTime(doc.getLong(MergeRequest.time.key))
                 .setWebUrl(doc.getString(MergeRequest.webUrl.key))
