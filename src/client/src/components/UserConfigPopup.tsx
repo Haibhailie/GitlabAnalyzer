@@ -46,6 +46,11 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     setFileScores([...fileScores])
   }
 
+  const deleteFileType = (index: number) => {
+    fileScores.splice(index, 1)
+    setFileScores([...fileScores])
+  }
+
   const save = () => {
     dispatch({
       type: 'SET_SCORES',
@@ -150,7 +155,10 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                   end: (
                     <div className={styles.end}>
                       pts
-                      <button className={styles.delete}>
+                      <button
+                        className={styles.delete}
+                        onClick={() => deleteFileType(i)}
+                      >
                         <Delete />
                       </button>
                     </div>
