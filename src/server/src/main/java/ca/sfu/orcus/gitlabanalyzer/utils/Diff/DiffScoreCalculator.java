@@ -142,17 +142,18 @@ public class DiffScoreCalculator {
 
         for (int i = 0; i < diffScoreDtos.size(); i++) {
 
-            int additions = diffScoreDtos.get(i).getNumLineAdditions();
-            int deletions = diffScoreDtos.get(i).getNumLineDeletions();
-            int blankAdditions = diffScoreDtos.get(i).getNumBlankAdditions();
-            int syntaxChanges = diffScoreDtos.get(i).getNumSyntaxChanges();
-            int spacingChanges = diffScoreDtos.get(i).getNumSpacingChanges();
+            DiffScoreDto presentDiffScore = diffScoreDtos.get(i);
+            int additions = presentDiffScore.getNumLineAdditions();
+            int deletions = presentDiffScore.getNumLineDeletions();
+            int blankAdditions = presentDiffScore.getNumBlankAdditions();
+            int syntaxChanges = presentDiffScore.getNumSyntaxChanges();
+            int spacingChanges = presentDiffScore.getNumSpacingChanges();
 
-            double totalScore = (diffScoreDtos.get(i).getNumLineAdditions() * addFactor)
-                    + diffScoreDtos.get(i).getNumLineDeletions() * deleteFactor
-                    + diffScoreDtos.get(i).getNumBlankAdditions() * blankFactor
-                    + diffScoreDtos.get(i).getNumSyntaxChanges() * syntaxFactor
-                    + diffScoreDtos.get(i).getNumSpacingChanges() * spacingFactor;
+            double totalScore = (additions * addFactor)
+                    + deletions * deleteFactor
+                    + blankAdditions * blankFactor
+                    + syntaxChanges * syntaxFactor
+                    + spacingChanges * spacingFactor;
 
             fileDtos.get(i).setMergeRequestFileScore(new Scores(totalScore,
                     additions,
@@ -167,7 +168,7 @@ public class DiffScoreCalculator {
                     syntaxChanges,
                     spacingChanges));
 
-            fileDtos.get(i).setFileDiffDtos(diffScoreDtos.get(i).getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i + 1)));
+            fileDtos.get(i).setFileDiffDtos(presentDiffScore.getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i + 1)));
         }
         return fileDtos;
     }
