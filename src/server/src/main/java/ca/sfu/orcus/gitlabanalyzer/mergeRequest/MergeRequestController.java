@@ -71,4 +71,57 @@ public class MergeRequestController {
         response.setStatus(allMergeRequestsByMemberId == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(allMergeRequestsByMemberId);
     }
+
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/ignore/true")
+    public void ignoreMergeRequest(@CookieValue(value = "sessionId") String jwt,
+                                   HttpServletResponse response,
+                                   @PathVariable int projectId,
+                                   @PathVariable int mergerequestId) {
+
+    }
+
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/ignore/false")
+    public void unignoreMergeRequest(@CookieValue(value = "sessionId") String jwt,
+                                   HttpServletResponse response,
+                                   @PathVariable int projectId,
+                                   @PathVariable int mergerequestId) {
+
+    }
+
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/file/{fileId}/ignore/true")
+    public void ignoreFile(@CookieValue(value = "sessionId") String jwt,
+                             HttpServletResponse response,
+                             @PathVariable int projectId,
+                             @PathVariable int mergerequestId,
+                             @PathVariable String fileId) {
+
+    }
+
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/file/{fileId}/ignore/false")
+    public void unignoreFile(@CookieValue(value = "sessionId") String jwt,
+                             HttpServletResponse response,
+                             @PathVariable int projectId,
+                             @PathVariable int mergerequestId,
+                             @PathVariable String fileId) {
+
+    }
+
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commit/{commitId}/ignore/true")
+    public void ignoreCommit(@CookieValue(value = "sessionId") String jwt,
+                           HttpServletResponse response,
+                           @PathVariable int projectId,
+                           @PathVariable int mergerequestId,
+                           @PathVariable String commitId) {
+
+    }
+
+    @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commit/{commitId}/ignore/false")
+    public void unignoreCommit(@CookieValue(value = "sessionId") String jwt,
+                             HttpServletResponse response,
+                             @PathVariable int projectId,
+                             @PathVariable int mergerequestId,
+                             @PathVariable String commitId) {
+
+    }
+
 }
