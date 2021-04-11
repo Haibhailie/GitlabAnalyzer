@@ -56,12 +56,9 @@ public class AnalysisService {
         //          - cacheCommitterDtos() inside projectDto
         analysisRepository.cacheProjectDto(projectDto);
 
-        analysisRepository.cacheMemberDtos(project.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
+        analysisRepository.cacheMergeRequestDtos(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
 
-        analysisRepository.cacheMergeRequestDtos(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values())); //(key: projectUrl + mergeRequestId)
-        /*List<Pair<Integer, ObjectId>> mrIdsToDocIds =
-                analysisRepository.cacheMergeRequestsDtos(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
-        addMergeRequestDocumentIdsToMemberDtos(memberToMemberDtoMap, mrIdToMrDtoMap, mrIdsToDocIds);
+        analysisRepository.cacheMemberDtos(project.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
     }
 
     private Map<Integer, MemberDtoDb> initializeMemberDtos(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
