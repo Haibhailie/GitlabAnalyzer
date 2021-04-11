@@ -170,7 +170,6 @@ public final class CommitDtoDb {
         return files;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {

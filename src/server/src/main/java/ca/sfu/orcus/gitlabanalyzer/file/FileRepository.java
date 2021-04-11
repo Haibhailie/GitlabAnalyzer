@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.file;
 
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.LOCDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
 import com.google.gson.Gson;

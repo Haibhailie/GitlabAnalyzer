@@ -7,7 +7,6 @@ import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.LOCDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
-import com.google.gson.Gson;
 import com.mongodb.client.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;

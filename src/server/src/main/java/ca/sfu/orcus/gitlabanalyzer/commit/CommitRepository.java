@@ -1,13 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitDtoDb;
-import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileRepository;
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestRepository;
-import ca.sfu.orcus.gitlabanalyzer.utils.Diff.LOCDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
 import com.google.gson.Gson;
-import com.mongodb.client.*;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
@@ -92,6 +87,4 @@ public class CommitRepository {
         commit.setFiles(fileRepository.getFilesFromCache(doc));
         return commit;
     }
-
-
 }

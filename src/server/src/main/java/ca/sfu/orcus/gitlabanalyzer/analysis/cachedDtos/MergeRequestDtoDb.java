@@ -22,7 +22,6 @@ public final class MergeRequestDtoDb {
     private boolean isIgnored;
     private List<FileDto> files;
 
-
     public MergeRequestDtoDb() {
     }
 
@@ -47,7 +46,6 @@ public final class MergeRequestDtoDb {
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
         setFiles(scoreCalculator.getMergeRequestScore(mergeRequestChanges));
     }
-
 
     public void setMergeRequestId(int mergeRequestId) {
         this.mergeRequestId = mergeRequestId;
@@ -144,7 +142,6 @@ public final class MergeRequestDtoDb {
     public List<FileDto> getFiles() {
         return files;
     }
-
 
     @Override
     public boolean equals(Object o) {
