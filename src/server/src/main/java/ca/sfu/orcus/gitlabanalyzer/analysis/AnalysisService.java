@@ -41,7 +41,7 @@ public class AnalysisService {
         Map<Integer, MergeRequestDtoDb> mrIdToMrDtoMap = new HashMap<>();
 
         for (MergeRequest mr : getAllMergeRequests(gitLabApi, projectId)) {
-            MergeRequestDtoDb mergeRequestDto = getMergeRequestDto(gitLabApi, mr, committerToCommitterDtoMap);
+            MergeRequestDtoDb mergeRequestDto = generateMergeRequestDto(gitLabApi, mr, committerToCommitterDtoMap);
             mrIdToMrDtoMap.put(mr.getIid(), mergeRequestDto);
 
             addMergeRequestNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, mr);
@@ -50,7 +50,7 @@ public class AnalysisService {
         addIssueNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, projectId);
 
         Project project = gitLabApi.getProjectApi().getProject(projectId);
-        ProjectDtoDb projectDto = getProjectDto(gitLabApi, project, new ArrayList<>(committerToCommitterDtoMap.values()));
+        ProjectDtoDb projectDto = generateProjectDto(gitLabApi, project, new ArrayList<>(committerToCommitterDtoMap.values()));
 
         // TODO: cacheProjectDto(projectDto) (key: projectUrl + projectId)
         //          - cacheCommitterDtos() inside projectDto
@@ -76,9 +76,10 @@ public class AnalysisService {
         return gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
     }
 
-    private MergeRequestDtoDb getMergeRequestDto(GitLabApi gitLabApi,
-                                                 MergeRequest mergeRequest,
-                                                 Map<String, CommitterDtoDb> committerToCommitterDtoMap) throws GitLabApiException {
+    private MergeRequestDtoDb generateMergeRequestDto(GitLabApi gitLabApi,
+                                                      MergeRequest mergeRequest,
+                                                      Map<String, CommitterDtoDb> committerToCommitterDtoMap)
+            throws GitLabApiException {
         List<CommitDtoDb> commitDtos = new ArrayList<>();
         Set<String> committers = new HashSet<>();
         boolean isSolo = true;
@@ -97,7 +98,7 @@ public class AnalysisService {
             committers.add(detailedCommit.getAuthorEmail());
             addCommitIdAndMrIdToCommitterDto(committerToCommitterDtoMap, detailedCommit, mergeRequestId);
 
-            CommitDtoDb commitDto = getCommitDto(gitLabApi, projectId, detailedCommit);
+            CommitDtoDb commitDto = generateCommitDto(gitLabApi, projectId, detailedCommit);
             sumOfCommitsScore += commitDto.getScore();
 
             commitDtos.add(commitDto);
@@ -139,10 +140,10 @@ public class AnalysisService {
         }
     }
 
-    private CommitDtoDb getCommitDto(GitLabApi gitLabApi, Integer projectId, Commit detailedCommit)
+    private CommitDtoDb generateCommitDto(GitLabApi gitLabApi, Integer projectId, Commit detailedCommit)
             throws GitLabApiException {
         List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, detailedCommit.getId());
-        return new CommitDtoDb(detailedCommit, diffList);
+        return new CommitDtoDb(detailedCommit, MemberUtils.EmptyMember.getId(), diffList);
     }
 
     private void addMergeRequestNotesToMemberDtos(GitLabApi gitLabApi,
@@ -173,7 +174,7 @@ public class AnalysisService {
         }
     }
 
-    private ProjectDtoDb getProjectDto(GitLabApi gitLabApi, Project project, List<CommitterDtoDb> committers)
+    private ProjectDtoDb generateProjectDto(GitLabApi gitLabApi, Project project, List<CommitterDtoDb> committers)
             throws GitLabApiException {
         String role = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
         return new ProjectDtoDb(project, role, new Date().getTime(), committers);
