@@ -23,7 +23,7 @@ const Home = () => {
   const history = useHistory()
   const { Suspense, data, error } = useSuspense<TProjects, Error>(
     (setData, setError) => {
-      jsonFetch<TProjects>('/api/projects')
+      jsonFetch<TProjects>('http://localhost:8081/api/projects')
         .then(data => {
           setData(data)
         })

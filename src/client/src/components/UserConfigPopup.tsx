@@ -1,6 +1,7 @@
 import { ChangeEvent, useContext, useState } from 'react'
-
+import classNames from '../utils/classNames'
 import { UserConfigContext } from '../context/UserConfigContext'
+
 import Selector from './Selector'
 import Modal from './Modal'
 import Table from './Table'
@@ -60,7 +61,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
           <div className={styles.selectorContainer}>
             <Table
               excludeHeaders
-              columnWidths={['6fr', '3fr', '1fr']}
+              columnWidths={['6fr', '2.5fr', '1fr']}
               classes={{ data: styles.row, table: styles.table }}
               data={generalScores.map((score, i) => {
                 return {
@@ -70,7 +71,10 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                       type="number"
                       step="0.2"
                       value={score.value}
-                      className={styles.generalInput}
+                      className={classNames(
+                        styles.generalInput,
+                        styles.mediumInput
+                      )}
                       onChange={e => generalScoresChange(e, i)}
                     />
                   ),
@@ -83,38 +87,74 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
             <Table
               headers={[
                 'File Extention',
-                'Comment Start',
-                'Comment End',
-                'Multiline Comment',
+                'Single Line Comment',
+                'Multiline Comment Start',
+                'Multiline Comment End',
+                'Syntax Characters',
                 'Weights',
                 '',
-                '',
               ]}
-              columnWidths={['3fr', '3fr', '3fr', '4fr', '3fr', '1fr', '1fr']}
+              columnWidths={['2fr', '2fr', '2fr', '2fr', '3.5fr', '1fr', '1fr']}
               classes={{ data: styles.skinnyRow, table: styles.table }}
               data={fileScores.map((score, i) => {
                 return {
                   type: score.fileExtension,
+                  comment: (
+                    <input
+                      type="text"
+                      className={classNames(
+                        styles.generalInput,
+                        styles.mediumInput
+                      )}
+                    />
+                  ),
                   commentStart: (
-                    <input type="text" className={styles.generalInput} />
+                    <input
+                      type="text"
+                      className={classNames(
+                        styles.generalInput,
+                        styles.mediumInput
+                      )}
+                    />
                   ),
                   commentEnd: (
-                    <input type="text" className={styles.generalInput} />
+                    <input
+                      type="text"
+                      className={classNames(
+                        styles.generalInput,
+                        styles.mediumInput
+                      )}
+                    />
                   ),
-                  multilineComment: (
-                    <input type="text" className={styles.generalInput} />
+                  syntax: (
+                    <input
+                      type="text"
+                      className={classNames(
+                        styles.generalInput,
+                        styles.longInput
+                      )}
+                    />
                   ),
                   weights: (
                     <input
                       type="number"
                       step="0.2"
                       value={score.scoreMultiplier}
-                      className={styles.generalInput}
+                      className={classNames(
+                        styles.generalInput,
+                        styles.shortInput
+                      )}
                       onChange={e => fileScoresChange(e, i)}
                     />
                   ),
-                  units: 'pts',
-                  delete: <Delete />,
+                  end: (
+                    <div className={styles.end}>
+                      pts
+                      <button className={styles.delete}>
+                        <Delete />
+                      </button>
+                    </div>
+                  ),
                 }
               })}
             />
