@@ -20,6 +20,7 @@ import java.util.Optional;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.exclude;
+import static com.mongodb.client.model.Projections.include;
 
 @Repository
 public class MemberRepository {
@@ -61,12 +62,15 @@ public class MemberRepository {
     }
 
     private String cacheMember(MemberDtoDb member, String projectUrl) {
-        String documentId = new ObjectId().toString();
-        Document memberDocument = generateMemberDocument(member, documentId, projectUrl);
-        if (memberCollection.findOneAndReplace(getMemberEqualityParameter(projectUrl, member), memberDocument) == null) {
-            memberCollection.insertOne(memberDocument);
+        Document existingDocument = memberCollection.find(getMemberEqualityParameter(projectUrl, member))
+                .projection(include(Member.documentId.key)).first();
+        if (existingDocument != null) {
+            String documentId = existingDocument.getString(Member.documentId.key);
+            replaceMemberDocument(documentId, member, projectUrl);
+            return documentId;
+        } else {
+            return cacheMemberDocument(member, projectUrl);
         }
-        return documentId;
     }
 
     private Bson getMemberEqualityParameter(String projectUrl, MemberDtoDb member) {

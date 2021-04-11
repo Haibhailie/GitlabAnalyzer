@@ -99,7 +99,8 @@ public class MergeRequestRepository {
     }
 
     private Document generateMergeRequestDocument(MergeRequestDtoDb mergeRequest, String documentId, String projectUrl) {
-        return new Document(MergeRequest.mergeRequestId.key, documentId)
+        return new Document(MergeRequest.documentId.key, documentId)
+                .append(MergeRequest.mergeRequestId.key, mergeRequest.getMergeRequestId())
                 .append(MergeRequest.projectUrl.key, projectUrl)
                 .append(MergeRequest.title.key, mergeRequest.getTitle())
                 .append(MergeRequest.author.key, mergeRequest.getAuthor())
