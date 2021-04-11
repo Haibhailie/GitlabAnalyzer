@@ -85,6 +85,11 @@ public final class MergeRequestDtoDb {
         return this;
     }
 
+    public MergeRequestDtoDb setSolo(boolean isSolo) {
+        this.isSolo = isSolo;
+        return this;
+    }
+
     public MergeRequestDtoDb setCommits(List<CommitDtoDb> commits) {
         this.commits = commits;
         return this;
@@ -107,11 +112,6 @@ public final class MergeRequestDtoDb {
 
     public MergeRequestDtoDb setFiles(List<FileDto> files) {
         this.files = files;
-        return this;
-    }
-
-    public MergeRequestDtoDb setSolo(boolean isSolo) {
-        this.isSolo = isSolo;
         return this;
     }
 
@@ -145,6 +145,10 @@ public final class MergeRequestDtoDb {
 
     public String getWebUrl() {
         return webUrl;
+    }
+
+    public boolean getSolo() {
+        return isSolo;
     }
 
     public List<CommitDtoDb> getCommits() {
@@ -186,6 +190,7 @@ public final class MergeRequestDtoDb {
                 && this.description.equals(m.description)
                 && this.time == m.time
                 && this.webUrl.equals(m.webUrl)
+                && this.isSolo == m.isSolo
                 && this.commits.equals(m.commits)
                 && this.committerEmails.equals(m.committerEmails)
                 && this.sumOfCommitsScore == m.sumOfCommitsScore
