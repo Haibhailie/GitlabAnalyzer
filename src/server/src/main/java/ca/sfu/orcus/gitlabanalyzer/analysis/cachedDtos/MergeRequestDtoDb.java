@@ -18,7 +18,7 @@ public final class MergeRequestDtoDb {
     private boolean isSolo;
 
     private List<CommitDtoDb> commits;
-    private Set<String> committerNames;
+    private Set<String> committerEmails;
     private double sumOfCommitsScore;
     private boolean isIgnored;
     private List<FileDto> files;
@@ -28,7 +28,7 @@ public final class MergeRequestDtoDb {
 
     public MergeRequestDtoDb(MergeRequest mergeRequest,
                              List<CommitDtoDb> commits,
-                             Set<String> committerNames,
+                             Set<String> committerEmails,
                              MergeRequest mergeRequestChanges,
                              double sumOfCommitsScore,
                              boolean isSolo) {
@@ -42,7 +42,7 @@ public final class MergeRequestDtoDb {
         setSolo(isSolo);
 
         setCommits(commits);
-        setCommitterNames(committerNames);
+        setCommitterEmails(committerEmails);
         setSumOfCommitsScore(sumOfCommitsScore);
         setIgnored(false);
 
@@ -90,8 +90,8 @@ public final class MergeRequestDtoDb {
         return this;
     }
 
-    public MergeRequestDtoDb setCommitterNames(Set<String> committerNames) {
-        this.committerNames = committerNames;
+    public MergeRequestDtoDb setCommitterEmails(Set<String> committerEmails) {
+        this.committerEmails = committerEmails;
         return this;
     }
 
@@ -151,8 +151,8 @@ public final class MergeRequestDtoDb {
         return commits;
     }
 
-    public Set<String> getCommitterNames() {
-        return committerNames;
+    public Set<String> getCommitterEmails() {
+        return committerEmails;
     }
 
     public double getSumOfCommitsScore() {
@@ -187,7 +187,7 @@ public final class MergeRequestDtoDb {
                 && this.time == m.time
                 && this.webUrl.equals(m.webUrl)
                 && this.commits.equals(m.commits)
-                && this.committerNames.equals(m.committerNames)
+                && this.committerEmails.equals(m.committerEmails)
                 && this.sumOfCommitsScore == m.sumOfCommitsScore
                 && this.isIgnored == m.isIgnored
                 && this.files.equals(m.files));

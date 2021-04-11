@@ -49,7 +49,7 @@ public class MergeRequestRepository {
         time("time"),
         webUrl("webUrl"),
         commits("commits"),
-        committerNames("committerNames"),
+        committerEmails("committerEmails"),
         sumOfCommitsScore("sumOfCommitsScore"),
         isIgnored("isIgnored"),
         files("files"),
@@ -114,7 +114,7 @@ public class MergeRequestRepository {
                 .append(MergeRequest.time.key, mergeRequest.getTime())
                 .append(MergeRequest.webUrl.key, mergeRequest.getWebUrl())
                 .append(MergeRequest.commits.key, commitDocuments)
-                .append(MergeRequest.committerNames.key, mergeRequest.getCommitterNames())
+                .append(MergeRequest.committerEmails.key, mergeRequest.getCommitterEmails())
                 .append(MergeRequest.sumOfCommitsScore.key, mergeRequest.getSumOfCommitsScore())
                 .append(MergeRequest.isIgnored.key, mergeRequest.isIgnored())
                 .append(MergeRequest.files.key, fileDocuments);
@@ -148,7 +148,7 @@ public class MergeRequestRepository {
                 .setTime(doc.getLong(MergeRequest.time.key))
                 .setWebUrl(doc.getString(MergeRequest.webUrl.key))
                 .setCommits(getCommitsFromCachedMergeRequest(doc))
-                .setCommitterNames(new HashSet<>(doc.getList(MergeRequest.committerNames.key, String.class)))
+                .setCommitterEmails(new HashSet<>(doc.getList(MergeRequest.committerEmails.key, String.class)))
                 .setSumOfCommitsScore(doc.getDouble(MergeRequest.sumOfCommitsScore.key))
                 .setIgnored(doc.getBoolean(MergeRequest.isIgnored.key))
                 .setFiles(fileRepo.getFilesFromCache(doc))
@@ -163,6 +163,5 @@ public class MergeRequestRepository {
         }
         return commits;
     }
-
 }
 
