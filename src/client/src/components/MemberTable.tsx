@@ -24,6 +24,7 @@ enum ResolutionStatus {
   RECOMMENDED,
   COMPLETED,
   ALL_IGNORED,
+  ERROR,
 }
 
 const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
@@ -55,6 +56,10 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
           const status = checkResolutionStatus()
           setResolutionStatus(status)
           switch (resolutionStatus) {
+            case ResolutionStatus.ERROR:
+              setModalMsg('Warning: no committers found.')
+              setShowModal(true)
+              break
             case ResolutionStatus.REQUIRED:
               setModalMsg(
                 'Committers have not been resolved yet! Please complete this step before proceeding.'
@@ -84,6 +89,9 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
   )
 
   const checkResolutionStatus = () => {
+    if (committerData === null) {
+      return ResolutionStatus.ERROR
+    }
     if (committerData?.length === 0) {
       return ResolutionStatus.REQUIRED
     }
@@ -128,9 +136,11 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
           <Modal close={isResolutionOptional() ? toggleModal : undefined}>
             <img src={alertIcon} className={styles.icon} />
             <div className={styles.modalMsgContainer}>{modalMsg}</div>
-            <LinkButton destPath={`/project/${projectId}/memberResolution`}>
-              Resolve committers
-            </LinkButton>
+            {resolutionStatus !== ResolutionStatus.ERROR && (
+              <LinkButton destPath={`/project/${projectId}/memberResolution`}>
+                Resolve committers
+              </LinkButton>
+            )}
           </Modal>
         )}
 
