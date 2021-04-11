@@ -24,9 +24,7 @@ export interface ICommentTableProps {
 
 const isLongComment = (content: string) => content.length > LONG_COMMENT_LEN
 
-const isInvalidUrl = (url: string) => {
-  return url.includes('example')
-}
+const isInvalidUrl = (url: string) => url.includes('example')
 
 const formatParentAuthor = (author: string) => {
   if (author === 'self') {

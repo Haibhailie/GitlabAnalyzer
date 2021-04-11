@@ -28,7 +28,7 @@
   overflow-x: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 600px;
+  max-width: 625px;
 }
 
 .commentBody {
