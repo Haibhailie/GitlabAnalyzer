@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 
 public class CommitDto {
-    private String title;
     private String author;
     private String authorEmail;
     private String id;
@@ -27,7 +26,6 @@ public class CommitDto {
     private String webUrl;
 
     public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit) throws GitLabApiException {
-        setTitle(commit.getTitle());
         setAuthor(commit.getAuthorName());
         setAuthorEmail(commit.getAuthorEmail());
         setId(commit.getId());
@@ -47,10 +45,6 @@ public class CommitDto {
         setFiles(scoreCalculator.getCommitScore(gitLabApi.getCommitsApi().getDiff(projectId, commit.getId())));
         setIgnored(false);
         setWebUrl(presentCommit.getWebUrl());
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public void setAuthor(String author) {
@@ -130,7 +124,6 @@ public class CommitDto {
         CommitDto c = (CommitDto) o;
 
         return (this.id.equals(c.id)
-                && this.title.equals(c.title)
                 && this.author.equals(c.author)
                 && this.authorEmail.equals(c.authorEmail)
                 && this.dateCommitted.equals(c.dateCommitted)

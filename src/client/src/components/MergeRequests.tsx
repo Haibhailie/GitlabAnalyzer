@@ -1,11 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  HTMLProps,
-  MouseEventHandler,
-  MouseEvent,
-} from 'react'
+import { useEffect, useRef, useState } from 'react'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
@@ -15,7 +8,8 @@ import { noop } from 'lodash'
 import classNames from '../utils/classNames'
 
 import Table from '../components/Table'
-import Diff from '../components/Diff'
+import Diff, { IDiffProps } from '../components/Diff'
+import IgnoreBox from '../components/IgnoreBox'
 
 import styles from '../css/MergeRequests.module.css'
 
@@ -27,7 +21,6 @@ export interface IMergeRequestsProps {
 type TTableData = {
   date: string
   title: string
-  view?: JSX.Element
   score: number
   ignore: JSX.Element
 }[]
@@ -44,33 +37,9 @@ const sharedTableProps = {
   },
 }
 
-const eventStopper = (onClick?: (event: MouseEvent) => void) => {
-  const handler: MouseEventHandler = event => {
-    event.stopPropagation()
-    onClick?.(event)
-  }
-  return handler
-}
-
-const IgnoreBox = ({
-  onClick,
-  className,
-  ...props
-}: HTMLProps<HTMLInputElement>) => (
-  <input
-    {...props}
-    onClick={eventStopper(e => onClick?.(e as MouseEvent<HTMLInputElement>))}
-    type="checkbox"
-    className={classNames(styles.ignore, className)}
-  />
-)
-
 const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
   const [selectedMr, setSelectedMr] = useState<string>()
-  const [selectedDiff, setSelectedDiff] = useState<{
-    type: 'mergerequest' | 'commit'
-    id: string
-  }>()
+  const [selectedDiff, setSelectedDiff] = useState<IDiffProps>()
   const [commits, setCommits] = useState<TCommitData>()
   const tableData = useRef<{ mrs?: TTableData; commits?: TTableData }>()
 
@@ -81,18 +50,11 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
       )
         .then(merges => {
           const mrTableData: TTableData = []
-          merges.forEach(({ time, title, mergeRequestId, score }) => {
+          merges.forEach(({ time, title, score }) => {
             mrTableData.push({
-              date: dateConverter(time),
+              date: dateConverter(time, true),
               title: title,
-              view: (
-                <button
-                  onClick={eventStopper(() => setSelectedMr(mergeRequestId))}
-                  className={styles.viewBtn}
-                >
-                  View commits
-                </button>
-              ),
+              // TODO: left-align .toFixed(1) score.
               score: score,
               ignore: <IgnoreBox onChange={noop} />,
             })
@@ -104,7 +66,8 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
           setData(merges)
         })
         .catch(onError(setError))
-    }
+    },
+    [projectId, memberId]
   )
 
   useEffect(() => {
@@ -117,8 +80,9 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
 
           commits.forEach(({ score, time, title }) => {
             commitTableData.push({
-              date: dateConverter(time),
+              date: dateConverter(time, true),
               title,
+              // TODO: left-align .toFixed(1) score.
               score,
               ignore: <IgnoreBox onChange={noop} />,
             })
@@ -135,13 +99,10 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
     }
   }, [selectedMr])
 
-  const viewDiffOf = (type: 'mergerequest' | 'commit', id?: string) => {
-    if (id !== undefined)
-      setSelectedDiff(
-        id === selectedDiff?.id && type === selectedDiff?.type
-          ? undefined
-          : { type, id }
-      )
+  const viewDiffOf = (diffProps: IDiffProps) => {
+    setSelectedDiff(
+      Object.is(diffProps.data, selectedDiff?.data) ? undefined : diffProps
+    )
   }
 
   return (
@@ -156,31 +117,52 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
         )}
       >
         <div className={styles.diff}>
-          <Diff
-            projectId={projectId}
-            source={selectedDiff?.type}
-            id={selectedDiff?.id}
-          />
+          {selectedDiff && <Diff {...selectedDiff} />}
         </div>
         <div className={styles.tables}>
           <Table
             {...sharedTableProps}
             title="Merge Requests"
-            headers={['Date', 'Title', '', 'Score', 'Ignore?']}
-            columnWidths={['3fr', '6fr', '3fr', '1fr', '1fr']}
+            headers={['Date', 'Title', 'Score', 'Ignore?']}
+            columnWidths={['6fr', '6fr', '1fr', '1fr']}
             onClick={(e, i) => {
-              viewDiffOf('mergerequest', mergeRequests?.[i].mergeRequestId)
+              if (mergeRequests?.[i]) {
+                const {
+                  files,
+                  mergeRequestId,
+                  commitsInfoInMergeRequest,
+                  title,
+                } = mergeRequests[i]
+                setSelectedMr(mergeRequestId)
+                viewDiffOf({
+                  data: files,
+                  type: 'MR',
+                  id: `#${mergeRequestId}`,
+                  commits: commitsInfoInMergeRequest,
+                  title,
+                })
+              }
             }}
             data={tableData.current?.mrs ?? []}
+            maxHeight={400}
+            startOpened
           />
           <Table
             {...sharedTableProps}
             isOpen={commits !== undefined}
-            title={`Commits for MR ${selectedMr ?? ''}`}
+            title={`Commits for MR #${selectedMr ?? ''}`}
             headers={['Date', 'Title', 'Score', 'Ignore?']}
-            columnWidths={['3fr', '9fr', '1fr', '1fr']}
+            columnWidths={['6fr', '6fr', '1fr', '1fr']}
             onClick={(e, i) => {
-              viewDiffOf('commit', commits?.[i].id)
+              if (commits?.[i]) {
+                const { id, files, message } = commits[i]
+                viewDiffOf({
+                  data: files,
+                  type: 'Commit',
+                  id: id,
+                  title: message,
+                })
+              }
             }}
             data={tableData.current?.commits ?? []}
           />
