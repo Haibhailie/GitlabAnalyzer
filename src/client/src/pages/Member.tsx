@@ -52,14 +52,14 @@ const Member = () => {
       fallback="Getting member details..."
       error={memberError?.message ?? 'Unknown Error'}
     >
-      <div className={styles.containerHeader}>
-        <MemberDropdown
-          members={members}
-          projectId={id}
-          currentMemberId={memberId}
-        />
-      </div>
       <div className={styles.container}>
+        <div className={styles.containerHeader}>
+          <MemberDropdown
+            members={members}
+            projectId={id}
+            currentMemberId={memberId}
+          />
+        </div>
         <h1 className={styles.header}>{memberData?.displayName}</h1>
         <h3 className={styles.subheader}>
           {memberData?.username && `@${memberData?.username}`}
