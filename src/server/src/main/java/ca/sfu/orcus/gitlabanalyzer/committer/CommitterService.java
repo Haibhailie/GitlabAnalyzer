@@ -47,11 +47,12 @@ public class CommitterService {
 
     public void updateCommitterTable(String jwt,
                                      int projectId,
-                                     Map<String, Integer> committerToMemberMap)throws GitLabApiException, NotFoundException {
+                                     Map<String, Integer> committerToMemberMap)
+            throws GitLabApiException, NotFoundException {
         int memberId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         Optional<String> projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId);
         if (projectUrl.isPresent() && userHasAccessToProject(memberId, projectId, projectUrl.get())) {
-            updateCommitterMemberResolution(projectUrl.get(), committerToMemberMap);
+            updateCommitterMemberResolutionOrThrow(projectUrl.get(), committerToMemberMap);
             committerRepo.updateCommitters(projectId, committerToMemberMap);
         } else {
             throw new NotFoundException("Project not found for user");
@@ -63,28 +64,20 @@ public class CommitterService {
         return true;
     }
 
-    private void updateCommitterMemberResolution(String projectUrl, Map<String, Integer> committerToMemberMap) {
-        /*
-         * 1. Get projectUrl (CHECK)
-         * 2. Get the committerDtoDbs for all committers (keys of the map)
-         * 3. For each committer involved
-         *    - update the MemberDto field
-         *    - for each of the commitIds
-         *      - update the memberId field of the commit
-         * 4. Update committerEmails in MemberDto
-         * 5. Update isSolo field in MR
-         */
-
+    private void updateCommitterMemberResolutionOrThrow(String projectUrl, Map<String, Integer> committerToMemberMap)
+            throws NotFoundException {
         for (Map.Entry<String, Integer> entry : committerToMemberMap.entrySet()) {
             String committerEmail = entry.getKey();
             Integer memberId = entry.getValue();
 
             // Update CommitterDto.member
-            MemberDtoDb memberDto = memberRepo.getMember(projectUrl, memberId).orElseThrow();
+            MemberDtoDb memberDto = memberRepo.getMember(projectUrl, memberId)
+                    .orElseThrow(() -> new NotFoundException("Could not fetch member"));
             projectRepo.updateCommittersMemberDto(projectUrl, committerEmail, memberDto);
 
             // Update Commit.userId for all commits by the committer
-            CommitterDtoDb committerDto = projectRepo.getCommitter(projectUrl, committerEmail).orElseThrow();
+            CommitterDtoDb committerDto = projectRepo.getCommitter(projectUrl, committerEmail)
+                    .orElseThrow(() -> new NotFoundException("Could not fetch committer"));
             for (String commitId : committerDto.getCommitIds()) {
                 mergeRequestRepo.updateCommitUserId(projectUrl, commitId, memberId);
             }
@@ -107,11 +100,4 @@ public class CommitterService {
             }
         }
     }
-
-    /*
-    private void updateCommittersMemberDto(String projectUrl, String committerEmail, Integer memberId) {
-        MemberDtoDb memberDto = memberRepo.getMember(projectUrl, memberId).orElseThrow();
-        projectRepo.updateCommittersMemberDto(projectUrl, committerEmail, memberDto);
-    }
-    */
 }

@@ -122,20 +122,15 @@ public class ProjectRepository {
 
     public void updateCommittersMemberDto(String projectUrl, String committerEmail, MemberDtoDb memberDto) {
         String memberJson = gson.toJson(memberDto);
+
+        // TODO: Use Committer enum in CommitterRepository to specify the keys here
         projectsCollection.updateOne(
-                and(eq(Project.projectUrl.key, projectUrl), eq("committers.email", committerEmail)),
-                set("committers.$.member", memberJson));
+                and(eq(Project.projectUrl.key, projectUrl), eq(Project.committers.key + ".email", committerEmail)),
+                set(Project.committers.key + ".$.member", memberJson));
     }
 
     public Optional<CommitterDtoDb> getCommitter(String projectUrl, String committerEmail) {
         Document projectDoc = getPartialProjectDocument(projectUrl, Project.committers.key);
-        List<CommitterDtoDb> committerDtos = committerRepo.getCommittersFromProjectDoc(projectDoc);
-        for (CommitterDtoDb committer : committerDtos) {
-            if (committer.getEmail().equals(committerEmail)) {
-                return Optional.of(committer);
-            }
-        }
-
-        return Optional.empty();
+        return committerRepo.getCommitterFromProjectDoc(projectDoc, committerEmail);
     }
 }

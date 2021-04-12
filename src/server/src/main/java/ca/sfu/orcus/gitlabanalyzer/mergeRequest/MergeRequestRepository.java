@@ -176,8 +176,8 @@ public class MergeRequestRepository {
 
     public void updateCommitUserId(String projectUrl, String commitId, Integer userId) {
         mergeRequestCollection.updateOne(
-                and(eq("projectUrl", projectUrl), eq("commits.commitId", commitId)),
-                set("commits.$.userId", userId));
+                and(eq(MergeRequest.projectUrl.key, projectUrl), eq(MergeRequest.commits.key + ".commitId", commitId)),
+                set(MergeRequest.commits.key + ".$.userId", userId));
     }
 
     public List<String> getCommitterEmailsForMergeRequest(String projectUrl, Integer mergeRequestId) {

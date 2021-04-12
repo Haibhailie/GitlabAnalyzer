@@ -10,6 +10,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import javax.print.Doc;
 import java.util.*;
 
 // TODO: When this is deleted, remember to move MemberMock back into the test package
@@ -72,6 +73,16 @@ public class CommitterRepository {
             committers.add(docToDto(d));
         }
         return committers;
+    }
+
+    public Optional<CommitterDtoDb> getCommitterFromProjectDoc(Document doc, String committerEmail) {
+        List<Document> committerDoc = doc.getList(Committer.committers.key, Document.class);
+        for (Document d : committerDoc) {
+            if (d.getString(Committer.email.key).equals(committerEmail)) {
+                return Optional.of(docToDto(d));
+            }
+        }
+        return Optional.empty();
     }
 
     private CommitterDtoDb docToDto(Document committerDoc) {
