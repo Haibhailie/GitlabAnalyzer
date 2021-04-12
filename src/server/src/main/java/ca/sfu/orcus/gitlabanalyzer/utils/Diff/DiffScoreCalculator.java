@@ -26,8 +26,6 @@ public class DiffScoreCalculator {
     double blankLOCFactor;
     double spacingChangeFactor;
 
-    private final double lineSimilarityFactor = 0.5;
-
     private List<String> generatedDiffList = new ArrayList<>();
     List<FileDiffDto> fileDiffs = new ArrayList<>();
 

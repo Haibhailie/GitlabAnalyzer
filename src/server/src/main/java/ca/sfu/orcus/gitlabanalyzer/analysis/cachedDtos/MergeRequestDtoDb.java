@@ -1,10 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
-import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
-import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.gitlab4j.api.models.MergeRequest;
 
 import java.util.List;
