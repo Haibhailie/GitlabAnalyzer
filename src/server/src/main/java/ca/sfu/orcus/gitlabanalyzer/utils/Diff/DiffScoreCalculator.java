@@ -50,6 +50,9 @@ public class DiffScoreCalculator {
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 } else if (line.substring(1).startsWith(multiLineCommentStart)) {
                     handleMultiLineComments(lineNumber);
+                } else if (checkForSyntaxInLine(syntaxInCode.split("\\s+"), lineNumber)) {
+                    numSyntaxChanges++;
+                    numLineAdditions++;
                 } else {
                     numBlankAdditions++;
                     numLineAdditions++;
@@ -85,12 +88,23 @@ public class DiffScoreCalculator {
         numSpacingChanges = 0;
     }
 
+    private boolean checkForSyntaxInLine(String[] syntaxArray, int lineNumber) {
+        for (String syntax : syntaxArray) {
+            if (generatedDiffList.get(lineNumber).replaceAll("\\s+", "").contains(syntax)) {
+                generatedDiffList.set(lineNumber, "---REMOVED");
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void handleMultiLineComments(int lineNumber) {
         for (int i = lineNumber; i < generatedDiffList.size(); i++) {
             String presentLine = generatedDiffList.get(i);
             if (presentLine.startsWith("+") && !presentLine.contains(multiLineCommentEnd)) {
                 numBlankAdditions++;
                 fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_BLANK));
+                generatedDiffList.set(i, "---REMOVED");
             }
         }
     }

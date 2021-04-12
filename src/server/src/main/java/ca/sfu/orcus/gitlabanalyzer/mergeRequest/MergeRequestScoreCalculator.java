@@ -15,6 +15,10 @@ public class MergeRequestScoreCalculator {
     double syntaxChangeFactor = 0.2;
     double blankLOCFactor = 0;
     double spacingChangeFactor = 0;
+    private String singleLineComment;
+    private String multiLineCommentStart;
+    private String multiLineCommentEnd;
+    private String syntaxInCode;
 
     public List<FileDto> getMergeRequestScore(MergeRequest mergeRequestChanges) {
 

@@ -9,12 +9,15 @@ public final class ConfigDto {
     private long endDate;
     private String scoreBy;
     private String graphMode;
+
     private List<GeneralTypeScoreDto> generalScores;
     private List<FileTypeScoreDto> fileScores;
+
     private String singleLineComment;
     private String multiLineCommentStart;
     private String multiLineCommentEnd;
     private String syntaxInCode;
+
     private String yAxis;
 
     private ConfigDto() {
