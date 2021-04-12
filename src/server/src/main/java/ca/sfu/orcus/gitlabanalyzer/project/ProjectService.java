@@ -1,8 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberServiceDirect;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.GitLabApi;
@@ -14,23 +13,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
-    private final ProjectRepository projectRepository;
+    private final ProjectRepository projectRepo;
     private final GitLabApiWrapper gitLabApiWrapper;
-    private final MemberServiceDirect memberService;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository,
-                          GitLabApiWrapper gitLabApiWrapper,
-                          MemberServiceDirect memberService) {
-        this.projectRepository = projectRepository;
+    public ProjectService(ProjectRepository projectRepo,
+                          GitLabApiWrapper gitLabApiWrapper) {
+        this.projectRepo = projectRepo;
         this.gitLabApiWrapper = gitLabApiWrapper;
-        this.memberService = memberService;
     }
 
-    public List<ProjectDto> getAllProjects(String jwt) {
+    public List<ProjectDtoDb> getAllProjects(String jwt) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
             return getAllProjects(gitLabApi);
@@ -39,14 +36,13 @@ public class ProjectService {
         }
     }
 
-    private ArrayList<ProjectDto> getAllProjects(GitLabApi gitLabApi) {
+    private ArrayList<ProjectDtoDb> getAllProjects(GitLabApi gitLabApi) {
         try {
-            ArrayList<ProjectDto> projectDtos = new ArrayList<>();
+            ArrayList<ProjectDtoDb> projectDtos = new ArrayList<>();
             List<Project> projects = gitLabApi.getProjectApi().getMemberProjects();
             for (Project p : projects) {
-                ProjectDto projectDto = getProjectDto(gitLabApi, p);
+                ProjectDtoDb projectDto = createProjectDto(gitLabApi, p);
                 projectDtos.add(projectDto);
-                projectRepository.cacheProjectSkeleton(projectDto, p.getVisibility());
             }
             return projectDtos;
         } catch (GitLabApiException e) {
@@ -54,31 +50,11 @@ public class ProjectService {
         }
     }
 
-    private ProjectDto getProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
+    private ProjectDtoDb createProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
         String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
-        long lastAnalysisTime = projectRepository.getLastAnalysisTimeForProject(project.getId(),
+        long lastAnalysisTime = projectRepo.getLastAnalysisTimeForProject(project.getId(),
                 VariableDecoderUtil.decode("GITLAB_URL"));
-        return new ProjectDto(project, memberRole, lastAnalysisTime);
-    }
-
-    public ProjectExtendedDto getProject(String jwt, int projectId) {
-        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
-        if (gitLabApi != null) {
-            List<MemberDto> memberDtos = memberService.getAllMembers(jwt, projectId);
-            return getProject(gitLabApi, projectId, memberDtos);
-        } else {
-            return null;
-        }
-    }
-
-    private ProjectExtendedDto getProject(GitLabApi gitLabApi, int projectId, List<MemberDto> memberDtos) {
-        try {
-            Project project = gitLabApi.getProjectApi().getProject(projectId, true);
-            long numBranches = gitLabApi.getRepositoryApi().getBranches(projectId).size();
-            return new ProjectExtendedDto(project, memberDtos, numBranches);
-        } catch (GitLabApiException e) {
-            return null;
-        }
+        return new ProjectDtoDb(project, memberRole, lastAnalysisTime, new ArrayList<>());
     }
 
     private String getAuthenticatedMembersRoleInProject(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
@@ -86,5 +62,41 @@ public class ProjectService {
         Member currentMember = gitLabApi.getProjectApi().getMember(projectId, currentUserId);
         int currentAccessLevel = currentMember.getAccessLevel().value;
         return MemberUtils.getMemberRoleFromAccessLevel(currentAccessLevel);
+    }
+
+    public Optional<ProjectDtoDb> getProject(String jwt, int projectId) {
+        Optional<String> projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId);
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (projectUrl.isEmpty() || gitLabApi == null) {
+            return Optional.empty();
+        }
+
+        return getProject(gitLabApi, projectId, projectUrl.get());
+    }
+
+    private Optional<ProjectDtoDb> getProject(GitLabApi gitLabApi, int projectId, String projectUrl) {
+        try {
+            Project project = gitLabApi.getProjectApi().getProject(projectId);
+            if (projectRepo.projectIsAlreadyCached(projectId, projectUrl)) {
+                return getProjectFromRepo(gitLabApi, project);
+            } else {
+                return Optional.of(createProjectDto(gitLabApi, project));
+            }
+        } catch (GitLabApiException e) {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<ProjectDtoDb> getProjectFromRepo(GitLabApi gitLabApi, Project project) throws GitLabApiException {
+        Optional<ProjectDtoDb> projectOptional = projectRepo.getProject(project.getId(), project.getWebUrl());
+        if (projectOptional.isPresent()) {
+            ProjectDtoDb projectDto = projectOptional.get();
+            projectDto.setRole(getAuthenticatedMembersRoleInProject(gitLabApi, project.getId()));
+            projectDto.setLastActivityTime(project.getLastActivityAt().getTime());
+            return Optional.of(projectDto);
+        } else {
+            return projectOptional;
+        }
+
     }
 }

@@ -1,3 +1,4 @@
+import { ChangeEvent, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import useSuspense from '../utils/useSuspense'
 import jsonFetch from '../utils/jsonFetcher'
@@ -8,6 +9,7 @@ import Table from '../components/Table'
 import Loading from '../components/Loading'
 import ErrorComp from '../components/ErrorComp'
 import AnalyzeButton from '../components/AnalyzeButton'
+import SearchBar from '../components/SearchBar'
 
 import styles from '../css/Home.module.css'
 
@@ -21,11 +23,14 @@ export type TProjects = {
 
 const Home = () => {
   const history = useHistory()
+  const [filteredData, setFilteredData] = useState<TProjects>([])
+
   const { Suspense, data, error } = useSuspense<TProjects, Error>(
     (setData, setError) => {
       jsonFetch<TProjects>('/api/projects')
         .then(data => {
           setData(data)
+          setFilteredData(data)
         })
         .catch(err => {
           if (err.message === '401' || err.message === '400') {
@@ -42,6 +47,17 @@ const Home = () => {
     history.push(`/project/${id}`)
   }
 
+  const onSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.target.value.toLowerCase()
+    if (input && data) {
+      setFilteredData(
+        data.filter(data => data.name.toLowerCase().includes(input))
+      )
+    } else {
+      data ? setFilteredData([...data]) : setFilteredData([])
+    }
+  }
+
   return (
     <Suspense
       fallback={<Loading message="Loading Projects..." />}
@@ -49,23 +65,26 @@ const Home = () => {
     >
       <div className={styles.container}>
         <h1 className={styles.header}>Your Projects</h1>
-        {data && (
+        <SearchBar placeholder="Search projects..." onSearch={onSearch} />
+        {filteredData && (
           <Table
-            data={data?.map(({ id, name, analyzed, lastActivityAt, role }) => {
-              return {
-                name,
-                role,
-                lastActivityAt: dateConverter(lastActivityAt, true),
-                analyzed: analyzed ? 'Yes' : 'No',
-                action: (
-                  <AnalyzeButton
-                    id={id}
-                    onClick={onAnalyze}
-                    message="Analyze"
-                  />
-                ),
+            data={filteredData?.map(
+              ({ id, name, analyzed, lastActivityAt, role }) => {
+                return {
+                  name,
+                  role,
+                  lastActivityAt: dateConverter(lastActivityAt, true),
+                  analyzed: analyzed ? 'Yes' : 'No',
+                  action: (
+                    <AnalyzeButton
+                      id={id}
+                      onClick={onAnalyze}
+                      message="Analyze"
+                    />
+                  ),
+                }
               }
-            })}
+            )}
             headers={['Project Name', 'Role', 'Last Updated', 'Analyzed?', '']}
             classes={{
               container: styles.tableContainer,
@@ -77,6 +96,7 @@ const Home = () => {
             sortable
           />
         )}
+        {filteredData.length === 0 && <ErrorComp message="No Results Found" />}
       </div>
     </Suspense>
   )

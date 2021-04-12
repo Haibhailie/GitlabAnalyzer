@@ -4,10 +4,8 @@ import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.NoteDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.google.gson.Gson;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.google.gson.reflect.TypeToken;
+import com.mongodb.client.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -102,22 +100,17 @@ public class MemberRepository {
                 .append(Member.notes.key, gson.toJson(member.getNotes()));
     }
 
-    public List<MemberDtoDb> getMembers(List<String> documentIds) {
+    public List<MemberDtoDb> getMembers(String projectUrl) {
+        MongoCursor<Document> memberDocs = memberCollection
+                .find(eq(Member.projectUrl.key, projectUrl))
+                .projection(exclude(Member.committerEmails.key, Member.mergeRequestDocIds.key))
+                .iterator();
         List<MemberDtoDb> members = new ArrayList<>();
-        for (String documentId : documentIds) {
-            Optional<MemberDtoDb> member = getMember(documentId);
-            member.ifPresent(members::add);
+        while (memberDocs.hasNext()) {
+            MemberDtoDb member = docToDto(memberDocs.next());
+            members.add(member);
         }
         return members;
-    }
-
-    private Optional<MemberDtoDb> getMember(String documentId) {
-        Document memberDoc = memberCollection.find(eq(Member.documentId.key, documentId))
-                .projection(exclude(
-                        Member.committerEmails.key,
-                        Member.mergeRequestDocIds.key))
-                .first();
-        return Optional.ofNullable(docToDto(memberDoc));
     }
 
     private MemberDtoDb docToDto(Document memberDoc) {
@@ -125,11 +118,11 @@ public class MemberRepository {
             return null;
         }
         return new MemberDtoDb()
-                .setId(memberDoc.getInteger(Member.memberId))
+                .setId(memberDoc.getInteger(Member.memberId.key))
                 .setDisplayName(memberDoc.getString(Member.displayName.key))
                 .setUsername(memberDoc.getString(Member.username.key))
                 .setRole(memberDoc.getString(Member.role.key))
                 .setWebUrl(memberDoc.getString(Member.memberUrl.key))
-                .setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>() {}.getClass()));
+                .setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new TypeToken<ArrayList<NoteDtoDb>>(){}.getType()));
     }
 }

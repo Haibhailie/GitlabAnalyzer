@@ -52,11 +52,7 @@ public class CommitterService {
     }
 
     private boolean userHasAccessToProject(int memberId, int projectId, String projectUrl) {
-        try {
-            return projectRepo.projectIsPublic(projectId,
-                    VariableDecoderUtil.decode("GITLAB_URL")) || projectRepo.containsMember(projectId, projectUrl, memberId);
-        } catch (NotFoundException e) {
-            return false;
-        }
+        // TODO: use gitlab to check this
+        return true;
     }
 }
