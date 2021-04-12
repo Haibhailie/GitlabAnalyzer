@@ -33,12 +33,11 @@ export interface ILocChanges {
 export type TFileData = IFileData[]
 export interface IFileData {
   name: string
-  fileId: string
   extension: string
-  isIgnored: boolean
-  fileScore: IScore
-  linesOfCodeChanges: ILocChanges
   fileDiffs: TDiffData
+  fileScore: IScore
+  isIgnored: boolean
+  linesOfCodeChanges: ILocChanges
 }
 
 export type TCommitData = ICommitData[]
