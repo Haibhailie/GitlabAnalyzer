@@ -16,6 +16,7 @@ public class FileRepository {
 
     private enum File {
         documentId("_id"),
+        fileId("fileId"),
         files("files"),
         name("name"),
         extension("extension"),
@@ -56,7 +57,9 @@ public class FileRepository {
     }
 
     public Document generateFileDocuments(FileDto file) {
-        return new Document(File.documentId.key, new ObjectId().toString())
+        String id = new ObjectId().toString();
+        return new Document(File.documentId.key, id)
+                .append(File.fileId.key, id)
                 .append(File.name.key, file.getFileName())
                 .append(File.extension.key, file.getFileExtension())
                 .append(File.fileScore.key, gson.toJson(file.getFileScore()))

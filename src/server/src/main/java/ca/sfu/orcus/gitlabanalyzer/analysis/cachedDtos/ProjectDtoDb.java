@@ -10,8 +10,11 @@ public class ProjectDtoDb {
     private String role;
     private long lastActivityTime;
     private long lastAnalysisTime;
+    private long createdAt;
     private String webUrl;
     private List<CommitterDtoDb> committers;
+
+    public ProjectDtoDb() {}
 
     public ProjectDtoDb(Project project, String role, long lastAnalysisTime, List<CommitterDtoDb> committers) {
         setId(project.getId());
@@ -19,36 +22,81 @@ public class ProjectDtoDb {
         setRole(role);
         setLastActivityTime(project.getLastActivityAt().getTime());
         setLastAnalysisTime(lastAnalysisTime);
+        setCreatedAt(project.getCreatedAt().getTime());
         setWebUrl(project.getWebUrl());
         setCommitters(committers);
     }
 
-    public void setId(int id) {
+    public ProjectDtoDb setId(int id) {
         this.id = id;
+        return this;
     }
 
-    public void setName(String name) {
+    public ProjectDtoDb setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public void setRole(String role) {
+    public ProjectDtoDb setRole(String role) {
         this.role = role;
+        return this;
     }
 
-    public void setLastActivityTime(long lastActivityTime) {
+    public ProjectDtoDb setLastActivityTime(long lastActivityTime) {
         this.lastActivityTime = lastActivityTime;
+        return this;
     }
 
-    public void setLastAnalysisTime(long lastAnalysisTime) {
+    public ProjectDtoDb setLastAnalysisTime(long lastAnalysisTime) {
         this.lastAnalysisTime = lastAnalysisTime;
+        return this;
     }
 
-    public void setWebUrl(String webUrl) {
+    public ProjectDtoDb setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+        return this;
+    }
+
+    public ProjectDtoDb setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+        return this;
     }
 
-    public void setCommitters(List<CommitterDtoDb> committers) {
+    public ProjectDtoDb setCommitters(List<CommitterDtoDb> committers) {
         this.committers = committers;
+        return this;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public long getLastActivityTime() {
+        return lastActivityTime;
+    }
+
+    public long getLastAnalysisTime() {
+        return lastAnalysisTime;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public List<CommitterDtoDb> getCommitters() {
+        return committers;
     }
 
     @Override
