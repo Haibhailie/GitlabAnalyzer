@@ -14,9 +14,15 @@ public class DiffScoreCalculator {
     private int numBlankAdditions = 0;
     private int numSyntaxChanges = 0;
     private int numSpacingChanges = 0;
-    private final double lineSimilarityFactor = 0.5;
+    private final double realCodeWrittenInALineFactor = 0.5;
     private List<String> generatedDiffList = new ArrayList<>();
     List<FileDiffDto> fileDiffs = new ArrayList<>();
+
+    //TODO:Take these from config
+    private String singleLineComment = "\\\\";
+    private String multiLineCommentStart = "/*";
+    private String multiLineCommentEnd = "*/";
+    private String syntaxInCode = "|| && + - / * ";
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
         resetCount();
@@ -37,6 +43,13 @@ public class DiffScoreCalculator {
                 if (line.substring(1).replaceAll("\\s+", "").length() > 0) {
                     numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION));
+                } else if (line.substring(1).startsWith(singleLineComment)
+                        || line.substring(line.indexOf(singleLineComment)).length() > line.substring(1).length() * realCodeWrittenInALineFactor) {
+                    numBlankAdditions++;
+                    numLineAdditions++;
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
+                } else if (line.substring(1).startsWith(multiLineCommentStart)) {
+                    handleMultiLineComments(lineNumber);
                 } else {
                     numBlankAdditions++;
                     numLineAdditions++;
@@ -72,13 +85,23 @@ public class DiffScoreCalculator {
         numSpacingChanges = 0;
     }
 
+    private void handleMultiLineComments(int lineNumber) {
+        for (int i = lineNumber; i < generatedDiffList.size(); i++) {
+            String presentLine = generatedDiffList.get(i);
+            if (presentLine.startsWith("+") && !presentLine.contains(multiLineCommentEnd)) {
+                numBlankAdditions++;
+                fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_BLANK));
+            }
+        }
+    }
+
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
         for (int i = lineNumber; i < generatedDiffList.size(); i++) {
             String presentLine = generatedDiffList.get(i);
             if (presentLine.startsWith("+")) {
                 //Checking the level of similarity between the two lines (if difference > half the original line, then
                 //it's considered a new addition, else a syntax change)
-                if (StringUtils.difference(testingLine, presentLine).length() > (testingLine.length()) * lineSimilarityFactor) {
+                if (StringUtils.difference(testingLine, presentLine).length() > (testingLine.length()) * realCodeWrittenInALineFactor) {
                     numSyntaxChanges++;
                     fileDiffs.add(new FileDiffDto(testingLine, FileDiffDto.DiffLineType.DELETION_SYNTAX));
                     fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_SYNTAX));
