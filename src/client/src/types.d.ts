@@ -120,20 +120,9 @@ export interface IDiffData {
   diff: string
 }
 
-export type TCommentData = ICommentData[]
-export interface ICommentData {
-  id: string
-  wordcount: number
-  content: string
-  date: number
-  context: string
-  webUrl: string
-  parentAuthor: string
-}
-
 export type TProjectData = IProjectData[]
 export interface IProjectData {
-  id: string | null
+  id: number
   name: string
   members: TMemberData
   numBranches: number

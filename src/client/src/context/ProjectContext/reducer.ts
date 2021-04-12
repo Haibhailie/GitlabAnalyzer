@@ -119,7 +119,9 @@ const ignoreMr = (state: IProjectState, mrId: number, setIgnored: boolean) => {
 
   mr.isIgnored = setIgnored
 
-  // await jsonFetcher(`/api/project/${state.id}/mergerequest/${mrId}/ignore`)
+  jsonFetcher(`/api/project/${state.id}/mergerequest/${mrId}/ignore`, {
+    responseIsEmpty: true,
+  })
 
   return state
 }

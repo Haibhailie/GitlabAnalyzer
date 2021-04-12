@@ -71,17 +71,14 @@ const Home = () => {
   }
 
   const preAnalyze = (id: string | number) => {
-    id = id.toString()
-
-    updateAnalyzingError(id, false)
-    updateAnalyzing(id, true)
+    updateAnalyzingError(id.toString(), false)
+    updateAnalyzing(id.toString(), true)
 
     jsonFetch(`/api/${id}/analyze`, {
       responseIsEmpty: true,
       method: 'PUT',
     })
       .then(res => {
-        id = id.toString()
         analysis[id].isAnalyzing = false
         setAnalysis({ ...analysis })
         if (res === 200) {
@@ -97,7 +94,7 @@ const Home = () => {
         } else if (res === 401 || res === 400) {
           history.push('/login')
         } else {
-          updateAnalyzingError(id, true)
+          updateAnalyzingError(id.toString(), true)
         }
       })
       .catch(() => {
