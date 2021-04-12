@@ -20,86 +20,230 @@ const dateZero = new Date(0)
 const reducer: TUserConfigReducer = async (state, action) => {
   switch (action.type) {
     case SET_START_DATE:
-      return action.date < (state.selected.endDate ?? new Date())
-        ? {
+      if (action.date < (state.selected.endDate ?? new Date())) {
+        try {
+          await jsonFetcher('/api/config/current', {
+            method: 'PUT',
+            responseIsEmpty: true,
+            body: JSON.stringify({
+              ...state,
+              selected: {
+                ...state.selected,
+                startDate: action.date?.getTime() ?? Date.now(),
+              },
+            }),
+          })
+          return {
             ...state,
             selected: {
               ...state.selected,
               startDate: action.date,
             },
           }
-        : state
+        } catch {
+          return state
+        }
+      }
+      return state
     case SET_END_DATE:
-      return action.date > (state.selected.startDate ?? dateZero)
-        ? {
+      if (action.date > (state.selected.startDate ?? dateZero)) {
+        try {
+          await jsonFetcher('/api/config/current', {
+            method: 'PUT',
+            responseIsEmpty: true,
+            body: JSON.stringify({
+              ...state,
+              selected: {
+                ...state.selected,
+                endDate: action.date?.getTime() ?? Date.now(),
+              },
+            }),
+          })
+          return {
             ...state,
             selected: {
               ...state.selected,
               endDate: action.date,
             },
           }
-        : state
+        } catch {
+          return state
+        }
+      }
+      return state
     case SET_SCORE_BY:
-      return {
-        ...state,
-        selected: {
-          ...state.selected,
-          scoreBy: action.scoreBy,
-        },
+      try {
+        await jsonFetcher('/api/config/current', {
+          method: 'PUT',
+          responseIsEmpty: true,
+          body: JSON.stringify({
+            ...state,
+            selected: {
+              ...state.selected,
+              scoreBy: action.scoreBy,
+            },
+          }),
+        })
+        return {
+          ...state,
+          selected: {
+            ...state.selected,
+            scoreBy: action.scoreBy,
+          },
+        }
+      } catch {
+        return state
       }
     case SET_GRAPH_Y_AXIS:
-      return {
-        ...state,
-        selected: {
-          ...state.selected,
-          yAxis: action.yAxis,
-        },
+      try {
+        await jsonFetcher('/api/config/current', {
+          method: 'PUT',
+          responseIsEmpty: true,
+          body: JSON.stringify({
+            ...state,
+            selected: {
+              ...state.selected,
+              yAxis: action.yAxis,
+            },
+          }),
+        })
+        return {
+          ...state,
+          selected: {
+            ...state.selected,
+            yAxis: action.yAxis,
+          },
+        }
+      } catch {
+        return state
       }
+
     case SET_GRAPH_BY:
-      return {
-        ...state,
-        selected: {
-          ...state.selected,
-          graphMode: action.graphMode,
-        },
+      try {
+        await jsonFetcher('/api/config/current', {
+          method: 'PUT',
+          responseIsEmpty: true,
+          body: JSON.stringify({
+            ...state,
+            selected: {
+              ...state.selected,
+              graphMode: action.graphMode,
+            },
+          }),
+        })
+        return {
+          ...state,
+          selected: {
+            ...state.selected,
+            graphMode: action.graphMode,
+          },
+        }
+      } catch {
+        return state
       }
+
     case SET_CONFIG_NAME:
-      return {
-        ...state,
-        selected: {
-          ...state.selected,
-          name: action.name,
-        },
+      try {
+        await jsonFetcher('/api/config/current', {
+          method: 'PUT',
+          responseIsEmpty: true,
+          body: JSON.stringify({
+            ...state,
+            selected: {
+              ...state.selected,
+              name: action.name,
+            },
+          }),
+        })
+        return {
+          ...state,
+          selected: {
+            ...state.selected,
+            name: action.name,
+          },
+        }
+      } catch {
+        return state
       }
+
     case SET_SCORES:
-      return {
-        ...state,
-        selected: {
-          ...state.selected,
-          fileScores: action.scores.fileScores,
-          generalScores: action.scores.generalScores,
-        },
+      try {
+        await jsonFetcher('/api/config/current', {
+          method: 'PUT',
+          responseIsEmpty: true,
+          body: JSON.stringify({
+            ...state,
+            selected: {
+              ...state.selected,
+              fileScores: action.scores.fileScores,
+              generalScores: action.scores.generalScores,
+            },
+          }),
+        })
+        return {
+          ...state,
+          selected: {
+            ...state.selected,
+            fileScores: action.scores.fileScores,
+            generalScores: action.scores.generalScores,
+          },
+        }
+      } catch {
+        return state
       }
+
     case SET_CONFIG:
       if (!state.configs[action.id]) return state
-      return {
-        ...state,
-        selected: state.configs[action.id],
+      try {
+        await jsonFetcher('/api/config/current', {
+          method: 'PUT',
+          responseIsEmpty: true,
+          body: JSON.stringify({
+            ...state,
+            selected: state.configs[action.id],
+          }),
+        })
+        return {
+          ...state,
+          selected: state.configs[action.id],
+        }
+      } catch {
+        return state
       }
+
     case UPDATE_CONFIG:
       if (!state.configs[action.id]) return state
-
-      return {
-        configs: {
-          ...state.configs,
-          [action.id]: {
+      try {
+        await jsonFetcher(`/api/config/${action.id}`, {
+          method: 'PUT',
+          responseIsEmpty: true,
+          body: JSON.stringify({
+            configs: {
+              ...state.configs,
+              [action.id]: {
+                ...state.selected,
+              },
+              selected: {
+                ...state.selected,
+              },
+            },
+          }),
+        })
+        return {
+          configs: {
+            ...state.configs,
+            [action.id]: {
+              ...state.selected,
+            },
+          },
+          selected: {
             ...state.selected,
           },
-        },
-        selected: {
-          ...state.selected,
-        },
+        }
+      } catch {
+        return state
       }
+
     case ADD_CONFIG:
       try {
         const newConfig = { ...state.selected }
