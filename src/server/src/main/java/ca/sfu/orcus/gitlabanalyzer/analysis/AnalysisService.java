@@ -2,7 +2,11 @@ package ca.sfu.orcus.gitlabanalyzer.analysis;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.*;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestScoreCalculator;
 import org.bson.types.ObjectId;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
@@ -13,17 +17,20 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import java.util.*;
 
 @Service
 public class AnalysisService {
     private final AnalysisRepository analysisRepository;
     private final GitLabApiWrapper gitLabApiWrapper;
+    private final ConfigService configService;
 
     @Autowired
-    public AnalysisService(AnalysisRepository analysisRepository, GitLabApiWrapper gitLabApiWrapper) {
+    public AnalysisService(AnalysisRepository analysisRepository, GitLabApiWrapper gitLabApiWrapper, ConfigService configService) {
         this.analysisRepository = analysisRepository;
         this.gitLabApiWrapper = gitLabApiWrapper;
+        this.configService = configService;
     }
 
     public void analyzeProject(String jwt, int projectId) throws GitLabApiException, NullPointerException, NotAuthorizedException {
@@ -32,16 +39,16 @@ public class AnalysisService {
             throw new NotAuthorizedException("Current user unauthorized");
         }
 
-        analyzeProject(gitLabApi, projectId);
+        analyzeProject(jwt, gitLabApi, projectId);
     }
 
-    private void analyzeProject(GitLabApi gitLabApi, Integer projectId) throws GitLabApiException, NullPointerException {
+    private void analyzeProject(String jwt, GitLabApi gitLabApi, Integer projectId) throws GitLabApiException, NullPointerException {
         Map<String, CommitterDtoDb> committerToCommitterDtoMap = new HashMap<>(); // committerEmail -> committerDto
         Map<Integer, MemberDtoDb> memberToMemberDtoMap = initializeMemberDtos(gitLabApi, projectId); // memberId -> memberDto
         Map<Integer, MergeRequestDtoDb> mrIdToMrDtoMap = new HashMap<>();
 
         for (MergeRequest mr : getAllMergeRequests(gitLabApi, projectId)) {
-            MergeRequestDtoDb mergeRequestDto = getMergeRequestDto(gitLabApi, mr, committerToCommitterDtoMap);
+            MergeRequestDtoDb mergeRequestDto = getMergeRequestDto(jwt, gitLabApi, mr, committerToCommitterDtoMap);
             mrIdToMrDtoMap.put(mr.getIid(), mergeRequestDto);
 
             addMergeRequestNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, mr);
@@ -76,7 +83,8 @@ public class AnalysisService {
         return gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
     }
 
-    private MergeRequestDtoDb getMergeRequestDto(GitLabApi gitLabApi,
+    private MergeRequestDtoDb getMergeRequestDto(String jwt,
+                                                 GitLabApi gitLabApi,
                                                  MergeRequest mergeRequest,
                                                  Map<String, CommitterDtoDb> committerToCommitterDtoMap) throws GitLabApiException {
         List<CommitDtoDb> commitDtos = new ArrayList<>();
@@ -97,14 +105,17 @@ public class AnalysisService {
             committers.add(detailedCommit.getAuthorEmail());
             addCommitIdAndMrIdToCommitterDto(committerToCommitterDtoMap, detailedCommit, mergeRequestId);
 
-            CommitDtoDb commitDto = getCommitDto(gitLabApi, projectId, detailedCommit);
+            CommitDtoDb commitDto = getCommitDto(jwt, gitLabApi, projectId, detailedCommit);
             sumOfCommitsScore += commitDto.getScore();
 
             commitDtos.add(commitDto);
         }
 
+        ConfigDto currentConfig = configService.getCurrentConfig(jwt)
+                .orElseThrow(() -> new NotFoundException("Current config not found"));
+        MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator(currentConfig);
         MergeRequest mrChanges = gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId);
-        return new MergeRequestDtoDb(mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore, isSolo);
+        return new MergeRequestDtoDb(jwt, mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore, isSolo, scoreCalculator);
     }
 
     private List<Commit> getMergeRequestCommits(GitLabApi gitLabApi, MergeRequest mergeRequest)
@@ -138,10 +149,13 @@ public class AnalysisService {
         }
     }
 
-    private CommitDtoDb getCommitDto(GitLabApi gitLabApi, Integer projectId, Commit detailedCommit)
+    private CommitDtoDb getCommitDto(String jwt, GitLabApi gitLabApi, Integer projectId, Commit detailedCommit)
             throws GitLabApiException {
         List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, detailedCommit.getId());
-        return new CommitDtoDb(detailedCommit, diffList);
+        ConfigDto currentConfig = configService.getCurrentConfig(jwt)
+                .orElseThrow(() -> new NotFoundException("Current config not found"));
+        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(currentConfig);
+        return new CommitDtoDb(detailedCommit, diffList, scoreCalculator);
     }
 
     private void addMergeRequestNotesToMemberDtos(GitLabApi gitLabApi,
