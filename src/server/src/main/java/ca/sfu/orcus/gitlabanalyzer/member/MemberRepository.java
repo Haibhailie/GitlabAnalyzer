@@ -59,7 +59,7 @@ public class MemberRepository {
         return documentIds;
     }
 
-    private String cacheMember(MemberDtoDb member, String projectUrl) {
+    public String cacheMember(MemberDtoDb member, String projectUrl) {
         Document existingDocument = memberCollection.find(getMemberEqualityParameter(projectUrl, member.getId()))
                 .projection(include(Member.documentId.key)).first();
         if (existingDocument != null) {

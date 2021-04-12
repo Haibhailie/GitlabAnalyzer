@@ -22,6 +22,7 @@ import java.util.Optional;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Updates.set;
 
 @Repository
 public class MergeRequestRepository {
@@ -166,7 +167,9 @@ public class MergeRequestRepository {
     }
 
     public void updateCommitUserId(String projectUrl, String commitId, Integer userId) {
-        mergeRequestCollection.updateOne(eq(commitRepo.getCommitEqualityParameter(projectUrl, commitId)));
+        mergeRequestCollection.updateOne(
+                and(eq("projectUrl", projectUrl), eq("commits.commitId", commitId)),
+                set("commits.$.userId", userId));
     }
 }
 
