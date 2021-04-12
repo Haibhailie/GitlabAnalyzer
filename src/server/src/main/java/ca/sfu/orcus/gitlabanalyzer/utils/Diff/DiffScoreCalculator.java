@@ -53,30 +53,23 @@ public class DiffScoreCalculator {
             } else if (line.startsWith("+")) {
                 if (checkForCommentedLine(line)) {
                     numBlankAdditions++;
-                    numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 } else if (line.substring(1).replaceAll("\\s+", "").startsWith(multiLineCommentStart)) {
                     handleMultiLineComments(lineNumber);
                 } else if (checkForSyntaxOnlyLine(line)) {
                     numSyntaxChanges++;
-                    numLineAdditions++;
                 } else if (line.substring(1).replaceAll("\\s+", "").length() > 0) {
                     numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION));
                 } else {
                     numBlankAdditions++;
-                    numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 }
             } else if (line.startsWith("-")) {
                 if (checkSpacingChanges(lineNumber, line)) {
-                    numLineAdditions++;
-                    numLineDeletions++;
                     continue;
                     //Log spacing changed line
                 } else if (checkSyntaxChanges(lineNumber, line)) {
-                    numLineAdditions++;
-                    numLineDeletions++;
                     continue;
                     //Log syntax changed line
                 } else {
