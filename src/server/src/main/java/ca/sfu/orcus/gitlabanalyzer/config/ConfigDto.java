@@ -125,7 +125,6 @@ public final class ConfigDto {
             return syntaxInCode;
         }
 
-
         public void setFileExtension(String fileExtension) {
             this.fileExtension = fileExtension;
         }

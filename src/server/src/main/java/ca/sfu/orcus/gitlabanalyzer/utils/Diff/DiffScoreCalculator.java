@@ -261,12 +261,12 @@ public class DiffScoreCalculator {
                 List<ConfigDto.GeneralTypeScoreDto> list = configDto.get().getGeneralScores();
                 for (ConfigDto.GeneralTypeScoreDto g : list) {
                     switch (g.getType()) {
-                        case ADD_FACTOR -> addLOCFactor = g.getValue();
-                        case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
-                        case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
-                        case BLANK_FACTOR -> blankLOCFactor = g.getValue();
-                        case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
-                        default -> throw new IllegalStateException("Unexpected type: " + g.getType());
+                      case ADD_FACTOR -> addLOCFactor = g.getValue();
+                      case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
+                      case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
+                      case BLANK_FACTOR -> blankLOCFactor = g.getValue();
+                      case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
+                      default -> throw new IllegalStateException("Unexpected type: " + g.getType());
                     }
                 }
             }
@@ -337,8 +337,9 @@ public class DiffScoreCalculator {
     }
 
     private String getFileTypeFromDiff(String fileName) {
-        if (fileName.contains("."))
+        if (fileName.contains(".")) {
             return fileName.substring(fileName.indexOf("."));
+        }
         return "N/A";
     }
 
