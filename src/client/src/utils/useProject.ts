@@ -13,7 +13,7 @@ const useProject = (projectId?: number) => {
       projectId,
     })
 
-    return undefined
+    return 'LOADING'
   }
 
   return project

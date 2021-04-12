@@ -38,7 +38,7 @@ const Home = () => {
         })
     }
   )
-  const onAnalyze = (id: string) => {
+  const onAnalyze = (id: string | number) => {
     history.push(`/project/${id}`)
   }
 

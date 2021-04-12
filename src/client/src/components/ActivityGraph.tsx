@@ -1,6 +1,10 @@
-import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { round } from 'lodash'
+import { ICommitData, IMergeData } from '../types'
+import { TCommits, TMergeRequests } from '../context/ProjectContext'
+import { useContext, useEffect, useState } from 'react'
+import { UserConfigContext } from '../context/UserConfigContext'
+
 import {
   BarChart,
   XAxis,
@@ -12,14 +16,8 @@ import {
   ReferenceLine,
   CartesianGrid,
 } from 'recharts'
-import { ICommitData, IMergeData } from '../types'
-
-import { onError } from '../utils/suspenseDefaults'
-import { useContext, useEffect, useState } from 'react'
-import { UserConfigContext } from '../context/UserConfigContext'
 
 import styles from '../css/ActivityGraph.module.css'
-import { TCommits, TMergeRequests } from '../context/ProjectContext'
 
 export interface IActivityData {
   commits: ICommitData[]
@@ -125,8 +123,8 @@ export interface IActivityGraphProps {
 
 const ActivityGraph = ({ graphTitle, mergeRequests }: IActivityGraphProps) => {
   const { Suspense, data, error } = useSuspense<TGraphData>(
-    (setData, setError) =>
-      mergeRequests && setData(computeGraphData(mergeRequests))
+    setData => mergeRequests && setData(computeGraphData(mergeRequests)),
+    [mergeRequests]
   )
   const { userConfigs } = useContext(UserConfigContext)
   const [selectedRange, setSelectedRange] = useState(data)

@@ -97,7 +97,7 @@ export type TFiles = {
   [fileId: string]: IFile
 }
 
-interface ICommit extends Omit<ICommitData, 'files'> {
+export interface ICommit extends Omit<ICommitData, 'files'> {
   // loc: ILoc
   // scores: ILoc
   score: number
@@ -112,7 +112,7 @@ export interface ISumOfCommitsScore {
   [memberId: number]: number
 }
 
-interface IMergeRequest
+export interface IMergeRequest
   extends Omit<IMergeData, 'commits' | 'files' | 'sumOfCommitsScore'> {
   // loc: ILoc // is this needed?
   // scores: ILoc

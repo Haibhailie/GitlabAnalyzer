@@ -1,4 +1,4 @@
-import { TCommitDiffs, TFileData, TLineType } from '../types'
+import { TFileData, TLineType } from '../types'
 import { LONG_STRING_LEN } from '../utils/constants'
 
 import Dropdown from './Dropdown'
@@ -10,7 +10,7 @@ export interface IDiffProps {
   data?: TFileData
   type: 'MR' | 'Commit'
   id: string
-  commits?: TCommitDiffs
+  commitsScore?: number
   title: string
 }
 
@@ -24,7 +24,7 @@ const getLineClassName = (lineType: TLineType) => {
   }
 }
 
-const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
+const Diff = ({ data, type, id, commitsScore, title }: IDiffProps) => {
   // TODO: Get score data from context or get that in MergeRequests and pass in. Use it in header.
   return (
     <div className={styles.container}>
@@ -36,8 +36,8 @@ const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
           <div>
             {type} score: {data?.[0].fileScore.totalScore}
           </div>
-          {commits && (
-            <div>Commit score: {commits[0].fileScore.totalScore}</div>
+          {type === 'MR' && commitsScore && (
+            <div>Commit score: {commitsScore}</div>
           )}
         </div>
         <Dropdown

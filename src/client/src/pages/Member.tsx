@@ -1,9 +1,6 @@
-import { useLocation, useParams } from 'react-router-dom'
-import { useState } from 'react'
-import jsonFetcher from '../utils/jsonFetcher'
+import { useParams } from 'react-router-dom'
 import useSuspense from '../utils/useSuspense'
-import { onError } from '../utils/suspenseDefaults'
-import { IMemberData, ICommitData, IMergeData } from '../types'
+import { ICommitData, IMergeData } from '../types'
 
 import Selector from '../components/Selector'
 import MemberSummary from '../components/MemberSummary'
@@ -11,6 +8,8 @@ import MemberDropdown from '../components/MemberDropdown'
 import MergeRequests from '../components/MergeRequests'
 
 import styles from '../css/Member.module.css'
+import useProject from '../utils/useProject'
+import { IProjectState } from '../context/ProjectContext'
 
 export interface IMemberStatData {
   commits: ICommitData[]
@@ -18,33 +17,31 @@ export interface IMemberStatData {
 }
 
 const Member = () => {
-  const { id, memberId } = useParams<{ id: string; memberId: string }>()
-  const { state } = useLocation<IMemberData>()
-  const [members, setMembers] = useState<IMemberData[]>([])
+  const { id: projectIdStr, memberId: memberIdStr } = useParams<{
+    id: string
+    memberId: string
+  }>()
 
-  const {
-    Suspense,
-    data: memberData,
-    error: memberError,
-  } = useSuspense<IMemberData>(
+  const projectId = parseInt(projectIdStr)
+  const memberId = parseInt(memberIdStr)
+
+  const project = useProject(projectId)
+
+  const { Suspense, data, error: memberError } = useSuspense<IProjectState>(
     (setData, setError) => {
-      if (state) {
-        setData(state)
-      } else {
-        jsonFetcher<IMemberData[]>(`/api/project/${id}/members`)
-          .then(memberData => {
-            setMembers(memberData)
-            for (const member of memberData) {
-              if (member.id == memberId) {
-                return setData(member)
-              }
-            }
-          })
-          .catch(onError(setError))
+      if (!projectId || !memberId)
+        return setError(new Error('Invalid project or member id.'))
+
+      if (!project) {
+        setError(new Error('Failed to load member data.'))
+      } else if (project !== 'LOADING') {
+        setData(project)
       }
     },
-    [memberId]
+    [projectId, memberId, project]
   )
+
+  const member = data?.members[memberId]
 
   return (
     <Suspense
@@ -54,21 +51,21 @@ const Member = () => {
       <div className={styles.container}>
         <div className={styles.containerHeader}>
           <MemberDropdown
-            members={members}
-            projectId={id}
+            members={Object.values(data?.members ?? {})}
+            projectId={projectId}
             currentMemberId={memberId}
           />
         </div>
-        <h1 className={styles.header}>{memberData?.displayName}</h1>
+        <h1 className={styles.header}>{member?.displayName}</h1>
         <h3 className={styles.subheader}>
-          {memberData?.username && `@${memberData?.username}`}
+          {member?.username && `@${member?.username}`}
         </h3>
         <Selector tabHeaders={['Summary', 'Merge Requests', 'Comments']}>
           <div className={styles.summaryContainer}>
-            <MemberSummary projectId={id} memberData={memberData} />
+            <MemberSummary memberId={memberId} />
           </div>
           <div className={styles.mergeRequestsContainer}>
-            <MergeRequests projectId={id} memberId={memberId} />
+            <MergeRequests projectId={projectId} memberId={memberId} />
           </div>
           <div className={styles.commentsContainer}>
             <h1>Comments Table</h1>

@@ -20,7 +20,7 @@ const MemberSummary = ({ memberId }: IMemberSummaryProps) => {
   const project = useProject()
   const { Suspense, data, error } = useSuspense<IMemberWithStats>(
     (setData, setError) => {
-      if (project?.members[memberId]) {
+      if (project !== 'LOADING' && project?.members[memberId]) {
         const member = project.members[memberId]
         setData({
           ...member,
@@ -60,7 +60,7 @@ const MemberSummary = ({ memberId }: IMemberSummaryProps) => {
           ],
         })
       } else {
-        setError(new Error(`could not load member's data`))
+        setError(new Error(`Failed to load the member's data`))
       }
     },
     [project, memberId]
