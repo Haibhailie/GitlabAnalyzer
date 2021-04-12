@@ -81,7 +81,7 @@ const ignoreFile = (
   const commit = !!commitId && mr.commits[commitId]
   const file = commit ? commit.files[fileId] : mr.files[fileId]
   const member = state.members[commit ? commit.userId : mr.userId]
-  if (!mr || !file || !member) return state
+  if (!mr || !file || !member || file.isIgnored === setIgnored) return state
 
   const scoreDelta = addOrSub(!setIgnored) * file.score
 
@@ -89,7 +89,7 @@ const ignoreFile = (
     mr.isIgnored = false
   }
 
-  file.isIgnored = !setIgnored
+  file.isIgnored = setIgnored
 
   if (commit) {
     commit.isIgnored = commit.isIgnored && setIgnored
@@ -109,7 +109,7 @@ const ignoreCommit = (
   setIgnored: boolean
 ) => {
   const commit = state.mergeRequests[mrId]?.commits[commitId]
-  if (!commit) return state
+  if (!commit || commit.isIgnored === setIgnored) return state
 
   Object.keys(commit.files).forEach(fileId => {
     state = ignoreFile(state, mrId, fileId, setIgnored, commitId)
@@ -122,7 +122,7 @@ const ignoreCommit = (
 
 const ignoreMr = (state: IProjectState, mrId: number, setIgnored: boolean) => {
   const mr = state.mergeRequests[mrId]
-  if (!mr) return state
+  if (!mr || mr.isIgnored === setIgnored) return state
 
   Object.keys(mr.commits).forEach(commitId => {
     state = ignoreCommit(state, mrId, commitId, setIgnored)

@@ -11,6 +11,7 @@ import {
   ProjectContext,
 } from '../context/ProjectContext'
 import { IMergeRequest } from '../context/ProjectContext'
+import fastDeepEquals from 'fast-deep-equal'
 
 import Table from '../components/Table'
 import Diff, { IDiffProps } from '../components/Diff'
@@ -147,7 +148,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
 
   const viewDiffOf = (diffProps: IDiffProps) => {
     setSelectedDiff(
-      Object.is(diffProps.data, selectedDiff?.data) ? undefined : diffProps
+      fastDeepEquals(diffProps.data, selectedDiff?.data) ? undefined : diffProps
     )
   }
 
