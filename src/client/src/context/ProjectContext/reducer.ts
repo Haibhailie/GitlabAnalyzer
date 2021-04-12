@@ -150,6 +150,8 @@ const formatMergeRequests = (
       let commitScore = 0
 
       commit.files.forEach(file => {
+        file.fileId = file.fileId ?? file.name
+
         const loc: ILoc = getFileLoc(file)
 
         const scores = calcScores(loc, config.generalScores)
@@ -181,6 +183,7 @@ const formatMergeRequests = (
     let numAdditions = 0
 
     mr.files.forEach(file => {
+      file.fileId = file.fileId ?? file.name
       const loc: ILoc = getFileLoc(file)
 
       const scores = calcScores(loc, config.generalScores)
@@ -252,7 +255,7 @@ const formatMembers = (members: TMemberData, mrs: TMergeRequests) => {
       if (mr.isSolo) {
         member.soloMrScore += mr.score
       } else {
-        member.sharedMrScore += mr.sumOfCommitsScore[member.id]
+        member.sharedMrScore += mr.sumOfCommitsScore[member.id] ?? 0
       }
 
       Object.values(mr.commits).forEach(commit => {
@@ -289,11 +292,6 @@ const reducer: TProjectReducer = async (state, action) => {
     let mergeRequests
     let members
 
-    // eslint-disable-next-line
-    // mergeRequests = JSON.parse(fakeMrs)
-    // eslint-disable-next-line
-    // members = JSON.parse(fakeMembers)
-
     try {
       mergeRequests = await jsonFetcher<TMergeData>(
         `/api/project/${projectId}/mergerequests`
@@ -325,6 +323,13 @@ const reducer: TProjectReducer = async (state, action) => {
       Object.values(state.members).forEach(member => {
         member.wordCount = 0
         member.numComments = 0
+        member.mergeRequests = {}
+        member.soloMrScore = 0
+        member.sharedMrScore = 0
+        member.commitScore = 0
+        member.numCommits = 0
+        member.numAdditions = 0
+        member.numDeletions = 0
         member.notes.forEach(note => {
           if (note.date >= startTime && note.date <= endTime) {
             member.numComments++
@@ -337,19 +342,11 @@ const reducer: TProjectReducer = async (state, action) => {
         const member = state.members[mr.userId]
         if (!member) return
 
-        member.mergeRequests = {}
-        member.soloMrScore = 0
-        member.sharedMrScore = 0
-        member.commitScore = 0
-        member.numCommits = 0
-        member.numAdditions = 0
-        member.numDeletions = 0
-
         if (!mr.isIgnored && mr.time >= startTime && mr.time <= endTime) {
           if (mr.isSolo) {
             member.soloMrScore += mr.score
           } else {
-            member.sharedMrScore += mr.sumOfCommitsScore[member.id]
+            member.sharedMrScore += mr.sumOfCommitsScore[member.id] ?? 0
           }
 
           Object.values(mr.commits).forEach(commit => {
@@ -361,9 +358,8 @@ const reducer: TProjectReducer = async (state, action) => {
 
           member.numAdditions += mr.numAdditions
           member.numDeletions += mr.numDeletions
+          member.mergeRequests[mr.mergeRequestId] = mr
         }
-
-        member.mergeRequests[mr.mergeRequestId] = mr
       })
       return { ...state }
     }

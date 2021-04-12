@@ -27,14 +27,16 @@ const MemberSummary = ({ memberId }: IMemberSummaryProps) => {
           stats: [
             {
               name: 'Merge request score',
-              value: `${member.soloMrScore} + ${member.sharedMrScore}`,
+              value: `${member.soloMrScore.toFixed(
+                1
+              )} + ${member.sharedMrScore.toFixed(1)}`,
               rawValue: member.soloMrScore + member.sharedMrScore,
               description:
                 'Sum of merge request diff scores for mrs where member was the only committer + sum of commit diff scores within mrs where more than one member committed.',
             },
             {
               name: 'Commit score',
-              value: member.commitScore,
+              value: member.commitScore.toFixed(1),
               description: 'Sum of commit scores for selected date range',
             },
             {

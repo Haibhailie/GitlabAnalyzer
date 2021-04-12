@@ -6,6 +6,7 @@ import useProject from '../utils/useProject'
 import {
   ICommit,
   IGNORE_COMMIT,
+  IGNORE_COMMIT_FILE,
   IGNORE_MR,
   IGNORE_MR_FILE,
   ProjectContext,
@@ -56,7 +57,6 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
   const tableData = useRef<{ mrs?: TTableData; commits?: TTableData }>()
 
   const project = useProject()
-  console.log(project)
   const { dispatch } = useContext(ProjectContext)
 
   const { Suspense, data: mergeRequests, error } = useSuspense<
@@ -67,26 +67,28 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
         setError(new Error("Failed to load the member's data"))
       } else if (project !== 'LOADING') {
         setData(
-          Object.values(project.mergeRequests).map(({ time, ...mr }) => {
-            return {
-              ...mr,
-              time,
-              date: dateConverter(time, true),
-              ignore: (
-                <IgnoreBox
-                  onChange={event => {
-                    const checked = (event.target as HTMLInputElement).checked
-                    dispatch({
-                      type: IGNORE_MR,
-                      mrId: mr.mergeRequestId,
-                      setIgnored: checked,
-                    })
-                  }}
-                  checked={mr.isIgnored}
-                />
-              ),
+          Object.values(project.members[memberId].mergeRequests).map(
+            ({ time, ...mr }) => {
+              return {
+                ...mr,
+                time,
+                date: dateConverter(time, true),
+                ignore: (
+                  <IgnoreBox
+                    onChange={event => {
+                      const checked = (event.target as HTMLInputElement).checked
+                      dispatch({
+                        type: IGNORE_MR,
+                        mrId: mr.mergeRequestId,
+                        setIgnored: checked,
+                      })
+                    }}
+                    checked={mr.isIgnored}
+                  />
+                ),
+              }
             }
-          })
+          )
         )
       }
     },
@@ -111,9 +113,11 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
   useEffect(() => {
     if (selectedMr !== undefined) {
       const commitTableData: TTableData = []
-      const commits = Object.values(mergeRequests?.[selectedMr]?.commits ?? {})
-
-      commits.forEach(({ score, time, message, mrId, id }) => {
+      const commits = Object.values(
+        mergeRequests?.find(mr => mr.mergeRequestId === selectedMr)?.commits ??
+          {}
+      )
+      commits.forEach(({ score, time, message, mrId, id, isIgnored }) => {
         commitTableData.push({
           date: dateConverter(time, true),
           title: message,
@@ -129,6 +133,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
                   setIgnored: checked,
                 })
               }}
+              checked={isIgnored}
             />
           ),
         })
@@ -141,7 +146,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
 
       setCommits(commits)
     }
-  }, [selectedMr])
+  }, [selectedMr, project])
 
   const viewDiffOf = (diffProps: IDiffProps) => {
     setSelectedDiff(
@@ -176,6 +181,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
                   mergeRequestId,
                   sumOfCommitsScore,
                   title,
+                  score,
                 } = mergeRequests[i]
                 setSelectedMr(mergeRequestId)
                 viewDiffOf({
@@ -183,6 +189,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
                   type: 'MR',
                   id: `#${mergeRequestId}`,
                   commitsScore: sumOfCommitsScore[memberId],
+                  score,
                   title,
                   ignore: (fileId: string, setIgnored: boolean) => {
                     dispatch({
@@ -203,20 +210,23 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
             {...sharedTableProps}
             isOpen={commits !== undefined}
             title={`Commits for MR #${selectedMr ?? ''}`}
+            maxHeight={400}
             headers={['Date', 'Title', 'Score', 'Ignore?']}
             columnWidths={['6fr', '6fr', '1fr', '1fr']}
             onClick={(e, i) => {
               if (commits?.[i]) {
-                const { id, files, message, mrId } = commits[i]
+                const { id, files, message, mrId, score } = commits[i]
                 viewDiffOf({
                   data: Object.values(files),
                   type: 'Commit',
                   id: id,
                   title: message,
+                  score,
                   ignore: (fileId: string, setIgnored: boolean) => {
                     dispatch({
-                      type: IGNORE_MR_FILE,
+                      type: IGNORE_COMMIT_FILE,
                       fileId,
+                      commitId: id,
                       mrId,
                       setIgnored,
                     })

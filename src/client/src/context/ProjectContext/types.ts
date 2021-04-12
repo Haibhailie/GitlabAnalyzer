@@ -81,7 +81,7 @@ export interface ILoc {
   deletions: number
 }
 
-interface IFile extends IFileData {
+export interface IFile extends IFileData {
   loc: ILoc
   scores: ILoc
   score: number

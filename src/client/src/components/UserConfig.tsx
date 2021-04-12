@@ -101,8 +101,8 @@ const UserConfig = () => {
                 dispatch({ type: SET_START_DATE, date: d })
                 projectDispatch({
                   type: UPDATE_TIME,
-                  endDate: userConfigs.selected.startDate ?? new Date(),
                   startDate: d,
+                  endDate: userConfigs.selected.endDate ?? new Date(),
                 })
               }
             }}
