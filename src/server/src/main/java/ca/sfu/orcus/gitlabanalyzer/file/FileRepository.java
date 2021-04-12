@@ -18,6 +18,7 @@ public class FileRepository {
     private enum File {
         documentId("_id"),
         files("files"),
+        fileDiffs("fileDiffs"),
         name("name"),
         extension("extension"),
         fileScore("fileScore"),
@@ -46,7 +47,7 @@ public class FileRepository {
                 .setTotalScore(gson.fromJson(doc.getString(File.fileScore.key), Scores.class))
                 .setFileDiffDtos(gson.fromJson(doc.getString(File.fileDiffs.key), new TypeToken<List<FileDiffDto>>(){}.getType()))
                 .setLinesOfCodeChanges(gson.fromJson(doc.getString(File.linesOfCodeChanges.key), LOCDto.class))
-                .setIgnored(doc.getBoolean(File.isIgnored));
+                .setIgnored(doc.getBoolean(File.isIgnored.key));
     }
 
     public List<Document> getFileDocuments(List<FileDto> files) {

@@ -5,10 +5,7 @@ import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MergeRequestDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitRepository;
 import ca.sfu.orcus.gitlabanalyzer.file.FileRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -121,16 +118,15 @@ public class MergeRequestRepository {
 
     public List<MergeRequestDtoDb> getAllMergeRequests(String projectUrl) {
         List<MergeRequestDtoDb> mergeRequests = new ArrayList<>();
-        for (String presentMergeRequestId : mergeRequestIds) {
-            Optional<MergeRequestDtoDb> mergeRequest = getMergeRequest(presentMergeRequestId);
-            mergeRequest.ifPresent(mergeRequests::add);
+        for (Document mergeRequestDoc : getMergeRequestDocuments(projectUrl)) {
+            MergeRequestDtoDb mergeRequestDto = docToDto(mergeRequestDoc);
+            mergeRequests.add(mergeRequestDto);
         }
         return mergeRequests;
     }
 
-    private Optional<MergeRequestDtoDb> getMergeRequest(String mergeRequestId) {
-        Document mergeRequestDoc = mergeRequestCollection.find(eq(MergeRequest.mergeRequestId.key, mergeRequestId)).first();
-        return Optional.ofNullable(docToDto(mergeRequestDoc));
+    private FindIterable<Document> getMergeRequestDocuments(String projectUrl) {
+        return mergeRequestCollection.find(eq(MergeRequest.projectUrl.key, projectUrl));
     }
 
     private MergeRequestDtoDb docToDto(Document doc) {
