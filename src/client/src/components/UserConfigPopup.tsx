@@ -1,4 +1,6 @@
 import { ChangeEvent, useContext, useState } from 'react'
+import { ThemeProvider, Tooltip } from '@material-ui/core'
+import tooltipTheme from '../themes/tooltipTheme'
 import classNames from '../utils/classNames'
 import {
   IFileTypeScoring,
@@ -13,6 +15,7 @@ import { ReactComponent as Delete } from '../assets/delete.svg'
 import { ReactComponent as Warning } from '../assets/error-small.svg'
 import { ReactComponent as Add } from '../assets/add-file.svg'
 import { ReactComponent as Save } from '../assets/save-large.svg'
+import { ReactComponent as Reload } from '../assets/reload.svg'
 
 import styles from '../css/UserConfigPopup.module.css'
 
@@ -23,10 +26,12 @@ interface IUserConfigPopup {
 const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
   const { userConfigs, dispatch } = useContext(UserConfigContext)
 
-  const [fileScores, setFileScores] = useState(userConfigs.selected.fileScores)
-  const [generalScores, setGeneralScores] = useState(
-    userConfigs.selected.generalScores
-  )
+  const [fileScores, setFileScores] = useState([
+    ...userConfigs.selected.fileScores,
+  ])
+  const [generalScores, setGeneralScores] = useState([
+    ...userConfigs.selected.generalScores,
+  ])
   const [newFileTypeName, setNewFileTypeName] = useState('')
   const [requireReanalyze, setRequireReanalyze] = useState(false)
 
@@ -56,7 +61,6 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     setFileScores([...fileScores])
 
     if (field !== 'scoreMultiplier') {
-      console.log(field)
       setRequireReanalyze(true)
     }
   }
@@ -105,6 +109,11 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     }
   }
 
+  const reset = () => {
+    setGeneralScores([...userConfigs.selected.generalScores])
+    setFileScores([...userConfigs.selected.fileScores])
+  }
+
   return (
     <Modal close={togglePopup}>
       <div className={styles.container}>
@@ -139,7 +148,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
             <div className={styles.scrollContainer}>
               <Table
                 headers={[
-                  'File Extention',
+                  'File Extension',
                   'Single Line Comment',
                   'Multiline Comment Start',
                   'Multiline Comment End',
@@ -205,6 +214,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                           styles.generalInput,
                           styles.longInput
                         )}
+                        placeholder="e.g. ,[]{}()=><?"
                         onChange={e => fileScoresChange(e, i)}
                       />
                     ),
@@ -255,10 +265,19 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
             </div>
           </div>
         </Selector>
-        <button onClick={save} className={styles.saveButton}>
-          <Save className={styles.saveIcon} />
-          Save score settings
-        </button>
+        <div className={styles.saveContainer}>
+          <button onClick={save} className={styles.saveButton}>
+            <Save className={styles.saveIcon} />
+            Save score settings
+          </button>
+          <ThemeProvider theme={tooltipTheme}>
+            <Tooltip title={'Reset Changes'} arrow>
+              <button onClick={reset}>
+                <Reload className={styles.resetButton} />
+              </button>
+            </Tooltip>
+          </ThemeProvider>
+        </div>
         {requireReanalyze && (
           <div className={styles.warningContainer}>
             <Warning className={styles.warningIcon} /> These changes will not be

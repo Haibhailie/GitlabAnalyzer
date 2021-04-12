@@ -131,17 +131,27 @@
   margin-right: 10px;
 }
 
-.saveButton {
+.saveContainer {
+  display: flex;
+  align-items: center;
   margin-top: 10px;
+}
+.saveButton {
   border: 1px solid var(--color-primary);
   border-radius: 5px;
   text-align: center;
   color: var(--color-primary);
   padding: 5px 10px;
   display: flex;
+  margin-right: 10px;
 }
 
 .saveIcon {
   stroke: var(--color-primary);
   margin-right: 5px;
+}
+
+.resetButton {
+  display: flex;
+  align-items: center;
 }
