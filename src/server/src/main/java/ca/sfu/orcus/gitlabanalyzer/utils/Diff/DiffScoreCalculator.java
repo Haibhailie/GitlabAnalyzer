@@ -67,12 +67,10 @@ public class DiffScoreCalculator {
                 }
             } else if (line.startsWith("-")) {
                 if (checkSpacingChanges(lineNumber, line)) {
-                    numLineAdditions++;
                     numLineDeletions++;
                     continue;
                     //Log spacing changed line
                 } else if (checkSyntaxChanges(lineNumber, line)) {
-                    numLineAdditions++;
                     numLineDeletions++;
                     continue;
                     //Log syntax changed line
