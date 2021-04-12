@@ -1,11 +1,12 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
+import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
-import org.gitlab4j.api.models.MergeRequest;
+import org.gitlab4j.api.models.Diff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,13 @@ import java.util.*;
 public class CommitService {
     private final CommitRepository commitRepository;
     private final GitLabApiWrapper gitLabApiWrapper;
+    private final ConfigService configService;
 
     @Autowired
-    public CommitService(CommitRepository commitRepository, GitLabApiWrapper gitLabApiWrapper) {
+    public CommitService(CommitRepository commitRepository, GitLabApiWrapper gitLabApiWrapper, ConfigService configService) {
         this.commitRepository = commitRepository;
         this.gitLabApiWrapper = gitLabApiWrapper;
+        this.configService = configService;
     }
 
     public List<CommitDto> getAllCommits(String jwt, int projectId, Date since, Date until) {
@@ -27,16 +30,19 @@ public class CommitService {
         if (gitLabApi == null) {
             return null;
         }
-        return getAllCommitDtos(gitLabApi, projectId, since, until);
+        return getAllCommitDtos(jwt, gitLabApi, projectId, since, until);
     }
 
-    private List<CommitDto> getAllCommitDtos(GitLabApi gitLabApi, int projectId, Date since, Date until) {
+    private List<CommitDto> getAllCommitDtos(String jwt, GitLabApi gitLabApi, int projectId, Date since, Date until) {
         try {
             String defaultBranch = gitLabApi.getProjectApi().getProject(projectId).getDefaultBranch();
             List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
             List<CommitDto> allCommits = new ArrayList<>();
             for (Commit commit : allGitCommits) {
-                CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit);
+                CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(configService);
+                List<Diff> diffs = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
+                List<FileDto> fileScores = scoreCalculator.getCommitScore(jwt, diffs);
+                CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit, fileScores);
                 allCommits.add(presentCommit);
             }
             return allCommits;
@@ -45,15 +51,15 @@ public class CommitService {
         }
     }
 
-    public List<CommitDto> getCommitsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
+    public List<CommitDto> returnAllCommitsOfAMember(String jwt, int projectId, Date since, Date until, String memberName) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        return returnAllCommits(gitLabApi, projectId, since, until, memberName);
+        return returnAllCommits(jwt, gitLabApi, projectId, since, until, memberName);
     }
 
-    private List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
+    private List<CommitDto> returnAllCommits(String jwt, GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
         if (gitLabApi == null) {
             return null;
         }
@@ -63,7 +69,10 @@ public class CommitService {
             List<CommitDto> allCommits = new ArrayList<>();
             for (Commit commit : allGitCommits) {
                 if (commit.getAuthorName().equalsIgnoreCase(name)) {
-                    CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit);
+                    CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(configService);
+                    List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
+                    List<FileDto> fileScores = scoreCalculator.getCommitScore(jwt, diffList);
+                    CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit, fileScores);
                     allCommits.add(presentCommit);
                 }
             }
@@ -80,7 +89,10 @@ public class CommitService {
         }
         try {
             Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectId, sha);
-            return new CommitDto(gitLabApi, projectId, gitCommit);
+            CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(configService);
+            List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, gitCommit.getId());
+            List<FileDto> fileScores = scoreCalculator.getCommitScore(jwt, diffList);
+            return new CommitDto(gitLabApi, projectId, gitCommit, fileScores);
         } catch (GitLabApiException e) {
             return null;
         }

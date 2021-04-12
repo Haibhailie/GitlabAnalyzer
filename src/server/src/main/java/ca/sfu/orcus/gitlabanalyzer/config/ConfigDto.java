@@ -120,17 +120,13 @@ public final class ConfigDto {
         return yAxis;
     }
 
-    public List<GeneralTypeScoreDto> getGeneralScores() {
-        return generalScores;
-    }
-
     public List<FileTypeScoreDto> getFileScores() {
         return fileScores;
     }
 
     // Nested class types
 
-    public static final class FileTypeScoreDto {
+    private static final class FileTypeScoreDto {
         private String fileExtension;
         private double scoreMultiplier;
 
@@ -147,13 +143,20 @@ public final class ConfigDto {
     }
 
     public static final class GeneralTypeScoreDto {
-        private String type;
+        public enum scoreFactors { // use of enum needs to be coordinated with frontend
+            ADD_FACTOR,
+            DELETE_FACTOR,
+            SYNTAX_FACTOR,
+            BLANK_FACTOR,
+            SPACING_FACTOR
+        }
+        private scoreFactors type;
         private double value;
 
         public GeneralTypeScoreDto() {
         }
 
-        public void setType(String type) {
+        public void setType(scoreFactors type) {
             this.type = type;
         }
 
@@ -161,13 +164,12 @@ public final class ConfigDto {
             this.value = value;
         }
 
-        public double getValue() {
-            return value;
+        public scoreFactors getType() {
+            return type;
         }
 
         public GeneralTypeScoreDto getTypeScore() {
             return this;
         }
     }
-
 }

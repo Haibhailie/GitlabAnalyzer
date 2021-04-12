@@ -1,11 +1,15 @@
 package ca.sfu.orcus.gitlabanalyzer.utils.Diff;
 
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDiffDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.apache.commons.lang3.StringUtils;
+import org.gitlab4j.api.GitLabApiException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DiffScoreCalculator {
 
@@ -15,6 +19,15 @@ public class DiffScoreCalculator {
     private int numSyntaxChanges = 0;
     private int numSpacingChanges = 0;
     private final double realCodeWrittenInALineFactor = 0.5;
+
+    double addLOCFactor;
+    double deleteLOCFactor;
+    double syntaxChangeFactor;
+    double blankLOCFactor;
+    double spacingChangeFactor;
+
+    private final double lineSimilarityFactor = 0.5;
+
     private List<String> generatedDiffList = new ArrayList<>();
     List<FileDiffDto> fileDiffs = new ArrayList<>();
 
@@ -149,12 +162,8 @@ public class DiffScoreCalculator {
     }
 
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
-    public List<FileDto> fileScoreCalculator(List<String> diffsList,
-                                             double addFactor,
-                                             double deleteFactor,
-                                             double syntaxFactor,
-                                             double blankFactor,
-                                             double spacingFactor) {
+    public List<FileDto> fileScoreCalculator(String jwt, ConfigService configService, List<String> diffsList) {
+        setMultipliersFromConfig(jwt, configService);
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
 
@@ -186,11 +195,11 @@ public class DiffScoreCalculator {
             int syntaxChanges = presentDiffScore.getNumSyntaxChanges();
             int spacingChanges = presentDiffScore.getNumSpacingChanges();
 
-            double totalScore = (additions * addFactor)
-                    + deletions * deleteFactor
-                    + blankAdditions * blankFactor
-                    + syntaxChanges * syntaxFactor
-                    + spacingChanges * spacingFactor;
+            double totalScore = (additions * addLOCFactor)
+                    + deletions * deleteLOCFactor
+                    + blankAdditions * blankLOCFactor
+                    + syntaxChanges * syntaxChangeFactor
+                    + spacingChanges * spacingChangeFactor;
 
             fileDtos.get(i).setTotalScore(new Scores(totalScore,
                     additions,
@@ -208,6 +217,32 @@ public class DiffScoreCalculator {
             fileDtos.get(i).setFileDiffDtos(presentDiffScore.getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i + 1)));
         }
         return fileDtos;
+    }
+
+    private void setMultipliersFromConfig(String jwt, ConfigService configService) {
+        try {
+            Optional<ConfigDto> configDto = configService.getCurrentConfig(jwt);
+            if (configDto.isPresent()) {
+                List<ConfigDto.GeneralTypeScoreDto> list = configDto.get().getGeneralScores();
+                for (ConfigDto.GeneralTypeScoreDto g : list) {
+                    switch (g.getType()) {
+                      case ADD_FACTOR -> addLOCFactor = g.getValue();
+                      case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
+                      case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
+                      case BLANK_FACTOR -> blankLOCFactor = g.getValue();
+                      case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
+                      default -> throw new IllegalStateException("Unexpected type: " + g.getType());
+                    }
+                }
+            }
+        } catch (GitLabApiException | IllegalStateException e) {
+            // default multipliers
+            addLOCFactor = 1;
+            deleteLOCFactor = 0.2;
+            syntaxChangeFactor = 0.2;
+            blankLOCFactor = 0;
+            spacingChangeFactor = 0;
+        }
     }
 
     private String getFileNameFromDiff(List<String> diff) {

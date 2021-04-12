@@ -3,6 +3,8 @@ package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestScoreCalculator;
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
+import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.gitlab4j.api.models.MergeRequest;
 
 import java.util.List;
@@ -12,7 +14,7 @@ public final class MergeRequestDtoDb {
     private int mergeRequestId;
     private String title;
     private String author;
-    private int userId; // TODO: Change it to authorId or memberId on both BE and FE
+    private int userId;
     private String description;
     private long time;
     private String webUrl;
@@ -24,10 +26,9 @@ public final class MergeRequestDtoDb {
     private boolean isIgnored;
     private List<FileDto> files;
 
-    public MergeRequestDtoDb() {
-    }
-
-    public MergeRequestDtoDb(MergeRequest mergeRequest,
+    public MergeRequestDtoDb(String jwt,
+                             ConfigService configService,
+                             MergeRequest mergeRequest,
                              List<CommitDtoDb> commits,
                              Set<String> committerNames,
                              MergeRequest mergeRequestChanges,
@@ -47,8 +48,12 @@ public final class MergeRequestDtoDb {
         setSumOfCommitsScore(sumOfCommitsScore);
         setIgnored(false);
 
-        MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
-        setFiles(scoreCalculator.getMergeRequestScore(mergeRequestChanges));
+        MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator(configService);
+        setFiles(scoreCalculator.getMergeRequestScore(jwt, mergeRequestChanges.getChanges()));
+    }
+
+    public MergeRequestDtoDb() {
+
     }
 
     public MergeRequestDtoDb setMergeRequestId(int mergeRequestId) {

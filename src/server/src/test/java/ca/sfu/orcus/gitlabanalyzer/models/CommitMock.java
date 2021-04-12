@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.models;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
@@ -102,7 +103,8 @@ public class CommitMock {
     public static List<CommitDto> generateTestCommitDto(List<Commit> commits, GitLabApi gitLabApi, int projectId) throws GitLabApiException {
         List<CommitDto> expectedCommitDtoList = new ArrayList<>();
         for (Commit c : commits) {
-            expectedCommitDtoList.add(new CommitDto(gitLabApi, projectId, c));
+            List<FileDto> fileScores = new ArrayList<>();
+            expectedCommitDtoList.add(new CommitDto(gitLabApi, projectId, c, fileScores));
         }
         return expectedCommitDtoList;
     }
