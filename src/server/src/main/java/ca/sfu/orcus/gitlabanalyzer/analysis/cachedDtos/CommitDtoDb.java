@@ -11,7 +11,6 @@ import java.util.List;
 
 public final class CommitDtoDb {
     private String id;
-    private String title;
     private String message;
     private String author;
     private String authorEmail;
@@ -28,7 +27,6 @@ public final class CommitDtoDb {
 
     public CommitDtoDb(String jwt, ConfigService configService,Commit commit, List<Diff> diffList) {
         setId(commit.getId());
-        setTitle(commit.getTitle());
         setMessage(commit.getMessage());
         setAuthor(commit.getAuthorName());
         setAuthorEmail(commit.getAuthorEmail());
@@ -48,66 +46,131 @@ public final class CommitDtoDb {
         setScore(fileScores);
     }
 
-    public void setId(String id) {
+    public CommitDtoDb() {
+    }
+
+    public CommitDtoDb setId(String id) {
         this.id = id;
+        return this;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setMessage(String message) {
+    public CommitDtoDb setMessage(String message) {
         this.message = message;
+        return this;
     }
 
-    public void setAuthor(String author) {
+    public CommitDtoDb setAuthor(String author) {
         this.author = author;
+        return this;
     }
 
-    public void setAuthorEmail(String authorEmail) {
+    public CommitDtoDb setAuthorEmail(String authorEmail) {
         this.authorEmail = authorEmail;
+        return this;
     }
 
-    public void setTime(long time) {
+    public CommitDtoDb setTime(long time) {
         this.time = time;
+        return this;
     }
 
-    public void setWebUrl(String webUrl) {
+    public CommitDtoDb setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+        return this;
     }
 
-    public void setNumAdditions(int numAdditions) {
+    public CommitDtoDb setNumAdditions(int numAdditions) {
         this.numAdditions = numAdditions;
+        return this;
     }
 
-    public void setNumDeletions(int numDeletions) {
+    public CommitDtoDb setNumDeletions(int numDeletions) {
         this.numDeletions = numDeletions;
+        return this;
     }
 
-    public void setTotal(int total) {
+    public CommitDtoDb setTotal(int total) {
         this.total = total;
+        return this;
     }
 
-    public void setDiffs(String diffs) {
+    public CommitDtoDb setDiffs(String diffs) {
         this.diffs = diffs;
+        return this;
     }
 
-    public void setIgnored(boolean isIgnored) {
+    public CommitDtoDb setIgnored(boolean isIgnored) {
         this.isIgnored = isIgnored;
+        return this;
     }
 
-    public void setFiles(List<FileDto> files) {
+    public CommitDtoDb setFiles(List<FileDto> files) {
         this.files = files;
+        return this;
     }
 
-    public void setScore(List<FileDto> files) {
+    public CommitDtoDb setScore(double score) {
+        this.score = score;
+        return this;
+    }
+
+    public CommitDtoDb setScore(List<FileDto> files) {
         for (FileDto file : files) {
             this.score += file.getTotalScore();
         }
+        return this;
     }
 
     public double getScore() {
         return score;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getAuthorEmail() {
+        return authorEmail;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public int getNumAdditions() {
+        return numAdditions;
+    }
+
+    public int getNumDeletions() {
+        return numDeletions;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public String getDiffs() {
+        return diffs;
+    }
+
+    public boolean isIgnored() {
+        return isIgnored;
+    }
+
+    public List<FileDto> getFiles() {
+        return files;
     }
 
     @Override
@@ -123,7 +186,6 @@ public final class CommitDtoDb {
         CommitDtoDb c = (CommitDtoDb) o;
 
         return (this.id.equals(c.id)
-                && this.title.equals(c.title)
                 && this.message.equals(c.message)
                 && this.author.equals(c.author)
                 && this.authorEmail.equals(c.authorEmail)

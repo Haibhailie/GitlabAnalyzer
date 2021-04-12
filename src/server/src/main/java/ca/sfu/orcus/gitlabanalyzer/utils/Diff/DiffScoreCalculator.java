@@ -31,6 +31,7 @@ public class DiffScoreCalculator {
     List<FileDiffDto> fileDiffs = new ArrayList<>();
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
+        resetCount();
         generatedDiffList = diffStrings;
         int lineNumber = -1;
 
@@ -45,18 +46,23 @@ public class DiffScoreCalculator {
             } else if (line.startsWith("@@")) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
             } else if (line.startsWith("+")) {
-                if (line.substring(1).length() > 0) {
+                if (line.substring(1).replaceAll("\\s+", "").length() > 0) {
                     numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION));
                 } else {
                     numBlankAdditions++;
+                    numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 }
             } else if (line.startsWith("-")) {
                 if (checkSpacingChanges(lineNumber, line)) {
+                    numLineAdditions++;
+                    numLineDeletions++;
                     continue;
                     //Log spacing changed line
                 } else if (checkSyntaxChanges(lineNumber, line)) {
+                    numLineAdditions++;
+                    numLineDeletions++;
                     continue;
                     //Log syntax changed line
                 } else {
@@ -68,6 +74,14 @@ public class DiffScoreCalculator {
             }
         }
         return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
+    }
+
+    private void resetCount() {
+        numLineAdditions = 0;
+        numLineDeletions = 0;
+        numBlankAdditions = 0;
+        numSyntaxChanges = 0;
+        numSpacingChanges = 0;
     }
 
     private boolean checkSyntaxChanges(int lineNumber, String testingLine) {
@@ -109,15 +123,6 @@ public class DiffScoreCalculator {
         return str1.replaceAll("\\s+", "").trim().equals(str2.replaceAll("\\s+", "").trim());
     }
 
-    private int findNextFileInDiff(List<String> diffsList, int startIndex) {
-        for (int i = startIndex; i < diffsList.size(); i++) {
-            if (diffsList.get(i).startsWith("diff --")) {
-                return i;
-            }
-        }
-        return diffsList.size();
-    }
-
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
     public List<FileDto> fileScoreCalculator(String jwt, ConfigService configService, List<String> diffsList) {
         setMultipliersFromConfig(jwt, configService);
@@ -144,11 +149,13 @@ public class DiffScoreCalculator {
         }
 
         for (int i = 0; i < diffScoreDtos.size(); i++) {
-            int additions = diffScoreDtos.get(i).getNumLineAdditions();
-            int deletions = diffScoreDtos.get(i).getNumLineDeletions();
-            int blankAdditions = diffScoreDtos.get(i).getNumBlankAdditions();
-            int syntaxChanges = diffScoreDtos.get(i).getNumSyntaxChanges();
-            int spacingChanges = diffScoreDtos.get(i).getNumSpacingChanges();
+
+            DiffScoreDto presentDiffScore = diffScoreDtos.get(i);
+            int additions = presentDiffScore.getNumLineAdditions();
+            int deletions = presentDiffScore.getNumLineDeletions();
+            int blankAdditions = presentDiffScore.getNumBlankAdditions();
+            int syntaxChanges = presentDiffScore.getNumSyntaxChanges();
+            int spacingChanges = presentDiffScore.getNumSpacingChanges();
 
             double totalScore = (additions * addLOCFactor)
                     + deletions * deleteLOCFactor
@@ -156,7 +163,7 @@ public class DiffScoreCalculator {
                     + syntaxChanges * syntaxChangeFactor
                     + spacingChanges * spacingChangeFactor;
 
-            fileDtos.get(i).setMergeRequestFileScore(new Scores(totalScore,
+            fileDtos.get(i).setTotalScore(new Scores(totalScore,
                     additions,
                     deletions,
                     blankAdditions,
@@ -169,7 +176,7 @@ public class DiffScoreCalculator {
                     syntaxChanges,
                     spacingChanges));
 
-            fileDtos.get(i).setFileDiffDtos(diffScoreDtos.get(i).getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i + 1)));
+            fileDtos.get(i).setFileDiffDtos(presentDiffScore.getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i + 1)));
         }
         return fileDtos;
     }

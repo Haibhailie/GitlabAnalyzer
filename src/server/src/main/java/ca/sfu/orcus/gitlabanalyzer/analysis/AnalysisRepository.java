@@ -4,24 +4,23 @@ import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MergeRequestDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
-import org.bson.types.ObjectId;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
 import java.util.List;
 
 @Repository
 public class AnalysisRepository {
     private final MemberRepository memberRepo;
+    private final MergeRequestRepository mergeRequestRepo;
 
     @Autowired
-    public AnalysisRepository(MemberRepository memberRepo) {
+    public AnalysisRepository(MemberRepository memberRepo, MergeRequestRepository mergeRequestRepo) {
         this.memberRepo = memberRepo;
+        this.mergeRequestRepo = mergeRequestRepo;
     }
-
-    // Cache the given projectDto
+    
     public void cacheProjectDto(ProjectDtoDb projectDto) {
         return;
     }
@@ -30,9 +29,7 @@ public class AnalysisRepository {
         return memberRepo.cacheAllMembers(projectUrl, memberDtos);
     }
 
-    // Cache all merge request DTOs and return a list of mappings from mergeRequestId -> documentId
-    public List<Pair<Integer, ObjectId>> cacheMergeRequestsDtos(String projectUrl,
-                                                                List<MergeRequestDtoDb> mergeRequestDtos) {
-        return Collections.emptyList();
+    public List<String> cacheMergeRequestDtos(String projectUrl, List<MergeRequestDtoDb> mergeRequests) {
+        return mergeRequestRepo.cacheAllMergeRequests(projectUrl, mergeRequests);
     }
 }
