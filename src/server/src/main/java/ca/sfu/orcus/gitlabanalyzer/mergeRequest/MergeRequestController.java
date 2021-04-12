@@ -95,7 +95,9 @@ public class MergeRequestController {
                              @PathVariable int mergerequestId,
                              @PathVariable String fileId,
                              @PathVariable boolean doIgnore) {
-
+        String projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId).orElse("test");
+        mergeRequestRepository.ignoreMergeRequestFile(projectUrl, mergerequestId, fileId, doIgnore);
+        response.setStatus(200);
     }
 
     @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commit/{commitId}/ignore/{doIgnore}")
@@ -118,6 +120,9 @@ public class MergeRequestController {
                              @PathVariable String commitId,
                              @PathVariable String fileId,
                              @PathVariable boolean doIgnore) {
+        String projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId).orElse("test");
+        mergeRequestRepository.ignoreCommitFile(projectUrl, mergerequestId, commitId, fileId, doIgnore);
+        response.setStatus(200);
 
     }
 
