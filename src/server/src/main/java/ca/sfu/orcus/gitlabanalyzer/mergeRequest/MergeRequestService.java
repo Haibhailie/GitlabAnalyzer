@@ -47,10 +47,10 @@ public class MergeRequestService {
         if (gitLabApi == null) {
             return null;
         }
-        return returnAllMergeRequests(gitLabApi, projectId, since, until, memberId);
+        return returnAllMergeRequests(jwt, gitLabApi, projectId, since, until, memberId);
     }
 
-    private List<MergeRequestDto> returnAllMergeRequests(GitLabApi gitLabApi, int projectId, Date since, Date until) {
+    private List<MergeRequestDto> returnAllMergeRequests(String jwt, GitLabApi gitLabApi, int projectId, Date since, Date until) {
         try {
             List<MergeRequestDto> filteredMergeRequests = new ArrayList<>();
             List<MergeRequest> allMergeRequests = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
@@ -65,7 +65,7 @@ public class MergeRequestService {
         }
     }
 
-    private List<MergeRequestDto> returnAllMergeRequests(GitLabApi gitLabApi, int projectId, Date since, Date until, int memberId) {
+    private List<MergeRequestDto> returnAllMergeRequests(String jwt, GitLabApi gitLabApi, int projectId, Date since, Date until, int memberId) {
         if (gitLabApi == null) {
             return null;
         }

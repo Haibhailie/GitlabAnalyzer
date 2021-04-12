@@ -64,16 +64,15 @@ public class CommitService {
         return diffScoreCalculator.fileScoreCalculator(jwt, configService, diffsList);
     }
 
-    public List<CommitDto> returnAllCommitsOfAMember(String jwt, GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
-    public List<CommitDto> getCommitsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
+    public List<CommitDto> returnAllCommitsOfAMember(String jwt, int projectId, Date since, Date until, String memberName) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi == null) {
             return null;
         }
-        return returnAllCommits(gitLabApi, projectId, since, until, memberName);
+        return returnAllCommits(jwt, gitLabApi, projectId, since, until, memberName);
     }
 
-    private List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
+    private List<CommitDto> returnAllCommits(String jwt, GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
         if (gitLabApi == null) {
             return null;
         }
