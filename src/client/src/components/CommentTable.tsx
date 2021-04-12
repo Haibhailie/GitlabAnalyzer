@@ -1,12 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
-import jsonFetcher from '../utils/jsonFetcher'
-import useSuspense from '../utils/useSuspense'
 import dateConverter from '../utils/dateConverter'
-import { onError } from '../utils/suspenseDefaults'
 import { UserConfigContext } from '../context/UserConfigContext'
 import { ThemeProvider, Tooltip } from '@material-ui/core'
 import tooltipTheme from '../themes/tooltipTheme'
-import { ICommentData, TCommentData } from '../types'
+import { TCommentData } from '../types'
 import { LONG_COMMENT_LEN } from '../utils/constants'
 
 import Table from '../components/Table'

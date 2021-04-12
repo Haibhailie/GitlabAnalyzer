@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import useSuspense from '../utils/useSuspense'
 import dateConverter from '../utils/dateConverter'
 import classNames from '../utils/classNames'
@@ -27,7 +27,7 @@ export interface IMergeRequestsProps {
 type TTableData = {
   date: string
   title: string
-  score: number
+  score: ReactNode
   ignore: JSX.Element
 }[]
 
@@ -69,7 +69,6 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
         setData(
           Object.values(project.mergeRequests).map(({ time, ...mr }) => {
             return {
-              // TODO: left-align .toFixed(1) score.
               ...mr,
               time,
               date: dateConverter(time, true),
@@ -101,7 +100,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
           return {
             date,
             title,
-            score,
+            score: <div className={styles.score}>{score.toFixed(1)}</div>,
             ignore,
           }
         })
@@ -118,8 +117,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
         commitTableData.push({
           date: dateConverter(time, true),
           title: message,
-          // TODO: left-align .toFixed(1) score.
-          score,
+          score: <div className={styles.score}>{score.toFixed(1)}</div>,
           ignore: (
             <IgnoreBox
               onChange={event => {

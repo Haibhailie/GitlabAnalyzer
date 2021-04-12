@@ -26,7 +26,6 @@ const getLineClassName = (lineType: TLineType) => {
 }
 
 const Diff = ({ data, type, id, commitsScore, title, ignore }: IDiffProps) => {
-  // TODO: Get score data from context or get that in MergeRequests and pass in. Use it in header.
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -38,7 +37,7 @@ const Diff = ({ data, type, id, commitsScore, title, ignore }: IDiffProps) => {
             {type} score: {data?.[0].fileScore.totalScore}
           </div>
           {type === 'MR' && commitsScore && (
-            <div>Commit score: {commitsScore}</div>
+            <div>Commit score: {commitsScore.toFixed(1)}</div>
           )}
         </div>
         <Dropdown
@@ -59,8 +58,7 @@ const Diff = ({ data, type, id, commitsScore, title, ignore }: IDiffProps) => {
           isIgnored,
         }) => (
           <Dropdown
-            // TODO: use fileId instead of name for key.
-            key={name}
+            key={fileId}
             className={styles.file}
             arrowOnLeft
             startOpened
