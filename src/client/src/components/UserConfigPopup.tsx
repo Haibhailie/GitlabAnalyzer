@@ -1,6 +1,6 @@
 import { ChangeEvent, useContext, useState } from 'react'
 
-import { UserConfigContext } from '../context/UserConfigContext'
+import { TScoreType, UserConfigContext } from '../context/UserConfigContext'
 import Selector from './Selector'
 import Modal from './Modal'
 import Table from './Table'
@@ -50,6 +50,29 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     })
   }
 
+  const typeToString = (type: TScoreType) => {
+    switch (type) {
+      case 'ADD_FACTOR': {
+        return 'New line of code'
+      }
+      case 'DELETE_FACTOR': {
+        return 'Deleting a line'
+      }
+      case 'SYNTAX_FACTOR': {
+        return 'Syntax only'
+      }
+      case 'BLANK_FACTOR': {
+        return 'Comment/blank'
+      }
+      case 'SPACING_FACTOR': {
+        return 'Spacing change'
+      }
+      default: {
+        return ''
+      }
+    }
+  }
+
   return (
     <Modal close={togglePopup}>
       <div className={styles.container}>
@@ -62,7 +85,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
               classes={{ data: styles.row, table: styles.table }}
               data={generalScores.map((score, i) => {
                 return {
-                  type: score.type,
+                  type: typeToString(score.type),
                   input: (
                     <input
                       type="number"

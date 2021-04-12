@@ -18,11 +18,11 @@ const defaultConfig: IUserConfig = {
   name: 'default',
   id: 'default',
   generalScores: [
-    { type: 'New line of code', value: 1 },
-    { type: 'Deleting a line', value: 0.2 },
-    { type: 'Comment/blank', value: 0 },
-    { type: 'Spacing change', value: 0 },
-    { type: 'Syntax only', value: 0.2 },
+    { type: 'ADD_FACTOR', value: 1 },
+    { type: 'DELETE_FACTOR', value: 0.2 },
+    { type: 'SYNTAX_FACTOR', value: 0.2 },
+    { type: 'BLANK_FACTOR', value: 0 },
+    { type: 'SPACING_FACTOR', value: 0 },
   ],
   fileScores: [
     { fileExtension: '.java', scoreMultiplier: 1 },

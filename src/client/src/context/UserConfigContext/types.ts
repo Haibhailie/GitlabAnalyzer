@@ -14,6 +14,12 @@ export const FLUSH_CONFIGS = 'FLUSH_CONFIGS'
 export type TScoreBy = 'MRS' | 'COMMITS'
 export type TYAxis = 'NUMBER' | 'SCORE'
 export type TGraphMode = 'PROJECT' | 'MEMBER'
+export type TScoreType =
+  | 'ADD_FACTOR'
+  | 'DELETE_FACTOR'
+  | 'SYNTAX_FACTOR'
+  | 'BLANK_FACTOR'
+  | 'SPACING_FACTOR'
 
 interface setDateAction {
   type: typeof SET_START_DATE | typeof SET_END_DATE
@@ -88,7 +94,7 @@ export interface IFileTypeScoring {
 }
 
 export interface IGeneralTypeScoring {
-  type: string
+  type: TScoreType
   value: number
 }
 
