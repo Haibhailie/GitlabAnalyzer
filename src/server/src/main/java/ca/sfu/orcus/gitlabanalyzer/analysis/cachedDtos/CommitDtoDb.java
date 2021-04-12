@@ -1,55 +1,62 @@
-package ca.sfu.orcus.gitlabanalyzer.commit;
+package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
-import org.gitlab4j.api.GitLabApi;
-import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
 
-import java.util.Date;
 import java.util.List;
 
-public class CommitDto {
+public final class CommitDtoDb {
+    private String id;
     private String title;
+    private String message;
     private String author;
     private String authorEmail;
-    private String id;
-    private Date dateCommitted;
     private long time;
-    private String message;
+    private String webUrl;
+
     private int numAdditions;
     private int numDeletions;
     private int total;
     private String diffs;
     private boolean isIgnored;
     private List<FileDto> files;
-    private String webUrl;
+    private double score;
 
-    public CommitDto(GitLabApi gitLabApi, int projectId, Commit commit, List<FileDto> fileScores) throws GitLabApiException {
+    public CommitDtoDb(Commit commit, List<Diff> diffList) {
+        setId(commit.getId());
         setTitle(commit.getTitle());
+        setMessage(commit.getMessage());
         setAuthor(commit.getAuthorName());
         setAuthorEmail(commit.getAuthorEmail());
-        setId(commit.getId());
-        setDateCommitted(commit.getCommittedDate());
         setTime(commit.getCommittedDate().getTime());
-        setMessage(commit.getMessage());
+        setWebUrl(commit.getWebUrl());
 
-        Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, commit.getShortId()); // Needed otherwise getStats() returns null
-        setNumAdditions(presentCommit.getStats().getAdditions());
-        setNumDeletions(presentCommit.getStats().getDeletions());
-        setTotal(presentCommit.getStats().getTotal());
+        setNumAdditions(commit.getStats().getAdditions());
+        setNumDeletions(commit.getStats().getDeletions());
+        setTotal(commit.getStats().getTotal());
 
-        List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
-        setDiffs((DiffStringParser.parseDiff(diffList)));
-
-        setFiles(fileScores);
+        setDiffs(DiffStringParser.parseDiff(diffList));
         setIgnored(false);
-        setWebUrl(presentCommit.getWebUrl());
+
+        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator();
+        List<FileDto> fileScores = scoreCalculator.getCommitScore(diffList);
+        setFiles(fileScores);
+        setScore(fileScores);
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public void setAuthor(String author) {
@@ -60,20 +67,12 @@ public class CommitDto {
         this.authorEmail = authorEmail;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setDateCommitted(Date dateCommitted) {
-        this.dateCommitted = dateCommitted;
-    }
-
     public void setTime(long time) {
         this.time = time;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
     }
 
     public void setNumAdditions(int numAdditions) {
@@ -100,20 +99,14 @@ public class CommitDto {
         this.files = files;
     }
 
-    public void setWebUrl(String webUrl) {
-        this.webUrl = webUrl;
+    public void setScore(List<FileDto> files) {
+        for (FileDto file : files) {
+            this.score += file.getTotalScore();
+        }
     }
 
-    public String getDiffs() {
-        return diffs;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getAuthor() {
-        return author;
+    public double getScore() {
+        return score;
     }
 
     @Override
@@ -122,24 +115,25 @@ public class CommitDto {
             return true;
         }
 
-        if (!(o instanceof CommitDto)) {
+        if (!(o instanceof CommitDtoDb)) {
             return false;
         }
 
-        CommitDto c = (CommitDto) o;
+        CommitDtoDb c = (CommitDtoDb) o;
 
         return (this.id.equals(c.id)
                 && this.title.equals(c.title)
+                && this.message.equals(c.message)
                 && this.author.equals(c.author)
                 && this.authorEmail.equals(c.authorEmail)
-                && this.dateCommitted.equals(c.dateCommitted)
                 && this.time == c.time
-                && this.message.equals(c.message)
+                && this.webUrl.equals(c.webUrl)
                 && this.numAdditions == c.numAdditions
                 && this.numDeletions == c.numDeletions
                 && this.total == c.total
                 && this.diffs.equals(c.diffs)
-                && this.isIgnored == c.isIgnored);
-        //&& this.files == c.files); Removed this since it was failing tests, and plus, we don't really test files in our mocks anyway :/
+                && this.isIgnored == c.isIgnored
+                && this.files.equals(c.files)
+                && this.score == c.score);
     }
 }

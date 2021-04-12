@@ -6,10 +6,12 @@ import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestDto;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
+import org.gitlab4j.api.models.MergeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +65,15 @@ public class CommitService {
     }
 
     public List<CommitDto> returnAllCommitsOfAMember(String jwt, GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
+    public List<CommitDto> getCommitsByMemberName(String jwt, int projectId, Date since, Date until, String memberName) {
+        GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
+        if (gitLabApi == null) {
+            return null;
+        }
+        return returnAllCommits(gitLabApi, projectId, since, until, memberName);
+    }
+
+    private List<CommitDto> returnAllCommits(GitLabApi gitLabApi, int projectId, Date since, Date until, String name) {
         if (gitLabApi == null) {
             return null;
         }

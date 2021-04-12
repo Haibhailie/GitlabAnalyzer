@@ -1,0 +1,20 @@
+get:
+  description: 'Get the commits of a single member (from an orphan merge request) in the project.'
+  responses:
+    '200':
+      description: OK
+      content:
+        'application/json':
+          schema:
+            $ref: './components/commits.yml'
+    '401':
+      description: Invalid JWT Token.
+    '500':
+      description: An error un-related to this request occurred.
+  parameters:
+    - $ref: './components/jwtcookie.yml'
+    - $ref: './components/projectId.yml'
+    - $ref: './components/mergerequestId.yml'
+    - name: memberName
+      in: path
+      required: true
