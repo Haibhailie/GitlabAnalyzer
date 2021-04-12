@@ -42,9 +42,11 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     event: ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
+    const field = event.target.name
     fileScores[index] = {
       ...fileScores[index],
-      scoreMultiplier: +event.target.value,
+      [field]:
+        field === 'scoreMultiplier' ? +event.target.value : event.target.value,
     }
 
     setFileScores([...fileScores])
@@ -135,7 +137,9 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                   type: score.fileExtension,
                   comment: (
                     <input
+                      name="singleLineCommentSyntax"
                       type="text"
+                      value={score.singleLineCommentSyntax}
                       className={classNames(
                         styles.generalInput,
                         styles.mediumInput
@@ -145,7 +149,9 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                   ),
                   commentStart: (
                     <input
+                      name="multilineCommentStart"
                       type="text"
+                      value={score.multilineCommentStart}
                       className={classNames(
                         styles.generalInput,
                         styles.mediumInput
@@ -155,7 +161,9 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                   ),
                   commentEnd: (
                     <input
+                      name="multilineCommentEnd"
                       type="text"
+                      value={score.multilineCommentEnd}
                       className={classNames(
                         styles.generalInput,
                         styles.mediumInput
@@ -165,7 +173,9 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                   ),
                   syntax: (
                     <input
+                      name="syntaxCharacters"
                       type="text"
+                      value={score.syntaxCharacters}
                       className={classNames(
                         styles.generalInput,
                         styles.longInput
@@ -175,6 +185,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                   ),
                   weights: (
                     <input
+                      name="scoreMultiplier"
                       type="number"
                       step="0.2"
                       value={score.scoreMultiplier}
