@@ -31,13 +31,14 @@ public class ConfigController {
     @PostMapping(value = "/api/config",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public void addConfig(@CookieValue(value = "sessionId") String jwt,
+    public String addConfig(@CookieValue(value = "sessionId") String jwt,
                           @RequestBody ConfigDto configDto,
                           HttpServletResponse response) {
         if (authService.jwtIsValid(jwt)) {
-            tryAddingNewConfig(jwt, configDto, response);
+            return tryAddingNewConfig(jwt, configDto, response);
         } else {
             response.setStatus(SC_UNAUTHORIZED);
+            return null;
         }
     }
 
@@ -121,13 +122,15 @@ public class ConfigController {
         }
     }
 
-    private void tryAddingNewConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
+    private String tryAddingNewConfig(String jwt, ConfigDto configDto, HttpServletResponse response) {
         try {
             String configId = configService.addNewConfig(jwt, configDto);
             addConfigIdToResponse(response, configId);
             response.setStatus(SC_OK);
+            return configId;
         } catch (IOException | GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
+            return null;
         }
     }
 
@@ -174,7 +177,6 @@ public class ConfigController {
         } catch (GitLabApiException e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
-        System.out.println(configJson);
         return configJson;
     }
 
