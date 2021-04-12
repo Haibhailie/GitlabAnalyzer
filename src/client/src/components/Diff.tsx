@@ -50,7 +50,14 @@ const Diff = ({ data, type, id, commitsScore, title, ignore }: IDiffProps) => {
         </Dropdown>
       </div>
       {data?.map(
-        ({ name, fileScore, linesOfCodeChanges, fileDiffs, fileId }) => (
+        ({
+          name,
+          fileScore,
+          linesOfCodeChanges,
+          fileDiffs,
+          fileId,
+          isIgnored,
+        }) => (
           <Dropdown
             // TODO: use fileId instead of name for key.
             key={name}
@@ -68,6 +75,7 @@ const Diff = ({ data, type, id, commitsScore, title, ignore }: IDiffProps) => {
                         const checked = (e.target as HTMLInputElement).checked
                         ignore(fileId, checked)
                       }}
+                      checked={isIgnored}
                       className={styles.ignoreBox}
                     />
                   </span>

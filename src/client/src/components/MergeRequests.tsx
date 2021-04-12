@@ -1,21 +1,22 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import useSuspense from '../utils/useSuspense'
 import dateConverter from '../utils/dateConverter'
-import { noop } from 'lodash'
 import classNames from '../utils/classNames'
 import useProject from '../utils/useProject'
 import {
   ICommit,
+  IGNORE_COMMIT,
+  IGNORE_MR,
   IGNORE_MR_FILE,
   ProjectContext,
 } from '../context/ProjectContext'
+import { IMergeRequest } from '../context/ProjectContext'
 
 import Table from '../components/Table'
 import Diff, { IDiffProps } from '../components/Diff'
 import IgnoreBox from '../components/IgnoreBox'
 
 import styles from '../css/MergeRequests.module.css'
-import { IMergeRequest } from '../context/ProjectContext'
 
 export interface IMergeRequestsProps {
   projectId: number
@@ -71,7 +72,20 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
               ...mr,
               time,
               date: dateConverter(time, true),
-              ignore: <IgnoreBox onChange={noop} />,
+              ignore: (
+                <IgnoreBox
+                  onChange={event => {
+                    console.log(event)
+                    const checked = (event.target as HTMLInputElement).checked
+                    dispatch({
+                      type: IGNORE_MR,
+                      mrId: mr.mergeRequestId,
+                      setIgnored: checked,
+                    })
+                  }}
+                  checked={mr.isIgnored}
+                />
+              ),
             }
           })
         )
@@ -100,13 +114,25 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
       const commitTableData: TTableData = []
       const commits = Object.values(mergeRequests?.[selectedMr]?.commits ?? {})
 
-      commits.forEach(({ score, time, message }) => {
+      commits.forEach(({ score, time, message, mrId, id }) => {
         commitTableData.push({
           date: dateConverter(time, true),
           title: message,
           // TODO: left-align .toFixed(1) score.
           score,
-          ignore: <IgnoreBox onChange={noop} />,
+          ignore: (
+            <IgnoreBox
+              onChange={event => {
+                const checked = (event.target as HTMLInputElement).checked
+                dispatch({
+                  type: IGNORE_COMMIT,
+                  mrId,
+                  commitId: id,
+                  setIgnored: checked,
+                })
+              }}
+            />
+          ),
         })
       })
 

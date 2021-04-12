@@ -117,6 +117,8 @@ const ignoreCommit = (
     state = ignoreFile(state, mrId, fileId, setIgnored, commitId)
   })
 
+  commit.isIgnored = setIgnored
+
   return state
 }
 
@@ -131,6 +133,8 @@ const ignoreMr = (state: IProjectState, mrId: number, setIgnored: boolean) => {
   Object.keys(mr.files).forEach(fileId => {
     state = ignoreFile(state, mrId, fileId, setIgnored)
   })
+
+  mr.isIgnored = setIgnored
 
   return state
 }
