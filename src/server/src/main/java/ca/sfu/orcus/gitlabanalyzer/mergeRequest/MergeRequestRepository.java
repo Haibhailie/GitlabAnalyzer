@@ -165,52 +165,57 @@ public class MergeRequestRepository {
         return commits;
     }
 
-    public void ignoreMergeRequest(String projectUrl, int mergeRequestId, boolean ignoreValue) {
-        if (ignoreValue) {
-            // ignore Merge Request
-            mergeRequestCollection.updateOne(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), set(MergeRequest.isIgnored.key, ignoreValue));
-            // ignore commits
-            mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("mergeRequestId", mergeRequestId)), set("commits.$[].isIgnored", ignoreValue));
-            // Ignore commits' nested files
-            mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("mergeRequestId", mergeRequestId)), set("commits.$[].files.$[].isIgnored", ignoreValue));
-            // ignore files
-            mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("mergeRequestId", mergeRequestId)), set("files.$[].isIgnored", ignoreValue));
+    public void updateMergeRequestIgnore(String projectUrl, int mergeRequestId, boolean isIgnored) {
+        // Ignore merge request
+        updateMergeRequestIgnoreOnly(projectUrl, mergeRequestId, isIgnored);
 
-        } else {
-            // unignore Merge Request
-            mergeRequestCollection.updateOne(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), set(MergeRequest.isIgnored.key, ignoreValue));
+        // Ignore all merge request diff files
+        mergeRequestCollection.updateMany(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                                                set("files.$[].isIgnored", isIgnored));
+
+        // Ignore all merge request commits
+        mergeRequestCollection.updateMany(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                                                set("commits.$[].isIgnored", isIgnored));
+
+        // Ignore all merge request commits' diff files
+        mergeRequestCollection.updateMany(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                                                set("commits.$[].files.$[].isIgnored", isIgnored));
+    }
+
+    private void updateMergeRequestIgnoreOnly(String projectUrl, int mergeRequestId, boolean isIgnored) {
+        mergeRequestCollection.updateOne(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                set(MergeRequest.isIgnored.key, isIgnored));
+    }
+
+    public void updateCommitIgnore(String projectUrl, int mergeRequestId, String commitId, boolean isIgnored) {
+        mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                eq("commits.commitId", commitId)),
+                set("commits.$.isIgnored", isIgnored));
+
+        // Ignore all files under the commit
+        mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                eq("commits.commitId", commitId)),
+                set("commits.$.files.$[].isIgnored", true));
+
+        // Trickle up if commit was unignored
+        if (!isIgnored) {
+            updateMergeRequestIgnoreOnly(projectUrl, mergeRequestId, false);
         }
     }
 
-    public void ignoreCommit(String projectUrl, int mergeRequestId, String commitId, boolean ignoreValue) {
-        // (un)ignore commit
-        mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("commits.commitId", commitId)), set("commits.$.isIgnored", ignoreValue));
-        // (un)ignore nested files
-        mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("mergeRequestId", mergeRequestId), eq("commits.commitId", commitId)), set("commits.$.files.$[].isIgnored", ignoreValue));
-        // unignore parent Merge Request
-        if (!ignoreValue) {
-            ignoreMergeRequest(projectUrl, mergeRequestId, ignoreValue);
+    public void updateMergeRequestFileIgnore(String projectUrl, int mergeRequestId, String fileId, boolean isIgnored) {
+        updateMergeRequestFileIgnoreOnly(projectUrl, mergeRequestId, fileId, isIgnored);
+
+        // Trickle up if merge request file was unignored
+        if (!isIgnored) {
+            updateMergeRequestIgnoreOnly(projectUrl, mergeRequestId, false);
         }
     }
 
-    public void ignoreMergeRequestFile(String projectUrl, int mergeRequestId, String fileId, boolean ignoreValue) {
-        // (un)ignore file
-        mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("files._id", fileId)), set("files.$.isIgnored", ignoreValue));
-
-        // unignore Merge Request
-        if (!ignoreValue) {
-            ignoreMergeRequest(projectUrl, mergeRequestId, ignoreValue);
-        }
-
-        //         MR
-        //    /          \
-        // Commits      Files (Displacement)
-        //    |
-        //  Files (Distance)
-    }
-
-    public void ignoreCommitFile(String projectUrl, int mergeRequestId, String commitId, String fileId, boolean ignoreValue) {
-
+    private void updateMergeRequestFileIgnoreOnly(String projectUrl, int mergeRequestId, String fileId, boolean isIgnored) {
+        mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                eq("files._id", fileId)),
+                set("files.$.isIgnored", isIgnored));
     }
 }
 

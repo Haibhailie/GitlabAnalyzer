@@ -115,4 +115,16 @@ public class MergeRequestService {
             return null;
         }
     }
+
+    public void updateMergeRequestIgnore(String projectUrl, int mergeRequestId, boolean doIgnore) {
+        mergeRequestRepository.updateMergeRequestIgnore(projectUrl, mergeRequestId, doIgnore);
+    }
+
+    public void updateMergeRequestFileIgnore(String projectUrl, int mergerequestId, String fileId, boolean doIgnore) {
+        mergeRequestRepository.updateMergeRequestFileIgnore(projectUrl, mergerequestId, fileId, doIgnore);
+    }
+
+    public void updateCommitIgnore(String projectUrl, int mergeRequestId, String commitId, boolean doIgnore) {
+        mergeRequestRepository.updateCommitIgnore(projectUrl, mergeRequestId, commitId, doIgnore);
+    }
 }
