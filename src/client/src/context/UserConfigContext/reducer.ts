@@ -26,11 +26,9 @@ const reducer: TUserConfigReducer = async (state, action) => {
             method: 'PUT',
             responseIsEmpty: true,
             body: JSON.stringify({
-              ...state,
-              selected: {
-                ...state.selected,
-                startDate: action.date?.getTime() ?? Date.now(),
-              },
+              ...state.selected,
+              startDate: action.date?.getTime() ?? Date.now(),
+              endDate: state.selected.endDate?.getTime() ?? Date.now(),
             }),
           })
           return {
@@ -52,11 +50,9 @@ const reducer: TUserConfigReducer = async (state, action) => {
             method: 'PUT',
             responseIsEmpty: true,
             body: JSON.stringify({
-              ...state,
-              selected: {
-                ...state.selected,
-                endDate: action.date?.getTime() ?? Date.now(),
-              },
+              ...state.selected,
+              startDate: state.selected.startDate?.getTime() ?? 0,
+              endDate: action.date?.getTime() ?? Date.now(),
             }),
           })
           return {
@@ -77,11 +73,10 @@ const reducer: TUserConfigReducer = async (state, action) => {
           method: 'PUT',
           responseIsEmpty: true,
           body: JSON.stringify({
-            ...state,
-            selected: {
-              ...state.selected,
-              scoreBy: action.scoreBy,
-            },
+            ...state.selected,
+            scoreBy: action.scoreBy,
+            startDate: state.selected.startDate?.getTime() ?? 0,
+            endDate: state.selected.endDate?.getTime() ?? Date.now(),
           }),
         })
         return {
@@ -100,11 +95,10 @@ const reducer: TUserConfigReducer = async (state, action) => {
           method: 'PUT',
           responseIsEmpty: true,
           body: JSON.stringify({
-            ...state,
-            selected: {
-              ...state.selected,
-              yAxis: action.yAxis,
-            },
+            ...state.selected,
+            yAxis: action.yAxis,
+            startDate: state.selected.startDate?.getTime() ?? 0,
+            endDate: state.selected.endDate?.getTime() ?? Date.now(),
           }),
         })
         return {
@@ -124,11 +118,10 @@ const reducer: TUserConfigReducer = async (state, action) => {
           method: 'PUT',
           responseIsEmpty: true,
           body: JSON.stringify({
-            ...state,
-            selected: {
-              ...state.selected,
-              graphMode: action.graphMode,
-            },
+            ...state.selected,
+            graphMode: action.graphMode,
+            startDate: state.selected.startDate?.getTime() ?? 0,
+            endDate: state.selected.endDate?.getTime() ?? Date.now(),
           }),
         })
         return {
@@ -148,11 +141,10 @@ const reducer: TUserConfigReducer = async (state, action) => {
           method: 'PUT',
           responseIsEmpty: true,
           body: JSON.stringify({
-            ...state,
-            selected: {
-              ...state.selected,
-              name: action.name,
-            },
+            ...state.selected,
+            name: action.name,
+            startDate: state.selected.startDate?.getTime() ?? 0,
+            endDate: state.selected.endDate?.getTime() ?? Date.now(),
           }),
         })
         return {
@@ -172,12 +164,11 @@ const reducer: TUserConfigReducer = async (state, action) => {
           method: 'PUT',
           responseIsEmpty: true,
           body: JSON.stringify({
-            ...state,
-            selected: {
-              ...state.selected,
-              fileScores: action.scores.fileScores,
-              generalScores: action.scores.generalScores,
-            },
+            ...state.selected,
+            fileScores: action.scores.fileScores,
+            generalScores: action.scores.generalScores,
+            startDate: state.selected.startDate?.getTime() ?? 0,
+            endDate: state.selected.endDate?.getTime() ?? Date.now(),
           }),
         })
         return {
@@ -199,8 +190,9 @@ const reducer: TUserConfigReducer = async (state, action) => {
           method: 'PUT',
           responseIsEmpty: true,
           body: JSON.stringify({
-            ...state,
-            selected: state.configs[action.id],
+            ...state.configs[action.id],
+            startDate: state.selected.startDate?.getTime() ?? 0,
+            endDate: state.selected.endDate?.getTime() ?? Date.now(),
           }),
         })
         return {
@@ -218,15 +210,9 @@ const reducer: TUserConfigReducer = async (state, action) => {
           method: 'PUT',
           responseIsEmpty: true,
           body: JSON.stringify({
-            configs: {
-              ...state.configs,
-              [action.id]: {
-                ...state.selected,
-              },
-              selected: {
-                ...state.selected,
-              },
-            },
+            ...state.selected,
+            startDate: state.selected.startDate?.getTime() ?? 0,
+            endDate: state.selected.endDate?.getTime() ?? Date.now(),
           }),
         })
         return {
@@ -252,7 +238,7 @@ const reducer: TUserConfigReducer = async (state, action) => {
           method: 'POST',
           body: JSON.stringify({
             ...newConfig,
-            startDate: newConfig.startDate?.getTime(),
+            startDate: newConfig.startDate?.getTime() ?? 0,
             // TODO: remove ?? edge case after BE fix.
             endDate: newConfig.endDate?.getTime() ?? Date.now(),
           }),
