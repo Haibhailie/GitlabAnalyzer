@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.analysis;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.*;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestScoreCalculator;
@@ -148,8 +149,10 @@ public class AnalysisService {
     private CommitDtoDb getCommitDto(String jwt, GitLabApi gitLabApi, Integer projectId, Commit detailedCommit)
             throws GitLabApiException {
         List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, detailedCommit.getId());
-        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(configService);
-        return new CommitDtoDb(jwt, scoreCalculator, detailedCommit, diffList);
+        ConfigDto currentConfig = configService.getCurrentConfig(jwt)
+                .orElseThrow(() -> new NotFoundException("Current config not found"));
+        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(currentConfig);
+        return new CommitDtoDb(detailedCommit, diffList, scoreCalculator);
     }
 
     private void addMergeRequestNotesToMemberDtos(GitLabApi gitLabApi,

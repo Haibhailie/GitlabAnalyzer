@@ -1,6 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
-import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
@@ -12,8 +12,8 @@ import java.util.List;
 public class MergeRequestScoreCalculator {
     private final ConfigService configService;
 
-    public MergeRequestScoreCalculator(ConfigService configService) {
-        this.configService = configService;
+    public MergeRequestScoreCalculator(ConfigDto currentConfig) {
+        this.currentConfig = currentConfig;
     }
 
     public List<FileDto> getMergeRequestScore(String jwt, List<Diff> diffs) {

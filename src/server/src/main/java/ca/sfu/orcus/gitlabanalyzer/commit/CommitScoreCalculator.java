@@ -22,6 +22,6 @@ public class CommitScoreCalculator {
         List<String> diffsList = Arrays.asList(diffArray);
 
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
-        return diffScoreCalculator.fileScoreCalculator(jwt, configService, diffsList);
+        return diffScoreCalculator.fileScoreCalculator(currentConfig, diffsList);
     }
 }

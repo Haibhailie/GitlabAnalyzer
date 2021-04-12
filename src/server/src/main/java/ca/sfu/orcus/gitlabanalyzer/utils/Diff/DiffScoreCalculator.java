@@ -199,8 +199,7 @@ public class DiffScoreCalculator {
             String fileName = getFileNameFromDiff(fileDiffs);
             fileDtos.add(new FileDto(fileName));
 
-            //setSyntaxFromConfig(jwt, configService, ".cpp");
-            setSyntaxFromConfig(jwt, configService, getFileTypeFromDiff(fileName));
+            setSyntaxFromConfig(currentConfig, getFileTypeFromDiff(fileName));
 
             fileSpecificScoreMultiplier.add(scoreMultiplier);
             diffScoreDtos.add(generateDiffScoreDto(fileDiffs));
@@ -239,19 +238,6 @@ public class DiffScoreCalculator {
             fileDtos.get(i).setFileDiffDtos(presentDiffScore.getFileDiffs(fileDiffLines.get(i), fileDiffLines.get(i + 1)));
         }
         return fileDtos;
-    }
-
-    private void setSyntaxFromConfig(String jwt, ConfigService configService, String extension) {
-        try {
-            Optional<ConfigDto> configDto = configService.getCurrentConfig(jwt);
-            if (configDto.isPresent()) {
-                setSyntaxValues(configDto.get(), extension);
-            } else {
-                setDefaultSyntaxValues();
-            }
-        } catch (GitLabApiException e) {
-            e.printStackTrace();
-        }
     }
 
     private void setMultipliersFromConfig(String jwt, ConfigService configService) {

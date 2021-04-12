@@ -24,7 +24,7 @@ public final class CommitDtoDb {
     private List<FileDto> files;
     private double score;
 
-    public CommitDtoDb(String jwt, CommitScoreCalculator scoreCalculator, Commit commit, List<Diff> diffList) {
+    public CommitDtoDb(Commit commit, List<Diff> diffList, CommitScoreCalculator scoreCalculator) {
         setId(commit.getId());
         setMessage(commit.getMessage());
         setAuthor(commit.getAuthorName());
@@ -38,8 +38,7 @@ public final class CommitDtoDb {
 
         setDiffs(DiffStringParser.parseDiff(diffList));
         setIgnored(false);
-
-        List<FileDto> fileScores = scoreCalculator.getCommitScore(jwt, diffList);
+        List<FileDto> fileScores = scoreCalculator.getCommitScore(diffList);
         setFiles(fileScores);
         setScore(fileScores);
     }
