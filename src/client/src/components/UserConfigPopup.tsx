@@ -134,96 +134,106 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
             />
           </div>
           <div className={styles.selectorContainer}>
-            <Table
-              headers={[
-                'File Extention',
-                'Single Line Comment',
-                'Multiline Comment Start',
-                'Multiline Comment End',
-                'Syntax Characters',
-                'Weights',
-                '',
-              ]}
-              columnWidths={['2fr', '2fr', '2fr', '2fr', '3.5fr', '1fr', '1fr']}
-              classes={{ data: styles.skinnyRow, table: styles.table }}
-              data={fileScores.map((score, i) => {
-                return {
-                  type: score.fileExtension,
-                  comment: (
-                    <input
-                      name="singleLineCommentSyntax"
-                      type="text"
-                      value={score.singleLineCommentSyntax}
-                      className={classNames(
-                        styles.generalInput,
-                        styles.mediumInput
-                      )}
-                      onChange={e => fileScoresChange(e, i)}
-                    />
-                  ),
-                  commentStart: (
-                    <input
-                      name="multilineCommentStart"
-                      type="text"
-                      value={score.multilineCommentStart}
-                      className={classNames(
-                        styles.generalInput,
-                        styles.mediumInput
-                      )}
-                      onChange={e => fileScoresChange(e, i)}
-                    />
-                  ),
-                  commentEnd: (
-                    <input
-                      name="multilineCommentEnd"
-                      type="text"
-                      value={score.multilineCommentEnd}
-                      className={classNames(
-                        styles.generalInput,
-                        styles.mediumInput
-                      )}
-                      onChange={e => fileScoresChange(e, i)}
-                    />
-                  ),
-                  syntax: (
-                    <input
-                      name="syntaxCharacters"
-                      type="text"
-                      value={score.syntaxCharacters}
-                      className={classNames(
-                        styles.generalInput,
-                        styles.longInput
-                      )}
-                      onChange={e => fileScoresChange(e, i)}
-                    />
-                  ),
-                  weights: (
-                    <input
-                      name="scoreMultiplier"
-                      type="number"
-                      step="0.2"
-                      value={score.scoreMultiplier}
-                      className={classNames(
-                        styles.generalInput,
-                        styles.shortInput
-                      )}
-                      onChange={e => fileScoresChange(e, i)}
-                    />
-                  ),
-                  end: (
-                    <div className={styles.end}>
-                      pts
-                      <button
-                        className={styles.delete}
-                        onClick={() => deleteFileType(i)}
-                      >
-                        <Delete />
-                      </button>
-                    </div>
-                  ),
-                }
-              })}
-            />
+            <div className={styles.scrollContainer}>
+              <Table
+                headers={[
+                  'File Extention',
+                  'Single Line Comment',
+                  'Multiline Comment Start',
+                  'Multiline Comment End',
+                  'Syntax Characters',
+                  'Weights',
+                  '',
+                ]}
+                columnWidths={[
+                  '2fr',
+                  '2fr',
+                  '2fr',
+                  '2fr',
+                  '3.5fr',
+                  '1fr',
+                  '1fr',
+                ]}
+                classes={{ data: styles.skinnyRow, table: styles.table }}
+                data={fileScores.map((score, i) => {
+                  return {
+                    type: score.fileExtension,
+                    comment: (
+                      <input
+                        name="singleLineCommentSyntax"
+                        type="text"
+                        value={score.singleLineCommentSyntax}
+                        className={classNames(
+                          styles.generalInput,
+                          styles.mediumInput
+                        )}
+                        onChange={e => fileScoresChange(e, i)}
+                      />
+                    ),
+                    commentStart: (
+                      <input
+                        name="multilineCommentStart"
+                        type="text"
+                        value={score.multilineCommentStart}
+                        className={classNames(
+                          styles.generalInput,
+                          styles.mediumInput
+                        )}
+                        onChange={e => fileScoresChange(e, i)}
+                      />
+                    ),
+                    commentEnd: (
+                      <input
+                        name="multilineCommentEnd"
+                        type="text"
+                        value={score.multilineCommentEnd}
+                        className={classNames(
+                          styles.generalInput,
+                          styles.mediumInput
+                        )}
+                        onChange={e => fileScoresChange(e, i)}
+                      />
+                    ),
+                    syntax: (
+                      <input
+                        name="syntaxCharacters"
+                        type="text"
+                        value={score.syntaxCharacters}
+                        className={classNames(
+                          styles.generalInput,
+                          styles.longInput
+                        )}
+                        onChange={e => fileScoresChange(e, i)}
+                      />
+                    ),
+                    weights: (
+                      <input
+                        name="scoreMultiplier"
+                        type="number"
+                        step="0.2"
+                        value={score.scoreMultiplier}
+                        className={classNames(
+                          styles.generalInput,
+                          styles.shortInput
+                        )}
+                        onChange={e => fileScoresChange(e, i)}
+                      />
+                    ),
+                    end: (
+                      <div className={styles.end}>
+                        pts
+                        <button
+                          className={styles.delete}
+                          onClick={() => deleteFileType(i)}
+                        >
+                          <Delete />
+                        </button>
+                      </div>
+                    ),
+                  }
+                })}
+              />
+            </div>
             <div className={styles.addContainer}>
               <input
                 type="text"

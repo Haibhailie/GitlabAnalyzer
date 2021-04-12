@@ -17,6 +17,23 @@
   align-items: center;
 }
 
+.scrollContainer {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background-color: var(--color-background-gray);
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  background-color: var(--color-light-gray);
+}
+
 .inputColumn {
   width: 150px;
 }
