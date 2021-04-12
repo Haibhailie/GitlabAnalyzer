@@ -4,6 +4,7 @@ import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.NoteDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mongodb.client.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -59,7 +60,7 @@ public class MemberRepository {
     }
 
     private String cacheMember(MemberDtoDb member, String projectUrl) {
-        Document existingDocument = memberCollection.find(getMemberEqualityParameter(projectUrl, member))
+        Document existingDocument = memberCollection.find(getMemberEqualityParameter(projectUrl, member.getId()))
                 .projection(include(Member.documentId.key)).first();
         if (existingDocument != null) {
             String documentId = existingDocument.getString(Member.documentId.key);
@@ -72,7 +73,7 @@ public class MemberRepository {
 
     private void replaceMemberDocument(String oldDocumentId, MemberDtoDb member, String projectUrl) {
         Document newMemberDocument = generateMemberDocument(member, oldDocumentId, projectUrl);
-        memberCollection.replaceOne(getMemberEqualityParameter(projectUrl, member), newMemberDocument);
+        memberCollection.replaceOne(getMemberEqualityParameter(projectUrl, member.getId()), newMemberDocument);
     }
 
     private String cacheMemberDocument(MemberDtoDb member, String projectUrl) {
@@ -82,11 +83,11 @@ public class MemberRepository {
         return documentId;
     }
 
-    private Bson getMemberEqualityParameter(String projectUrl, MemberDtoDb member) {
-        return and(eq(Member.projectUrl.key, projectUrl), eq(Member.memberId.key, member.getId()));
+    private Bson getMemberEqualityParameter(String projectUrl, Integer memberId) {
+        return and(eq(Member.projectUrl.key, projectUrl), eq(Member.memberId.key, memberId));
     }
 
-    private Document generateMemberDocument(MemberDtoDb member, String documentId, String projectUrl) {
+    public Document generateMemberDocument(MemberDtoDb member, String documentId, String projectUrl) {
         return new Document(Member.documentId.key, documentId)
                 .append(Member.projectUrl.key, projectUrl)
                 .append(Member.memberId.key, member.getId())
@@ -112,6 +113,11 @@ public class MemberRepository {
         return members;
     }
 
+    public Optional<MemberDtoDb> getMember(String projectUrl, Integer memberId) {
+        Document memberDoc = memberCollection.find(getMemberEqualityParameter(projectUrl, memberId)).first();
+        return Optional.ofNullable(docToDto(memberDoc));
+    }
+
     private MemberDtoDb docToDto(Document memberDoc) {
         if (memberDoc == null) {
             return null;
@@ -122,6 +128,6 @@ public class MemberRepository {
                 .setUsername(memberDoc.getString(Member.username.key))
                 .setRole(memberDoc.getString(Member.role.key))
                 .setWebUrl(memberDoc.getString(Member.memberUrl.key))
-                .setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>() {}.getClass()));
+                .setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new TypeToken<ArrayList<NoteDtoDb>>(){}.getType()));
     }
 }

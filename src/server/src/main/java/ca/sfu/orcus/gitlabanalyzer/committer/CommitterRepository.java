@@ -1,14 +1,13 @@
 package ca.sfu.orcus.gitlabanalyzer.committer;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
-import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
-import ca.sfu.orcus.gitlabanalyzer.file.FileRepository;
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberMock;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.gitlab4j.api.models.Commit;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -25,6 +24,7 @@ public class CommitterRepository {
         name("name"),
         commitIds("commitIds"),
         mergeRequestIds("mergeRequestIds"),
+        member("member"),
         committers("committers");
 
         private final String key;
@@ -57,12 +57,12 @@ public class CommitterRepository {
     }
 
     private Document generateCommitterDocument(CommitterDtoDb committer) {
-        return new Document()
-                .append(Committer.documentId.key, new ObjectId().toString())
+        return new Document(Committer.documentId.key, new ObjectId().toString())
                 .append(Committer.email.key, committer.getEmail())
                 .append(Committer.name.key, committer.getName())
-                .append(Committer.commitIds.key, gson.toJson(committer.getCommitIds()))
-                .append(Committer.mergeRequestIds.key, gson.toJson(committer.getMergeRequestIds()));
+                .append(Committer.commitIds.key, gson.toJson(committer.getCommitIds().toString()))
+                .append(Committer.mergeRequestIds.key, gson.toJson(committer.getMergeRequestIds()))
+                .append(Committer.member.key, gson.toJson(committer.getMember()));
     }
 
     public List<CommitterDtoDb> getCommittersFromCache(Document doc) {
@@ -81,7 +81,8 @@ public class CommitterRepository {
         return new CommitterDtoDb()
                 .setEmail(committerDoc.getString(Committer.email.key))
                 .setName(committerDoc.getString(Committer.name.key))
-                .setCommitIds(gson.fromJson(committerDoc.getString(Committer.commitIds.key), new HashSet<String>() {}.getClass()))
-                .setMergeRequestIds(gson.fromJson(committerDoc.getString(Committer.mergeRequestIds.key), new HashSet<Integer>() {}.getClass()));
+                .setCommitIds(gson.fromJson(committerDoc.getString(Committer.commitIds.key), new TypeToken<HashSet<String>>(){}.getType()))
+                .setMergeRequestIds(gson.fromJson(committerDoc.getString(Committer.mergeRequestIds.key), new TypeToken<HashSet<String>>(){}.getType()))
+                .setMember(gson.fromJson(committerDoc.getString(Committer.member.key), MemberDtoDb.class));
     }
 }
