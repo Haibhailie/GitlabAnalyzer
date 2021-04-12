@@ -49,16 +49,8 @@ public class AnalysisService {
 
         addIssueNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, projectId);
 
-        Project project = gitLabApi.getProjectApi().getProject(projectId);
-        ProjectDtoDb projectDto = generateProjectDto(gitLabApi, project, new ArrayList<>(committerToCommitterDtoMap.values()));
-
-        // TODO: cacheProjectDto(projectDto) (key: projectUrl + projectId)
-        //          - cacheCommitterDtos() inside projectDto
-        analysisRepository.cacheProjectDto(projectDto);
-
-        analysisRepository.cacheMergeRequestDtos(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
-
-        analysisRepository.cacheMemberDtos(project.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
+        ProjectDtoDb projectDto = generateProjectDto(gitLabApi, projectId, new ArrayList<>(committerToCommitterDtoMap.values()));
+        cache(projectDto, mrIdToMrDtoMap, memberToMemberDtoMap);
     }
 
     private Map<Integer, MemberDtoDb> initializeMemberDtos(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
@@ -170,8 +162,10 @@ public class AnalysisService {
         }
     }
 
-    private ProjectDtoDb generateProjectDto(GitLabApi gitLabApi, Project project, List<CommitterDtoDb> committers)
-            throws GitLabApiException {
+    private ProjectDtoDb generateProjectDto(GitLabApi gitLabApi,
+                                            Integer projectId,
+                                            List<CommitterDtoDb> committers) throws GitLabApiException {
+        Project project = gitLabApi.getProjectApi().getProject(projectId);
         String role = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
         return new ProjectDtoDb(project, role, new Date().getTime(), committers);
     }
@@ -191,5 +185,13 @@ public class AnalysisService {
             Integer memberId = mrIdToMrDtoMap.get(mrId).getUserId();
             memberToMemberDtoMap.get(memberId).addMergeRequestDocId(mrIdToDocId.getSecond());
         }
+    }
+
+    private void cache(ProjectDtoDb projectDto,
+                       Map<Integer, MergeRequestDtoDb> mrIdToMrDtoMap,
+                       Map<Integer, MemberDtoDb> memberToMemberDtoMap) {
+        analysisRepository.cacheProjectDto(projectDto);
+        analysisRepository.cacheMergeRequestDtos(projectDto.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
+        analysisRepository.cacheMemberDtos(projectDto.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
     }
 }

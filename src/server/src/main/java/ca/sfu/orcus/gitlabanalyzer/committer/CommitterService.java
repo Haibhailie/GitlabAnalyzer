@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.committer;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
@@ -83,8 +84,8 @@ public class CommitterService {
             projectRepo.updateCommittersMemberDto(projectUrl, committerEmail, memberDto);
 
             // Update Commit.userId for all commits by the committer
-            Set<String> commitIds = projectRepo.getCommitIdsForCommitter(projectUrl, committerEmail);
-            for (String commitId : commitIds) {
+            CommitterDtoDb committerDto = projectRepo.getCommitter(projectUrl, committerEmail).orElseThrow();
+            for (String commitId : committerDto.getCommitIds()) {
                 mergeRequestRepo.updateCommitUserId(projectUrl, commitId, memberId);
             }
 
@@ -93,6 +94,9 @@ public class CommitterService {
             memberRepo.cacheMember(memberDto, projectUrl);
 
             // Update MergeRequestDto.isSolo for all the MRs involved
+            for (Integer mrId : committerDto.getMergeRequestIds()) {
+                mergeRequestRepo.getCommitterForMergeRequest(projectUrl, mrId);
+            }
         }
     }
 

@@ -73,7 +73,8 @@ public class MergeRequestRepository {
     }
 
     private String cacheMergeRequest(MergeRequestDtoDb mergeRequest, String projectUrl) {
-        Document existingDocument = mergeRequestCollection.find(getMergeRequestEqualityParameter(projectUrl, mergeRequest))
+        Document existingDocument = mergeRequestCollection.find(
+                getMergeRequestEqualityParameter(projectUrl, mergeRequest.getMergeRequestId()))
                 .projection(include(MergeRequest.documentId.key)).first();
         if (existingDocument != null) {
             String documentId = existingDocument.getString(MergeRequest.documentId.key);
@@ -86,7 +87,9 @@ public class MergeRequestRepository {
 
     private void replaceMergeRequestDocument(String documentId, MergeRequestDtoDb mergeRequest, String projectUrl) {
         Document mergeRequestDocument = generateMergeRequestDocument(mergeRequest, documentId, projectUrl);
-        mergeRequestCollection.replaceOne(getMergeRequestEqualityParameter(projectUrl, mergeRequest), mergeRequestDocument);
+        mergeRequestCollection.replaceOne(
+                getMergeRequestEqualityParameter(projectUrl, mergeRequest.getMergeRequestId()),
+                mergeRequestDocument);
     }
 
     private String cacheMergeRequestDocument(MergeRequestDtoDb mergeRequest, String projectUrl) {
@@ -96,8 +99,8 @@ public class MergeRequestRepository {
         return documentId;
     }
 
-    private Bson getMergeRequestEqualityParameter(String projectUrl, MergeRequestDtoDb mergeRequest) {
-        return and(eq(MergeRequest.projectUrl.key, projectUrl), eq(MergeRequest.mergeRequestId.key, mergeRequest.getMergeRequestId()));
+    private Bson getMergeRequestEqualityParameter(String projectUrl, Integer mergeRequestId) {
+        return and(eq(MergeRequest.projectUrl.key, projectUrl), eq(MergeRequest.mergeRequestId.key, mergeRequestId));
     }
 
     private Document generateMergeRequestDocument(MergeRequestDtoDb mergeRequest, String documentId, String projectUrl) {
@@ -134,6 +137,11 @@ public class MergeRequestRepository {
     private Optional<MergeRequestDtoDb> getMergeRequest(String mergeRequestId) {
         Document mergeRequestDoc = mergeRequestCollection.find(eq(MergeRequest.mergeRequestId.key, mergeRequestId)).first();
         return Optional.ofNullable(docToDto(mergeRequestDoc));
+    }
+
+    private Document getPartialMergeRequestDocument(String projectUrl, Integer mergeRequestId, String... projectionKey) {
+        return mergeRequestCollection.find(getMergeRequestEqualityParameter(projectUrl, mergeRequestId))
+                .projection(include(projectionKey)).first();
     }
 
     private MergeRequestDtoDb docToDto(Document doc) {

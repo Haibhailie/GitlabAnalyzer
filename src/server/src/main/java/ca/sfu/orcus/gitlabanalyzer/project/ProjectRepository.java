@@ -15,6 +15,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.and;
@@ -91,12 +92,12 @@ public class ProjectRepository {
                     .append(Project.committers.key, committerDocs);
     }
 
-    public long getLastAnalysisTimeForProject(int projectId, String projectUrl) {
+    public long getLastAnalysisTimeForProject(String projectUrl) {
         Document project = getPartialProjectDocument(projectUrl, Project.lastAnalysisTime.key);
         return project == null ? 0 : project.getLong(Project.lastAnalysisTime.key);
     }
 
-    private Document getPartialProjectDocument(String projectUrl, String projectionKey) {
+    private Document getPartialProjectDocument(String projectUrl, String... projectionKey) {
         return projectsCollection.find(getProjectEqualityParameter(projectUrl))
                 .projection(include(projectionKey)).first();
     }
@@ -126,14 +127,15 @@ public class ProjectRepository {
                 set("committers.$.member", memberJson));
     }
 
-    public Set<String> getCommitIdsForCommitter(String projectUrl, String committerEmail) {
+    public Optional<CommitterDtoDb> getCommitter(String projectUrl, String committerEmail) {
         Document projectDoc = getPartialProjectDocument(projectUrl, Project.committers.key);
         List<CommitterDtoDb> committerDtos = committerRepo.getCommittersFromProjectDoc(projectDoc);
         for (CommitterDtoDb committer : committerDtos) {
             if (committer.getEmail().equals(committerEmail)) {
-                return committer.getCommitIds();
+                return Optional.of(committer);
             }
         }
-        return Collections.emptySet();
+
+        return Optional.empty();
     }
 }
