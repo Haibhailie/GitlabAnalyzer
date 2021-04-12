@@ -2,13 +2,14 @@ import classNames from '../utils/classNames'
 
 import styles from '../css/AnalyzeButton.module.css'
 
-import gt from '../assets/greater-than.svg'
-
 export interface IAnalyzeButtonProps {
   id: string
   message: string
   onClick: (id: string) => void
   className?: string
+  disabled?: boolean
+  isAnalyzing: boolean | undefined
+  Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>
 }
 
 const AnalyzeButton = ({
@@ -16,14 +17,25 @@ const AnalyzeButton = ({
   message,
   onClick,
   className,
+  disabled,
+  isAnalyzing,
+  Icon,
 }: IAnalyzeButtonProps) => {
   return (
     <button
-      className={classNames(styles.analyze, className)}
-      onClick={() => onClick(id)}
+      className={classNames(
+        styles.analyze,
+        className,
+        isAnalyzing && styles.loading
+      )}
+      onClick={event => {
+        event.stopPropagation()
+        onClick(id)
+      }}
+      disabled={disabled}
     >
       {message}
-      <img src={gt} />
+      <Icon className={styles.icon} />
     </button>
   )
 }

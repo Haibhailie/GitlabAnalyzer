@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileDto {
+    String id;
     String name;
     String extension;
     boolean isIgnored;
@@ -27,6 +28,10 @@ public class FileDto {
         setFileDiffDtos(fileDiffDtos);
         this.isIgnored = isIgnored;
         this.setTotalScore(score);
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public FileDto setExtension(String name) {
@@ -89,6 +94,10 @@ public class FileDto {
 
     public String getName() {
         return name;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public List<FileDiffDto> getFileDiffDtos() {
