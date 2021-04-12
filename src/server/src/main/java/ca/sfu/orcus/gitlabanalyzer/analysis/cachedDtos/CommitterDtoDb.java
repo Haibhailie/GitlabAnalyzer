@@ -40,8 +40,9 @@ public final class CommitterDtoDb {
         return this;
     }
 
-    public void setMember(MemberDtoDb member) {
+    public CommitterDtoDb setMember(MemberDtoDb member) {
         this.member = member;
+        return this;
     }
 
     public void addCommitId(String commitId) {
@@ -66,6 +67,10 @@ public final class CommitterDtoDb {
 
     public Set<Integer> getMergeRequestIds() {
         return mergeRequestIds;
+    }
+
+    public MemberDtoDb getMember() {
+        return member;
     }
 
     @Override
