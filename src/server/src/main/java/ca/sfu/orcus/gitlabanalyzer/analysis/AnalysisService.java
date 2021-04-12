@@ -47,8 +47,11 @@ public class AnalysisService {
         Map<Integer, MemberDtoDb> memberToMemberDtoMap = initializeMemberDtos(gitLabApi, projectId); // memberId -> memberDto
         Map<Integer, MergeRequestDtoDb> mrIdToMrDtoMap = new HashMap<>();
 
+        ConfigDto currentConfig = configService.getCurrentConfig(jwt)
+                .orElseThrow(() -> new NotFoundException("Current config not found"));
+
         for (MergeRequest mr : getAllMergeRequests(gitLabApi, projectId)) {
-            MergeRequestDtoDb mergeRequestDto = getMergeRequestDto(jwt, gitLabApi, mr, committerToCommitterDtoMap);
+            MergeRequestDtoDb mergeRequestDto = generateMergeRequestDto(gitLabApi, mr, committerToCommitterDtoMap, currentConfig);
             mrIdToMrDtoMap.put(mr.getIid(), mergeRequestDto);
 
             addMergeRequestNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, mr);
@@ -56,16 +59,9 @@ public class AnalysisService {
 
         addIssueNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, projectId);
 
-        Project project = gitLabApi.getProjectApi().getProject(projectId);
-        ProjectDtoDb projectDto = getProjectDto(gitLabApi, project, new ArrayList<>(committerToCommitterDtoMap.values()));
+        ProjectDtoDb projectDto = generateProjectDto(gitLabApi, projectId, new ArrayList<>(committerToCommitterDtoMap.values()));
 
-        // TODO: cacheProjectDto(projectDto) (key: projectUrl + projectId)
-        //          - cacheCommitterDtos() inside projectDto
-        analysisRepository.cacheProjectDto(projectDto);
-
-        analysisRepository.cacheMergeRequestDtos(project.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
-
-        analysisRepository.cacheMemberDtos(project.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
+        cache(projectDto, mrIdToMrDtoMap, memberToMemberDtoMap);
     }
 
     private Map<Integer, MemberDtoDb> initializeMemberDtos(GitLabApi gitLabApi, int projectId) throws GitLabApiException {
@@ -83,13 +79,13 @@ public class AnalysisService {
         return gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.MERGED);
     }
 
-    private MergeRequestDtoDb getMergeRequestDto(String jwt,
-                                                 GitLabApi gitLabApi,
-                                                 MergeRequest mergeRequest,
-                                                 Map<String, CommitterDtoDb> committerToCommitterDtoMap) throws GitLabApiException {
+    private MergeRequestDtoDb generateMergeRequestDto(GitLabApi gitLabApi,
+                                                      MergeRequest mergeRequest,
+                                                      Map<String, CommitterDtoDb> committerToCommitterDtoMap,
+                                                      ConfigDto currentConfig)
+            throws GitLabApiException {
         List<CommitDtoDb> commitDtos = new ArrayList<>();
         Set<String> committers = new HashSet<>();
-        boolean isSolo = true;
 
         double sumOfCommitsScore = 0;
 
@@ -99,23 +95,18 @@ public class AnalysisService {
         for (Commit c : getMergeRequestCommits(gitLabApi, mergeRequest)) {
             Commit detailedCommit = getDetailedCommit(gitLabApi, projectId, c);
 
-            //TODO: check if author names are the best form of comparison between MR and Commit authors
-            isSolo = c.getAuthorName().equals(mergeRequest.getAuthor().getName());
-
             committers.add(detailedCommit.getAuthorEmail());
             addCommitIdAndMrIdToCommitterDto(committerToCommitterDtoMap, detailedCommit, mergeRequestId);
 
-            CommitDtoDb commitDto = getCommitDto(jwt, gitLabApi, projectId, detailedCommit);
+            CommitDtoDb commitDto = generateCommitDto(gitLabApi, projectId, detailedCommit, currentConfig);
             sumOfCommitsScore += commitDto.getScore();
 
             commitDtos.add(commitDto);
         }
 
-        ConfigDto currentConfig = configService.getCurrentConfig(jwt)
-                .orElseThrow(() -> new NotFoundException("Current config not found"));
         MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator(currentConfig);
         MergeRequest mrChanges = gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId);
-        return new MergeRequestDtoDb(jwt, mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore, isSolo, scoreCalculator);
+        return new MergeRequestDtoDb(mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore, scoreCalculator);
     }
 
     private List<Commit> getMergeRequestCommits(GitLabApi gitLabApi, MergeRequest mergeRequest)
@@ -144,18 +135,20 @@ public class AnalysisService {
                     new CommitterDtoDb(
                             authorEmail,
                             authorName,
-                            Collections.singleton(commit.getId()),
-                            Collections.singleton(mergeRequestId)));
+                            new HashSet<>(Collections.singletonList(commit.getId())),
+                            new HashSet<>(Collections.singletonList(mergeRequestId)),
+                            new MemberDtoDb()));
         }
     }
 
-    private CommitDtoDb getCommitDto(String jwt, GitLabApi gitLabApi, Integer projectId, Commit detailedCommit)
+    private CommitDtoDb generateCommitDto(GitLabApi gitLabApi,
+                                          Integer projectId,
+                                          Commit detailedCommit,
+                                          ConfigDto currentConfig)
             throws GitLabApiException {
-        List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, detailedCommit.getId());
-        ConfigDto currentConfig = configService.getCurrentConfig(jwt)
-                .orElseThrow(() -> new NotFoundException("Current config not found"));
         CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(currentConfig);
-        return new CommitDtoDb(detailedCommit, diffList, scoreCalculator);
+        List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, detailedCommit.getId());
+        return new CommitDtoDb(detailedCommit, MemberUtils.EmptyMember.getId(), diffList, scoreCalculator);
     }
 
     private void addMergeRequestNotesToMemberDtos(GitLabApi gitLabApi,
@@ -186,8 +179,10 @@ public class AnalysisService {
         }
     }
 
-    private ProjectDtoDb getProjectDto(GitLabApi gitLabApi, Project project, List<CommitterDtoDb> committers)
-            throws GitLabApiException {
+    private ProjectDtoDb generateProjectDto(GitLabApi gitLabApi,
+                                            Integer projectId,
+                                            List<CommitterDtoDb> committers) throws GitLabApiException {
+        Project project = gitLabApi.getProjectApi().getProject(projectId);
         String role = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
         return new ProjectDtoDb(project, role, new Date().getTime(), committers);
     }
@@ -207,5 +202,13 @@ public class AnalysisService {
             Integer memberId = mrIdToMrDtoMap.get(mrId).getUserId();
             memberToMemberDtoMap.get(memberId).addMergeRequestDocId(mrIdToDocId.getSecond());
         }
+    }
+
+    private void cache(ProjectDtoDb projectDto,
+                       Map<Integer, MergeRequestDtoDb> mrIdToMrDtoMap,
+                       Map<Integer, MemberDtoDb> memberToMemberDtoMap) {
+        analysisRepository.cacheProjectDto(projectDto);
+        analysisRepository.cacheMergeRequestDtos(projectDto.getWebUrl(), new ArrayList<>(mrIdToMrDtoMap.values()));
+        analysisRepository.cacheMemberDtos(projectDto.getWebUrl(), new ArrayList<>(memberToMemberDtoMap.values()));
     }
 }

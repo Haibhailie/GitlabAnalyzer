@@ -17,10 +17,19 @@ public final class MemberDtoDb {
     private String webUrl;
 
     private Set<String> committerEmails;
-    private Set<ObjectId> mergeRequestDocIds;
+    private Set<ObjectId> mergeRequestDocIds; // TODO: Remove
     private List<NoteDtoDb> notes;
 
-    public MemberDtoDb() {}
+    public MemberDtoDb() {
+        setId(-1);
+        setDisplayName("-");
+        setUsername("-");
+        setRole("-");
+        setWebUrl("-");
+        setCommitterEmails(new HashSet<>());
+        setMergeRequestDocIds(new HashSet<>());
+        setNotes(new ArrayList<>());
+    }
 
     public MemberDtoDb(Member member) {
         this(member,
@@ -36,6 +45,7 @@ public final class MemberDtoDb {
         setId(member.getId());
         setDisplayName(member.getName());
         setUsername(member.getUsername());
+
         setRole(member.getAccessLevel() == null ? "GUEST" : MemberUtils.getMemberRoleFromAccessLevel(member.getAccessLevel().value));
         setWebUrl(member.getWebUrl());
 

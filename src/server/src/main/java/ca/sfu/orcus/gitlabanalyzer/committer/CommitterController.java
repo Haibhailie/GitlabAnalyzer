@@ -62,16 +62,6 @@ public class CommitterController {
         }
     }
 
-    private Map<String, Integer> getCommitterToMemberMap(String committers) {
-        Type typeOfCommitterList = new TypeToken<ArrayList<CommitterToMemberMapping>>() {}.getType();
-        List<CommitterToMemberMapping> committerList = gson.fromJson(committers, typeOfCommitterList);
-        Map<String, Integer> committerToMemberMap = new HashMap<>();
-        for (CommitterToMemberMapping o : committerList) {
-            committerToMemberMap.put(o.name, o.memberId);
-        }
-        return committerToMemberMap;
-    }
-
     private void tryUpdatingCommitterTable(String jwt, int projectId, String committers, HttpServletResponse response) {
         Map<String, Integer> committerToMemberMap = getCommitterToMemberMap(committers);
         try {
@@ -84,8 +74,18 @@ public class CommitterController {
         }
     }
 
+    private Map<String, Integer> getCommitterToMemberMap(String committers) {
+        Type typeOfCommitterList = new TypeToken<ArrayList<CommitterToMemberMapping>>() {}.getType();
+        List<CommitterToMemberMapping> committerList = gson.fromJson(committers, typeOfCommitterList);
+        Map<String, Integer> committerToMemberMap = new HashMap<>();
+        for (CommitterToMemberMapping o : committerList) {
+            committerToMemberMap.put(o.email, o.memberId);
+        }
+        return committerToMemberMap;
+    }
+
     private static class CommitterToMemberMapping {
-        public String name;
+        public String email;
         public int memberId;
     }
 }

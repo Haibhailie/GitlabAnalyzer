@@ -52,7 +52,7 @@ public class ProjectService {
     private ProjectDtoDb createProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
         String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
         String projectUrl = gitLabApi.getProjectApi().getProject(project.getId()).getWebUrl();
-        long lastAnalysisTime = projectRepo.getLastAnalysisTimeForProject(project.getId(), projectUrl);
+        long lastAnalysisTime = projectRepo.getLastAnalysisTimeForProject(projectUrl);
         return new ProjectDtoDb(project, memberRole, lastAnalysisTime, new ArrayList<>());
     }
 
@@ -76,7 +76,7 @@ public class ProjectService {
     private Optional<ProjectDtoDb> getProject(GitLabApi gitLabApi, int projectId, String projectUrl) {
         try {
             Project project = gitLabApi.getProjectApi().getProject(projectId);
-            if (projectRepo.projectIsAlreadyCached(projectId, projectUrl)) {
+            if (projectRepo.projectIsAlreadyCached(projectUrl)) {
                 return getProjectFromRepo(gitLabApi, project);
             } else {
                 return Optional.of(createProjectDto(gitLabApi, project));
@@ -87,7 +87,7 @@ public class ProjectService {
     }
 
     private Optional<ProjectDtoDb> getProjectFromRepo(GitLabApi gitLabApi, Project project) throws GitLabApiException {
-        Optional<ProjectDtoDb> projectOptional = projectRepo.getProject(project.getId(), project.getWebUrl());
+        Optional<ProjectDtoDb> projectOptional = projectRepo.getProject(project.getWebUrl());
         if (projectOptional.isPresent()) {
             ProjectDtoDb projectDto = projectOptional.get();
             projectDto.setRole(getAuthenticatedMembersRoleInProject(gitLabApi, project.getId()));

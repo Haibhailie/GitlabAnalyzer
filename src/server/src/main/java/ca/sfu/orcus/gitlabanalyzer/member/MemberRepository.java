@@ -59,8 +59,8 @@ public class MemberRepository {
         return documentIds;
     }
 
-    private String cacheMember(MemberDtoDb member, String projectUrl) {
-        Document existingDocument = memberCollection.find(getMemberEqualityParameter(projectUrl, member))
+    public String cacheMember(MemberDtoDb member, String projectUrl) {
+        Document existingDocument = memberCollection.find(getMemberEqualityParameter(projectUrl, member.getId()))
                 .projection(include(Member.documentId.key)).first();
         if (existingDocument != null) {
             String documentId = existingDocument.getString(Member.documentId.key);
@@ -73,7 +73,7 @@ public class MemberRepository {
 
     private void replaceMemberDocument(String oldDocumentId, MemberDtoDb member, String projectUrl) {
         Document newMemberDocument = generateMemberDocument(member, oldDocumentId, projectUrl);
-        memberCollection.replaceOne(getMemberEqualityParameter(projectUrl, member), newMemberDocument);
+        memberCollection.replaceOne(getMemberEqualityParameter(projectUrl, member.getId()), newMemberDocument);
     }
 
     private String cacheMemberDocument(MemberDtoDb member, String projectUrl) {
@@ -83,11 +83,11 @@ public class MemberRepository {
         return documentId;
     }
 
-    private Bson getMemberEqualityParameter(String projectUrl, MemberDtoDb member) {
-        return and(eq(Member.projectUrl.key, projectUrl), eq(Member.memberId.key, member.getId()));
+    private Bson getMemberEqualityParameter(String projectUrl, Integer memberId) {
+        return and(eq(Member.projectUrl.key, projectUrl), eq(Member.memberId.key, memberId));
     }
 
-    private Document generateMemberDocument(MemberDtoDb member, String documentId, String projectUrl) {
+    public Document generateMemberDocument(MemberDtoDb member, String documentId, String projectUrl) {
         return new Document(Member.documentId.key, documentId)
                 .append(Member.projectUrl.key, projectUrl)
                 .append(Member.memberId.key, member.getId())
@@ -111,6 +111,11 @@ public class MemberRepository {
             members.add(member);
         }
         return members;
+    }
+
+    public Optional<MemberDtoDb> getMember(String projectUrl, Integer memberId) {
+        Document memberDoc = memberCollection.find(getMemberEqualityParameter(projectUrl, memberId)).first();
+        return Optional.ofNullable(docToDto(memberDoc));
     }
 
     private MemberDtoDb docToDto(Document memberDoc) {
