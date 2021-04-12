@@ -9,6 +9,8 @@ import AnalyzeButton from './AnalyzeButton'
 
 import styles from '../css/MemberTable.module.css'
 
+import { ReactComponent as gt } from '../assets/greater-than.svg'
+
 export interface IActivityGraphProps {
   projectId: string
   projectName?: string
@@ -58,6 +60,8 @@ const MemberTable = ({ projectId, projectName }: IActivityGraphProps) => {
                   id={id}
                   onClick={onAnalyze}
                   className={styles.analyze}
+                  isAnalyzing={false}
+                  Icon={gt}
                 />
               ),
             }
