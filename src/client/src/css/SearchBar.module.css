@@ -1,0 +1,11 @@
+.input {
+  border: 2px solid var(--color-gray);
+  box-sizing: border-box;
+  background: url(../assets/search.svg) no-repeat;
+  background-position: 8px 7px;
+  width: 85%;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  padding: 4px 0px 4px 34px;
+  font: var(--font-body-large-poppins);
+}
