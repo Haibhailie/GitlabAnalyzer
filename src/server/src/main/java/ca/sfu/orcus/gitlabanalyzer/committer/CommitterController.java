@@ -1,5 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.committer;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -53,7 +54,7 @@ public class CommitterController {
 
     private String tryGettingCommitterTableJson(String jwt, int projectId, HttpServletResponse response) {
         try {
-            Optional<List<CommitterDto>> committers = committerService.getCommittersInProject(jwt, projectId);
+            Optional<List<CommitterDtoDb>> committers = committerService.getCommittersInProject(jwt, projectId);
             response.setStatus(committers.isEmpty() ? SC_NOT_FOUND : SC_OK);
             return gson.toJson(committers.orElse(new ArrayList<>()));
         } catch (GitLabApiException e) {

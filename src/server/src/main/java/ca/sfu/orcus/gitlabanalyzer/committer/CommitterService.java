@@ -2,11 +2,14 @@ package ca.sfu.orcus.gitlabanalyzer.committer;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberRepository;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestRepository;
 import ca.sfu.orcus.gitlabanalyzer.project.ProjectRepository;
+import org.bson.Document;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -35,11 +38,13 @@ public class CommitterService {
         this.gitLabApiWrapper = gitLabApiWrapper;
     }
 
-    public Optional<List<CommitterDto>> getCommittersInProject(String jwt, int projectId) throws GitLabApiException {
+    public Optional<List<CommitterDtoDb>> getCommittersInProject(String jwt, int projectId) throws GitLabApiException {
         int memberId = gitLabApiWrapper.getGitLabUserIdFromJwt(jwt);
         Optional<String> projectUrl = gitLabApiWrapper.getProjectUrl(jwt, projectId);
         if (projectUrl.isPresent() && userHasAccessToProject(memberId, projectId, projectUrl.get())) {
-            return committerRepo.getCommitterTableForProject(projectId);
+            ProjectDtoDb project = projectRepo.getProject(projectUrl.get())
+                    .orElseThrow(() -> new GitLabApiException("Could not get project document"));
+            return Optional.of(project.getCommitters());
         } else {
             return Optional.empty();
         }
