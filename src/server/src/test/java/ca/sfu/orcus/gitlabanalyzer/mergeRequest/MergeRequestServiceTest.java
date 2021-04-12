@@ -71,12 +71,4 @@ public class MergeRequestServiceTest extends MergeRequestMock {
         initialNullCheckSetup();
         assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId));
     }
-
-    @Test
-    public void getAllMergeRequestsWithoutMemberIDTestException() throws GitLabApiException {
-        initialMergeRequestTestSetup();
-        when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenThrow(GitLabApiException.class);
-        assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId));
-    }
-
 }
