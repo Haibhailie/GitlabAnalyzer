@@ -174,9 +174,9 @@ public class DiffScoreCalculator {
     }
 
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
-    public List<FileDto> fileScoreCalculator(String jwt, ConfigService configService, List<String> diffsList) {
+    public List<FileDto> fileScoreCalculator(ConfigDto currentConfig, List<String> diffsList) {
+        setMultipliersFromConfig(currentConfig);
 
-        setMultipliersFromConfig(jwt, configService);
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
         List<Double> fileSpecificScoreMultiplier = new ArrayList<>();
@@ -240,33 +240,21 @@ public class DiffScoreCalculator {
         return fileDtos;
     }
 
-    private void setMultipliersFromConfig(String jwt, ConfigService configService) {
-        try {
-            Optional<ConfigDto> configDto = configService.getCurrentConfig(jwt);
-            if (configDto.isPresent()) {
-                List<ConfigDto.GeneralTypeScoreDto> list = configDto.get().getGeneralScores();
-                for (ConfigDto.GeneralTypeScoreDto g : list) {
-                    switch (g.getType()) {
-                      case ADD_FACTOR -> addLOCFactor = g.getValue();
-                      case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
-                      case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
-                      case BLANK_FACTOR -> blankLOCFactor = g.getValue();
-                      case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
-                      default -> throw new IllegalStateException("Unexpected type: " + g.getType());
-                    }
-                }
+    private void setMultipliersFromConfig(ConfigDto currentConfig) {
+        List<ConfigDto.GeneralTypeScoreDto> list = currentConfig.getGeneralScores();
+        for (ConfigDto.GeneralTypeScoreDto g : list) {
+            switch (g.getType()) {
+                case ADD_FACTOR -> addLOCFactor = g.getValue();
+                case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
+                case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
+                case BLANK_FACTOR -> blankLOCFactor = g.getValue();
+                case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
+                default -> throw new IllegalStateException("Unexpected type: " + g.getType());
             }
-        } catch (GitLabApiException | IllegalStateException | NullPointerException e) {
-            // default multipliers
-            addLOCFactor = 1;
-            deleteLOCFactor = 0.2;
-            syntaxChangeFactor = 0.2;
-            blankLOCFactor = 0;
-            spacingChangeFactor = 0;
         }
     }
 
-    private void setSyntaxValues(ConfigDto configDto, String extension) {
+    private void setSyntaxFromConfig(ConfigDto configDto, String extension) {
         setDefaultSyntaxValues();
         List<ConfigDto.FileTypeScoreDto> fileTypeScores;
         fileTypeScores = configDto.getFileScores();

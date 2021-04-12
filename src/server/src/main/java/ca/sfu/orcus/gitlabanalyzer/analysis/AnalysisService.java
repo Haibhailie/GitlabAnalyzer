@@ -17,6 +17,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import java.util.*;
 
 @Service
@@ -110,7 +111,9 @@ public class AnalysisService {
             commitDtos.add(commitDto);
         }
 
-        MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator(configService);
+        ConfigDto currentConfig = configService.getCurrentConfig(jwt)
+                .orElseThrow(() -> new NotFoundException("Current config not found"));
+        MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator(currentConfig);
         MergeRequest mrChanges = gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId);
         return new MergeRequestDtoDb(jwt, mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore, isSolo, scoreCalculator);
     }

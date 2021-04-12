@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MergeRequestScoreCalculator {
-    private final ConfigService configService;
+    private final ConfigDto currentConfig;
 
     public MergeRequestScoreCalculator(ConfigDto currentConfig) {
         this.currentConfig = currentConfig;
@@ -22,6 +22,6 @@ public class MergeRequestScoreCalculator {
         List<String> diffsList = Arrays.asList(diffArray);
 
         DiffScoreCalculator diffScoreCalculator = new DiffScoreCalculator();
-        return diffScoreCalculator.fileScoreCalculator(jwt, configService, diffsList);
+        return diffScoreCalculator.fileScoreCalculator(currentConfig, diffsList);
     }
 }

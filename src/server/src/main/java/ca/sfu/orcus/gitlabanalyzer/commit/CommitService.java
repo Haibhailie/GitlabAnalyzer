@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
+import ca.sfu.orcus.gitlabanalyzer.config.ConfigDto;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import org.gitlab4j.api.GitLabApi;
@@ -10,6 +11,7 @@ import org.gitlab4j.api.models.Diff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.ws.rs.NotFoundException;
 import java.util.*;
 
 @Service
@@ -39,9 +41,11 @@ public class CommitService {
             List<Commit> allGitCommits = gitLabApi.getCommitsApi().getCommits(projectId, defaultBranch, since, until);
             List<CommitDto> allCommits = new ArrayList<>();
             for (Commit commit : allGitCommits) {
-                CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(configService);
+                ConfigDto currentConfig = configService.getCurrentConfig(jwt)
+                        .orElseThrow(() -> new NotFoundException("Current config not found"));
+                CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(currentConfig);
                 List<Diff> diffs = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
-                List<FileDto> fileScores = scoreCalculator.getCommitScore(jwt, diffs);
+                List<FileDto> fileScores = scoreCalculator.getCommitScore(diffs);
                 CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit, fileScores);
                 allCommits.add(presentCommit);
             }
@@ -69,9 +73,11 @@ public class CommitService {
             List<CommitDto> allCommits = new ArrayList<>();
             for (Commit commit : allGitCommits) {
                 if (commit.getAuthorName().equalsIgnoreCase(name)) {
-                    CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(configService);
+                    ConfigDto currentConfig = configService.getCurrentConfig(jwt)
+                            .orElseThrow(() -> new NotFoundException("Current config not found"));
+                    CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(currentConfig);
                     List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, commit.getId());
-                    List<FileDto> fileScores = scoreCalculator.getCommitScore(jwt, diffList);
+                    List<FileDto> fileScores = scoreCalculator.getCommitScore(diffList);
                     CommitDto presentCommit = new CommitDto(gitLabApi, projectId, commit, fileScores);
                     allCommits.add(presentCommit);
                 }
@@ -89,9 +95,11 @@ public class CommitService {
         }
         try {
             Commit gitCommit = gitLabApi.getCommitsApi().getCommit(projectId, sha);
-            CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(configService);
+            ConfigDto currentConfig = configService.getCurrentConfig(jwt)
+                    .orElseThrow(() -> new NotFoundException("Current config not found"));
+            CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(currentConfig);
             List<Diff> diffList = gitLabApi.getCommitsApi().getDiff(projectId, gitCommit.getId());
-            List<FileDto> fileScores = scoreCalculator.getCommitScore(jwt, diffList);
+            List<FileDto> fileScores = scoreCalculator.getCommitScore(diffList);
             return new CommitDto(gitLabApi, projectId, gitCommit, fileScores);
         } catch (GitLabApiException e) {
             return null;
