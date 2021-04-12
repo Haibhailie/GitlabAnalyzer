@@ -1,4 +1,4 @@
-package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
+package ca.sfu.orcus.gitlabanalyzer.commit;
 
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
@@ -9,14 +9,14 @@ import org.gitlab4j.api.models.Diff;
 import java.util.Arrays;
 import java.util.List;
 
-public class MergeRequestScoreCalculator {
+public class CommitScoreCalculator {
     private final ConfigService configService;
 
-    public MergeRequestScoreCalculator(ConfigService configService) {
+    public CommitScoreCalculator(ConfigService configService) {
         this.configService = configService;
     }
 
-    public List<FileDto> getMergeRequestScore(String jwt, List<Diff> diffs) {
+    public List<FileDto> getCommitScore(String jwt, List<Diff> diffs) {
         // regex to split lines by new line and store in generatedDiffList
         String[] diffArray = DiffStringParser.parseDiff(diffs).split("\\r?\\n");
         List<String> diffsList = Arrays.asList(diffArray);
