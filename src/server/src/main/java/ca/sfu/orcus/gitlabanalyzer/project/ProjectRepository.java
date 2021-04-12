@@ -1,10 +1,8 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
-import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.committer.CommitterRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
-import com.google.gson.Gson;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -14,8 +12,6 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
-import javax.print.Doc;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +23,6 @@ import static com.mongodb.client.model.Projections.include;
 public class ProjectRepository {
     private final MongoCollection<Document> projectsCollection;
     private final CommitterRepository committerRepo;
-    private static final Gson gson = new Gson();
 
     public ProjectRepository(CommitterRepository committerRepo) {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
