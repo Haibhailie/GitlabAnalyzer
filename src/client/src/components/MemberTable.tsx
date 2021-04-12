@@ -114,7 +114,7 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
 
   const isProjectMember = (id: string) => memberIds.includes(id)
 
-  const onAnalyze = (id: string) =>
+  const onAnalyze = (id: string | number) =>
     history.push(`/project/${projectId}/member/${id}`)
 
   const isResolutionOptional = () =>
