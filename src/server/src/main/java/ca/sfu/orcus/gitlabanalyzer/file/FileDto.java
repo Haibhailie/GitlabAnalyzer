@@ -30,8 +30,9 @@ public class FileDto {
         this.setTotalScore(score);
     }
 
-    public void setId(String id) {
+    public FileDto setId(String id) {
         this.id = id;
+        return this;
     }
 
     public FileDto setExtension(String name) {
