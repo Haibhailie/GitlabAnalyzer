@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Optional;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -98,6 +99,17 @@ public class ConfigController {
         }
     }
 
+    @GetMapping("/api/config/current")
+    public String getCurrentConfig(@CookieValue(value = "sessionId") String jwt,
+                                 HttpServletResponse response) {
+        if (authService.jwtIsValid(jwt)) {
+            return tryGettingConfigForCurrentUser(jwt, response);
+        } else {
+            response.setStatus(SC_UNAUTHORIZED);
+            return "";
+        }
+    }
+
     @PutMapping("/api/config/current")
     public void updateCurrentConfig(@CookieValue(value = "sessionId") String jwt,
                                     @RequestBody ConfigDto configDto,
@@ -146,6 +158,23 @@ public class ConfigController {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
 
+        return configJson;
+    }
+
+    private String tryGettingConfigForCurrentUser(String jwt, HttpServletResponse response) {
+        Optional<ConfigDto> optionalConfigDto;
+        String configJson = "";
+
+        try {
+            optionalConfigDto = configService.getCurrentConfig(jwt);
+            if (optionalConfigDto.isPresent()) {
+                configJson = gson.toJson(optionalConfigDto.get());
+            }
+            response.setStatus(configJson.isEmpty() ? SC_NOT_FOUND : SC_OK);
+        } catch (GitLabApiException e) {
+            response.setStatus(SC_INTERNAL_SERVER_ERROR);
+        }
+        System.out.println(configJson);
         return configJson;
     }
 
