@@ -25,7 +25,7 @@ public final class CommitDtoDb {
     private List<FileDto> files;
     private double score;
 
-    public CommitDtoDb(String jwt, ConfigService configService,Commit commit, List<Diff> diffList) {
+    public CommitDtoDb(String jwt, ConfigService configService, Commit commit, List<Diff> diffList) {
         setId(commit.getId());
         setMessage(commit.getMessage());
         setAuthor(commit.getAuthorName());

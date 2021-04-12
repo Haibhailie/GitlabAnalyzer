@@ -82,7 +82,6 @@ public final class ConfigDto {
         return generalScores;
     }
 
-
     public String getName() {
         return name;
     }

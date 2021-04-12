@@ -71,7 +71,6 @@ public class FileDto {
         return fileScore.getTotalScore();
     }
 
-
     public Scores getFileScore() {
         return fileScore;
     }
@@ -95,7 +94,6 @@ public class FileDto {
     public List<FileDiffDto> getFileDiffDtos() {
         return fileDiffDtos;
     }
-
 
     @Override
     public boolean equals(Object o) {
