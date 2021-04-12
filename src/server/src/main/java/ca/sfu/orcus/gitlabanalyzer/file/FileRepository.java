@@ -44,6 +44,7 @@ public class FileRepository {
 
     private FileDto getFileFromDocument(Document doc) {
         return new FileDto(doc.getString(File.name.key))
+                .setId(doc.getString(File.fileId.key))
                 .setExtension(doc.getString(File.extension.key))
                 .setTotalScore(gson.fromJson(doc.getString(File.fileScore.key), Scores.class))
                 .setFileDiffDtos(gson.fromJson(doc.getString(File.fileDiffs.key), new TypeToken<List<FileDiffDto>>(){}.getType()))
