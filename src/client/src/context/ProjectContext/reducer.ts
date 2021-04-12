@@ -307,20 +307,20 @@ const reducer: TProjectReducer = async (state, action) => {
     let members
 
     // eslint-disable-next-line
-    mergeRequests = JSON.parse(fakeMrs)
+    // mergeRequests = JSON.parse(fakeMrs)
     // eslint-disable-next-line
-    members = JSON.parse(fakeMembers)
+    // members = JSON.parse(fakeMembers)
 
-    // try {
-    //   // mergeRequests = await jsonFetcher<TMergeData>(
-    //   //   `/api/project/${projectId}/mergerequests`
-    //   // )
-    //   // members = await jsonFetcher<TMemberData>(
-    //   //   `/api/project/${projectId}/members`
-    //   // )
-    // } catch {
-    //   // return state
-    // }
+    try {
+      mergeRequests = await jsonFetcher<TMergeData>(
+        `/api/project/${projectId}/mergerequests`
+      )
+      members = await jsonFetcher<TMemberData>(
+        `/api/project/${projectId}/members`
+      )
+    } catch {
+      return state
+    }
 
     const formattedMrs = formatMergeRequests(mergeRequests, config)
     const formattedMembers = formatMembers(members, formattedMrs)

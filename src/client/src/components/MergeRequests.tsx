@@ -76,7 +76,6 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
               ignore: (
                 <IgnoreBox
                   onChange={event => {
-                    console.log(event)
                     const checked = (event.target as HTMLInputElement).checked
                     dispatch({
                       type: IGNORE_MR,

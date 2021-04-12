@@ -69,7 +69,7 @@ const Member = () => {
             <MergeRequests projectId={projectId} memberId={memberId} />
           </div>
           <div className={styles.commentsContainer}>
-            <CommentTable projectId={id} memberId={memberId} />
+            <CommentTable comments={member?.notes ?? []} />
           </div>
         </Selector>
       </div>
