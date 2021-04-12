@@ -85,10 +85,10 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
   const addFileExtension = () => {
     const newFileType: IFileTypeScoring = {
       fileExtension: newFileTypeName,
-      singleLineCommentSyntax: '',
-      multilineCommentStart: '',
-      multilineCommentEnd: '',
-      syntaxCharacters: '',
+      singleLineComment: '',
+      multiLineCommentStart: '',
+      multiLineCommentEnd: '',
+      syntaxInCode: '',
       scoreMultiplier: 1,
     }
     fileScores.push(newFileType)
@@ -171,9 +171,9 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                     type: score.fileExtension,
                     comment: (
                       <input
-                        name="singleLineCommentSyntax"
+                        name="singleLineComment"
                         type="text"
-                        value={score.singleLineCommentSyntax}
+                        value={score.singleLineComment}
                         className={classNames(
                           styles.generalInput,
                           styles.mediumInput
@@ -183,9 +183,9 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                     ),
                     commentStart: (
                       <input
-                        name="multilineCommentStart"
+                        name="multiLineCommentStart"
                         type="text"
-                        value={score.multilineCommentStart}
+                        value={score.multiLineCommentStart}
                         className={classNames(
                           styles.generalInput,
                           styles.mediumInput
@@ -195,9 +195,9 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                     ),
                     commentEnd: (
                       <input
-                        name="multilineCommentEnd"
+                        name="multiLineCommentEnd"
                         type="text"
-                        value={score.multilineCommentEnd}
+                        value={score.multiLineCommentEnd}
                         className={classNames(
                           styles.generalInput,
                           styles.mediumInput
@@ -207,9 +207,9 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                     ),
                     syntax: (
                       <input
-                        name="syntaxCharacters"
+                        name="syntaxInCode"
                         type="text"
-                        value={score.syntaxCharacters}
+                        value={score.syntaxInCode}
                         className={classNames(
                           styles.generalInput,
                           styles.longInput

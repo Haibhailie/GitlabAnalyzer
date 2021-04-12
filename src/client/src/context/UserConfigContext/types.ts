@@ -84,10 +84,10 @@ export type TUserConfigActions =
 
 export interface IFileTypeScoring {
   fileExtension: string
-  singleLineCommentSyntax: string
-  multilineCommentStart: string
-  multilineCommentEnd: string
-  syntaxCharacters: string
+  singleLineComment: string
+  multiLineCommentStart: string
+  multiLineCommentEnd: string
+  syntaxInCode: string
   scoreMultiplier: number
 }
 
