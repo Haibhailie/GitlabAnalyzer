@@ -11,6 +11,8 @@ import Table from './Table'
 
 import { ReactComponent as Delete } from '../assets/delete.svg'
 import { ReactComponent as Warning } from '../assets/error-small.svg'
+import { ReactComponent as Add } from '../assets/add-file.svg'
+import { ReactComponent as Save } from '../assets/save-large.svg'
 
 import styles from '../css/UserConfigPopup.module.css'
 
@@ -238,7 +240,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
               <input
                 type="text"
                 placeholder="New File Extension..."
-                className={styles.generalInput}
+                className={styles.fileInput}
                 value={newFileTypeName}
                 onChange={e => setNewFileTypeName(e.target.value)}
               />
@@ -247,12 +249,14 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                 className={styles.addButton}
                 disabled={!isValidFileType()}
               >
+                <Add className={styles.addIcon} />
                 Add file type
               </button>
             </div>
           </div>
         </Selector>
         <button onClick={save} className={styles.saveButton}>
+          <Save className={styles.saveIcon} />
           Save score settings
         </button>
         {requireReanalyze && (

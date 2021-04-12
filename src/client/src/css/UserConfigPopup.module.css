@@ -88,18 +88,38 @@
   margin-top: 20px;
 }
 
+.fileInput {
+  height: 24px;
+  border: 2px solid var(--color-gray);
+  border-radius: 4px;
+  padding: 0px 10px;
+  font: var(--font-body-medium-poppins);
+}
+
 .addButton {
   margin-left: 10px;
   border: 1px solid var(--color-primary);
-  border-radius: 5px;
+  border-radius: 4px;
   text-align: center;
   color: var(--color-primary);
   padding: 0 5px;
+  display: flex;
+  align-items: flex-end;
+  font: var(--font-body-small-poppins);
+  padding: 1px 5px;
+}
+
+.addIcon {
+  margin-right: 2px;
 }
 
 .addButton:disabled {
   border: 1px solid var(--color-gray);
   color: var(--color-gray);
+}
+
+.addButton:disabled .addIcon {
+  stroke: var(--color-gray);
 }
 
 .warningContainer {
@@ -117,5 +137,11 @@
   border-radius: 5px;
   text-align: center;
   color: var(--color-primary);
-  padding: 5px;
+  padding: 5px 10px;
+  display: flex;
+}
+
+.saveIcon {
+  stroke: var(--color-primary);
+  margin-right: 5px;
 }
