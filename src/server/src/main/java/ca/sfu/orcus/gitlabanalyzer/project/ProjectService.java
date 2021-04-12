@@ -3,7 +3,6 @@ package ca.sfu.orcus.gitlabanalyzer.project;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
-import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Member;
@@ -52,7 +51,8 @@ public class ProjectService {
 
     private ProjectDtoDb createProjectDto(GitLabApi gitLabApi, Project project) throws GitLabApiException {
         String memberRole = getAuthenticatedMembersRoleInProject(gitLabApi, project.getId());
-        long lastAnalysisTime = projectRepo.getLastAnalysisTimeForProject(VariableDecoderUtil.decode("GITLAB_URL"));
+        String projectUrl = gitLabApi.getProjectApi().getProject(project.getId()).getWebUrl();
+        long lastAnalysisTime = projectRepo.getLastAnalysisTimeForProject(projectUrl);
         return new ProjectDtoDb(project, memberRole, lastAnalysisTime, new ArrayList<>());
     }
 

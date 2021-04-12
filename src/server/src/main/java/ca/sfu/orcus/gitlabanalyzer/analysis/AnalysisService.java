@@ -50,6 +50,7 @@ public class AnalysisService {
         addIssueNotesToMemberDtos(gitLabApi, memberToMemberDtoMap, projectId);
 
         ProjectDtoDb projectDto = generateProjectDto(gitLabApi, projectId, new ArrayList<>(committerToCommitterDtoMap.values()));
+
         cache(projectDto, mrIdToMrDtoMap, memberToMemberDtoMap);
     }
 

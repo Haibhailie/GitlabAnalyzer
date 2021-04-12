@@ -179,5 +179,16 @@ public class MergeRequestRepository {
                 and(eq("projectUrl", projectUrl), eq("commits.commitId", commitId)),
                 set("commits.$.userId", userId));
     }
+
+    public List<String> getCommitterEmailsForMergeRequest(String projectUrl, Integer mergeRequestId) {
+        Document mergeRequestDoc = getPartialMergeRequestDocument(projectUrl, mergeRequestId, MergeRequest.committerEmails.key);
+        return mergeRequestDoc.getList(MergeRequest.committerEmails.key, String.class);
+    }
+
+    public void setSolo(String projectUrl, Integer mergeRequestId, boolean isSolo) {
+        mergeRequestCollection.updateOne(
+                getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                set(MergeRequest.isSolo.key, isSolo));
+    }
 }
 

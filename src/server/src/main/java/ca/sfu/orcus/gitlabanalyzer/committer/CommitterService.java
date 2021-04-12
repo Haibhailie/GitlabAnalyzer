@@ -95,7 +95,15 @@ public class CommitterService {
 
             // Update MergeRequestDto.isSolo for all the MRs involved
             for (Integer mrId : committerDto.getMergeRequestIds()) {
-                mergeRequestRepo.getCommitterForMergeRequest(projectUrl, mrId);
+                boolean isSolo = true;
+                List<String> committerEmails = mergeRequestRepo.getCommitterEmailsForMergeRequest(projectUrl, mrId);
+                for (String c : committerEmails) {
+                    if (!committerToMemberMap.getOrDefault(c, -1).equals(memberId)) {
+                        isSolo = false;
+                        break;
+                    }
+                }
+                mergeRequestRepo.setSolo(projectUrl, mrId, isSolo);
             }
         }
     }
