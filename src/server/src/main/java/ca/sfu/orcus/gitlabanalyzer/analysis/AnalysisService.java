@@ -4,6 +4,7 @@ import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.*;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestScoreCalculator;
 import org.bson.types.ObjectId;
 import org.gitlab4j.api.Constants;
 import org.gitlab4j.api.GitLabApi;
@@ -107,8 +108,9 @@ public class AnalysisService {
             commitDtos.add(commitDto);
         }
 
+        MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator(configService);
         MergeRequest mrChanges = gitLabApi.getMergeRequestApi().getMergeRequestChanges(projectId, mergeRequestId);
-        return new MergeRequestDtoDb(jwt, configService, mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore, isSolo);
+        return new MergeRequestDtoDb(jwt, mergeRequest, commitDtos, committers, mrChanges, sumOfCommitsScore, isSolo, scoreCalculator);
     }
 
     private List<Commit> getMergeRequestCommits(GitLabApi gitLabApi, MergeRequest mergeRequest)

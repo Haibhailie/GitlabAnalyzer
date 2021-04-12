@@ -56,12 +56,12 @@ public class DiffScoreCalculator {
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 } else if (line.substring(1).replaceAll("\\s+", "").startsWith(multiLineCommentStart)) {
                     handleMultiLineComments(lineNumber);
+                } else if (checkForSyntaxOnlyLine(line)) {
+                    numSyntaxChanges++;
+                    numLineAdditions++;
                 } else if (line.substring(1).replaceAll("\\s+", "").length() > 0) {
                     numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION));
-                } else if (checkForSyntaxInLine(line)) {
-                    numSyntaxChanges++;
-                    numLineAdditions++;
                 } else {
                     numBlankAdditions++;
                     numLineAdditions++;
@@ -86,9 +86,7 @@ public class DiffScoreCalculator {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.UNCHANGED));
             }
         }
-        return new
-
-                DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
+        return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
 
     }
 
@@ -105,11 +103,10 @@ public class DiffScoreCalculator {
         return line.substring(1).replaceAll("\\s+", "").startsWith(singleLineComment);
     }
 
-    private boolean checkForSyntaxInLine(String line) {
+    private boolean checkForSyntaxOnlyLine(String line) {
         String[] syntaxArray = syntaxInCode.split("\\s+");
         for (String syntax : syntaxArray) {
-            if (line.substring(1).replaceAll("\\s+", "").startsWith(syntax)) {
-                System.out.println(line);
+            if (line.substring(1).replaceAll("\\s+", "").equals(syntax)) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_SYNTAX));
                 return true;
             }
@@ -274,12 +271,12 @@ public class DiffScoreCalculator {
                 List<ConfigDto.GeneralTypeScoreDto> list = configDto.get().getGeneralScores();
                 for (ConfigDto.GeneralTypeScoreDto g : list) {
                     switch (g.getType()) {
-                      case ADD_FACTOR -> addLOCFactor = g.getValue();
-                      case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
-                      case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
-                      case BLANK_FACTOR -> blankLOCFactor = g.getValue();
-                      case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
-                      default -> throw new IllegalStateException("Unexpected type: " + g.getType());
+                        case ADD_FACTOR -> addLOCFactor = g.getValue();
+                        case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
+                        case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
+                        case BLANK_FACTOR -> blankLOCFactor = g.getValue();
+                        case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
+                        default -> throw new IllegalStateException("Unexpected type: " + g.getType());
                     }
                 }
             }
