@@ -31,11 +31,10 @@ public class DiffScoreCalculator {
     private List<String> generatedDiffList = new ArrayList<>();
     List<FileDiffDto> fileDiffs = new ArrayList<>();
 
-    //TODO:Take these from config
-    private String singleLineComment = "\\\\";
-    private String multiLineCommentStart = "/*";
-    private String multiLineCommentEnd = "*/";
-    private String syntaxInCode = "|| && + - / * ";
+    private String singleLineComment;
+    private String multiLineCommentStart;
+    private String multiLineCommentEnd;
+    private String syntaxInCode;
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
         resetCount();
@@ -53,17 +52,16 @@ public class DiffScoreCalculator {
             } else if (line.startsWith("@@")) {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.HEADER));
             } else if (line.startsWith("+")) {
-                if (line.substring(1).replaceAll("\\s+", "").length() > 0) {
-                    numLineAdditions++;
-                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION));
-                } else if (line.substring(1).startsWith(singleLineComment)
-                        || line.substring(line.indexOf(singleLineComment)).length() > line.substring(1).length() * realCodeWrittenInALineFactor) {
+                if (checkForCommentedLine(line)) {
                     numBlankAdditions++;
                     numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
-                } else if (line.substring(1).startsWith(multiLineCommentStart)) {
+                } else if (line.substring(1).replaceAll("\\s+", "").startsWith(multiLineCommentStart)) {
                     handleMultiLineComments(lineNumber);
-                } else if (checkForSyntaxInLine(syntaxInCode.split("\\s+"), lineNumber)) {
+                } else if (line.substring(1).replaceAll("\\s+", "").length() > 0) {
+                    numLineAdditions++;
+                    fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION));
+                } else if (checkForSyntaxInLine(line)) {
                     numSyntaxChanges++;
                     numLineAdditions++;
                 } else {
@@ -90,7 +88,10 @@ public class DiffScoreCalculator {
                 fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.UNCHANGED));
             }
         }
-        return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
+        return new
+
+                DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
+
     }
 
     private void resetCount() {
@@ -101,10 +102,17 @@ public class DiffScoreCalculator {
         numSpacingChanges = 0;
     }
 
-    private boolean checkForSyntaxInLine(String[] syntaxArray, int lineNumber) {
+    private boolean checkForCommentedLine(String line) {
+
+        return line.substring(1).replaceAll("\\s+", "").startsWith(singleLineComment);
+    }
+
+    private boolean checkForSyntaxInLine(String line) {
+        String[] syntaxArray = syntaxInCode.split("\\s+");
         for (String syntax : syntaxArray) {
-            if (generatedDiffList.get(lineNumber).replaceAll("\\s+", "").contains(syntax)) {
-                generatedDiffList.set(lineNumber, "---REMOVED");
+            if (line.substring(1).replaceAll("\\s+", "").startsWith(syntax)) {
+                System.out.println(line);
+                fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_SYNTAX));
                 return true;
             }
         }
@@ -117,6 +125,15 @@ public class DiffScoreCalculator {
             if (presentLine.startsWith("+") && !presentLine.contains(multiLineCommentEnd)) {
                 numBlankAdditions++;
                 fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_BLANK));
+                generatedDiffList.set(i, "---REMOVED");
+            } else if ((presentLine.startsWith("+") && presentLine.contains(multiLineCommentEnd))) {
+                numBlankAdditions++;
+                fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.ADDITION_BLANK));
+                generatedDiffList.set(i, "---REMOVED");
+                break;
+            } else {
+                numLineDeletions++;
+                fileDiffs.add(new FileDiffDto(presentLine, FileDiffDto.DiffLineType.DELETION_BLANK));
                 generatedDiffList.set(i, "---REMOVED");
             }
         }
@@ -164,6 +181,7 @@ public class DiffScoreCalculator {
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
     public List<FileDto> fileScoreCalculator(String jwt, ConfigService configService, List<String> diffsList) {
         setMultipliersFromConfig(jwt, configService);
+        setSyntaxFromConfig(jwt, configService);
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
 
@@ -219,6 +237,38 @@ public class DiffScoreCalculator {
         return fileDtos;
     }
 
+    private void setSyntaxFromConfig(String jwt, ConfigService configService) {
+        try {
+            Optional<ConfigDto> configDto = configService.getCurrentConfig(jwt);
+            configDto.ifPresent(this::setSyntaxValues);
+        } catch (GitLabApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setSyntaxValues(ConfigDto configDto) {
+        if (configDto.getSingleLineComment() != null) {
+            singleLineComment = configDto.getSingleLineComment();
+        } else {
+            singleLineComment = "//";
+        }
+        if (configDto.getMultiLineCommentStart() != null) {
+            multiLineCommentStart = configDto.getMultiLineCommentStart();
+        } else {
+            multiLineCommentStart = "/*";
+        }
+        if (configDto.getMultiLineCommentEnd() != null) {
+            multiLineCommentEnd = configDto.getMultiLineCommentEnd();
+        } else {
+            multiLineCommentEnd = "*/";
+        }
+        if (configDto.getSyntaxInCode() != null) {
+            syntaxInCode = configDto.getSyntaxInCode();
+        } else {
+            syntaxInCode = "{ } [ ] ( ) & | + - / * , ! = % ` ~";
+        }
+    }
+
     private void setMultipliersFromConfig(String jwt, ConfigService configService) {
         try {
             Optional<ConfigDto> configDto = configService.getCurrentConfig(jwt);
@@ -226,16 +276,16 @@ public class DiffScoreCalculator {
                 List<ConfigDto.GeneralTypeScoreDto> list = configDto.get().getGeneralScores();
                 for (ConfigDto.GeneralTypeScoreDto g : list) {
                     switch (g.getType()) {
-                      case ADD_FACTOR -> addLOCFactor = g.getValue();
-                      case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
-                      case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
-                      case BLANK_FACTOR -> blankLOCFactor = g.getValue();
-                      case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
-                      default -> throw new IllegalStateException("Unexpected type: " + g.getType());
+                        case ADD_FACTOR -> addLOCFactor = g.getValue();
+                        case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
+                        case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
+                        case BLANK_FACTOR -> blankLOCFactor = g.getValue();
+                        case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
+                        default -> throw new IllegalStateException("Unexpected type: " + g.getType());
                     }
                 }
             }
-        } catch (GitLabApiException | IllegalStateException e) {
+        } catch (GitLabApiException | IllegalStateException | NullPointerException e) {
             // default multipliers
             addLOCFactor = 1;
             deleteLOCFactor = 0.2;

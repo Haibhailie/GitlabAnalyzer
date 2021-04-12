@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
+import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitService;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
@@ -121,7 +122,8 @@ public class MergeRequestService {
             List<Commit> allCommits = gitLabApi.getMergeRequestApi().getCommits(projectId, mergeRequestId);
             for (Commit c : allCommits) {
                 List<Diff> diffs = gitLabApi.getCommitsApi().getDiff(projectId, c.getId());
-                List<FileDto> fileScores = commitService.getCommitScore(jwt, diffs);
+                CommitScoreCalculator commitScoreCalculator = new CommitScoreCalculator(configService);
+                List<FileDto> fileScores = commitScoreCalculator.getCommitScore(jwt, diffs);
                 filteredCommits.add(new CommitDto(gitLabApi, projectId, c, fileScores));
             }
             return filteredCommits;
@@ -153,7 +155,8 @@ public class MergeRequestService {
         for (Commit c : commits) {
             Commit presentCommit = gitLabApi.getCommitsApi().getCommit(projectId, c.getShortId());
             if (presentCommit.getStats() != null) {
-                List<FileDto> presentCommitFiles = commitService.getCommitScore(jwt, gitLabApi.getCommitsApi().getDiff(projectId, presentCommit.getShortId()));
+                CommitScoreCalculator commitScoreCalculator = new CommitScoreCalculator(configService);
+                List<FileDto> presentCommitFiles = commitScoreCalculator.getCommitScore(jwt, gitLabApi.getCommitsApi().getDiff(projectId, presentCommit.getShortId()));
                 for (FileDto fileIterator : presentCommitFiles) {
                     sumOfCommitsScore += fileIterator.getTotalScore();
                     commitsInfoInMergeRequest.add(new MergeRequestCommitsDto(fileIterator.getFileScore(), fileIterator.getLinesOfCodeChanges()));

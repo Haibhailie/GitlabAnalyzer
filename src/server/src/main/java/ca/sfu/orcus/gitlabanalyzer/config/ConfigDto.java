@@ -9,7 +9,6 @@ public final class ConfigDto {
     private long endDate;
     private String scoreBy;
     private String graphMode;
-
     private List<GeneralTypeScoreDto> generalScores;
     private List<FileTypeScoreDto> fileScores;
 
@@ -77,6 +76,10 @@ public final class ConfigDto {
 
     public void setSyntaxInCode(String syntaxInCode) {
         this.syntaxInCode = syntaxInCode;
+    }
+
+    public List<GeneralTypeScoreDto> getGeneralScores() {
+        return generalScores;
     }
 
 
@@ -150,6 +153,7 @@ public final class ConfigDto {
             BLANK_FACTOR,
             SPACING_FACTOR
         }
+
         private scoreFactors type;
         private double value;
 
@@ -166,6 +170,10 @@ public final class ConfigDto {
 
         public scoreFactors getType() {
             return type;
+        }
+
+        public double getValue() {
+            return value;
         }
 
         public GeneralTypeScoreDto getTypeScore() {

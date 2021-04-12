@@ -66,7 +66,7 @@ public class CommitController {
                                          @PathVariable String memberName) {
         Date dateSince = DateUtils.getDateSinceOrEarliest(since);
         Date dateUntil = DateUtils.getDateUntilOrNow(until);
-        List<CommitDto> allCommitsByMemberName = commitService.getCommitsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
+        List<CommitDto> allCommitsByMemberName = commitService.returnAllCommitsOfAMember(jwt, projectId, dateSince, dateUntil, memberName);
         response.setStatus(allCommitsByMemberName == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(allCommitsByMemberName);
     }
