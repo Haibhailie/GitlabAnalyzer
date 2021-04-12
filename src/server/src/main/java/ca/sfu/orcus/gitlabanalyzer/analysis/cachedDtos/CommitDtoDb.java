@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
+import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
@@ -25,7 +26,7 @@ public final class CommitDtoDb {
     private List<FileDto> files;
     private double score;
 
-    public CommitDtoDb(String jwt, ConfigService configService, Commit commit, List<Diff> diffList) {
+    public CommitDtoDb(String jwt, CommitScoreCalculator scoreCalculator, Commit commit, List<Diff> diffList) {
         setId(commit.getId());
         setMessage(commit.getMessage());
         setAuthor(commit.getAuthorName());
@@ -40,7 +41,6 @@ public final class CommitDtoDb {
         setDiffs(DiffStringParser.parseDiff(diffList));
         setIgnored(false);
 
-        CommitScoreCalculator scoreCalculator = new CommitScoreCalculator(configService);
         List<FileDto> fileScores = scoreCalculator.getCommitScore(jwt, diffList);
         setFiles(fileScores);
         setScore(fileScores);
