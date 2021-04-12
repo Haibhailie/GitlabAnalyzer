@@ -67,6 +67,10 @@ const UserConfig = () => {
   const [popUpOpen, setPopUpOpen] = useState(false)
   const [name, setName] = useState(userConfigs.selected.name)
 
+  useEffect(() => {
+    setName(userConfigs.selected.name)
+  }, [userConfigs.selected.name])
+
   const save: FormEventHandler = event => {
     event.preventDefault()
     const [foundConfig] = Object.values(userConfigs.configs).filter(
@@ -77,7 +81,7 @@ const UserConfig = () => {
     } else {
       dispatch({ type: ADD_CONFIG, name })
     }
-    setName('')
+    // setName('')
   }
 
   const togglePopup = () => {
