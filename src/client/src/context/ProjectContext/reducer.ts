@@ -6,10 +6,8 @@ import {
   IGNORE_COMMIT_FILE,
   IGNORE_MR,
   IGNORE_MR_FILE,
-  UPDATE_START_TIME,
-  UPDATE_END_TIME,
+  UPDATE_TIME,
   UPDATE_GENERAL_WEIGHT,
-  UPDATE_EXTENSION,
   TProjectReducer,
   IProjectState,
   ILoc,
@@ -337,11 +335,54 @@ const reducer: TProjectReducer = async (state, action) => {
   if (!state) return state
 
   switch (action.type) {
-    case UPDATE_START_TIME: {
-      return state
-    }
-    case UPDATE_END_TIME: {
-      return state
+    case UPDATE_TIME: {
+      const { startDate, endDate } = action
+      const startTime = startDate.getTime()
+      const endTime = endDate.getTime()
+      Object.values(state.members).forEach(member => {
+        member.wordCount = 0
+        member.numComments = 0
+        member.notes.forEach(note => {
+          if (note.date >= startTime && note.date <= endTime) {
+            member.numComments++
+            member.wordCount += note.wordCount
+          }
+        })
+      })
+
+      Object.values(state.mergeRequests).forEach(mr => {
+        const member = state.members[mr.userId]
+        if (!member) return
+
+        member.mergeRequests = {}
+        member.soloMrScore = 0
+        member.sharedMrScore = 0
+        member.commitScore = 0
+        member.numCommits = 0
+        member.numAdditions = 0
+        member.numDeletions = 0
+
+        if (!mr.isIgnored && mr.time >= startTime && mr.time <= endTime) {
+          if (mr.isSolo) {
+            member.soloMrScore += mr.score
+          } else {
+            member.sharedMrScore += mr.sumOfCommitsScore[member.id]
+          }
+
+          Object.values(mr.commits).forEach(commit => {
+            if (!commit.isIgnored) {
+              member.commitScore += commit.score
+              member.numCommits++
+            }
+          })
+
+          member.numAdditions += mr.numAdditions
+          member.numDeletions += mr.numDeletions
+        }
+
+        member.mergeRequests[mr.mergeRequestId] = mr
+      })
+      return { ...state }
     }
     case IGNORE_MR: {
       const { mrId, setIgnored } = action
@@ -369,7 +410,7 @@ const reducer: TProjectReducer = async (state, action) => {
           const newScore = calcScore(file.scores)
           file.score = newScore
           mr.score += newScore
-        }, 0)
+        })
         Object.values(mr.commits).forEach(commit => {
           mr.sumOfCommitsScore[commit.userId] = 0
           commit.score = 0
@@ -379,12 +420,11 @@ const reducer: TProjectReducer = async (state, action) => {
             file.score = newScore
             mr.sumOfCommitsScore[commit.userId] += newScore
             commit.score += newScore
-          }, 0)
+          })
         })
       })
       return { ...state }
     }
-    case UPDATE_EXTENSION:
     default: {
       return state
     }

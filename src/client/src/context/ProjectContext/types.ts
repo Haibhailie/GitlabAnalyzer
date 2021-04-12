@@ -5,15 +5,14 @@ export const IGNORE_MR = 'IGNORE_MR'
 export const IGNORE_MR_FILE = 'IGNORE_MR_FILE'
 export const IGNORE_COMMIT = 'IGNORE_COMMIT'
 export const IGNORE_COMMIT_FILE = 'IGNORE_COMMIT_FILE'
-export const UPDATE_START_TIME = 'UPDATE_START_TIME'
-export const UPDATE_END_TIME = 'UPDATE_END_TIME'
+export const UPDATE_TIME = 'UPDATE_TIME'
 export const UPDATE_GENERAL_WEIGHT = 'UPDATE_GENERAL_WEIGHT'
-export const UPDATE_EXTENSION = 'UPDATE_EXTENSION'
 export const GET_PROJECT = 'GET_PROJECT'
 
 interface setDateAction {
-  type: typeof UPDATE_START_TIME | typeof UPDATE_END_TIME
-  date: Date
+  type: typeof UPDATE_TIME
+  startDate: Date
+  endDate: Date
 }
 
 interface ignoreMrAction {
@@ -57,12 +56,6 @@ interface updateGeneralWeightAction {
   newWeight: number
 }
 
-interface updateExtensionWeightAction {
-  type: typeof UPDATE_EXTENSION
-  extension: string
-  newWeight: number
-}
-
 interface getProjectAction {
   type: typeof GET_PROJECT
   projectId: number
@@ -76,7 +69,6 @@ export type TProjectActions =
   | ignoreCommitAction
   | ignoreCommitFileAction
   | updateGeneralWeightAction
-  | updateExtensionWeightAction
   | getProjectAction
 
 export interface ILoc {
