@@ -5,9 +5,9 @@ import styles from '../css/AnalyzeButton.module.css'
 import gt from '../assets/greater-than.svg'
 
 export interface IAnalyzeButtonProps {
-  id: string
+  id: string | number
   message: string
-  onClick: (id: string) => void
+  onClick: (id: string | number) => void
   className?: string
 }
 

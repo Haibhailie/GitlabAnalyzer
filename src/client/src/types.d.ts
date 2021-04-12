@@ -1,35 +1,121 @@
+export type TLineType =
+  | 'HEADER'
+  | 'ADDITION'
+  | 'ADDITION_SYNTAX'
+  | 'ADDITION_BLANK'
+  | 'DELETION'
+  | 'DELETION_SYNTAX'
+  | 'DELETION_BLANK'
+  | 'UNCHANGED'
+
+export type TDiffData = IDiffData[]
+export interface IDiffData {
+  diffLine: string
+  lineType: TLineType
+}
+
+export interface IScore {
+  totalScore: number
+  scoreAdditions: number
+  scoreDeletions: number
+  scoreBlankAdditions: number
+  scoreSyntaxChanges: number
+}
+
+export interface ILocChanges {
+  numAdditions: number
+  numDeletions: number
+  numBlankAdditions: number
+  numSyntaxChanges: number
+  numSpacingChanges: number
+}
+
+export type TFileData = IFileData[]
+export interface IFileData {
+  name: string
+  fileId: string
+  extension: string
+  isIgnored: boolean
+  fileScore: IScore
+  linesOfCodeChanges: ILocChanges
+  fileDiffs: TDiffData
+}
+
 export type TCommitData = ICommitData[]
 export interface ICommitData {
-  sha: string
+  id: string
+  message: string
   author: string
+  authorEmail: string
+  userId: number
   time: number
-  score: number
-  title: string
-  id?: string
+  webUrl: string
+  numAdditions: number
+  numDeletions: number
+  total: number
+  diffs: string
+  isIgnored: boolean
+  files: TFileData
 }
+
+export type TCommitDiffs = {
+  fileScore: IScore
+  linesOfCodeChanges: ILocChanges
+}[]
 
 export type TMergeData = IMergeData[]
 export interface IMergeData {
-  id: string
-  author: string
-  time: number
+  mergeRequestId: number
   title: string
-  score: number
-  // TODO: remove mergeRequestId after BE fix.
-  mergeRequestId?: string
+  author: string
+  userId: number
+  description: string
+  time: number
+  webUrl: string
+  commits: TCommitData
+  committerNames: string[]
+  sumOfCommitsScore: number
+  isIgnored: boolean
+  files: TFileData
+  isSolo: boolean
+}
+
+export type TCommentData = ICommentData[]
+export interface ICommentData {
+  id: number
+  content: string
+  wordCount: number
+  date: number
+  context: 'Issue' | 'MergeRequest'
+  webUrl: string
+  parentAuthor: string
 }
 
 export type TMemberData = IMemberData[]
 export interface IMemberData {
-  id: string
-  username: string
+  id: number
   displayName: string
+  username: string
   role: string
   webUrl: string
+  committerEmails: string[]
+  mergeRequestDocIds: string[]
+  notes: TCommentData
 }
 
 export interface IDiffData {
   diff: string
+}
+
+export type TCommentData = ICommentData[]
+export interface ICommentData {
+  id: string
+  wordcount: number
+  content: string
+  date: number
+  context: string
+  webUrl: string
+  parentAuthor: string
 }
 
 export type TProjectData = IProjectData[]

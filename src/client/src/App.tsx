@@ -15,8 +15,8 @@ import PageWrapper from './components/PageWrapper'
 const App = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <UserConfigProvider>
-        <ProjectProvider>
+      <ProjectProvider>
+        <UserConfigProvider>
           <ThemeProvider theme={globalTheme}>
             <Router>
               <Switch>
@@ -41,8 +41,8 @@ const App = () => {
               </Switch>
             </Router>
           </ThemeProvider>
-        </ProjectProvider>
-      </UserConfigProvider>
+        </UserConfigProvider>
+      </ProjectProvider>
     </LocalizationProvider>
   )
 }
