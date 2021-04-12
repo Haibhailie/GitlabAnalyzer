@@ -25,9 +25,30 @@ const defaultConfig: IUserConfig = {
     { type: 'Syntax only', value: 0.2 },
   ],
   fileScores: [
-    { fileExtension: '.java', scoreMultiplier: 1 },
-    { fileExtension: '.html', scoreMultiplier: 1 },
-    { fileExtension: '.tsx', scoreMultiplier: 1 },
+    {
+      fileExtension: '.java',
+      singleLineComment: '',
+      multiLineCommentStart: '',
+      multiLineCommentEnd: '',
+      syntaxInCode: '',
+      scoreMultiplier: 1,
+    },
+    {
+      fileExtension: '.html',
+      singleLineComment: '',
+      multiLineCommentStart: '',
+      multiLineCommentEnd: '',
+      syntaxInCode: '',
+      scoreMultiplier: 1,
+    },
+    {
+      fileExtension: '.tsx',
+      singleLineComment: '',
+      multiLineCommentStart: '',
+      multiLineCommentEnd: '',
+      syntaxInCode: '',
+      scoreMultiplier: 1,
+    },
   ],
 }
 
