@@ -15,13 +15,13 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.include;
-import static com.mongodb.client.model.Updates.*;
+import static com.mongodb.client.model.Updates.set;
 
 @Repository
 public class ProjectRepository {
