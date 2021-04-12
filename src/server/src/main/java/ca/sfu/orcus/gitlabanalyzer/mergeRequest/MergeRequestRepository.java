@@ -153,7 +153,7 @@ public class MergeRequestRepository {
                 .setDescription(doc.getString(MergeRequest.description.key))
                 .setTime(doc.getLong(MergeRequest.time.key))
                 .setWebUrl(doc.getString(MergeRequest.webUrl.key))
-                .setSolo(doc.getBoolean(MergeRequest.isIgnored.key))
+                .setSolo(doc.getBoolean(MergeRequest.isSolo.key))
                 .setCommits(getCommitsFromCachedMergeRequest(doc))
                 .setCommitterEmails(new HashSet<>(doc.getList(MergeRequest.committerEmails.key, String.class)))
                 .setSumOfCommitsScore(doc.getDouble(MergeRequest.sumOfCommitsScore.key))
