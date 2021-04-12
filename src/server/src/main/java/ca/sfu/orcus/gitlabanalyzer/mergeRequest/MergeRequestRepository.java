@@ -189,7 +189,6 @@ public class MergeRequestRepository {
                             getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
                             eq("commits.commitId", commitId)),
                     set("commits.$.isIgnored", true));
-            
         }
 
 
