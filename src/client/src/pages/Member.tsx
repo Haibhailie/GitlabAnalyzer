@@ -1,8 +1,6 @@
 import { useParams } from 'react-router-dom'
 import useSuspense from '../utils/useSuspense'
-import { ICommitData, IMergeData } from '../types'
-import { onError } from '../utils/suspenseDefaults'
-import { IMemberData, TMemberData, TMergeData, TCommitData } from '../types'
+import { TMergeData, TCommitData } from '../types'
 
 import Selector from '../components/Selector'
 import MemberSummary from '../components/MemberSummary'
