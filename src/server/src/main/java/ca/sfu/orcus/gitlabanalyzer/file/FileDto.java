@@ -14,7 +14,6 @@ public class FileDto {
     boolean isIgnored;
     Scores fileScore;
     LOCDto linesOfCodeChanges;
-
     @SerializedName("fileDiffs")
     List<FileDiffDto> fileDiffDtos = new ArrayList<>();
 
@@ -99,6 +98,10 @@ public class FileDto {
 
     public String getId() {
         return id;
+    }
+
+    public List<FileDiffDto> getFileDiffDtos() {
+        return fileDiffDtos;
     }
 
     @Override

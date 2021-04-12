@@ -23,14 +23,12 @@ public final class MergeRequestDtoDb {
     private boolean isIgnored;
     private List<FileDto> files;
 
-    public MergeRequestDtoDb() {
-    }
-
     public MergeRequestDtoDb(MergeRequest mergeRequest,
                              List<CommitDtoDb> commits,
                              Set<String> committerEmails,
                              MergeRequest mergeRequestChanges,
-                             double sumOfCommitsScore) {
+                             double sumOfCommitsScore,
+                             MergeRequestScoreCalculator scoreCalculator) {
         setMergeRequestId(mergeRequest.getIid());
         setTitle(mergeRequest.getTitle());
         setAuthor(mergeRequest.getAuthor().getName());
@@ -45,9 +43,10 @@ public final class MergeRequestDtoDb {
         setSumOfCommitsScore(sumOfCommitsScore);
         setIgnored(false);
 
-        MergeRequestScoreCalculator scoreCalculator = new MergeRequestScoreCalculator();
-        setFiles(scoreCalculator.getMergeRequestScore(mergeRequestChanges));
+        setFiles(scoreCalculator.getMergeRequestScore(mergeRequestChanges.getChanges()));
     }
+
+    public MergeRequestDtoDb() {}
 
     public MergeRequestDtoDb setMergeRequestId(int mergeRequestId) {
         this.mergeRequestId = mergeRequestId;
