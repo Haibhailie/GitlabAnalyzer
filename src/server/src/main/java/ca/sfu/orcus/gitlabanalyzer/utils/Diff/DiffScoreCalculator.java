@@ -33,6 +33,7 @@ public class DiffScoreCalculator {
     private String multiLineCommentStart;
     private String multiLineCommentEnd;
     private String syntaxInCode;
+    private double scoreMultiplier;
 
     public DiffScoreDto parseDiffList(List<String> diffStrings) {
         resetCount();
@@ -87,7 +88,6 @@ public class DiffScoreCalculator {
             }
         }
         return new DiffScoreDto(numLineAdditions, numLineDeletions, numBlankAdditions, numSyntaxChanges, numSpacingChanges, fileDiffs);
-
     }
 
     private void resetCount() {
@@ -175,10 +175,11 @@ public class DiffScoreCalculator {
 
     //Loop that separates the diffs and scores of individual files in a Merge Request diff
     public List<FileDto> fileScoreCalculator(String jwt, ConfigService configService, List<String> diffsList) {
+
         setMultipliersFromConfig(jwt, configService);
-        setSyntaxFromConfig(jwt, configService);
         List<FileDto> fileDtos = new ArrayList<>();
         List<DiffScoreDto> diffScoreDtos = new ArrayList<>();
+        List<Double> fileSpecificScoreMultiplier = new ArrayList<>();
 
         int fileCount = 0;
         List<Integer> fileDiffLines = new ArrayList<>();
@@ -195,7 +196,13 @@ public class DiffScoreCalculator {
 
         for (int i = 0; i < fileCount; i++) {
             List<String> fileDiffs = diffsList.subList(fileDiffLines.get(i), fileDiffLines.get(i + 1));
-            fileDtos.add(new FileDto(getFileNameFromDiff(fileDiffs)));
+            String fileName = getFileNameFromDiff(fileDiffs);
+            fileDtos.add(new FileDto(fileName));
+
+            //setSyntaxFromConfig(jwt, configService, ".cpp");
+            setSyntaxFromConfig(jwt, configService, getFileTypeFromDiff(fileName));
+
+            fileSpecificScoreMultiplier.add(scoreMultiplier);
             diffScoreDtos.add(generateDiffScoreDto(fileDiffs));
         }
 
@@ -213,6 +220,8 @@ public class DiffScoreCalculator {
                     + blankAdditions * blankLOCFactor
                     + syntaxChanges * syntaxChangeFactor
                     + spacingChanges * spacingChangeFactor;
+
+            totalScore = totalScore * fileSpecificScoreMultiplier.get(i);
 
             fileDtos.get(i).setTotalScore(new Scores(totalScore,
                     additions,
@@ -232,35 +241,16 @@ public class DiffScoreCalculator {
         return fileDtos;
     }
 
-    private void setSyntaxFromConfig(String jwt, ConfigService configService) {
+    private void setSyntaxFromConfig(String jwt, ConfigService configService, String extension) {
         try {
             Optional<ConfigDto> configDto = configService.getCurrentConfig(jwt);
-            configDto.ifPresent(this::setSyntaxValues);
+            if (configDto.isPresent()) {
+                setSyntaxValues(configDto.get(), extension);
+            } else {
+                setDefaultSyntaxValues();
+            }
         } catch (GitLabApiException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void setSyntaxValues(ConfigDto configDto) {
-        if (configDto.getSingleLineComment() != null) {
-            singleLineComment = configDto.getSingleLineComment();
-        } else {
-            singleLineComment = "//";
-        }
-        if (configDto.getMultiLineCommentStart() != null) {
-            multiLineCommentStart = configDto.getMultiLineCommentStart();
-        } else {
-            multiLineCommentStart = "/*";
-        }
-        if (configDto.getMultiLineCommentEnd() != null) {
-            multiLineCommentEnd = configDto.getMultiLineCommentEnd();
-        } else {
-            multiLineCommentEnd = "*/";
-        }
-        if (configDto.getSyntaxInCode() != null) {
-            syntaxInCode = configDto.getSyntaxInCode();
-        } else {
-            syntaxInCode = "{ } [ ] ( ) & | + - / * , ! = % ` ~";
         }
     }
 
@@ -271,12 +261,12 @@ public class DiffScoreCalculator {
                 List<ConfigDto.GeneralTypeScoreDto> list = configDto.get().getGeneralScores();
                 for (ConfigDto.GeneralTypeScoreDto g : list) {
                     switch (g.getType()) {
-                      case ADD_FACTOR -> addLOCFactor = g.getValue();
-                      case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
-                      case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
-                      case BLANK_FACTOR -> blankLOCFactor = g.getValue();
-                      case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
-                      default -> throw new IllegalStateException("Unexpected type: " + g.getType());
+                        case ADD_FACTOR -> addLOCFactor = g.getValue();
+                        case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
+                        case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
+                        case BLANK_FACTOR -> blankLOCFactor = g.getValue();
+                        case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
+                        default -> throw new IllegalStateException("Unexpected type: " + g.getType());
                     }
                 }
             }
@@ -290,6 +280,53 @@ public class DiffScoreCalculator {
         }
     }
 
+    private void setSyntaxValues(ConfigDto configDto, String extension) {
+        setDefaultSyntaxValues();
+        List<ConfigDto.FileTypeScoreDto> fileTypeScores;
+        fileTypeScores = configDto.getFileScores();
+        for (ConfigDto.FileTypeScoreDto f : fileTypeScores) {
+            if (f.getFileExtension().equals(extension)) {
+                if (!isNullOrEmpty(f.getSingleLineComment())) {
+                    singleLineComment = f.getSingleLineComment();
+                } else {
+                    singleLineComment = "//";
+                }
+
+                if (!isNullOrEmpty(f.getMultiLineCommentStart())) {
+                    multiLineCommentStart = f.getMultiLineCommentStart();
+                } else {
+                    multiLineCommentStart = "/*";
+                }
+
+                if (!isNullOrEmpty(f.getMultiLineCommentEnd())) {
+                    multiLineCommentEnd = f.getMultiLineCommentEnd();
+                } else {
+                    multiLineCommentEnd = "*/";
+                }
+
+                if (!isNullOrEmpty(f.getSyntaxInCode())) {
+                    syntaxInCode = f.getSyntaxInCode();
+                } else {
+                    syntaxInCode = "{ } [ ] ( ) & | + - / * , ! = % ` ~";
+                }
+
+                if (f.getScoreMultiplier() != 0) {
+                    scoreMultiplier = f.getScoreMultiplier();
+                } else {
+                    scoreMultiplier = 1;
+                }
+            }
+        }
+    }
+
+    private void setDefaultSyntaxValues() {
+        singleLineComment = "//";
+        multiLineCommentStart = "/*";
+        multiLineCommentEnd = "*/";
+        syntaxInCode = "{ } [ ] ( ) & | + - / * , ! = % ` ~";
+        scoreMultiplier = 1;
+    }
+
     private String getFileNameFromDiff(List<String> diff) {
         for (String s : diff) {
             if (s.startsWith("+++")) {
@@ -299,8 +336,18 @@ public class DiffScoreCalculator {
         return "N/A";
     }
 
+    private String getFileTypeFromDiff(String fileName) {
+        if (fileName.contains("."))
+            return fileName.substring(fileName.indexOf("."));
+        return "N/A";
+    }
+
     private DiffScoreDto generateDiffScoreDto(List<String> diffList) {
         return parseDiffList(diffList);
+    }
+
+    private boolean isNullOrEmpty(String str) {
+        return str == null || str.trim().isEmpty();
     }
 
 }

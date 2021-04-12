@@ -1,9 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitScoreCalculator;
-import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
-import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestScoreCalculator;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.DiffStringParser;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;

@@ -11,12 +11,6 @@ public final class ConfigDto {
     private String graphMode;
     private List<GeneralTypeScoreDto> generalScores;
     private List<FileTypeScoreDto> fileScores;
-
-    private String singleLineComment;
-    private String multiLineCommentStart;
-    private String multiLineCommentEnd;
-    private String syntaxInCode;
-
     private String yAxis;
 
     private ConfigDto() {
@@ -62,22 +56,6 @@ public final class ConfigDto {
         this.yAxis = yAxis;
     }
 
-    public void setSingleLineComment(String singleLineComment) {
-        this.singleLineComment = singleLineComment;
-    }
-
-    public void setMultiLineCommentStart(String multiLineCommentStart) {
-        this.multiLineCommentStart = multiLineCommentStart;
-    }
-
-    public void setMultiLineCommentEnd(String multiLineCommentEnd) {
-        this.multiLineCommentEnd = multiLineCommentEnd;
-    }
-
-    public void setSyntaxInCode(String syntaxInCode) {
-        this.syntaxInCode = syntaxInCode;
-    }
-
     public List<GeneralTypeScoreDto> getGeneralScores() {
         return generalScores;
     }
@@ -102,22 +80,6 @@ public final class ConfigDto {
         return graphMode;
     }
 
-    public String getSingleLineComment() {
-        return singleLineComment;
-    }
-
-    public String getMultiLineCommentStart() {
-        return multiLineCommentStart;
-    }
-
-    public String getMultiLineCommentEnd() {
-        return multiLineCommentEnd;
-    }
-
-    public String getSyntaxInCode() {
-        return syntaxInCode;
-    }
-
     public String getyAxis() {
         return yAxis;
     }
@@ -128,12 +90,41 @@ public final class ConfigDto {
 
     // Nested class types
 
-    private static final class FileTypeScoreDto {
+    public static final class FileTypeScoreDto {
         private String fileExtension;
-        private double scoreMultiplier;
+        private double scoreMultiplier = 0;
+        private String singleLineComment;
+        private String multiLineCommentStart;
+        private String multiLineCommentEnd;
+        private String syntaxInCode;
 
         public FileTypeScoreDto() {
         }
+
+        public String getFileExtension() {
+            return fileExtension;
+        }
+
+        public double getScoreMultiplier() {
+            return scoreMultiplier;
+        }
+
+        public String getSingleLineComment() {
+            return singleLineComment;
+        }
+
+        public String getMultiLineCommentStart() {
+            return multiLineCommentStart;
+        }
+
+        public String getMultiLineCommentEnd() {
+            return multiLineCommentEnd;
+        }
+
+        public String getSyntaxInCode() {
+            return syntaxInCode;
+        }
+
 
         public void setFileExtension(String fileExtension) {
             this.fileExtension = fileExtension;
