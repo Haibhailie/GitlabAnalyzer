@@ -94,7 +94,7 @@ const UserConfig = () => {
 
   return (
     <>
-      <SideNavItem label="Settings" Icon={settingsIcon}>
+      <SideNavItem label="Configurations" Icon={settingsIcon}>
         <SideNavSubItem startOpened label="Date Range">
           <DatePicker
             label="Start date"
