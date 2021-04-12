@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MergeRequestDtoDb;
+import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.commit.CommitRepository;
 import ca.sfu.orcus.gitlabanalyzer.file.FileRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
@@ -14,10 +15,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -29,12 +27,14 @@ public class MergeRequestRepository {
     private final MongoCollection<Document> mergeRequestCollection;
     private final CommitRepository commitRepo;
     private final FileRepository fileRepo;
+    private final GitLabApiWrapper gitLabApiWrapper;
 
-    public MergeRequestRepository(CommitRepository commitRepo, FileRepository fileRepo) {
+    public MergeRequestRepository(CommitRepository commitRepo, FileRepository fileRepo, GitLabApiWrapper gitLabApiWrapper) {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
         mergeRequestCollection = database.getCollection(VariableDecoderUtil.decode("MERGE_REQUESTS_COLLECTION"));
 
+        this.gitLabApiWrapper = gitLabApiWrapper;
         this.commitRepo = commitRepo;
         this.fileRepo = fileRepo;
     }
@@ -172,6 +172,59 @@ public class MergeRequestRepository {
             commits.add(commitRepo.getCommitFromDocument(presentDocument));
         }
         return commits;
+    }
+
+    public void updateMergeRequestIgnore(String projectUrl, int mergeRequestId, boolean isIgnored) {
+        // Ignore merge request
+        updateMergeRequestIgnoreOnly(projectUrl, mergeRequestId, isIgnored);
+
+        // Ignore all merge request diff files
+        mergeRequestCollection.updateMany(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                                                set("files.$[].isIgnored", isIgnored));
+
+        // Ignore all merge request commits
+        mergeRequestCollection.updateMany(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                                                set("commits.$[].isIgnored", isIgnored));
+
+        // Ignore all merge request commits' diff files
+        mergeRequestCollection.updateMany(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                                                set("commits.$[].files.$[].isIgnored", isIgnored));
+    }
+
+    private void updateMergeRequestIgnoreOnly(String projectUrl, int mergeRequestId, boolean isIgnored) {
+        mergeRequestCollection.updateOne(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                set(MergeRequest.isIgnored.key, isIgnored));
+    }
+
+    public void updateCommitIgnore(String projectUrl, int mergeRequestId, String commitId, boolean isIgnored) {
+        mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                eq("commits.commitId", commitId)),
+                set("commits.$.isIgnored", isIgnored));
+
+        // Ignore all files under the commit
+        mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                eq("commits.commitId", commitId)),
+                set("commits.$.files.$[].isIgnored", true));
+
+        // Trickle up if commit was unignored
+        if (!isIgnored) {
+            updateMergeRequestIgnoreOnly(projectUrl, mergeRequestId, false);
+        }
+    }
+
+    public void updateMergeRequestFileIgnore(String projectUrl, int mergeRequestId, String fileId, boolean isIgnored) {
+        updateMergeRequestFileIgnoreOnly(projectUrl, mergeRequestId, fileId, isIgnored);
+
+        // Trickle up if merge request file was unignored
+        if (!isIgnored) {
+            updateMergeRequestIgnoreOnly(projectUrl, mergeRequestId, false);
+        }
+    }
+
+    private void updateMergeRequestFileIgnoreOnly(String projectUrl, int mergeRequestId, String fileId, boolean isIgnored) {
+        mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                eq("files._id", fileId)),
+                set("files.$.isIgnored", isIgnored));
     }
 
     public void updateCommitUserId(String projectUrl, String commitId, Integer userId) {
