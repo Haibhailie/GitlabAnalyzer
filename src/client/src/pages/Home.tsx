@@ -117,10 +117,7 @@ const Home = () => {
         {filteredData && (
           <Table
             data={filteredData?.map(
-              (
-                { id, name, lastAnalysisTime, lastActivityTime, role },
-                index
-              ) => {
+              ({ id, name, lastAnalysisTime, lastActivityTime, role }) => {
                 return {
                   name,
                   role,
