@@ -106,8 +106,8 @@ const ignoreCommit = (
 }
 
 const ignoreMr = (state: IProjectState, mrId: number, setIgnored: boolean) => {
-  const mr = state.mergeRequests[mrId]
-  if (!mr || mr.isIgnored === setIgnored) return state
+  const mr = state?.mergeRequests[mrId]
+  if (!mr || mr.isIgnored === setIgnored || !state?.id) return state
 
   Object.keys(mr.commits).forEach(commitId => {
     state = ignoreCommit(state, mrId, commitId, setIgnored)
@@ -118,6 +118,8 @@ const ignoreMr = (state: IProjectState, mrId: number, setIgnored: boolean) => {
   })
 
   mr.isIgnored = setIgnored
+
+  // await jsonFetcher(`/api/project/${state.id}/mergerequest/${mrId}/ignore`)
 
   return state
 }
@@ -150,7 +152,7 @@ const formatMergeRequests = (
       let commitScore = 0
 
       commit.files.forEach(file => {
-        file.fileId = file.fileId ?? file.name
+        file.id = file.id ?? file.name
 
         const loc: ILoc = getFileLoc(file)
 
@@ -159,7 +161,7 @@ const formatMergeRequests = (
 
         if (!file.isIgnored) commitScore += score
 
-        files[file.fileId] = {
+        files[file.id] = {
           ...file,
           loc,
           scores,
@@ -183,7 +185,7 @@ const formatMergeRequests = (
     let numAdditions = 0
 
     mr.files.forEach(file => {
-      file.fileId = file.fileId ?? file.name
+      file.id = file.id ?? file.name
       const loc: ILoc = getFileLoc(file)
 
       const scores = calcScores(loc, config.generalScores)
@@ -202,7 +204,7 @@ const formatMergeRequests = (
 
       if (!file.isIgnored) mrScore += score
 
-      mrFiles[file.fileId] = {
+      mrFiles[file.id] = {
         ...file,
         loc,
         scores,

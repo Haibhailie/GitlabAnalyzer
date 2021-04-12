@@ -33,7 +33,7 @@ export interface ILocChanges {
 export type TFileData = IFileData[]
 export interface IFileData {
   name: string
-  fileId: string
+  id: string
   extension: string
   fileDiffs: TDiffData
   fileScore: IScore

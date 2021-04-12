@@ -67,12 +67,12 @@ const Diff = ({
           score,
           linesOfCodeChanges,
           fileDiffs,
-          fileId,
+          id,
           isIgnored,
           scores,
         }) => (
           <Dropdown
-            key={fileId}
+            key={id}
             className={styles.file}
             arrowOnLeft
             startOpened
@@ -85,8 +85,7 @@ const Diff = ({
                     <IgnoreBox
                       onChange={e => {
                         const checked = (e.target as HTMLInputElement).checked
-                        console.log(checked)
-                        ignore(fileId, checked)
+                        ignore(id, checked)
                       }}
                       checked={isIgnored}
                       className={styles.ignoreBox}
@@ -113,10 +112,16 @@ const Diff = ({
                     </Tooltip>
                   </span>
                   <span className={styles.additions}>
-                    +{linesOfCodeChanges.numAdditions}
+                    +
+                    {linesOfCodeChanges.numAdditions +
+                      linesOfCodeChanges.numBlankAdditions +
+                      linesOfCodeChanges.numSyntaxChanges +
+                      linesOfCodeChanges.numSpacingChanges}
                   </span>
                   <span className={styles.deletions}>
-                    -{linesOfCodeChanges.numDeletions}
+                    -
+                    {linesOfCodeChanges.numDeletions +
+                      linesOfCodeChanges.numSyntaxChanges}
                   </span>
                 </div>
               </div>

@@ -28,22 +28,10 @@ const formatParentAuthor = (author: string) => {
 }
 
 export interface ICommentTableProps {
-  // projectId: string
-  // memberId: string
   comments: TCommentData
 }
 
 const CommentTable = ({ comments }: ICommentTableProps) => {
-  // const { Suspense, data, error } = useSuspense<TCommentData>(
-  //   (setData, setError) => {
-  //     jsonFetcher<TCommentData>(
-  //       `/api/project/${projectId}/members/${memberId}/notes`
-  //     )
-  //       .then(setData)
-  //       .catch(onError(setError))
-  //   }
-  // )
-
   const { userConfigs } = useContext(UserConfigContext)
   const [selectedRange, setSelectedRange] = useState(comments)
 
@@ -77,7 +65,7 @@ const CommentTable = ({ comments }: ICommentTableProps) => {
         title={`Code review comments`}
         data={
           selectedRange?.map(
-            ({ wordcount, content, date, context, webUrl, parentAuthor }) => {
+            ({ wordCount, content, date, context, webUrl, parentAuthor }) => {
               return {
                 date: dateConverter(date, true),
                 content: (
@@ -94,7 +82,7 @@ const CommentTable = ({ comments }: ICommentTableProps) => {
                     </Dropdown>
                   </div>
                 ),
-                wordcount,
+                wordCount,
                 context: context === 'MergeRequest' ? 'Merge Request' : context,
                 parentAuthor: formatParentAuthor(parentAuthor),
                 gitlabUrl: isInvalidUrl(webUrl) ? (
