@@ -167,27 +167,15 @@ public class MergeRequestRepository {
     }
 
     public void ignoreMergeRequest(String projectUrl, int mergeRequestId, boolean ignoreValue) {
-        if (ignoreValue == true) {
+        if (ignoreValue) {
             // ignore Merge Request
             mergeRequestCollection.updateOne(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), set(MergeRequest.isIgnored.key, ignoreValue));
             // ignore commits
-            mergeRequestCollection.updateMany(
-                    and(
-                            getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
-                            eq("mergeRequestId", mergeRequestId)),
-                    set("commits.$[].isIgnored", ignoreValue));
+            mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("mergeRequestId", mergeRequestId)), set("commits.$[].isIgnored", ignoreValue));
             // Ignore commits' nested files
-            mergeRequestCollection.updateMany(
-                    and(
-                            getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
-                            eq("mergeRequestId", mergeRequestId)),
-                    set("commits.$[].files.$[].isIgnored", ignoreValue));
+            mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("mergeRequestId", mergeRequestId)), set("commits.$[].files.$[].isIgnored", ignoreValue));
             // ignore files
-            mergeRequestCollection.updateMany(
-                    and(
-                            getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
-                            eq("mergeRequestId", mergeRequestId)),
-                    set("files.$[].isIgnored", ignoreValue));
+            mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("mergeRequestId", mergeRequestId)), set("files.$[].isIgnored", ignoreValue));
 
         } else {
             // unignore Merge Request
@@ -197,18 +185,9 @@ public class MergeRequestRepository {
 
     public void ignoreCommit(String projectUrl, int mergeRequestId, String commitId, boolean ignoreValue) {
         // (un)ignore commit
-        mergeRequestCollection.updateOne(
-                and(
-                        getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
-                        eq("commits.commitId", commitId)),
-                set("commits.$.isIgnored", ignoreValue));
+        mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("commits.commitId", commitId)), set("commits.$.isIgnored", ignoreValue));
         // (un)ignore nested files
-        mergeRequestCollection.updateMany(
-                and(
-                        getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
-                        eq("mergeRequestId", mergeRequestId),
-                        eq("commits.commitId", commitId)),
-                set("commits.$.files.$[].isIgnored", ignoreValue));
+        mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("mergeRequestId", mergeRequestId), eq("commits.commitId", commitId)), set("commits.$.files.$[].isIgnored", ignoreValue));
         // unignore parent Merge Request
         if(!ignoreValue) {
             ignoreMergeRequest(projectUrl, mergeRequestId, ignoreValue);
@@ -217,11 +196,7 @@ public class MergeRequestRepository {
 
     public void ignoreMergeRequestFile(String projectUrl, int mergeRequestId, String fileId, boolean ignoreValue) {
         // (un)ignore file
-        mergeRequestCollection.updateOne(
-                and(
-                        getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
-                        eq("files._id", fileId)),
-                set("files.$.isIgnored", ignoreValue));
+        mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("files._id", fileId)), set("files.$.isIgnored", ignoreValue));
 
         // unignore Merge Request
         if(!ignoreValue) {
