@@ -83,6 +83,14 @@ const Home = () => {
         setAnalysis({ ...analysis })
         if (res === 200) {
           // TODO: update last analyzed
+          setFilteredData(
+            filteredData.map(project => {
+              if (project.id === id) {
+                project.lastAnalysisTime = Date.now()
+              }
+              return { ...project }
+            })
+          )
         } else if (res === 401 || res === 400) {
           history.push('/login')
         } else {
