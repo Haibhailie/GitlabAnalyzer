@@ -40,15 +40,15 @@ public class MergeRequestController {
         return gson.toJson(mergeRequestDtos);
     }
 
-//    @GetMapping("/api/project/{projectId}/members/{memberId}/mergerequests")
-//    public String getMergeRequestsByMemberID(@CookieValue(value = "sessionId") String jwt,
-//                                             HttpServletResponse response,
-//                                             @PathVariable int projectId,
-//                                             @PathVariable int memberId) {
-//        List<MergeRequestDto> allMergeRequestsByMemberId = mergeRequestService.getMergeRequestsByMemberId(jwt, projectId, dateSince, dateUntil, memberId);
-//        response.setStatus(allMergeRequestsByMemberId == null ? SC_UNAUTHORIZED : SC_OK);
-//        return gson.toJson(allMergeRequestsByMemberId);
-//    }
+    //    @GetMapping("/api/project/{projectId}/members/{memberId}/mergerequests")
+    //    public String getMergeRequestsByMemberID(@CookieValue(value = "sessionId") String jwt,
+    //                                             HttpServletResponse response,
+    //                                             @PathVariable int projectId,
+    //                                             @PathVariable int memberId) {
+    //        List<MergeRequestDto> allMergeRequestsByMemberId = mergeRequestService.getMergeRequestsByMemberId(jwt, projectId, dateSince, dateUntil, memberId);
+    //        response.setStatus(allMergeRequestsByMemberId == null ? SC_UNAUTHORIZED : SC_OK);
+    //        return gson.toJson(allMergeRequestsByMemberId);
+    //    }
 
     @PutMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/ignore/{doIgnore}")
     public void updateMergeRequestIgnore(@CookieValue(value = "sessionId") String jwt,

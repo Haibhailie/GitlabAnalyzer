@@ -238,12 +238,12 @@ public class DiffScoreCalculator {
             List<ConfigDto.GeneralTypeScoreDto> list = currentConfig.getGeneralScores();
             for (ConfigDto.GeneralTypeScoreDto g : list) {
                 switch (g.getType()) {
-                    case ADD_FACTOR -> addLOCFactor = g.getValue();
-                    case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
-                    case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
-                    case BLANK_FACTOR -> blankLOCFactor = g.getValue();
-                    case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
-                    default -> throw new IllegalStateException("Unexpected type: " + g.getType());
+                  case ADD_FACTOR -> addLOCFactor = g.getValue();
+                  case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
+                  case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
+                  case BLANK_FACTOR -> blankLOCFactor = g.getValue();
+                  case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
+                  default -> throw new IllegalStateException("Unexpected type: " + g.getType());
                 }
             }
         } catch (Exception e) {
@@ -258,6 +258,7 @@ public class DiffScoreCalculator {
         blankLOCFactor = 0;
         spacingChangeFactor = 0;
     }
+
     private void setSyntaxFromConfig(ConfigDto configDto, String extension) {
         setDefaultSyntaxValues();
         List<ConfigDto.FileTypeScoreDto> fileTypeScores;
