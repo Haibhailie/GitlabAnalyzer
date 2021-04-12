@@ -5,6 +5,7 @@
   padding: 10px 20px;
   transition: border 120ms ease-out, background-color 230ms ease-out;
   font: var(--font-body-large-poppins);
+  margin-top: auto;
 }
 
 .button:hover {
