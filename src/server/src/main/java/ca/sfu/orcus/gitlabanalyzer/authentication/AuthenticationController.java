@@ -62,6 +62,7 @@ public class AuthenticationController {
                                   HttpServletResponse response) {
         Cookie cookie = new Cookie("sessionId", jwt);
         cookie.setMaxAge(0); // Set cookie age as 0 to delete an existing cookie.
+        response.addCookie(cookie);
         response.setStatus(SC_OK);
     }
 

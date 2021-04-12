@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  margin: 10px 0px;
+}
+
+.commentContainer {
+  text-align: justify;
+  padding: 0px 15px 0px 0px;
+  max-height: 20px;
+  transition: max-height 0.5s cubic-bezier(0.12, 1.02, 0.45, 0.97);
+}
+
+.collapsed {
+  overflow-y: hidden;
+}
+
+.expanded {
+  max-height: 1000px;
+  overflow-y: scroll;
+  transition: max-height 0.5s ease-in-out;
+}
+
+.toggleButton {
+  display: flex;
+  justify-content: flex-start;
+  margin-right: 7px;
+}
+
+.openIcon {
+  transition: transform 0.3s ease-in-out;
+  transform: rotate(0deg);
+}
+
+.closedIcon {
+  transition: transform 0.3s ease-in-out;
+  transform: rotate(-90deg);
+}
