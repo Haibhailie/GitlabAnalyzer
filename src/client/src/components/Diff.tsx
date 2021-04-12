@@ -12,6 +12,7 @@ export interface IDiffProps {
   id: string
   commitsScore?: number
   title: string
+  ignore: (fileId: string, setIgnored: boolean) => void
 }
 
 const getLineClassName = (lineType: TLineType) => {
@@ -24,7 +25,7 @@ const getLineClassName = (lineType: TLineType) => {
   }
 }
 
-const Diff = ({ data, type, id, commitsScore, title }: IDiffProps) => {
+const Diff = ({ data, type, id, commitsScore, title, ignore }: IDiffProps) => {
   // TODO: Get score data from context or get that in MergeRequests and pass in. Use it in header.
   return (
     <div className={styles.container}>
@@ -48,46 +49,57 @@ const Diff = ({ data, type, id, commitsScore, title }: IDiffProps) => {
           <div className={styles.title}>{title}</div>
         </Dropdown>
       </div>
-      {data?.map(({ name, fileScore, linesOfCodeChanges, fileDiffs }) => (
-        <Dropdown
-          // TODO: use fileId instead of name for key.
-          key={name}
-          className={styles.file}
-          arrowOnLeft
-          startOpened
-          header={
-            <div className={styles.fileHeader}>
-              <span className={styles.fileName}>{name}</span>
-              <div className={styles.fileScore}>
-                <span className={styles.ignore}>
-                  Ignore: <IgnoreBox className={styles.ignoreBox} />
-                </span>
-                <span className={styles.score}>
-                  {/* TODO: Score breakdown tooltip*/}
-                  score: {fileScore.totalScore.toFixed(1)}
-                </span>
-                <span className={styles.additions}>
-                  +{linesOfCodeChanges.numAdditions}
-                </span>
-                <span className={styles.deletions}>
-                  -{linesOfCodeChanges.numDeletions}
-                </span>
+      {data?.map(
+        ({ name, fileScore, linesOfCodeChanges, fileDiffs, fileId }) => (
+          <Dropdown
+            // TODO: use fileId instead of name for key.
+            key={name}
+            className={styles.file}
+            arrowOnLeft
+            startOpened
+            header={
+              <div className={styles.fileHeader}>
+                <span className={styles.fileName}>{name}</span>
+                <div className={styles.fileScore}>
+                  <span className={styles.ignore}>
+                    Ignore:{' '}
+                    <IgnoreBox
+                      onClick={e => {
+                        const checked = (e.target as HTMLInputElement).checked
+                        ignore(fileId, checked)
+                      }}
+                      className={styles.ignoreBox}
+                    />
+                  </span>
+                  <span className={styles.score}>
+                    {/* TODO: Score breakdown tooltip*/}
+                    score: {fileScore.totalScore.toFixed(1)}
+                  </span>
+                  <span className={styles.additions}>
+                    +{linesOfCodeChanges.numAdditions}
+                  </span>
+                  <span className={styles.deletions}>
+                    -{linesOfCodeChanges.numDeletions}
+                  </span>
+                </div>
+              </div>
+            }
+          >
+            <div className={styles.diffVerticalScroll}>
+              <div className={styles.diff}>
+                {fileDiffs.map(
+                  ({ lineType, diffLine }) =>
+                    lineType !== 'HEADER' && (
+                      <div className={getLineClassName(lineType)}>
+                        {diffLine}
+                      </div>
+                    )
+                )}
               </div>
             </div>
-          }
-        >
-          <div className={styles.diffVerticalScroll}>
-            <div className={styles.diff}>
-              {fileDiffs.map(
-                ({ lineType, diffLine }) =>
-                  lineType !== 'HEADER' && (
-                    <div className={getLineClassName(lineType)}>{diffLine}</div>
-                  )
-              )}
-            </div>
-          </div>
-        </Dropdown>
-      ))}
+          </Dropdown>
+        )
+      )}
     </div>
   )
 }

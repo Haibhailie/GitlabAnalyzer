@@ -186,6 +186,7 @@ const formatMergeRequests = (
         ...commit,
         files,
         score: commitScore,
+        mrId: mr.mergeRequestId,
       }
     })
 

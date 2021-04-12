@@ -1,10 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import useSuspense from '../utils/useSuspense'
 import dateConverter from '../utils/dateConverter'
 import { noop } from 'lodash'
 import classNames from '../utils/classNames'
 import useProject from '../utils/useProject'
-import { ICommit } from '../context/ProjectContext'
+import {
+  ICommit,
+  IGNORE_MR_FILE,
+  ProjectContext,
+} from '../context/ProjectContext'
 
 import Table from '../components/Table'
 import Diff, { IDiffProps } from '../components/Diff'
@@ -50,6 +54,8 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
   const tableData = useRef<{ mrs?: TTableData; commits?: TTableData }>()
 
   const project = useProject()
+  const { dispatch } = useContext(ProjectContext)
+
   const { Suspense, data: mergeRequests, error } = useSuspense<
     IMergeRequests[]
   >(
@@ -154,6 +160,14 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
                   id: `#${mergeRequestId}`,
                   commitsScore: sumOfCommitsScore[memberId],
                   title,
+                  ignore: (fileId: string, setIgnored: boolean) => {
+                    dispatch({
+                      type: IGNORE_MR_FILE,
+                      fileId,
+                      mrId: mergeRequestId,
+                      setIgnored,
+                    })
+                  },
                 })
               }
             }}
@@ -169,12 +183,20 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
             columnWidths={['6fr', '6fr', '1fr', '1fr']}
             onClick={(e, i) => {
               if (commits?.[i]) {
-                const { id, files, message } = commits[i]
+                const { id, files, message, mrId } = commits[i]
                 viewDiffOf({
                   data: Object.values(files),
                   type: 'Commit',
                   id: id,
                   title: message,
+                  ignore: (fileId: string, setIgnored: boolean) => {
+                    dispatch({
+                      type: IGNORE_MR_FILE,
+                      fileId,
+                      mrId,
+                      setIgnored,
+                    })
+                  },
                 })
               }
             }}

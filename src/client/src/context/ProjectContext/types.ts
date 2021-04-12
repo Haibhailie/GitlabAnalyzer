@@ -101,6 +101,7 @@ export interface ICommit extends Omit<ICommitData, 'files'> {
   // loc: ILoc
   // scores: ILoc
   score: number
+  mrId: number
   files: TFiles
 }
 
