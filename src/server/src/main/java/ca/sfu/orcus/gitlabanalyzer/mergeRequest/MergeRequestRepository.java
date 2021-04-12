@@ -20,14 +20,17 @@ import java.util.*;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Updates.set;
+
 
 @Repository
 public class MergeRequestRepository {
     private final MongoCollection<Document> mergeRequestCollection;
     private final CommitRepository commitRepo;
     private final FileRepository fileRepo;
+    private final GitLabApiWrapper gitLabApiWrapper;
 
-    public MergeRequestRepository(CommitRepository commitRepo, FileRepository fileRepo) {
+    public MergeRequestRepository(CommitRepository commitRepo, FileRepository fileRepo, GitLabApiWrapper gitLabApiWrapper) {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
         mergeRequestCollection = database.getCollection(VariableDecoderUtil.decode("MERGE_REQUESTS_COLLECTION"));
@@ -71,7 +74,7 @@ public class MergeRequestRepository {
     }
 
     private String cacheMergeRequest(MergeRequestDtoDb mergeRequest, String projectUrl) {
-        Document existingDocument = mergeRequestCollection.find(getMergeRequestEqualityParameter(projectUrl, mergeRequest))
+        Document existingDocument = mergeRequestCollection.find(getMergeRequestEqualityParameter(projectUrl, mergeRequest.getMergeRequestId()))
                 .projection(include(MergeRequest.documentId.key)).first();
         if (existingDocument != null) {
             String documentId = existingDocument.getString(MergeRequest.documentId.key);
@@ -94,8 +97,8 @@ public class MergeRequestRepository {
         return documentId;
     }
 
-    private Bson getMergeRequestEqualityParameter(String projectUrl, MergeRequestDtoDb mergeRequest) {
-        return and(eq(MergeRequest.projectUrl.key, projectUrl), eq(MergeRequest.mergeRequestId.key, mergeRequest.getMergeRequestId()));
+    private Bson getMergeRequestEqualityParameter(String projectUrl, int mergeRequestId) {
+        return and(eq(MergeRequest.projectUrl.key, projectUrl), eq(MergeRequest.mergeRequestId.key, mergeRequestId));
     }
 
     private Document generateMergeRequestDocument(MergeRequestDtoDb mergeRequest, String documentId, String projectUrl) {
