@@ -1,8 +1,11 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.committer.CommitterRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
+import com.google.gson.Gson;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -18,11 +21,13 @@ import java.util.Optional;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Updates.set;
 
 @Repository
 public class ProjectRepository {
     private final MongoCollection<Document> projectsCollection;
     private final CommitterRepository committerRepo;
+    private final Gson gson = new Gson();
 
     public ProjectRepository(CommitterRepository committerRepo) {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
@@ -48,7 +53,7 @@ public class ProjectRepository {
     }
 
     public void cacheProject(ProjectDtoDb project) {
-        Document existingProject = getPartialProjectDocument(project.getId(), project.getWebUrl(), Project.documentId.key);
+        Document existingProject = getPartialProjectDocument(project.getWebUrl(), Project.documentId.key);
         if (existingProject != null) {
             String documentId = existingProject.getString(Project.documentId.key);
             replaceProjectDocument(documentId, project);
@@ -59,7 +64,7 @@ public class ProjectRepository {
 
     private void replaceProjectDocument(String documentId, ProjectDtoDb project) {
         Document projectDoc = generateProjectDocument(project, documentId);
-        projectsCollection.replaceOne(getProjectEqualityParameter(project.getId(), project.getWebUrl()), projectDoc);
+        projectsCollection.replaceOne(getProjectEqualityParameter(project.getWebUrl()), projectDoc);
     }
 
     private void cacheNewProject(ProjectDtoDb project) {
@@ -67,12 +72,12 @@ public class ProjectRepository {
         projectsCollection.insertOne(projectDoc);
     }
 
-    private Bson getProjectEqualityParameter(int projectId, String projectUrl) {
-        return and(eq(Project.projectId.key, projectId), eq(Project.projectUrl.key, projectUrl));
+    private Bson getProjectEqualityParameter(String projectUrl) {
+        return eq(Project.projectUrl.key, projectUrl);
     }
 
-    public boolean projectIsAlreadyCached(int projectId, String projectUrl) {
-        Document project = getPartialProjectDocument(projectId, projectUrl, Project.projectId.key);
+    public boolean projectIsAlreadyCached(String projectUrl) {
+        Document project = getPartialProjectDocument(projectUrl, Project.projectId.key);
         return (project != null);
     }
 
@@ -87,19 +92,18 @@ public class ProjectRepository {
                     .append(Project.committers.key, committerDocs);
     }
 
-    public long getLastAnalysisTimeForProject(int projectId, String projectUrl) {
-        Document project = getPartialProjectDocument(projectId, projectUrl, Project.lastAnalysisTime.key);
+    public long getLastAnalysisTimeForProject(String projectUrl) {
+        Document project = getPartialProjectDocument(projectUrl, Project.lastAnalysisTime.key);
         return project == null ? 0 : project.getLong(Project.lastAnalysisTime.key);
     }
 
-    private Document getPartialProjectDocument(int projectId, String repoUrl, String projectionKey) {
-        return projectsCollection.find(and(eq(Project.projectId.key, projectId),
-                eq(Project.projectUrl.key, repoUrl)))
+    private Document getPartialProjectDocument(String projectUrl, String... projectionKey) {
+        return projectsCollection.find(getProjectEqualityParameter(projectUrl))
                 .projection(include(projectionKey)).first();
     }
 
-    public Optional<ProjectDtoDb> getProject(int projectId, String projectUrl) {
-        Document projectDoc = projectsCollection.find(getProjectEqualityParameter(projectId, projectUrl)).first();
+    public Optional<ProjectDtoDb> getProject(String projectUrl) {
+        Document projectDoc = projectsCollection.find(getProjectEqualityParameter(projectUrl)).first();
         return Optional.ofNullable(docToDto(projectDoc));
     }
 
@@ -114,5 +118,19 @@ public class ProjectRepository {
             .setLastAnalysisTime(projectDoc.getLong(Project.lastAnalysisTime.key))
             .setCreatedAt(projectDoc.getLong(Project.createdAt.key))
             .setCommitters(committerRepo.getCommittersFromProjectDoc(projectDoc));
+    }
+
+    public void updateCommittersMemberDto(String projectUrl, String committerEmail, MemberDtoDb memberDto) {
+        String memberJson = gson.toJson(memberDto);
+
+        // TODO: Use Committer enum in CommitterRepository to specify the keys here
+        projectsCollection.updateOne(
+                and(eq(Project.projectUrl.key, projectUrl), eq(Project.committers.key + ".email", committerEmail)),
+                set(Project.committers.key + ".$.member", memberJson));
+    }
+
+    public Optional<CommitterDtoDb> getCommitter(String projectUrl, String committerEmail) {
+        Document projectDoc = getPartialProjectDocument(projectUrl, Project.committers.key);
+        return committerRepo.getCommitterFromProjectDoc(projectDoc, committerEmail);
     }
 }

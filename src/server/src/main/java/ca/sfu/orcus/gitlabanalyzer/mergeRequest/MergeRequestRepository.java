@@ -47,7 +47,7 @@ public class MergeRequestRepository {
         time("time"),
         webUrl("webUrl"),
         commits("commits"),
-        committerNames("committerNames"),
+        committerEmails("committerEmails"),
         sumOfCommitsScore("sumOfCommitsScore"),
         isIgnored("isIgnored"),
         files("files"),
@@ -70,7 +70,8 @@ public class MergeRequestRepository {
     }
 
     private String cacheMergeRequest(MergeRequestDtoDb mergeRequest, String projectUrl) {
-        Document existingDocument = mergeRequestCollection.find(getMergeRequestEqualityParameter(projectUrl, mergeRequest.getMergeRequestId()))
+        Document existingDocument = mergeRequestCollection.find(
+                getMergeRequestEqualityParameter(projectUrl, mergeRequest.getMergeRequestId()))
                 .projection(include(MergeRequest.documentId.key)).first();
         if (existingDocument != null) {
             String documentId = existingDocument.getString(MergeRequest.documentId.key);
@@ -83,7 +84,9 @@ public class MergeRequestRepository {
 
     private void replaceMergeRequestDocument(String documentId, MergeRequestDtoDb mergeRequest, String projectUrl) {
         Document mergeRequestDocument = generateMergeRequestDocument(mergeRequest, documentId, projectUrl);
-        mergeRequestCollection.replaceOne(getMergeRequestEqualityParameter(projectUrl, mergeRequest.getMergeRequestId()), mergeRequestDocument);
+        mergeRequestCollection.replaceOne(
+                getMergeRequestEqualityParameter(projectUrl, mergeRequest.getMergeRequestId()),
+                mergeRequestDocument);
     }
 
     private String cacheMergeRequestDocument(MergeRequestDtoDb mergeRequest, String projectUrl) {
@@ -93,7 +96,7 @@ public class MergeRequestRepository {
         return documentId;
     }
 
-    private Bson getMergeRequestEqualityParameter(String projectUrl, int mergeRequestId) {
+    private Bson getMergeRequestEqualityParameter(String projectUrl, Integer mergeRequestId) {
         return and(eq(MergeRequest.projectUrl.key, projectUrl), eq(MergeRequest.mergeRequestId.key, mergeRequestId));
     }
 
@@ -111,8 +114,9 @@ public class MergeRequestRepository {
                 .append(MergeRequest.description.key, mergeRequest.getDescription())
                 .append(MergeRequest.time.key, mergeRequest.getTime())
                 .append(MergeRequest.webUrl.key, mergeRequest.getWebUrl())
+                .append(MergeRequest.isSolo.key, mergeRequest.getSolo())
                 .append(MergeRequest.commits.key, commitDocuments)
-                .append(MergeRequest.committerNames.key, mergeRequest.getCommitterNames())
+                .append(MergeRequest.committerEmails.key, mergeRequest.getCommitterEmails())
                 .append(MergeRequest.sumOfCommitsScore.key, mergeRequest.getSumOfCommitsScore())
                 .append(MergeRequest.isIgnored.key, mergeRequest.isIgnored())
                 .append(MergeRequest.files.key, fileDocuments);
@@ -131,6 +135,11 @@ public class MergeRequestRepository {
         return mergeRequestCollection.find(eq(MergeRequest.projectUrl.key, projectUrl));
     }
 
+    private Document getPartialMergeRequestDocument(String projectUrl, Integer mergeRequestId, String projectionKey) {
+        return mergeRequestCollection.find(getMergeRequestEqualityParameter(projectUrl, mergeRequestId))
+                .projection(include(projectionKey)).first();
+    }
+
     private MergeRequestDtoDb docToDto(Document doc) {
         if (doc == null) {
             return null;
@@ -144,12 +153,12 @@ public class MergeRequestRepository {
                 .setDescription(doc.getString(MergeRequest.description.key))
                 .setTime(doc.getLong(MergeRequest.time.key))
                 .setWebUrl(doc.getString(MergeRequest.webUrl.key))
+                .setSolo(doc.getBoolean(MergeRequest.isIgnored.key))
                 .setCommits(getCommitsFromCachedMergeRequest(doc))
-                .setCommitterNames(new HashSet<>(doc.getList(MergeRequest.committerNames.key, String.class)))
+                .setCommitterEmails(new HashSet<>(doc.getList(MergeRequest.committerEmails.key, String.class)))
                 .setSumOfCommitsScore(doc.getDouble(MergeRequest.sumOfCommitsScore.key))
                 .setIgnored(doc.getBoolean(MergeRequest.isIgnored.key))
-                .setFiles(fileRepo.getFilesFromCache(doc))
-                .setSolo(doc.getBoolean(MergeRequest.isIgnored.key));
+                .setFiles(fileRepo.getFilesFromCache(doc));
     }
 
     private List<CommitDtoDb> getCommitsFromCachedMergeRequest(Document doc) {
@@ -212,6 +221,23 @@ public class MergeRequestRepository {
         mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
                 eq("files._id", fileId)),
                 set("files.$.isIgnored", isIgnored));
+    }
+
+    public void updateCommitUserId(String projectUrl, String commitId, Integer userId) {
+        mergeRequestCollection.updateOne(
+                and(eq(MergeRequest.projectUrl.key, projectUrl), eq(MergeRequest.commits.key + ".commitId", commitId)),
+                set(MergeRequest.commits.key + ".$.userId", userId));
+    }
+
+    public List<String> getCommitterEmailsForMergeRequest(String projectUrl, Integer mergeRequestId) {
+        Document mergeRequestDoc = getPartialMergeRequestDocument(projectUrl, mergeRequestId, MergeRequest.committerEmails.key);
+        return mergeRequestDoc.getList(MergeRequest.committerEmails.key, String.class);
+    }
+
+    public void setSolo(String projectUrl, Integer mergeRequestId, boolean isSolo) {
+        mergeRequestCollection.updateOne(
+                getMergeRequestEqualityParameter(projectUrl, mergeRequestId),
+                set(MergeRequest.isSolo.key, isSolo));
     }
 }
 

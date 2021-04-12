@@ -32,7 +32,6 @@ const AnalyzeButton = ({
         event.stopPropagation()
         onClick(id)
       }}
-      disabled={disabled}
     >
       {message}
       <Icon className={styles.icon} />

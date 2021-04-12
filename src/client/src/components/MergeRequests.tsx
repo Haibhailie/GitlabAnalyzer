@@ -57,6 +57,7 @@ const MergeRequests = ({ projectId, memberId }: IMergeRequestsProps) => {
   const tableData = useRef<{ mrs?: TTableData; commits?: TTableData }>()
 
   const project = useProject()
+  console.log(project)
   const { dispatch } = useContext(ProjectContext)
 
   const { Suspense, data: mergeRequests, error } = useSuspense<

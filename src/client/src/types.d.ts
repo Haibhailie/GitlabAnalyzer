@@ -103,6 +103,19 @@ export interface IMemberData {
   notes: TCommentData
 }
 
+export type TCommitterData = ICommitterData[]
+export interface ICommitterData {
+  email: string
+  name: string
+  member: IMemberData
+}
+
+export type TMemberCommitterMap = IMemberCommitterMap[]
+export interface IMemberCommitterMap {
+  email: string
+  memberId: number | string
+}
+
 export interface IDiffData {
   diff: string
 }

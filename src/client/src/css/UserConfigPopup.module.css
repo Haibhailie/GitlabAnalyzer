@@ -17,12 +17,29 @@
   align-items: center;
 }
 
+.scrollContainer {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background-color: var(--color-background-gray);
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  background-color: var(--color-light-gray);
+}
+
 .inputColumn {
   width: 150px;
 }
 
 .table {
-  max-width: 300px;
+  max-width: 1000px;
   width: 100%;
 }
 
@@ -35,19 +52,106 @@
 }
 
 .generalInput {
-  width: 85px;
   height: 28px;
   border: 2px solid var(--color-gray);
   border-radius: 4px;
-  margin-right: 10px;
   padding: 0px 10px;
 }
 
-.saveButton {
+.shortInput {
+  width: 60px;
+}
+
+.mediumInput {
+  width: 85px;
+}
+
+.longInput {
+  width: 200px;
+}
+
+.end {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.delete {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.addContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.fileInput {
+  height: 24px;
+  border: 2px solid var(--color-gray);
+  border-radius: 4px;
+  padding: 0px 10px;
+  font: var(--font-body-medium-poppins);
+}
+
+.addButton {
+  margin-left: 10px;
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  text-align: center;
+  color: var(--color-primary);
+  padding: 0 5px;
+  display: flex;
+  align-items: flex-end;
+  font: var(--font-body-small-poppins);
+  padding: 1px 5px;
+}
+
+.addIcon {
+  margin-right: 2px;
+}
+
+.addButton:disabled {
+  border: 1px solid var(--color-gray);
+  color: var(--color-gray);
+}
+
+.addButton:disabled .addIcon {
+  stroke: var(--color-gray);
+}
+
+.warningContainer {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+.warningIcon {
+  margin-right: 10px;
+}
+
+.saveContainer {
+  display: flex;
+  align-items: center;
   margin-top: 10px;
+}
+.saveButton {
   border: 1px solid var(--color-primary);
   border-radius: 5px;
   text-align: center;
   color: var(--color-primary);
-  padding: 5px;
+  padding: 5px 10px;
+  display: flex;
+  margin-right: 10px;
+}
+
+.saveIcon {
+  stroke: var(--color-primary);
+  margin-right: 5px;
+}
+
+.resetButton {
+  display: flex;
+  align-items: center;
 }

@@ -23,6 +23,7 @@
 
 .memberContainer {
   display: flex;
+  flex-direction: column;
   width: 58%;
   height: auto;
   margin: auto;
