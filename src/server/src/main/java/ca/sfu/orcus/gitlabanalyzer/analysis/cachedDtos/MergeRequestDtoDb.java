@@ -2,7 +2,6 @@ package ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos;
 
 import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
 import ca.sfu.orcus.gitlabanalyzer.mergeRequest.MergeRequestScoreCalculator;
-import ca.sfu.orcus.gitlabanalyzer.config.ConfigService;
 import org.gitlab4j.api.models.MergeRequest;
 
 import java.util.List;
@@ -12,26 +11,24 @@ public final class MergeRequestDtoDb {
     private int mergeRequestId;
     private String title;
     private String author;
-    private int userId;
+    private int userId; // TODO: Change it to authorId or memberId on both BE and FE
     private String description;
     private long time;
     private String webUrl;
     private boolean isSolo;
 
     private List<CommitDtoDb> commits;
-    private Set<String> committerNames;
+    private Set<String> committerEmails;
     private double sumOfCommitsScore;
     private boolean isIgnored;
     private List<FileDto> files;
 
-    public MergeRequestDtoDb(String jwt,
-                             MergeRequest mergeRequest,
+    public MergeRequestDtoDb(MergeRequest mergeRequest,
                              List<CommitDtoDb> commits,
-                             Set<String> committerNames,
+                             Set<String> committerEmails,
                              MergeRequest mergeRequestChanges,
                              double sumOfCommitsScore,
-                             boolean isSolo,
-                             MergeRequestScoreCalculator mergeRequestScoreCalculator) {
+                             MergeRequestScoreCalculator scoreCalculator) {
         setMergeRequestId(mergeRequest.getIid());
         setTitle(mergeRequest.getTitle());
         setAuthor(mergeRequest.getAuthor().getName());
@@ -39,19 +36,17 @@ public final class MergeRequestDtoDb {
         setDescription(mergeRequest.getDescription());
         setTime(mergeRequest.getMergedAt().getTime());
         setWebUrl(mergeRequest.getWebUrl());
-        setSolo(isSolo);
+        setSolo(false);
 
         setCommits(commits);
-        setCommitterNames(committerNames);
+        setCommitterEmails(committerEmails);
         setSumOfCommitsScore(sumOfCommitsScore);
         setIgnored(false);
 
-        setFiles(mergeRequestScoreCalculator.getMergeRequestScore(jwt, mergeRequestChanges.getChanges()));
+        setFiles(scoreCalculator.getMergeRequestScore(mergeRequestChanges.getChanges()));
     }
 
-    public MergeRequestDtoDb() {
-
-    }
+    public MergeRequestDtoDb() {}
 
     public MergeRequestDtoDb setMergeRequestId(int mergeRequestId) {
         this.mergeRequestId = mergeRequestId;
@@ -88,13 +83,18 @@ public final class MergeRequestDtoDb {
         return this;
     }
 
+    public MergeRequestDtoDb setSolo(boolean isSolo) {
+        this.isSolo = isSolo;
+        return this;
+    }
+
     public MergeRequestDtoDb setCommits(List<CommitDtoDb> commits) {
         this.commits = commits;
         return this;
     }
 
-    public MergeRequestDtoDb setCommitterNames(Set<String> committerNames) {
-        this.committerNames = committerNames;
+    public MergeRequestDtoDb setCommitterEmails(Set<String> committerEmails) {
+        this.committerEmails = committerEmails;
         return this;
     }
 
@@ -110,11 +110,6 @@ public final class MergeRequestDtoDb {
 
     public MergeRequestDtoDb setFiles(List<FileDto> files) {
         this.files = files;
-        return this;
-    }
-
-    public MergeRequestDtoDb setSolo(boolean isSolo) {
-        this.isSolo = isSolo;
         return this;
     }
 
@@ -150,12 +145,16 @@ public final class MergeRequestDtoDb {
         return webUrl;
     }
 
+    public boolean getSolo() {
+        return isSolo;
+    }
+
     public List<CommitDtoDb> getCommits() {
         return commits;
     }
 
-    public Set<String> getCommitterNames() {
-        return committerNames;
+    public Set<String> getCommitterEmails() {
+        return committerEmails;
     }
 
     public double getSumOfCommitsScore() {
@@ -189,8 +188,9 @@ public final class MergeRequestDtoDb {
                 && this.description.equals(m.description)
                 && this.time == m.time
                 && this.webUrl.equals(m.webUrl)
+                && this.isSolo == m.isSolo
                 && this.commits.equals(m.commits)
-                && this.committerNames.equals(m.committerNames)
+                && this.committerEmails.equals(m.committerEmails)
                 && this.sumOfCommitsScore == m.sumOfCommitsScore
                 && this.isIgnored == m.isIgnored
                 && this.files.equals(m.files));

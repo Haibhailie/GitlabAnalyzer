@@ -1,6 +1,7 @@
 package ca.sfu.orcus.gitlabanalyzer.committer;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberMock;
 import com.google.gson.Gson;
@@ -9,6 +10,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
+import javax.print.Doc;
 import java.util.*;
 
 // TODO: When this is deleted, remember to move MemberMock back into the test package
@@ -23,6 +25,7 @@ public class CommitterRepository {
         name("name"),
         commitIds("commitIds"),
         mergeRequestIds("mergeRequestIds"),
+        member("member"),
         committers("committers");
 
         private final String key;
@@ -32,18 +35,8 @@ public class CommitterRepository {
         }
     }
 
-    public Optional<List<CommitterDto>> getCommitterTableForProject(int projectId) {
-        List<CommitterDto> list = generateCommitterTable();
-        return Optional.of(list);
-    }
-
     public void updateCommitters(int projectId, Map<String, Integer> committerToMemberMap) {
         // do nothing
-    }
-
-    private List<CommitterDto> generateCommitterTable() {
-        MemberDto memberDto = new MemberDto(MemberMock.createMember());
-        return List.of(new CommitterDto("example@domain.com", "Example User", memberDto));
     }
 
     public List<Document> getCommitterDocs(List<CommitterDtoDb> committerDtos) {
@@ -55,12 +48,12 @@ public class CommitterRepository {
     }
 
     private Document generateCommitterDocument(CommitterDtoDb committer) {
-        return new Document()
-                .append(Committer.documentId.key, new ObjectId().toString())
+        return new Document(Committer.documentId.key, new ObjectId().toString())
                 .append(Committer.email.key, committer.getEmail())
                 .append(Committer.name.key, committer.getName())
                 .append(Committer.commitIds.key, gson.toJson(committer.getCommitIds()))
-                .append(Committer.mergeRequestIds.key, gson.toJson(committer.getMergeRequestIds()));
+                .append(Committer.mergeRequestIds.key, gson.toJson(committer.getMergeRequestIds()))
+                .append(Committer.member.key, gson.toJson(committer.getMember()));
     }
 
     public List<CommitterDtoDb> getCommittersFromProjectDoc(Document doc) {
@@ -72,6 +65,16 @@ public class CommitterRepository {
         return committers;
     }
 
+    public Optional<CommitterDtoDb> getCommitterFromProjectDoc(Document doc, String committerEmail) {
+        List<Document> committerDoc = doc.getList(Committer.committers.key, Document.class);
+        for (Document d : committerDoc) {
+            if (d.getString(Committer.email.key).equals(committerEmail)) {
+                return Optional.of(docToDto(d));
+            }
+        }
+        return Optional.empty();
+    }
+
     private CommitterDtoDb docToDto(Document committerDoc) {
         if (committerDoc == null) {
             return null;
@@ -80,6 +83,7 @@ public class CommitterRepository {
                 .setEmail(committerDoc.getString(Committer.email.key))
                 .setName(committerDoc.getString(Committer.name.key))
                 .setCommitIds(gson.fromJson(committerDoc.getString(Committer.commitIds.key), new TypeToken<HashSet<String>>(){}.getType()))
-                .setMergeRequestIds(gson.fromJson(committerDoc.getString(Committer.mergeRequestIds.key), new TypeToken<HashSet<Integer>>(){}.getType()));
+                .setMergeRequestIds(gson.fromJson(committerDoc.getString(Committer.mergeRequestIds.key), new TypeToken<HashSet<Integer>>(){}.getType()))
+                .setMember(gson.fromJson(committerDoc.getString(Committer.member.key), MemberDtoDb.class));
     }
 }

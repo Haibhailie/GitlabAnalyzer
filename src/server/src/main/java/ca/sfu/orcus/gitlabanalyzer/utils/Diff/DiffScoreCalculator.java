@@ -53,30 +53,23 @@ public class DiffScoreCalculator {
             } else if (line.startsWith("+")) {
                 if (checkForCommentedLine(line)) {
                     numBlankAdditions++;
-                    numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 } else if (line.substring(1).replaceAll("\\s+", "").startsWith(multiLineCommentStart)) {
                     handleMultiLineComments(lineNumber);
                 } else if (checkForSyntaxOnlyLine(line)) {
                     numSyntaxChanges++;
-                    numLineAdditions++;
                 } else if (line.substring(1).replaceAll("\\s+", "").length() > 0) {
                     numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION));
                 } else {
                     numBlankAdditions++;
-                    numLineAdditions++;
                     fileDiffs.add(new FileDiffDto(line, FileDiffDto.DiffLineType.ADDITION_BLANK));
                 }
             } else if (line.startsWith("-")) {
                 if (checkSpacingChanges(lineNumber, line)) {
-                    numLineAdditions++;
-                    numLineDeletions++;
                     continue;
                     //Log spacing changed line
                 } else if (checkSyntaxChanges(lineNumber, line)) {
-                    numLineAdditions++;
-                    numLineDeletions++;
                     continue;
                     //Log syntax changed line
                 } else {
@@ -241,17 +234,29 @@ public class DiffScoreCalculator {
     }
 
     private void setMultipliersFromConfig(ConfigDto currentConfig) {
-        List<ConfigDto.GeneralTypeScoreDto> list = currentConfig.getGeneralScores();
-        for (ConfigDto.GeneralTypeScoreDto g : list) {
-            switch (g.getType()) {
-              case ADD_FACTOR -> addLOCFactor = g.getValue();
-              case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
-              case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
-              case BLANK_FACTOR -> blankLOCFactor = g.getValue();
-              case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
-              default -> throw new IllegalStateException("Unexpected type: " + g.getType());
+        try {
+            List<ConfigDto.GeneralTypeScoreDto> list = currentConfig.getGeneralScores();
+            for (ConfigDto.GeneralTypeScoreDto g : list) {
+                switch (g.getType()) {
+                  case ADD_FACTOR -> addLOCFactor = g.getValue();
+                  case DELETE_FACTOR -> deleteLOCFactor = g.getValue();
+                  case SYNTAX_FACTOR -> syntaxChangeFactor = g.getValue();
+                  case BLANK_FACTOR -> blankLOCFactor = g.getValue();
+                  case SPACING_FACTOR -> spacingChangeFactor = g.getValue();
+                  default -> throw new IllegalStateException("Unexpected type: " + g.getType());
+                }
             }
+        } catch (Exception e) {
+            setDefaultGeneralValues();
         }
+    }
+
+    private void setDefaultGeneralValues() {
+        addLOCFactor = 1;
+        deleteLOCFactor = 0.2;
+        syntaxChangeFactor = 0;
+        blankLOCFactor = 0;
+        spacingChangeFactor = 0;
     }
 
     private void setSyntaxFromConfig(ConfigDto configDto, String extension) {

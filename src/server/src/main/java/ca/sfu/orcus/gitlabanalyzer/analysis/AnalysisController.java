@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.analysis;
 
-import ca.sfu.orcus.gitlabanalyzer.authentication.AuthenticationService;
 import org.gitlab4j.api.GitLabApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +13,10 @@ import static javax.servlet.http.HttpServletResponse.*;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AnalysisController {
     private final AnalysisService analysisService;
-    private final AuthenticationService authService;
 
     @Autowired
-    public AnalysisController(AnalysisService analysisService, AuthenticationService authService) {
+    public AnalysisController(AnalysisService analysisService) {
         this.analysisService = analysisService;
-        this.authService = authService;
     }
 
     @PutMapping(value = "/api/{projectId}/analyze")

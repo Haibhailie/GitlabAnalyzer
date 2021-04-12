@@ -8,15 +8,16 @@ public final class CommitterDtoDb {
     private String name;
     private Set<String> commitIds;
     private Set<Integer> mergeRequestIds;
-    // TODO: Add some MemberDto information
+    private MemberDtoDb member;
 
     public CommitterDtoDb() {}
 
-    public CommitterDtoDb(String email, String name, Set<String> commitIds, Set<Integer> mergeRequestIds) {
+    public CommitterDtoDb(String email, String name, Set<String> commitIds, Set<Integer> mergeRequestIds, MemberDtoDb member) {
         setEmail(email);
         setName(name);
         setCommitIds(new HashSet<>(commitIds));
         setMergeRequestIds(new HashSet<>(mergeRequestIds));
+        setMember(member);
     }
 
     public CommitterDtoDb setEmail(String email) {
@@ -36,6 +37,11 @@ public final class CommitterDtoDb {
 
     public CommitterDtoDb setMergeRequestIds(Set<Integer> mrIds) {
         this.mergeRequestIds = mrIds;
+        return this;
+    }
+
+    public CommitterDtoDb setMember(MemberDtoDb member) {
+        this.member = member;
         return this;
     }
 
@@ -63,6 +69,10 @@ public final class CommitterDtoDb {
         return mergeRequestIds;
     }
 
+    public MemberDtoDb getMember() {
+        return member;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -78,6 +88,7 @@ public final class CommitterDtoDb {
         return (this.email.equals(c.email)
                 && this.name.equals(c.name)
                 && this.commitIds.equals(c.commitIds)
-                && this.mergeRequestIds.equals(c.mergeRequestIds));
+                && this.mergeRequestIds.equals(c.mergeRequestIds)
+                && this.member.equals(c.member));
     }
 }

@@ -20,11 +20,11 @@ public class CommitRepository {
     private enum Commit {
         documentId("_id"),
         commitId("commitId"),
-        title("title"),
         message("message"),
         author("author"),
         authorEmail("authorEmail"),
         time("time"),
+        userId("userId"),
         webUrl("webUrl"),
         numAdditions("numAdditions"),
         numDeletions("numDeletions"),
@@ -56,6 +56,7 @@ public class CommitRepository {
                 .append(Commit.author.key, commit.getAuthor())
                 .append(Commit.authorEmail.key, commit.getAuthorEmail())
                 .append(Commit.time.key, commit.getTime())
+                .append(Commit.userId.key, commit.getUserId())
                 .append(Commit.webUrl.key, commit.getWebUrl())
                 .append(Commit.numAdditions.key, commit.getNumAdditions())
                 .append(Commit.numDeletions.key, commit.getNumDeletions())
@@ -73,6 +74,7 @@ public class CommitRepository {
                 .setAuthor(doc.getString(Commit.author.key))
                 .setAuthorEmail(doc.getString(Commit.authorEmail.key))
                 .setTime(doc.getLong(Commit.time.key))
+                .setUserId(doc.getInteger(Commit.userId.key))
                 .setWebUrl(doc.getString(Commit.webUrl.key))
                 .setNumAdditions(doc.getInteger(Commit.numAdditions.key))
                 .setNumDeletions(doc.getInteger(Commit.numDeletions.key))

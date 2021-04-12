@@ -56,7 +56,7 @@ const Home = () => {
         })
     }
   )
-  const onAnalyze = (id: string) => {
+  const onAnalyze = (id: string | number) => {
     history.push(`/project/${id}`)
   }
 
@@ -70,9 +70,9 @@ const Home = () => {
     setAnalysis({ ...analysis })
   }
 
-  const preAnalyze = (id: string) => {
-    updateAnalyzingError(id, false)
-    updateAnalyzing(id, true)
+  const preAnalyze = (id: string | number) => {
+    updateAnalyzingError(id.toString(), false)
+    updateAnalyzing(id.toString(), true)
 
     jsonFetch(`/api/${id}/analyze`, {
       responseIsEmpty: true,
@@ -94,10 +94,11 @@ const Home = () => {
         } else if (res === 401 || res === 400) {
           history.push('/login')
         } else {
-          updateAnalyzingError(id, true)
+          updateAnalyzingError(id.toString(), true)
         }
       })
       .catch(() => {
+        id = id.toString()
         updateAnalyzing(id, false)
         updateAnalyzingError(id, true)
       })

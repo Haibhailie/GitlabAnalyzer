@@ -1,17 +1,23 @@
-import { TCommitDiffs, TFileData, TLineType } from '../types'
+import { TLineType } from '../types'
 import { LONG_STRING_LEN } from '../utils/constants'
+import { IFile } from '../context/ProjectContext'
+import { Tooltip } from '@material-ui/core'
 
 import Dropdown from './Dropdown'
 import IgnoreBox from './IgnoreBox'
 
 import styles from '../css/Diff.module.css'
 
+import info from '../assets/info.svg'
+
 export interface IDiffProps {
-  data?: TFileData
+  data?: IFile[]
   type: 'MR' | 'Commit'
+  score: number
   id: string
-  commits?: TCommitDiffs
+  commitsScore?: number
   title: string
+  ignore: (fileId: string, setIgnored: boolean) => void
 }
 
 const getLineClassName = (lineType: TLineType) => {
@@ -24,8 +30,15 @@ const getLineClassName = (lineType: TLineType) => {
   }
 }
 
-const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
-  // TODO: Get score data from context or get that in MergeRequests and pass in. Use it in header.
+const Diff = ({
+  data,
+  type,
+  id,
+  commitsScore,
+  score,
+  title,
+  ignore,
+}: IDiffProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -34,10 +47,10 @@ const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
             {type} {id}
           </div>
           <div>
-            {type} score: {data?.[0].fileScore.totalScore}
+            {type} score: {score.toFixed(1)}
           </div>
-          {commits && (
-            <div>Commit score: {commits[0].fileScore.totalScore}</div>
+          {type === 'MR' && commitsScore && (
+            <div>Commit score: {commitsScore.toFixed(1)}</div>
           )}
         </div>
         <Dropdown
@@ -48,46 +61,87 @@ const Diff = ({ data, type, id, commits, title }: IDiffProps) => {
           <div className={styles.title}>{title}</div>
         </Dropdown>
       </div>
-      {data?.map(({ name, fileScore, linesOfCodeChanges, fileDiffs }) => (
-        <Dropdown
-          // TODO: use fileId instead of name for key.
-          key={name}
-          className={styles.file}
-          arrowOnLeft
-          startOpened
-          header={
-            <div className={styles.fileHeader}>
-              <span className={styles.fileName}>{name}</span>
-              <div className={styles.fileScore}>
-                <span className={styles.ignore}>
-                  Ignore: <IgnoreBox className={styles.ignoreBox} />
-                </span>
-                <span className={styles.score}>
-                  {/* TODO: Score breakdown tooltip*/}
-                  score: {fileScore.totalScore.toFixed(1)}
-                </span>
-                <span className={styles.additions}>
-                  +{linesOfCodeChanges.numAdditions}
-                </span>
-                <span className={styles.deletions}>
-                  -{linesOfCodeChanges.numDeletions}
-                </span>
+      {data?.map(
+        ({
+          name,
+          score,
+          linesOfCodeChanges,
+          fileDiffs,
+          id,
+          isIgnored,
+          scores,
+        }) => (
+          <Dropdown
+            key={id}
+            className={styles.file}
+            arrowOnLeft
+            startOpened
+            header={
+              <div className={styles.fileHeader}>
+                <span className={styles.fileName}>{name}</span>
+                <div className={styles.fileScore}>
+                  <span className={styles.ignore}>
+                    Ignore:{' '}
+                    <IgnoreBox
+                      onChange={e => {
+                        const checked = (e.target as HTMLInputElement).checked
+                        ignore(id, checked)
+                      }}
+                      checked={isIgnored}
+                      className={styles.ignoreBox}
+                    />
+                  </span>
+                  <span className={styles.score}>
+                    score: {score.toFixed(1)}
+                    <Tooltip
+                      title={
+                        <div className={styles.breakdown}>
+                          <div>additions: +{scores.additions.toFixed(1)} </div>
+                          <div>comments: +{scores.comments.toFixed(1)} </div>
+                          <div>
+                            whitespaces: +{scores.whitespaces.toFixed(1)}{' '}
+                          </div>
+                          <div>syntax: +{scores.syntaxes.toFixed(1)} </div>
+                          <div>deletions: +{scores.deletions.toFixed(1)} </div>
+                        </div>
+                      }
+                      placement="top"
+                      arrow
+                    >
+                      <img className={styles.icon} src={info} />
+                    </Tooltip>
+                  </span>
+                  <span className={styles.additions}>
+                    +
+                    {linesOfCodeChanges.numAdditions +
+                      linesOfCodeChanges.numBlankAdditions +
+                      linesOfCodeChanges.numSyntaxChanges +
+                      linesOfCodeChanges.numSpacingChanges}
+                  </span>
+                  <span className={styles.deletions}>
+                    -
+                    {linesOfCodeChanges.numDeletions +
+                      linesOfCodeChanges.numSyntaxChanges}
+                  </span>
+                </div>
+              </div>
+            }
+          >
+            <div className={styles.diffVerticalScroll}>
+              <div className={styles.diff}>
+                {fileDiffs.map(
+                  ({ lineType, diffLine }) =>
+                    lineType !== 'HEADER' && (
+                      <div className={getLineClassName(lineType)}>
+                        {diffLine}
+                      </div>
+                    )
+                )}
               </div>
             </div>
-          }
-        >
-          <div className={styles.diffVerticalScroll}>
-            <div className={styles.diff}>
-              {fileDiffs.map(
-                ({ lineType, diffLine }) =>
-                  lineType !== 'HEADER' && (
-                    <div className={getLineClassName(lineType)}>{diffLine}</div>
-                  )
-              )}
-            </div>
-          </div>
-        </Dropdown>
-      ))}
+          </Dropdown>
+        )
+      )}
     </div>
   )
 }

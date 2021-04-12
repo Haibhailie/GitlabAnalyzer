@@ -33,6 +33,7 @@ export interface ILocChanges {
 export type TFileData = IFileData[]
 export interface IFileData {
   name: string
+  id: string
   extension: string
   fileDiffs: TDiffData
   fileScore: IScore
@@ -42,20 +43,19 @@ export interface IFileData {
 
 export type TCommitData = ICommitData[]
 export interface ICommitData {
+  id: string
+  message: string
   author: string
   authorEmail: string
-  diffs: string
-  files: TFileData
-  id: string
-  isIgnored: boolean
-  message: string
+  userId: number
+  time: number
+  webUrl: string
   numAdditions: number
   numDeletions: number
-  time: number
-  title: string
   total: number
-  webUrl: string
-  score: number
+  diffs: string
+  isIgnored: boolean
+  files: TFileData
 }
 
 export type TCommitDiffs = {
@@ -65,54 +65,64 @@ export type TCommitDiffs = {
 
 export type TMergeData = IMergeData[]
 export interface IMergeData {
-  mergeRequestId: string
-  author: string
-  commitsInfoInMergeRequest: TCommitDiffs
-  committers: string[]
-  description: string
-  files: TFileData
-  hasConflicts: boolean
-  isIgnored: boolean
-  isOpen: boolean
   mergeRequestId: number
-  participants: TMemberData
-  sourceBranch: string
-  sumOfCommitsScore: number
-  targetBranch: string
-  time: number
   title: string
+  author: string
   userId: number
+  description: string
+  time: number
   webUrl: string
-  score: number
+  commits: TCommitData
+  committerNames: string[]
+  sumOfCommitsScore: number
+  isIgnored: boolean
+  files: TFileData
+  isSolo: boolean
+}
+
+export type TCommentData = ICommentData[]
+export interface ICommentData {
+  id: number
+  content: string
+  wordCount: number
+  date: number
+  context: 'Issue' | 'MergeRequest'
+  webUrl: string
+  parentAuthor: string
 }
 
 export type TMemberData = IMemberData[]
 export interface IMemberData {
-  id: string
-  username: string
+  id: number
   displayName: string
+  username: string
   role: string
   webUrl: string
+  committerEmails: string[]
+  mergeRequestDocIds: string[]
+  notes: TCommentData
+}
+
+export type TCommitterData = ICommitterData[]
+export interface ICommitterData {
+  email: string
+  name: string
+  member: IMemberData
+}
+
+export type TMemberCommitterMap = IMemberCommitterMap[]
+export interface IMemberCommitterMap {
+  email: string
+  memberId: number | string
 }
 
 export interface IDiffData {
   diff: string
 }
 
-export type TCommentData = ICommentData[]
-export interface ICommentData {
-  id: string
-  wordcount: number
-  content: string
-  date: number
-  context: string
-  webUrl: string
-  parentAuthor: string
-}
-
 export type TProjectData = IProjectData[]
 export interface IProjectData {
-  id: string | null
+  id: number
   name: string
   members: TMemberData
   numBranches: number

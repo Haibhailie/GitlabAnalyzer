@@ -3,9 +3,9 @@ import classNames from '../utils/classNames'
 import styles from '../css/AnalyzeButton.module.css'
 
 export interface IAnalyzeButtonProps {
-  id: string
+  id: string | number
   message: string
-  onClick: (id: string) => void
+  onClick: (id: string | number) => void
   className?: string
   disabled?: boolean
   isAnalyzing: boolean | undefined
@@ -17,7 +17,6 @@ const AnalyzeButton = ({
   message,
   onClick,
   className,
-  disabled,
   isAnalyzing,
   Icon,
 }: IAnalyzeButtonProps) => {
@@ -32,7 +31,6 @@ const AnalyzeButton = ({
         event.stopPropagation()
         onClick(id)
       }}
-      disabled={disabled}
     >
       {message}
       <Icon className={styles.icon} />

@@ -10,13 +10,14 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Project from './pages/Project'
 import Member from './pages/Member'
+import MemberResolution from './pages/MemberResolution'
 import PageWrapper from './components/PageWrapper'
 
 const App = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <UserConfigProvider>
-        <ProjectProvider>
+      <ProjectProvider>
+        <UserConfigProvider>
           <ThemeProvider theme={globalTheme}>
             <Router>
               <Switch>
@@ -30,6 +31,11 @@ const App = () => {
                     <Member />
                   </PageWrapper>
                 </Route>
+                <Route path="/project/:id/memberResolution">
+                  <PageWrapper>
+                    <MemberResolution />
+                  </PageWrapper>
+                </Route>
                 <Route path="/project/:id">
                   <PageWrapper>
                     <Project />
@@ -41,8 +47,8 @@ const App = () => {
               </Switch>
             </Router>
           </ThemeProvider>
-        </ProjectProvider>
-      </UserConfigProvider>
+        </UserConfigProvider>
+      </ProjectProvider>
     </LocalizationProvider>
   )
 }

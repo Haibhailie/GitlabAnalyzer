@@ -1,6 +1,10 @@
-import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { round } from 'lodash'
+import { ICommitData, IMergeData } from '../types'
+import { TCommits, TMergeRequests } from '../context/ProjectContext'
+import { useContext, useEffect, useState } from 'react'
+import { UserConfigContext } from '../context/UserConfigContext'
+
 import {
   BarChart,
   XAxis,
@@ -12,23 +16,12 @@ import {
   ReferenceLine,
   CartesianGrid,
 } from 'recharts'
-import { ICommitData, IMergeData } from '../types'
-
-import { onError } from '../utils/suspenseDefaults'
-import { useContext, useEffect, useState } from 'react'
-import { UserConfigContext } from '../context/UserConfigContext'
 
 import styles from '../css/ActivityGraph.module.css'
 
 export interface IActivityData {
   commits: ICommitData[]
   merges: IMergeData[]
-}
-
-export interface IActivityGraphProps {
-  mergeUrl: string
-  commitUrl: string
-  graphTitle: string
 }
 
 export type TGraphData = {
@@ -43,10 +36,7 @@ export type TGraphData = {
 const epochToDate = (epoch: number) =>
   new Date(epoch).toDateString().slice(4, 10) ?? 'none'
 
-const computeGraphData = (
-  commitData: ICommitData[],
-  mergeData: IMergeData[]
-): TGraphData => {
+const computeGraphData = (mergeData: TMergeRequests): TGraphData => {
   const graphObj: Record<
     string,
     {
@@ -73,24 +63,28 @@ const computeGraphData = (
   }
 
   const fillObj = (
-    data: ICommitData[] | IMergeData[],
+    data: TCommits | TMergeRequests,
     field: 'commits' | 'merges',
     fieldScore: 'commitScore' | 'mergeScore'
   ) => {
-    data.forEach(({ time, score }: { time: number; score: number }) => {
-      oldestCommit = Math.min(oldestCommit, time)
-      const date = epochToDate(time)
-      fillIfMissing(date)
-      graphObj[date].time = time
-      graphObj[date][fieldScore] += score
-      graphObj[date][field] += 1
-    })
+    Object.values(data).forEach(
+      ({ time, score }: { time: number; score: number }) => {
+        oldestCommit = Math.min(oldestCommit, time)
+        const date = epochToDate(time)
+        fillIfMissing(date)
+        graphObj[date].time = time
+        graphObj[date][fieldScore] += score
+        graphObj[date][field] += 1
+      }
+    )
   }
 
   oldestCommit = Math.min(oldestCommit, Date.now() - 60 * 24 * 60 * 60 * 1000)
 
-  fillObj(commitData, 'commits', 'commitScore')
   fillObj(mergeData, 'merges', 'mergeScore')
+  Object.values(mergeData).forEach(mr => {
+    fillObj(mr.commits, 'commits', 'commitScore')
+  })
 
   Object.entries(graphObj).forEach(
     ([key, { commitScore, mergeScore, merges }]) => {
@@ -122,35 +116,16 @@ const computeGraphData = (
   return graphData
 }
 
-const ActivityGraph = ({
-  mergeUrl,
-  commitUrl,
-  graphTitle,
-}: IActivityGraphProps) => {
-  const { Suspense, data, error } = useSuspense<TGraphData, Error>(
-    (setData, setError) => {
-      let otherData: ICommitData[] | IMergeData[] | null = null
-      jsonFetcher<IMergeData[]>(mergeUrl)
-        .then(data => {
-          if (otherData) {
-            setData(computeGraphData(otherData as ICommitData[], data))
-          } else {
-            otherData = data
-          }
-        })
-        .catch(onError(setError))
-      jsonFetcher<ICommitData[]>(commitUrl)
-        .then(data => {
-          if (otherData) {
-            setData(computeGraphData(data, otherData as IMergeData[]))
-          } else {
-            otherData = data
-          }
-        })
-        .catch(onError(setError))
-    }
-  )
+export interface IActivityGraphProps {
+  graphTitle: string
+  mergeRequests?: TMergeRequests
+}
 
+const ActivityGraph = ({ graphTitle, mergeRequests }: IActivityGraphProps) => {
+  const { Suspense, data, error } = useSuspense<TGraphData>(
+    setData => mergeRequests && setData(computeGraphData(mergeRequests)),
+    [mergeRequests]
+  )
   const { userConfigs } = useContext(UserConfigContext)
   const [selectedRange, setSelectedRange] = useState(data)
   const { yAxis } = userConfigs.selected

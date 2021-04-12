@@ -13,6 +13,7 @@ public final class CommitDtoDb {
     private String message;
     private String author;
     private String authorEmail;
+    private int userId; // TODO: Change it to authorId or memberId on both BE and FE
     private long time;
     private String webUrl;
 
@@ -24,11 +25,12 @@ public final class CommitDtoDb {
     private List<FileDto> files;
     private double score;
 
-    public CommitDtoDb(Commit commit, List<Diff> diffList, CommitScoreCalculator scoreCalculator) {
+    public CommitDtoDb(Commit commit, int userId, List<Diff> diffList, CommitScoreCalculator scoreCalculator) {
         setId(commit.getId());
         setMessage(commit.getMessage());
         setAuthor(commit.getAuthorName());
         setAuthorEmail(commit.getAuthorEmail());
+        setUserId(userId);
         setTime(commit.getCommittedDate().getTime());
         setWebUrl(commit.getWebUrl());
 
@@ -43,8 +45,7 @@ public final class CommitDtoDb {
         setScore(fileScores);
     }
 
-    public CommitDtoDb() {
-    }
+    public CommitDtoDb() {}
 
     public CommitDtoDb setId(String id) {
         this.id = id;
@@ -63,6 +64,11 @@ public final class CommitDtoDb {
 
     public CommitDtoDb setAuthorEmail(String authorEmail) {
         this.authorEmail = authorEmail;
+        return this;
+    }
+
+    public CommitDtoDb setUserId(int userId) {
+        this.userId = userId;
         return this;
     }
 
@@ -138,6 +144,10 @@ public final class CommitDtoDb {
         return authorEmail;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
     public long getTime() {
         return time;
     }
@@ -186,6 +196,7 @@ public final class CommitDtoDb {
                 && this.message.equals(c.message)
                 && this.author.equals(c.author)
                 && this.authorEmail.equals(c.authorEmail)
+                && this.userId == c.userId
                 && this.time == c.time
                 && this.webUrl.equals(c.webUrl)
                 && this.numAdditions == c.numAdditions

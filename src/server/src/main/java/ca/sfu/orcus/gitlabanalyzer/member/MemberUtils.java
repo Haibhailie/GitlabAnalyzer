@@ -1,11 +1,25 @@
 package ca.sfu.orcus.gitlabanalyzer.member;
 
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 
 public final class MemberUtils {
     private MemberUtils() {
         throw new AssertionError();
     }
+
+    public static final MemberDtoDb EmptyMember = new MemberDtoDb()
+            .setId(0)
+            .setDisplayName("")
+            .setUsername("")
+            .setRole("")
+            .setWebUrl("")
+            .setCommitterEmails(new HashSet<>())
+            .setMergeRequestDocIds(new HashSet<>())
+            .setNotes(new ArrayList<>());
 
     private static final Map<Integer, String> AccessLevelToRoleMap = Map.of(
             -1, "INVALID",

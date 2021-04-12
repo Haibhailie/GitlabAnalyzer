@@ -16,7 +16,7 @@ public class MergeRequestScoreCalculator {
         this.currentConfig = currentConfig;
     }
 
-    public List<FileDto> getMergeRequestScore(String jwt, List<Diff> diffs) {
+    public List<FileDto> getMergeRequestScore(List<Diff> diffs) {
         // regex to split lines by new line and store in generatedDiffList
         String[] diffArray = DiffStringParser.parseDiff(diffs).split("\\r?\\n");
         List<String> diffsList = Arrays.asList(diffArray);
