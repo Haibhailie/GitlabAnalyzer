@@ -27,36 +27,44 @@ public class ProjectDtoDb {
         setCommitters(committers);
     }
 
-    public void setId(int id) {
+    public ProjectDtoDb setId(int id) {
         this.id = id;
+        return this;
     }
 
-    public void setName(String name) {
+    public ProjectDtoDb setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public void setRole(String role) {
+    public ProjectDtoDb setRole(String role) {
         this.role = role;
+        return this;
     }
 
-    public void setLastActivityTime(long lastActivityTime) {
+    public ProjectDtoDb setLastActivityTime(long lastActivityTime) {
         this.lastActivityTime = lastActivityTime;
+        return this;
     }
 
-    public void setLastAnalysisTime(long lastAnalysisTime) {
+    public ProjectDtoDb setLastAnalysisTime(long lastAnalysisTime) {
         this.lastAnalysisTime = lastAnalysisTime;
+        return this;
     }
 
-    public void setWebUrl(String webUrl) {
+    public ProjectDtoDb setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+        return this;
     }
 
-    public void setCommitters(List<CommitterDtoDb> committers) {
+    public ProjectDtoDb setCommitters(List<CommitterDtoDb> committers) {
         this.committers = committers;
+        return this;
     }
 
-    public void setCreatedAt(long createdAt) {
+    public ProjectDtoDb setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
+        return this;
     }
 
     public int getId() {

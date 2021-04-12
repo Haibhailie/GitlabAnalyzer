@@ -76,7 +76,6 @@ public class ProjectService {
         }
 
         return getProject(gitLabApi, projectId, projectUrl.get());
-
     }
 
     private Optional<ProjectDtoDb> getProject(GitLabApi gitLabApi, int projectId, String projectUrl) {
