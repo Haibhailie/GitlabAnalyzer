@@ -1,6 +1,5 @@
 package ca.sfu.orcus.gitlabanalyzer.project;
 
-import ca.sfu.orcus.gitlabanalyzer.analysis.AnalysisService;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
@@ -20,15 +19,12 @@ import java.util.Optional;
 public class ProjectService {
     private final ProjectRepository projectRepo;
     private final GitLabApiWrapper gitLabApiWrapper;
-    private final AnalysisService analysisService;
 
     @Autowired
     public ProjectService(ProjectRepository projectRepo,
-                          GitLabApiWrapper gitLabApiWrapper,
-                          AnalysisService analysisService) {
+                          GitLabApiWrapper gitLabApiWrapper) {
         this.projectRepo = projectRepo;
         this.gitLabApiWrapper = gitLabApiWrapper;
-        this.analysisService = analysisService;
     }
 
     public List<ProjectDtoDb> getAllProjects(String jwt) {

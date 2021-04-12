@@ -1,14 +1,12 @@
 package ca.sfu.orcus.gitlabanalyzer.committer;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
-import ca.sfu.orcus.gitlabanalyzer.file.FileDto;
-import ca.sfu.orcus.gitlabanalyzer.file.FileRepository;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberMock;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.gitlab4j.api.models.Commit;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -65,7 +63,7 @@ public class CommitterRepository {
                 .append(Committer.mergeRequestIds.key, gson.toJson(committer.getMergeRequestIds()));
     }
 
-    public List<CommitterDtoDb> getCommittersFromCache(Document doc) {
+    public List<CommitterDtoDb> getCommittersFromProjectDoc(Document doc) {
         List<Document> committerDoc = doc.getList(Committer.committers.key, Document.class);
         List<CommitterDtoDb> committers = new ArrayList<>();
         for (Document d : committerDoc) {
@@ -81,7 +79,7 @@ public class CommitterRepository {
         return new CommitterDtoDb()
                 .setEmail(committerDoc.getString(Committer.email.key))
                 .setName(committerDoc.getString(Committer.name.key))
-                .setCommitIds(gson.fromJson(committerDoc.getString(Committer.commitIds.key), new HashSet<String>() {}.getClass()))
-                .setMergeRequestIds(gson.fromJson(committerDoc.getString(Committer.mergeRequestIds.key), new HashSet<Integer>() {}.getClass()));
+                .setCommitIds(gson.fromJson(committerDoc.getString(Committer.commitIds.key), new TypeToken<HashSet<String>>(){}.getType()))
+                .setMergeRequestIds(gson.fromJson(committerDoc.getString(Committer.mergeRequestIds.key), new TypeToken<HashSet<Integer>>(){}.getType()));
     }
 }

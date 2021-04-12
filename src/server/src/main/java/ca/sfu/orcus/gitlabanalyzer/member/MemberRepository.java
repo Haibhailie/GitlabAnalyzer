@@ -4,6 +4,7 @@ import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MemberDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.NoteDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mongodb.client.*;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -122,6 +123,6 @@ public class MemberRepository {
                 .setUsername(memberDoc.getString(Member.username.key))
                 .setRole(memberDoc.getString(Member.role.key))
                 .setWebUrl(memberDoc.getString(Member.memberUrl.key))
-                .setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new ArrayList<NoteDtoDb>() {}.getClass()));
+                .setNotes(gson.fromJson(memberDoc.getString(Member.notes.key), new TypeToken<ArrayList<NoteDtoDb>>(){}.getType()));
     }
 }

@@ -52,6 +52,11 @@ public class ProjectDtoDb {
         return this;
     }
 
+    public ProjectDtoDb setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+        return this;
+    }
+
     public ProjectDtoDb setWebUrl(String webUrl) {
         this.webUrl = webUrl;
         return this;
@@ -59,11 +64,6 @@ public class ProjectDtoDb {
 
     public ProjectDtoDb setCommitters(List<CommitterDtoDb> committers) {
         this.committers = committers;
-        return this;
-    }
-
-    public ProjectDtoDb setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
         return this;
     }
 
@@ -87,16 +87,16 @@ public class ProjectDtoDb {
         return lastAnalysisTime;
     }
 
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
     public String getWebUrl() {
         return webUrl;
     }
 
     public List<CommitterDtoDb> getCommitters() {
         return committers;
-    }
-
-    public long getCreatedAt() {
-        return createdAt;
     }
 
     @Override

@@ -114,7 +114,8 @@ public class JwtServiceTest {
         Random rand = new Random();
         int idx = rand.nextInt(jwt.length());
         StringBuilder sb = new StringBuilder(jwt);
-        sb.setCharAt(idx, (char) (sb.charAt(idx) - 1));
+        //    sb.setCharAt(idx, (char) (sb.charAt(idx) - 1));
+        sb.setCharAt(idx, '@');
         return sb.toString();
     }
 }

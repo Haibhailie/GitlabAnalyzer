@@ -38,7 +38,6 @@ public class ProjectRepository {
         projectUrl("projectUrl"),
         lastAnalysisTime("lastAnalysisTime"),
         createdAt("createdAt"),
-        analysis("analysis"),
         committers("committers");
 
         public final String key;
@@ -114,6 +113,6 @@ public class ProjectRepository {
             .setWebUrl(projectDoc.getString(Project.projectUrl.key))
             .setLastAnalysisTime(projectDoc.getLong(Project.lastAnalysisTime.key))
             .setCreatedAt(projectDoc.getLong(Project.createdAt.key))
-            .setCommitters(committerRepo.getCommittersFromCache(projectDoc));
+            .setCommitters(committerRepo.getCommittersFromProjectDoc(projectDoc));
     }
 }
