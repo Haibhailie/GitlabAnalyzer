@@ -22,7 +22,6 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.include;
 import static com.mongodb.client.model.Updates.set;
 
-
 @Repository
 public class MergeRequestRepository {
     private final MongoCollection<Document> mergeRequestCollection;
@@ -189,7 +188,7 @@ public class MergeRequestRepository {
         // (un)ignore nested files
         mergeRequestCollection.updateMany(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("mergeRequestId", mergeRequestId), eq("commits.commitId", commitId)), set("commits.$.files.$[].isIgnored", ignoreValue));
         // unignore parent Merge Request
-        if(!ignoreValue) {
+        if (!ignoreValue) {
             ignoreMergeRequest(projectUrl, mergeRequestId, ignoreValue);
         }
     }
@@ -199,7 +198,7 @@ public class MergeRequestRepository {
         mergeRequestCollection.updateOne(and(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), eq("files._id", fileId)), set("files.$.isIgnored", ignoreValue));
 
         // unignore Merge Request
-        if(!ignoreValue) {
+        if (!ignoreValue) {
             ignoreMergeRequest(projectUrl, mergeRequestId, ignoreValue);
         }
 
