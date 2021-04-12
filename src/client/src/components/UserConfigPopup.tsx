@@ -1,6 +1,9 @@
 import { ChangeEvent, useContext, useState } from 'react'
 import classNames from '../utils/classNames'
-import { UserConfigContext } from '../context/UserConfigContext'
+import {
+  IFileTypeScoring,
+  UserConfigContext,
+} from '../context/UserConfigContext'
 
 import Selector from './Selector'
 import Modal from './Modal'
@@ -21,6 +24,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
   const [generalScores, setGeneralScores] = useState(
     userConfigs.selected.generalScores
   )
+  const [newFileTypeName, setNewFileTypeName] = useState('')
 
   const generalScoresChange = (
     event: ChangeEvent<HTMLInputElement>,
@@ -51,6 +55,27 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     setFileScores([...fileScores])
   }
 
+  const isValidFileType = () => {
+    if (
+      newFileTypeName === '' ||
+      fileScores.map(score => score.fileExtension).includes(newFileTypeName)
+    ) {
+      return false
+    } else {
+      return true
+    }
+  }
+
+  const addFileExtension = () => {
+    const newFileType: IFileTypeScoring = {
+      fileExtension: newFileTypeName,
+      scoreMultiplier: 1,
+    }
+    fileScores.push(newFileType)
+    setFileScores([...fileScores])
+    setNewFileTypeName('')
+  }
+
   const save = () => {
     dispatch({
       type: 'SET_SCORES',
@@ -66,7 +91,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
           <div className={styles.selectorContainer}>
             <Table
               excludeHeaders
-              columnWidths={['6fr', '2.5fr', '1fr']}
+              columnWidths={['6fr', '2.2fr', '1fr']}
               classes={{ data: styles.row, table: styles.table }}
               data={generalScores.map((score, i) => {
                 return {
@@ -166,6 +191,22 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                 }
               })}
             />
+            <div className={styles.addContainer}>
+              <input
+                type="text"
+                placeholder="New File Extension..."
+                className={styles.generalInput}
+                value={newFileTypeName}
+                onChange={e => setNewFileTypeName(e.target.value)}
+              />
+              <button
+                onClick={addFileExtension}
+                className={styles.addButton}
+                disabled={!isValidFileType()}
+              >
+                Add file type
+              </button>
+            </div>
           </div>
         </Selector>
         <button onClick={save} className={styles.saveButton}>
