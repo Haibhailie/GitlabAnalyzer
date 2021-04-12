@@ -17,7 +17,6 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -120,7 +119,7 @@ public class MergeRequestRepository {
                 .append(MergeRequest.files.key, fileDocuments);
     }
 
-    public List<MergeRequestDtoDb> getMergeRequests(List<String> mergeRequestIds) {
+    public List<MergeRequestDtoDb> getAllMergeRequests(String projectUrl) {
         List<MergeRequestDtoDb> mergeRequests = new ArrayList<>();
         for (String presentMergeRequestId : mergeRequestIds) {
             Optional<MergeRequestDtoDb> mergeRequest = getMergeRequest(presentMergeRequestId);

@@ -3,6 +3,7 @@ package ca.sfu.orcus.gitlabanalyzer.file;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.LOCDto;
 import ca.sfu.orcus.gitlabanalyzer.utils.Diff.Scores;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
@@ -43,6 +44,7 @@ public class FileRepository {
         return new FileDto(doc.getString(File.name.key))
                 .setExtension(doc.getString(File.extension.key))
                 .setTotalScore(gson.fromJson(doc.getString(File.fileScore.key), Scores.class))
+                .setFileDiffDtos(gson.fromJson(doc.getString(File.fileDiffs.key), new TypeToken<List<FileDiffDto>>(){}.getType()))
                 .setLinesOfCodeChanges(gson.fromJson(doc.getString(File.linesOfCodeChanges.key), LOCDto.class))
                 .setIgnored(doc.getBoolean(File.isIgnored));
     }
@@ -60,6 +62,7 @@ public class FileRepository {
                 .append(File.name.key, file.getFileName())
                 .append(File.extension.key, file.getFileExtension())
                 .append(File.fileScore.key, gson.toJson(file.getFileScore()))
+                .append(File.fileDiffs.key, gson.toJson(file.getFileDiffDtos()))
                 .append(File.linesOfCodeChanges.key, gson.toJson(file.getLinesOfCodeChanges()))
                 .append(File.isIgnored.key, file.isIgnored());
     }

@@ -1,8 +1,6 @@
 package ca.sfu.orcus.gitlabanalyzer.mergeRequest;
 
-import ca.sfu.orcus.gitlabanalyzer.Constants;
-import ca.sfu.orcus.gitlabanalyzer.commit.CommitDto;
-import ca.sfu.orcus.gitlabanalyzer.utils.DateUtils;
+import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.MergeRequestDtoDb;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,47 +26,9 @@ public class MergeRequestController {
     @GetMapping("/api/project/{projectId}/mergerequests")
     public String getMergeRequests(@CookieValue(value = "sessionId") String jwt,
                                    HttpServletResponse response,
-                                   @PathVariable int projectId,
-                                   @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
-                                   @RequestParam(required = false, defaultValue = Constants.DEFAULT_UNTIL) long until) {
-        Date dateSince = DateUtils.getDateSinceOrEarliest(since);
-        Date dateUntil = DateUtils.getDateUntilOrNow(until);
-        List<MergeRequestDto> mergeRequestDtos = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
+                                   @PathVariable int projectId) {
+        List<MergeRequestDtoDb> mergeRequestDtos = mergeRequestService.getAllMergeRequests(jwt, projectId);
         response.setStatus(mergeRequestDtos == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(mergeRequestDtos);
-    }
-
-    @GetMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/commits")
-    public String getCommitsFromMergeRequests(@CookieValue(value = "sessionId") String jwt,
-                                              HttpServletResponse response,
-                                              @PathVariable int projectId,
-                                              @PathVariable int mergerequestId) {
-        List<CommitDto> commitDtos = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergerequestId);
-        response.setStatus(commitDtos == null ? SC_UNAUTHORIZED : SC_OK);
-        return gson.toJson(commitDtos);
-    }
-
-    @GetMapping("/api/project/{projectId}/mergerequest/{mergerequestId}/diff")
-    public String getDiffsFromMergeRequests(@CookieValue(value = "sessionId") String jwt,
-                                            HttpServletResponse response,
-                                            @PathVariable int projectId,
-                                            @PathVariable int mergerequestId) {
-        String mergeRequestDiff = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergerequestId);
-        response.setStatus(mergeRequestDiff == null ? SC_UNAUTHORIZED : SC_OK);
-        return gson.toJson(mergeRequestDiff);
-    }
-
-    @GetMapping("/api/project/{projectId}/members/{memberId}/mergerequests")
-    public String getMergeRequestsByMemberID(@CookieValue(value = "sessionId") String jwt,
-                                             HttpServletResponse response,
-                                             @PathVariable int projectId,
-                                             @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
-                                             @RequestParam(required = false, defaultValue = Constants.DEFAULT_UNTIL) long until,
-                                             @PathVariable int memberId) {
-        Date dateSince = DateUtils.getDateSinceOrEarliest(since);
-        Date dateUntil = DateUtils.getDateUntilOrNow(until);
-        List<MergeRequestDto> allMergeRequestsByMemberId = mergeRequestService.getMergeRequestsByMemberId(jwt, projectId, dateSince, dateUntil, memberId);
-        response.setStatus(allMergeRequestsByMemberId == null ? SC_UNAUTHORIZED : SC_OK);
-        return gson.toJson(allMergeRequestsByMemberId);
     }
 }

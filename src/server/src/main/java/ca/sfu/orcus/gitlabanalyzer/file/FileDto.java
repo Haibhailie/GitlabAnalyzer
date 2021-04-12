@@ -13,7 +13,6 @@ public class FileDto {
     boolean isIgnored;
     Scores fileScore;
     LOCDto linesOfCodeChanges;
-
     @SerializedName("fileDiffs")
     List<FileDiffDto> fileDiffDtos = new ArrayList<>();
 
@@ -72,6 +71,7 @@ public class FileDto {
         return fileScore.getTotalScore();
     }
 
+
     public Scores getFileScore() {
         return fileScore;
     }
@@ -91,6 +91,11 @@ public class FileDto {
     public String getName() {
         return name;
     }
+
+    public List<FileDiffDto> getFileDiffDtos() {
+        return fileDiffDtos;
+    }
+
 
     @Override
     public boolean equals(Object o) {
