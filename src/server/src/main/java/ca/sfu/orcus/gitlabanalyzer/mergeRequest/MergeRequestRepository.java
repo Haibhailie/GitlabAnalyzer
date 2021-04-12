@@ -236,32 +236,7 @@ public class MergeRequestRepository {
     }
 
     public void ignoreCommitFile(String projectUrl, int mergeRequestId, String commitId, String fileId, boolean ignoreValue) {
-        if (ignoreValue == true) {
-            Document mergeRequestDocument = mergeRequestCollection.find(getMergeRequestEqualityParameter(projectUrl, mergeRequestId)).first();
-            MergeRequestDtoDb mergeRequestDto = docToDto(mergeRequestDocument);
-            List<CommitDtoDb> commitDtos = mergeRequestDto.getCommits();
-            for (CommitDtoDb commit : commitDtos) {
-                if (commit.getId().equals(commitId)) {
-                    List<FileDto> fileDtos = commit.getFiles();
-                    for (FileDto file : fileDtos) {
-                        if (file.getId().equals(fileId)) {
-                            file.setIgnored(true);
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
 
-            String documentId = mergeRequestDocument.getString(MergeRequest.documentId.key);
-            Document newDoc = generateMergeRequestDocument(mergeRequestDto, documentId, projectUrl);
-
-            mergeRequestCollection.replaceOne(getMergeRequestEqualityParameter(projectUrl, mergeRequestId), newDoc);
-
-        } else {
-            ignoreMergeRequest(projectUrl, mergeRequestId, ignoreValue);
-            ignoreCommit(projectUrl, mergeRequestId, commitId, ignoreValue);
-        }
     }
 }
 
