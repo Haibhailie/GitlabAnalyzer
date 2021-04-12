@@ -82,6 +82,13 @@ const ignoreFile = (
     mr.sumOfCommitsScore[member.id] += scoreDelta
   } else {
     mr.score += scoreDelta
+    jsonFetcher(
+      `/api/project/${state.id}/mergerequest/${mrId}/file/${fileId}/ignore/${setIgnored}`,
+      {
+        responseIsEmpty: true,
+        method: 'PUT',
+      }
+    )
   }
 
   return { ...state }
@@ -102,6 +109,14 @@ const ignoreCommit = (
 
   commit.isIgnored = setIgnored
 
+  jsonFetcher(
+    `/api/project/${state.id}/mergerequest/${mrId}/commit/${commitId}/ignore/${setIgnored}`,
+    {
+      responseIsEmpty: true,
+      method: 'PUT',
+    }
+  )
+
   return state
 }
 
@@ -119,9 +134,13 @@ const ignoreMr = (state: IProjectState, mrId: number, setIgnored: boolean) => {
 
   mr.isIgnored = setIgnored
 
-  jsonFetcher(`/api/project/${state.id}/mergerequest/${mrId}/ignore`, {
-    responseIsEmpty: true,
-  })
+  jsonFetcher(
+    `/api/project/${state.id}/mergerequest/${mrId}/ignore/${setIgnored}`,
+    {
+      responseIsEmpty: true,
+      method: 'PUT',
+    }
+  )
 
   return state
 }
@@ -152,6 +171,10 @@ const formatMergeRequests = (
     mr.commits.forEach(commit => {
       const files: TFiles = {}
       let commitScore = 0
+
+      if (!mrCommitsScore[commit.userId]) {
+        mrCommitsScore[commit.userId] = 0
+      }
 
       commit.files.forEach(file => {
         file.id = file.id ?? file.name
@@ -362,6 +385,7 @@ const reducer: TProjectReducer = async (state, action) => {
 
           member.numAdditions += mr.numAdditions
           member.numDeletions += mr.numDeletions
+        } else if (mr.time >= startTime && mr.time <= endTime) {
           member.mergeRequests[mr.mergeRequestId] = mr
         }
       })

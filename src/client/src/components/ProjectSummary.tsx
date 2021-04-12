@@ -10,7 +10,6 @@ export interface IProjectSummaryProps {
 
 const ProjectSummary = ({ projectName }: IProjectSummaryProps) => {
   const project = useProject()
-  console.log(project)
   if (!project || project === 'LOADING') return null
 
   const { mergeRequests } = project
