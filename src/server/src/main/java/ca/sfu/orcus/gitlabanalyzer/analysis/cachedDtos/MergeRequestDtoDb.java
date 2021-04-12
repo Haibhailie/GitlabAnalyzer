@@ -30,8 +30,7 @@ public final class MergeRequestDtoDb {
                              List<CommitDtoDb> commits,
                              Set<String> committerEmails,
                              MergeRequest mergeRequestChanges,
-                             double sumOfCommitsScore,
-                             boolean isSolo) {
+                             double sumOfCommitsScore) {
         setMergeRequestId(mergeRequest.getIid());
         setTitle(mergeRequest.getTitle());
         setAuthor(mergeRequest.getAuthor().getName());
@@ -39,7 +38,7 @@ public final class MergeRequestDtoDb {
         setDescription(mergeRequest.getDescription());
         setTime(mergeRequest.getMergedAt().getTime());
         setWebUrl(mergeRequest.getWebUrl());
-        setSolo(isSolo);
+        setSolo(false);
 
         setCommits(commits);
         setCommitterEmails(committerEmails);
