@@ -9,12 +9,16 @@ import {
   Legend,
   Bar,
   ResponsiveContainer,
+  ReferenceLine,
+  CartesianGrid,
 } from 'recharts'
 import { ICommitData, IMergeData } from '../types'
 
 import { onError } from '../utils/suspenseDefaults'
 import { useContext, useEffect, useState } from 'react'
 import { UserConfigContext } from '../context/UserConfigContext'
+
+import styles from '../css/ActivityGraph.module.css'
 
 export interface IActivityData {
   commits: ICommitData[]
@@ -24,6 +28,7 @@ export interface IActivityData {
 export interface IActivityGraphProps {
   mergeUrl: string
   commitUrl: string
+  graphTitle: string
 }
 
 export type TGraphData = {
@@ -35,10 +40,8 @@ export type TGraphData = {
   mergeScore: number
 }[]
 
-const dateRegex = /\d{4}-\d{2}-\d{2}/
-
 const epochToDate = (epoch: number) =>
-  new Date(epoch).toISOString().match(dateRegex)?.[0] ?? 'none'
+  new Date(epoch).toDateString().slice(4, 10) ?? 'none'
 
 const computeGraphData = (
   commitData: ICommitData[],
@@ -84,15 +87,18 @@ const computeGraphData = (
     })
   }
 
-  oldestCommit = Math.min(oldestCommit, Date.now() - 7 * 24 * 60 * 60 * 1000)
+  oldestCommit = Math.min(oldestCommit, Date.now() - 60 * 24 * 60 * 60 * 1000)
 
   fillObj(commitData, 'commits', 'commitScore')
   fillObj(mergeData, 'merges', 'mergeScore')
 
-  Object.entries(graphObj).forEach(([key, { commitScore, mergeScore }]) => {
-    graphObj[key].commitScore = round(commitScore, 2)
-    graphObj[key].mergeScore = round(mergeScore, 2)
-  })
+  Object.entries(graphObj).forEach(
+    ([key, { commitScore, mergeScore, merges }]) => {
+      graphObj[key].commitScore = round(commitScore, 2)
+      graphObj[key].mergeScore = round(mergeScore * -1, 2)
+      graphObj[key].merges = merges * -1
+    }
+  )
 
   const now = Date.now()
   while (oldestCommit <= now) {
@@ -116,7 +122,11 @@ const computeGraphData = (
   return graphData
 }
 
-const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
+const ActivityGraph = ({
+  mergeUrl,
+  commitUrl,
+  graphTitle,
+}: IActivityGraphProps) => {
   const { Suspense, data, error } = useSuspense<TGraphData, Error>(
     (setData, setError) => {
       let otherData: ICommitData[] | IMergeData[] | null = null
@@ -142,12 +152,12 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
   )
 
   const { userConfigs } = useContext(UserConfigContext)
-  const [selectedRange, setSelectedRange] = useState(data?.slice(-7))
+  const [selectedRange, setSelectedRange] = useState(data)
   const { yAxis } = userConfigs.selected
 
   useEffect(() => {
     const {
-      startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      startDate = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
       endDate = new Date(),
     } = userConfigs.selected
 
@@ -163,14 +173,22 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
       fallback="Loading Commit Data..."
       error={error?.message ?? 'Unknown Error'}
     >
-      <ResponsiveContainer width="100%" height="100%">
+      <h1 className={styles.graphTitle}>{graphTitle}</h1>
+      <ResponsiveContainer width="100%" height="90%">
         <BarChart
           width={730}
-          height={250}
+          height={200}
           data={selectedRange}
-          margin={{ top: 40, left: 40, bottom: 40, right: 40 }}
+          margin={{ top: 10, left: 40, bottom: 20, right: 40 }}
+          stackOffset="sign"
         >
-          <XAxis dataKey="date" />
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="date"
+            style={{
+              font: 'var(--font-body-large-mulish)',
+            }}
+          />
           <YAxis
             label={{
               value:
@@ -179,19 +197,37 @@ const ActivityGraph = ({ mergeUrl, commitUrl }: IActivityGraphProps) => {
                   : 'Score of Commits/Merge Requests',
               angle: -90,
               viewBox: { x: -60, y: 150, width: 200, height: 200 },
+              style: {
+                font: 'var(--font-body-large-mulish)',
+              },
+            }}
+            style={{
+              font: 'var(--font-body-large-mulish)',
             }}
           />
-          <Tooltip />
-          <Legend align="right" verticalAlign="top" layout="horizontal" />
+          <Tooltip
+            wrapperStyle={{
+              font: 'var(--font-body-large-mulish)',
+            }}
+          />
+          <Legend
+            align="right"
+            verticalAlign="top"
+            layout="horizontal"
+            wrapperStyle={{ font: 'var(--font-body-large-mulish)' }}
+          />
+          <ReferenceLine y={0} stroke="#000000" />
           <Bar
             name="Merge Requests"
             dataKey={yAxis === 'NUMBER' ? 'merges' : 'mergeScore'}
             fill="var(--color-secondary)"
+            stackId="stack"
           />
           <Bar
             name="Commits"
             dataKey={yAxis === 'NUMBER' ? 'commits' : 'commitScore'}
             fill="var(--color-primary)"
+            stackId="stack"
           />
         </BarChart>
       </ResponsiveContainer>

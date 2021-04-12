@@ -17,10 +17,9 @@ public class FileDto {
     @SerializedName("fileDiffs")
     List<FileDiffDto> fileDiffDtos = new ArrayList<>();
 
-    public FileDto(String[] unifiedDiff, String name) {
+    public FileDto(String name) {
         this.name = name;
         setExtension(name);
-        generateFileDiffDto(unifiedDiff);
     }
 
     public FileDto(String name, List<FileDiffDto> fileDiffDtos, double score, boolean isIgnored) {
@@ -31,38 +30,42 @@ public class FileDto {
         this.setTotalScore(score);
     }
 
-    public void setExtension(String name) {
+    public FileDto setExtension(String name) {
         if (name.contains(".")) {
-            extension = name.substring(name.indexOf(".") + 1);
+            this.extension = name.substring(name.indexOf(".") + 1);
         } else {
-            extension = "Unknown";
+            this.extension = "Unknown";
         }
+        return this;
     }
 
-    public void setFileDiffDtos(List<FileDiffDto> fileDiffDtos) {
+    public FileDto setFileDiffDtos(List<FileDiffDto> fileDiffDtos) {
         this.fileDiffDtos = fileDiffDtos;
+        return this;
     }
 
-    private void generateFileDiffDto(String[] unifiedDiff) {
-        for (String line : unifiedDiff) {
-            fileDiffDtos.add(new FileDiffDto(line));
-        }
-    }
-
-    public void setMergeRequestFileScore(Scores fileScore) {
+    public FileDto setTotalScore(Scores fileScore) {
         this.fileScore = fileScore;
+        return this;
     }
 
-    public void setTotalScore(double totalScore) {
+    public FileDto setTotalScore(double totalScore) {
         fileScore.setTotalScore(totalScore);
+        return this;
     }
 
-    public void setLinesOfCodeChanges(LOCDto linesOfCodeChanges) {
+    public FileDto setLinesOfCodeChanges(LOCDto linesOfCodeChanges) {
         this.linesOfCodeChanges = linesOfCodeChanges;
+        return this;
     }
 
-    public void setIgnored(boolean ignored) {
+    public FileDto setIgnored(boolean ignored) {
         isIgnored = ignored;
+        return this;
+    }
+
+    public boolean isIgnored() {
+        return isIgnored;
     }
 
     public double getTotalScore() {
@@ -75,6 +78,18 @@ public class FileDto {
 
     public LOCDto getLinesOfCodeChanges() {
         return linesOfCodeChanges;
+    }
+
+    public String getFileName() {
+        return name;
+    }
+
+    public String getFileExtension() {
+        return extension;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

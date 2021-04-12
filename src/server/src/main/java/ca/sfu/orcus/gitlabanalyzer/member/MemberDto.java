@@ -21,6 +21,14 @@ public class MemberDto {
         setWebUrl(presentMember.getWebUrl());
     }
 
+    public MemberDto(String displayName, int id, String username, String role, String webUrl) {
+        this.displayName = displayName;
+        this.id = id;
+        this.username = username;
+        this.role = role;
+        this.webUrl = webUrl;
+    }
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
@@ -41,6 +49,26 @@ public class MemberDto {
         this.webUrl = webUrl;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this) {
@@ -58,5 +86,4 @@ public class MemberDto {
                 && this.username.equals(m.username)
                 && this.role.equals(m.role));
     }
-
 }

@@ -56,4 +56,18 @@ public class CommitController {
         response.setStatus(diffs == null ? SC_UNAUTHORIZED : SC_OK);
         return gson.toJson(diffs);
     }
+
+    @GetMapping("/api/project/{projectId}/members/{memberName}/commits")
+    public String getCommitsByMemberName(@CookieValue(value = "sessionId") String jwt,
+                                         HttpServletResponse response,
+                                         @PathVariable int projectId,
+                                         @RequestParam(required = false, defaultValue = Constants.DEFAULT_SINCE) long since,
+                                         @RequestParam(required = false, defaultValue = Constants.DEFAULT_UNTIL) long until,
+                                         @PathVariable String memberName) {
+        Date dateSince = DateUtils.getDateSinceOrEarliest(since);
+        Date dateUntil = DateUtils.getDateUntilOrNow(until);
+        List<CommitDto> allCommitsByMemberName = commitService.getCommitsByMemberName(jwt, projectId, dateSince, dateUntil, memberName);
+        response.setStatus(allCommitsByMemberName == null ? SC_UNAUTHORIZED : SC_OK);
+        return gson.toJson(allCommitsByMemberName);
+    }
 }

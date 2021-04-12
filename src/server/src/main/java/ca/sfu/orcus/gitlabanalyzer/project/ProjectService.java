@@ -2,7 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.project;
 
 import ca.sfu.orcus.gitlabanalyzer.authentication.GitLabApiWrapper;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberDto;
-import ca.sfu.orcus.gitlabanalyzer.member.MemberService;
+import ca.sfu.orcus.gitlabanalyzer.member.MemberServiceDirect;
 import ca.sfu.orcus.gitlabanalyzer.member.MemberUtils;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import org.gitlab4j.api.GitLabApi;
@@ -19,10 +19,12 @@ import java.util.List;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final GitLabApiWrapper gitLabApiWrapper;
-    private final MemberService memberService;
+    private final MemberServiceDirect memberService;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, GitLabApiWrapper gitLabApiWrapper, MemberService memberService) {
+    public ProjectService(ProjectRepository projectRepository,
+                          GitLabApiWrapper gitLabApiWrapper,
+                          MemberServiceDirect memberService) {
         this.projectRepository = projectRepository;
         this.gitLabApiWrapper = gitLabApiWrapper;
         this.memberService = memberService;
@@ -62,17 +64,17 @@ public class ProjectService {
     public ProjectExtendedDto getProject(String jwt, int projectId) {
         GitLabApi gitLabApi = gitLabApiWrapper.getGitLabApiFor(jwt);
         if (gitLabApi != null) {
-            return getProject(gitLabApi, projectId);
+            List<MemberDto> memberDtos = memberService.getAllMembers(jwt, projectId);
+            return getProject(gitLabApi, projectId, memberDtos);
         } else {
             return null;
         }
     }
 
-    private ProjectExtendedDto getProject(GitLabApi gitLabApi, int projectId) {
+    private ProjectExtendedDto getProject(GitLabApi gitLabApi, int projectId, List<MemberDto> memberDtos) {
         try {
             Project project = gitLabApi.getProjectApi().getProject(projectId, true);
             long numBranches = gitLabApi.getRepositoryApi().getBranches(projectId).size();
-            List<MemberDto> memberDtos = memberService.getAllMembers(gitLabApi, projectId);
             return new ProjectExtendedDto(project, memberDtos, numBranches);
         } catch (GitLabApiException e) {
             return null;
