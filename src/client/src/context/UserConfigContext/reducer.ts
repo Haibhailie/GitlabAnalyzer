@@ -248,18 +248,15 @@ const reducer: TUserConfigReducer = async (state, action) => {
       try {
         const newConfig = { ...state.selected }
         newConfig.name = action.name
-        const { id } = await jsonFetcher<{ id: string }>(
-          `http://localhost:8081/api/config`,
-          {
-            method: 'POST',
-            body: JSON.stringify({
-              ...newConfig,
-              startDate: newConfig.startDate?.getTime(),
-              // TODO: remove ?? edge case after BE fix.
-              endDate: newConfig.endDate?.getTime() ?? Date.now(),
-            }),
-          }
-        )
+        const { id } = await jsonFetcher<{ id: string }>(`/api/config`, {
+          method: 'POST',
+          body: JSON.stringify({
+            ...newConfig,
+            startDate: newConfig.startDate?.getTime(),
+            // TODO: remove ?? edge case after BE fix.
+            endDate: newConfig.endDate?.getTime() ?? Date.now(),
+          }),
+        })
         newConfig.id = id
         state.configs[id] = newConfig
         return {
