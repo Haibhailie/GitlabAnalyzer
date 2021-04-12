@@ -27,7 +27,6 @@ public class MemberServiceCached {
         if (projectUrl.isEmpty()) {
             return null;
         }
-        List<String> memberDocumentIds = projectRepo.getMemberDocIds(projectId, projectUrl.get());
-        return memberRepo.getMembers(memberDocumentIds);
+        return memberRepo.getMembers(projectUrl.get());
     }
 }

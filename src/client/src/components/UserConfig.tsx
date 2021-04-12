@@ -91,7 +91,7 @@ const UserConfig = () => {
   return (
     <>
       <SideNavItem label="Settings" Icon={settingsIcon}>
-        <SideNavSubItem startOpened={true} label="Date Range">
+        <SideNavSubItem startOpened label="Date Range">
           <DatePicker
             label="Start date"
             onChange={d => d && dispatch({ type: SET_START_DATE, date: d })}
@@ -103,7 +103,7 @@ const UserConfig = () => {
             value={userConfigs.selected.endDate ?? null}
           />
         </SideNavSubItem>
-        <SideNavSubItem startOpened={true} label="Member scores by">
+        <SideNavSubItem startOpened label="Member scores by">
           <RadioInput
             label="Merge Requests"
             name="SCORE"
@@ -119,7 +119,7 @@ const UserConfig = () => {
             }
           />
         </SideNavSubItem>
-        <SideNavSubItem startOpened={true} label="Graph Settings">
+        <SideNavSubItem startOpened label="Graph Settings">
           <p className={styles.subHeader}>Graph Y-Axis</p>
           <RadioInput
             label="Number"

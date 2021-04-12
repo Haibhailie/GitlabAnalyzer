@@ -44,36 +44,44 @@ public final class MemberDtoDb {
         setNotes(notes);
     }
 
-    public void setId(int id) {
+    public MemberDtoDb setId(int id) {
         this.id = id;
+        return this;
     }
 
-    public void setDisplayName(String displayName) {
+    public MemberDtoDb setDisplayName(String displayName) {
         this.displayName = displayName;
+        return this;
     }
 
-    public void setUsername(String username) {
+    public MemberDtoDb setUsername(String username) {
         this.username = username;
+        return this;
     }
 
-    public void setRole(String role) {
+    public MemberDtoDb setRole(String role) {
         this.role = role;
+        return this;
     }
 
-    public void setWebUrl(String webUrl) {
+    public MemberDtoDb setWebUrl(String webUrl) {
         this.webUrl = webUrl;
+        return this;
     }
 
-    public void setCommitterEmails(Set<String> committerEmails) {
+    public MemberDtoDb setCommitterEmails(Set<String> committerEmails) {
         this.committerEmails = committerEmails;
+        return this;
     }
 
-    public void setMergeRequestDocIds(Set<ObjectId> mergeRequestDocIds) {
+    public MemberDtoDb setMergeRequestDocIds(Set<ObjectId> mergeRequestDocIds) {
         this.mergeRequestDocIds = mergeRequestDocIds;
+        return this;
     }
 
-    public void setNotes(List<NoteDtoDb> comments) {
+    public MemberDtoDb setNotes(List<NoteDtoDb> comments) {
         this.notes = comments;
+        return this;
     }
 
     public void addMergeRequestDocId(ObjectId mergeRequestDocId) {

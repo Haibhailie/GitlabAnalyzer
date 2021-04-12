@@ -1,12 +1,12 @@
 import classNames from '../utils/classNames'
 
-import SideNavItem from './SideNavItem'
-import UserConfig from './UserConfig'
+import SideNavItem from '../components/SideNavItem'
+import UserConfig from '../components/UserConfig'
+import LogoutButton from '../components/LogoutButton'
 
 import styles from '../css/SideNav.module.css'
 
 import { ReactComponent as repoIcon } from '../assets/database.svg'
-import { ReactComponent as reportIcon } from '../assets/report.svg'
 
 export interface ISideNavProps {
   isOpen: boolean
@@ -14,10 +14,7 @@ export interface ISideNavProps {
   className?: string
 }
 
-const items = [
-  { icon: repoIcon, label: 'Projects', dest: '/home' },
-  { icon: reportIcon, label: 'Reports', dest: '/reports' },
-]
+const items = [{ icon: repoIcon, label: 'Projects', dest: '/home' }]
 
 const SideNav = ({ isOpen, sideNavToggler, className }: ISideNavProps) => {
   const toggleSideNav = () => {
@@ -36,6 +33,7 @@ const SideNav = ({ isOpen, sideNavToggler, className }: ISideNavProps) => {
           />
         ))}
         <UserConfig />
+        <LogoutButton />
       </div>
       <button
         type="button"

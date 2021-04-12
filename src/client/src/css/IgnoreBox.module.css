@@ -1,0 +1,22 @@
+.ignore {
+  appearance: none;
+  margin: auto;
+  background-color: #ffffff;
+  border: 2px solid var(--color-gray);
+  padding: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.ignore:hover {
+  background-color: var(--color-background-gray);
+}
+
+.ignore:checked {
+  background: center url('../assets/check.svg');
+  background-color: var(--color-primary);
+  border: none;
+  padding: 12px;
+}

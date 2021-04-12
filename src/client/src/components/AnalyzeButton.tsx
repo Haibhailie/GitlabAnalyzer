@@ -5,7 +5,6 @@ import styles from '../css/AnalyzeButton.module.css'
 export interface IAnalyzeButtonProps {
   id: string
   message: string
-  index?: number
   onClick: (id: string) => void
   className?: string
   disabled?: boolean
