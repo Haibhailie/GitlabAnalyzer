@@ -107,7 +107,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     <Modal close={togglePopup}>
       <div className={styles.container}>
         <div className={styles.header}>Edit Scoring</div>
-        <Selector tabHeaders={['Change Multipliers', 'File Type Multipliers']}>
+        <Selector tabHeaders={['Code Change Weights', 'File Type Weights']}>
           <div className={styles.selectorContainer}>
             <Table
               excludeHeaders
@@ -257,8 +257,8 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
         </button>
         {requireReanalyze && (
           <div className={styles.warningContainer}>
-            <Warning className={styles.warningIcon} /> These changes will
-            require projects to be reanalyzed to be applied
+            <Warning className={styles.warningIcon} /> These changes will not be
+            applied until projects are re-analyzed
           </div>
         )}
       </div>
