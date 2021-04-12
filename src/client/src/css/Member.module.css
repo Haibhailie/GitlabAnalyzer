@@ -7,15 +7,14 @@
 }
 
 .container {
-  min-height: calc(100% - 100px);
-  overflow-x: hidden;
+  height: 100%;
   width: 100%;
-  padding-bottom: 100px;
   margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  overflow-x: hidden;
 }
 
 .header {
@@ -38,8 +37,15 @@
 
 .mergeRequestsContainer {
   display: flex;
-  width: 80%;
-  height: 1000px;
+  width: calc(100% - 40px);
+  height: 100%;
   margin: auto;
   padding: 0px 20px;
+}
+
+.commentsContainer {
+  display: flex;
+  width: 85%;
+  height: auto;
+  margin: auto;
 }

@@ -66,7 +66,13 @@ const Dropdown = ({
   return (
     <div className={classNames(className, !isOpen && styles.collapsed)}>
       {header && (
-        <button className={styles.headerBtn} onClick={toggleCollapse}>
+        <button
+          className={classNames(
+            styles.headerBtn,
+            fixedCollapsed && styles.fixedCollapsed
+          )}
+          onClick={toggleCollapse}
+        >
           <div
             className={classNames(
               styles.header,

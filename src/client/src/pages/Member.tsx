@@ -9,6 +9,7 @@ import Selector from '../components/Selector'
 import MemberSummary from '../components/MemberSummary'
 import MemberDropdown from '../components/MemberDropdown'
 import MergeRequests from '../components/MergeRequests'
+import CommentTable from '../components/CommentTable'
 
 import styles from '../css/Member.module.css'
 
@@ -51,14 +52,14 @@ const Member = () => {
       fallback="Getting member details..."
       error={memberError?.message ?? 'Unknown Error'}
     >
-      <div className={styles.containerHeader}>
-        <MemberDropdown
-          members={members}
-          projectId={id}
-          currentMemberId={memberId}
-        />
-      </div>
       <div className={styles.container}>
+        <div className={styles.containerHeader}>
+          <MemberDropdown
+            members={members}
+            projectId={id}
+            currentMemberId={memberId}
+          />
+        </div>
         <h1 className={styles.header}>{memberData?.displayName}</h1>
         <h3 className={styles.subheader}>
           {memberData?.username && `@${memberData?.username}`}
@@ -71,7 +72,7 @@ const Member = () => {
             <MergeRequests projectId={id} memberId={memberId} />
           </div>
           <div className={styles.commentsContainer}>
-            <h1>Comments Table</h1>
+            <CommentTable projectId={id} memberId={memberId} />
           </div>
         </Selector>
       </div>
