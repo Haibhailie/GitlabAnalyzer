@@ -43,7 +43,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     index: number
   ) => {
     fileScores[index] = {
-      fileExtension: fileScores[index].fileExtension,
+      ...fileScores[index],
       scoreMultiplier: +event.target.value,
     }
 
@@ -69,6 +69,10 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
   const addFileExtension = () => {
     const newFileType: IFileTypeScoring = {
       fileExtension: newFileTypeName,
+      singleLineCommentSyntax: '',
+      multilineCommentStart: '',
+      multilineCommentEnd: '',
+      syntaxCharacters: '',
       scoreMultiplier: 1,
     }
     fileScores.push(newFileType)
@@ -136,6 +140,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                         styles.generalInput,
                         styles.mediumInput
                       )}
+                      onChange={e => fileScoresChange(e, i)}
                     />
                   ),
                   commentStart: (
@@ -145,6 +150,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                         styles.generalInput,
                         styles.mediumInput
                       )}
+                      onChange={e => fileScoresChange(e, i)}
                     />
                   ),
                   commentEnd: (
@@ -154,6 +160,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                         styles.generalInput,
                         styles.mediumInput
                       )}
+                      onChange={e => fileScoresChange(e, i)}
                     />
                   ),
                   syntax: (
@@ -163,6 +170,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
                         styles.generalInput,
                         styles.longInput
                       )}
+                      onChange={e => fileScoresChange(e, i)}
                     />
                   ),
                   weights: (
