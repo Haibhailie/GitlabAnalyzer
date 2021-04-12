@@ -110,13 +110,11 @@ const UserConfig = () => {
         <SideNavSubItem startOpened label="Member scores by">
           <RadioInput
             label="Merge Requests"
-            name="SCORE"
             checked={userConfigs.selected.scoreBy === 'MRS'}
             onChange={() => dispatch({ type: SET_SCORE_BY, scoreBy: 'MRS' })}
           />
           <RadioInput
             label="Commits"
-            name="SCORE"
             checked={userConfigs.selected.scoreBy === 'COMMITS'}
             onChange={() =>
               dispatch({ type: SET_SCORE_BY, scoreBy: 'COMMITS' })
@@ -127,7 +125,6 @@ const UserConfig = () => {
           <p className={styles.subHeader}>Graph Y-Axis</p>
           <RadioInput
             label="Number"
-            name="yAxis"
             checked={userConfigs.selected.yAxis === 'NUMBER'}
             onChange={() =>
               dispatch({ type: SET_GRAPH_Y_AXIS, yAxis: 'NUMBER' })
@@ -135,7 +132,6 @@ const UserConfig = () => {
           />
           <RadioInput
             label="Score"
-            name="yAxis"
             checked={userConfigs.selected.yAxis === 'SCORE'}
             onChange={() =>
               dispatch({ type: SET_GRAPH_Y_AXIS, yAxis: 'SCORE' })
@@ -144,7 +140,6 @@ const UserConfig = () => {
           <p className={styles.subHeader}>Project Graph</p>
           <RadioInput
             label="Entire Project"
-            name="Graph"
             checked={userConfigs.selected.graphMode === 'PROJECT'}
             onChange={() =>
               dispatch({ type: SET_GRAPH_BY, graphMode: 'PROJECT' })
@@ -152,7 +147,6 @@ const UserConfig = () => {
           />
           <RadioInput
             label="Split By Member"
-            name="Graph"
             checked={userConfigs.selected.graphMode === 'MEMBER'}
             onChange={() =>
               dispatch({ type: SET_GRAPH_BY, graphMode: 'MEMBER' })
