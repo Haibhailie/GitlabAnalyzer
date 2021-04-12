@@ -24,7 +24,7 @@ export interface IMember {
 const Project = () => {
   const { id } = useParams<{ id: string }>()
   const { dispatch } = useContext(ProjectContext)
-  const { Suspense, data: project, error } = useSuspense<IProjectData, Error>(
+  const { Suspense, data: project, error } = useSuspense<IProjectData>(
     (setData, setError) => {
       jsonFetcher<IProjectData>(`/api/project/${id}`)
         .then(data => {

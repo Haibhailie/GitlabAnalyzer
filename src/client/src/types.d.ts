@@ -95,6 +95,19 @@ export interface IMemberData {
   webUrl: string
 }
 
+export type TCommitterData = ICommitterData[]
+export interface ICommitterData {
+  email: string
+  name: string
+  member: IMemberData
+}
+
+export type TMemberCommitterMap = IMemberCommitterMap[]
+export interface IMemberCommitterMap {
+  email: string
+  memberId: number | string
+}
+
 export interface IDiffData {
   diff: string
 }

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
 import { onError } from '../utils/suspenseDefaults'
-import { IMemberData, ICommitData, IMergeData } from '../types'
+import { IMemberData, TMemberData, TMergeData, TCommitData } from '../types'
 
 import Selector from '../components/Selector'
 import MemberSummary from '../components/MemberSummary'
@@ -14,14 +14,14 @@ import CommentTable from '../components/CommentTable'
 import styles from '../css/Member.module.css'
 
 export interface IMemberStatData {
-  commits: ICommitData[]
-  mergeRequests: IMergeData[]
+  commits: TCommitData
+  mergeRequests: TMergeData
 }
 
 const Member = () => {
   const { id, memberId } = useParams<{ id: string; memberId: string }>()
   const { state } = useLocation<IMemberData>()
-  const [members, setMembers] = useState<IMemberData[]>([])
+  const [members, setMembers] = useState<TMemberData>([])
 
   const {
     Suspense,
@@ -32,7 +32,7 @@ const Member = () => {
       if (state) {
         setData(state)
       } else {
-        jsonFetcher<IMemberData[]>(`/api/project/${id}/members`)
+        jsonFetcher<TMemberData>(`/api/project/${id}/members`)
           .then(memberData => {
             setMembers(memberData)
             for (const member of memberData) {

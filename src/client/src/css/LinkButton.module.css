@@ -1,0 +1,18 @@
+.button {
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  color: #ffffff;
+  background-color: var(--color-primary);
+  font: var(--font-body-medium-poppins);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0px 12px;
+  margin: auto;
+  width: fit-content;
+}
+
+.button:hover {
+  background-color: var(--color-button-hover);
+}
