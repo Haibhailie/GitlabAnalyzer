@@ -70,7 +70,9 @@ const Home = () => {
     setAnalysis({ ...analysis })
   }
 
-  const preAnalyze = (id: string) => {
+  const preAnalyze = (id: string | number) => {
+    id = id.toString()
+
     updateAnalyzingError(id, false)
     updateAnalyzing(id, true)
 
@@ -79,6 +81,7 @@ const Home = () => {
       method: 'PUT',
     })
       .then(res => {
+        id = id.toString()
         analysis[id].isAnalyzing = false
         setAnalysis({ ...analysis })
         if (res === 200) {
@@ -98,6 +101,7 @@ const Home = () => {
         }
       })
       .catch(() => {
+        id = id.toString()
         updateAnalyzing(id, false)
         updateAnalyzingError(id, true)
       })

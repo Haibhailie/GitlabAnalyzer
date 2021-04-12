@@ -6,6 +6,10 @@ import Modal from './Modal'
 import Table from './Table'
 
 import styles from '../css/UserConfigPopup.module.css'
+import {
+  ProjectContext,
+  UPDATE_GENERAL_WEIGHT,
+} from '../context/ProjectContext'
 
 interface IUserConfigPopup {
   togglePopup: () => void
@@ -13,6 +17,8 @@ interface IUserConfigPopup {
 
 const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
   const { userConfigs, dispatch } = useContext(UserConfigContext)
+
+  const { dispatch: projectDispatch } = useContext(ProjectContext)
 
   const [fileScores, setFileScores] = useState(userConfigs.selected.fileScores)
   const [generalScores, setGeneralScores] = useState(
@@ -47,6 +53,11 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     dispatch({
       type: 'SET_SCORES',
       scores: { generalScores: generalScores, fileScores: fileScores },
+    })
+
+    projectDispatch({
+      type: UPDATE_GENERAL_WEIGHT,
+      weights: generalScores,
     })
   }
 

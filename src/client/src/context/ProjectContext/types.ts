@@ -1,5 +1,8 @@
 import { ICommitData, IFileData, IMemberData, IMergeData } from '../../types'
-import { IUserConfig } from '../../context/UserConfigContext'
+import {
+  IGeneralTypeScoring,
+  IUserConfig,
+} from '../../context/UserConfigContext'
 
 export const IGNORE_MR = 'IGNORE_MR'
 export const IGNORE_MR_FILE = 'IGNORE_MR_FILE'
@@ -52,8 +55,7 @@ export type TLocCategory =
 
 interface updateGeneralWeightAction {
   type: typeof UPDATE_GENERAL_WEIGHT
-  category: TLocCategory
-  newWeight: number
+  weights: IGeneralTypeScoring[]
 }
 
 interface getProjectAction {
