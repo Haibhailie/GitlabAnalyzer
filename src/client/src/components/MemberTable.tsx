@@ -13,6 +13,7 @@ import LinkButton from '../components/LinkButton'
 import styles from '../css/MemberTable.module.css'
 
 import alertIcon from '../assets/alert-octagon.svg'
+import { ReactComponent as gt } from '../assets/greater-than.svg'
 
 export interface IMemberTableProps {
   projectId: string
@@ -114,7 +115,7 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
 
   const isProjectMember = (id: string) => memberIds.includes(id)
 
-  const onAnalyze = (id: string | number) =>
+  const onAnalyze = (id: string) =>
     history.push(`/project/${projectId}/member/${id}`)
 
   const isResolutionOptional = () =>
@@ -167,6 +168,8 @@ const MemberTable = ({ projectId, projectName }: IMemberTableProps) => {
                     id={id}
                     onClick={onAnalyze}
                     className={styles.analyze}
+                    isAnalyzing={false}
+                    Icon={gt}
                   />
                 ),
               }
