@@ -65,7 +65,7 @@ public class CommitterRepository {
                 .append(Committer.member.key, gson.toJson(committer.getMember()));
     }
 
-    public List<CommitterDtoDb> getCommittersFromCache(Document doc) {
+    public List<CommitterDtoDb> getCommittersFromProjectDoc(Document doc) {
         List<Document> committerDoc = doc.getList(Committer.committers.key, Document.class);
         List<CommitterDtoDb> committers = new ArrayList<>();
         for (Document d : committerDoc) {

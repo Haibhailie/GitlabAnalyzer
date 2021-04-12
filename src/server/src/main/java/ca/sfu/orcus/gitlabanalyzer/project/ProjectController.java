@@ -36,7 +36,6 @@ public class ProjectController {
                              @PathVariable("projectId") int projectId,
                              HttpServletResponse response) {
         Optional<ProjectDtoDb> project = projectService.getProject(jwt, projectId);
-        response.setStatus(project.isEmpty() ? SC_UNAUTHORIZED : SC_OK);
 
         if (project.isEmpty()) {
             response.setStatus(SC_UNAUTHORIZED);

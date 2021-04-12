@@ -26,7 +26,7 @@ import static com.mongodb.client.model.Updates.*;
 public class ProjectRepository {
     private final MongoCollection<Document> projectsCollection;
     private final CommitterRepository committerRepo;
-    private static final Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public ProjectRepository(CommitterRepository committerRepo) {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
@@ -42,7 +42,6 @@ public class ProjectRepository {
         projectUrl("projectUrl"),
         lastAnalysisTime("lastAnalysisTime"),
         createdAt("createdAt"),
-        analysis("analysis"),
         committers("committers");
 
         public final String key;
@@ -117,7 +116,7 @@ public class ProjectRepository {
             .setWebUrl(projectDoc.getString(Project.projectUrl.key))
             .setLastAnalysisTime(projectDoc.getLong(Project.lastAnalysisTime.key))
             .setCreatedAt(projectDoc.getLong(Project.createdAt.key))
-            .setCommitters(committerRepo.getCommittersFromCache(projectDoc));
+            .setCommitters(committerRepo.getCommittersFromProjectDoc(projectDoc));
     }
 
     public void updateCommittersMemberDto(String projectUrl, String committerEmail, MemberDtoDb memberDto) {
@@ -129,7 +128,7 @@ public class ProjectRepository {
 
     public Set<String> getCommitIdsForCommitter(String projectUrl, String committerEmail) {
         Document projectDoc = getPartialProjectDocument(projectUrl, Project.committers.key);
-        List<CommitterDtoDb> committerDtos = committerRepo.getCommittersFromCache(projectDoc);
+        List<CommitterDtoDb> committerDtos = committerRepo.getCommittersFromProjectDoc(projectDoc);
         for (CommitterDtoDb committer : committerDtos) {
             if (committer.getEmail().equals(committerEmail)) {
                 return committer.getCommitIds();
