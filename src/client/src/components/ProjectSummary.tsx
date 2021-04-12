@@ -1,20 +1,24 @@
-import { IProjectData } from '../types'
+import useProject from '../utils/useProject'
 
 import ActivityGraph from './ActivityGraph'
 
 import styles from '../css/ProjectSummary.module.css'
 
-const ProjectSummary = ({ project }: { project: IProjectData | undefined }) => {
-  if (!project) return null
+export interface IProjectSummaryProps {
+  projectName: string
+}
 
-  const { id, name } = project
+const ProjectSummary = ({ projectName }: IProjectSummaryProps) => {
+  const project = useProject()
+  if (!project || project === 'LOADING') return null
+
+  const { mergeRequests } = project
 
   return (
     <div className={styles.container}>
       <ActivityGraph
-        mergeUrl={`/api/project/${id}/mergerequests`}
-        commitUrl={`/api/project/${id}/commits`}
-        graphTitle={`${name} Summary`}
+        mergeRequests={mergeRequests}
+        graphTitle={`${projectName} Summary`}
       />
     </div>
   )

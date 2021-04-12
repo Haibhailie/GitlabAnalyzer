@@ -35,18 +35,8 @@ public class CommitterRepository {
         }
     }
 
-    public Optional<List<CommitterDto>> getCommitterTableForProject(int projectId) {
-        List<CommitterDto> list = generateCommitterTable();
-        return Optional.of(list);
-    }
-
     public void updateCommitters(int projectId, Map<String, Integer> committerToMemberMap) {
         // do nothing
-    }
-
-    private List<CommitterDto> generateCommitterTable() {
-        MemberDto memberDto = new MemberDto(MemberMock.createMember());
-        return List.of(new CommitterDto("example@domain.com", "Example User", memberDto));
     }
 
     public List<Document> getCommitterDocs(List<CommitterDtoDb> committerDtos) {
