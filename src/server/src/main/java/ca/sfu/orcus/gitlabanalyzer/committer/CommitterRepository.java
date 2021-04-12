@@ -61,7 +61,7 @@ public class CommitterRepository {
         return new Document(Committer.documentId.key, new ObjectId().toString())
                 .append(Committer.email.key, committer.getEmail())
                 .append(Committer.name.key, committer.getName())
-                .append(Committer.commitIds.key, gson.toJson(committer.getCommitIds().toString()))
+                .append(Committer.commitIds.key, gson.toJson(committer.getCommitIds()))
                 .append(Committer.mergeRequestIds.key, gson.toJson(committer.getMergeRequestIds()))
                 .append(Committer.member.key, gson.toJson(committer.getMember()));
     }
@@ -93,7 +93,7 @@ public class CommitterRepository {
                 .setEmail(committerDoc.getString(Committer.email.key))
                 .setName(committerDoc.getString(Committer.name.key))
                 .setCommitIds(gson.fromJson(committerDoc.getString(Committer.commitIds.key), new TypeToken<HashSet<String>>(){}.getType()))
-                .setMergeRequestIds(gson.fromJson(committerDoc.getString(Committer.mergeRequestIds.key), new TypeToken<HashSet<String>>(){}.getType()))
+                .setMergeRequestIds(gson.fromJson(committerDoc.getString(Committer.mergeRequestIds.key), new TypeToken<HashSet<Integer>>(){}.getType()))
                 .setMember(gson.fromJson(committerDoc.getString(Committer.member.key), MemberDtoDb.class));
     }
 }

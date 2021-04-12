@@ -17,7 +17,7 @@ public final class MemberDtoDb {
     private String webUrl;
 
     private Set<String> committerEmails;
-    private Set<ObjectId> mergeRequestDocIds;
+    private Set<ObjectId> mergeRequestDocIds; // TODO: Remove
     private List<NoteDtoDb> notes;
 
     public MemberDtoDb() {

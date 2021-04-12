@@ -135,7 +135,7 @@ public class MergeRequestRepository {
         return mergeRequestCollection.find(eq(MergeRequest.projectUrl.key, projectUrl));
     }
 
-    private Document getPartialMergeRequestDocument(String projectUrl, Integer mergeRequestId, String... projectionKey) {
+    private Document getPartialMergeRequestDocument(String projectUrl, Integer mergeRequestId, String projectionKey) {
         return mergeRequestCollection.find(getMergeRequestEqualityParameter(projectUrl, mergeRequestId))
                 .projection(include(projectionKey)).first();
     }

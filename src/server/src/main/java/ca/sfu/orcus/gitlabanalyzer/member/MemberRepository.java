@@ -34,7 +34,7 @@ public class MemberRepository {
         role("role"),
         memberUrl("memberUrl"),
         committerEmails("committerEmails"),
-        mergeRequestDocIds("mergeRequestDocIds"),
+        mergeRequestIds("mergeRequestIds"),
         notes("notes");
 
         public String key;
