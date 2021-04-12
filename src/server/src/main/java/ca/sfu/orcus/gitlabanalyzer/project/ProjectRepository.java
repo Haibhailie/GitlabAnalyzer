@@ -2,6 +2,7 @@ package ca.sfu.orcus.gitlabanalyzer.project;
 
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.CommitterDtoDb;
 import ca.sfu.orcus.gitlabanalyzer.analysis.cachedDtos.ProjectDtoDb;
+import ca.sfu.orcus.gitlabanalyzer.committer.CommitterRepository;
 import ca.sfu.orcus.gitlabanalyzer.utils.VariableDecoderUtil;
 import com.google.gson.Gson;
 import com.mongodb.client.MongoClient;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.print.Doc;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
@@ -24,12 +26,14 @@ import static com.mongodb.client.model.Projections.include;
 @Repository
 public class ProjectRepository {
     private final MongoCollection<Document> projectsCollection;
+    private final CommitterRepository committerRepo;
     private static final Gson gson = new Gson();
 
-    public ProjectRepository() {
+    public ProjectRepository(CommitterRepository committerRepo) {
         MongoClient mongoClient = MongoClients.create(VariableDecoderUtil.decode("MONGO_URI"));
         MongoDatabase database = mongoClient.getDatabase(VariableDecoderUtil.decode("DATABASE"));
         projectsCollection = database.getCollection(VariableDecoderUtil.decode("PROJECTS_COLLECTION"));
+        this.committerRepo = committerRepo;
     }
 
     private enum Project {
@@ -79,13 +83,14 @@ public class ProjectRepository {
     }
 
     private Document generateProjectDocument(ProjectDtoDb project, String documentId) {
+        List<Document> committerDocs = committerRepo.getCommitterDocs(project.getCommitters());
         return new Document(Project.documentId.key, documentId)
                     .append(Project.projectId.key, project.getId())
                     .append(Project.projectName.key, project.getName())
                     .append(Project.lastAnalysisTime.key, project.getLastAnalysisTime())
                     .append(Project.createdAt.key, project.getCreatedAt())
                     .append(Project.projectUrl.key, project.getWebUrl())
-                    .append(Project.committers.key, gson.toJson(project.getCommitters()));
+                    .append(Project.committers.key, committerDocs);
     }
 
     public long getLastAnalysisTimeForProject(int projectId, String projectUrl) {
@@ -108,13 +113,12 @@ public class ProjectRepository {
         if (projectDoc == null) {
             return null;
         }
-        ProjectDtoDb projectDto = new ProjectDtoDb();
-        projectDto.setId(projectDoc.getInteger(Project.projectId.key));
-        projectDto.setName(projectDoc.getString(Project.projectName.key));
-        projectDto.setWebUrl(projectDoc.getString(Project.projectUrl.key));
-        projectDto.setLastAnalysisTime(projectDoc.getLong(Project.lastAnalysisTime.key));
-        projectDto.setCreatedAt(projectDoc.getLong(Project.createdAt.key));
-        projectDto.setCommitters(gson.fromJson(projectDoc.getString(Project.committers.key), new ArrayList<CommitterDtoDb>() {}.getClass()));
-        return projectDto;
+        return new ProjectDtoDb()
+            .setId(projectDoc.getInteger(Project.projectId.key))
+            .setName(projectDoc.getString(Project.projectName.key))
+            .setWebUrl(projectDoc.getString(Project.projectUrl.key))
+            .setLastAnalysisTime(projectDoc.getLong(Project.lastAnalysisTime.key))
+            .setCreatedAt(projectDoc.getLong(Project.createdAt.key))
+            .setCommitters(committerRepo.getCommittersFromCache(projectDoc));
     }
 }

@@ -37,7 +37,14 @@ public class ProjectController {
                              HttpServletResponse response) {
         Optional<ProjectDtoDb> project = projectService.getProject(jwt, projectId);
         response.setStatus(project.isEmpty() ? SC_UNAUTHORIZED : SC_OK);
-        return gson.toJson(project);
+
+        if (project.isEmpty()) {
+            response.setStatus(SC_UNAUTHORIZED);
+            return "";
+        } else {
+            response.setStatus(SC_OK);
+            return gson.toJson(project.get());
+        }
     }
 
 }

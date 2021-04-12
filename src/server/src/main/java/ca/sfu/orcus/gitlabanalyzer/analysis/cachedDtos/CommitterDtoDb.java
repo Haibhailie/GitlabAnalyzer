@@ -10,6 +10,8 @@ public final class CommitterDtoDb {
     private Set<Integer> mergeRequestIds;
     // TODO: Add some MemberDto information
 
+    public CommitterDtoDb() {}
+
     public CommitterDtoDb(String email, String name, Set<String> commitIds, Set<Integer> mergeRequestIds) {
         setEmail(email);
         setName(name);
@@ -17,20 +19,24 @@ public final class CommitterDtoDb {
         setMergeRequestIds(new HashSet<>(mergeRequestIds));
     }
 
-    public void setEmail(String email) {
+    public CommitterDtoDb setEmail(String email) {
         this.email = email;
+        return this;
     }
 
-    public void setName(String name) {
+    public CommitterDtoDb setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public void setCommitIds(Set<String> commitIds) {
+    public CommitterDtoDb setCommitIds(Set<String> commitIds) {
         this.commitIds = commitIds;
+        return this;
     }
 
-    public void setMergeRequestIds(Set<Integer> mrIds) {
+    public CommitterDtoDb setMergeRequestIds(Set<Integer> mrIds) {
         this.mergeRequestIds = mrIds;
+        return this;
     }
 
     public void addCommitId(String commitId) {
@@ -39,6 +45,22 @@ public final class CommitterDtoDb {
 
     public void addMergeRequestId(Integer mergeRequestId) {
         this.mergeRequestIds.add(mergeRequestId);
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Set<String> getCommitIds() {
+        return commitIds;
+    }
+
+    public Set<Integer> getMergeRequestIds() {
+        return mergeRequestIds;
     }
 
     @Override
