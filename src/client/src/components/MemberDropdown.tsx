@@ -7,8 +7,8 @@ import { ReactComponent as Go } from '../assets/go.svg'
 import styles from '../css/MemberDropdown.module.css'
 
 export interface IMemberDropdownProps {
-  currentMemberId: string
-  projectId: string
+  currentMemberId: number
+  projectId: number
   members: IMemberData[]
 }
 
@@ -17,7 +17,7 @@ const MemberDropdown = ({
   projectId,
   members,
 }: IMemberDropdownProps) => {
-  const [selectedId, setSelectedId] = useState(currentMemberId)
+  const [selectedId, setSelectedId] = useState<number | string>(currentMemberId)
   const history = useHistory()
 
   const onMemberChange = () => {

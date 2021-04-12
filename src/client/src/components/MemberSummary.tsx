@@ -1,8 +1,7 @@
-import jsonFetcher from '../utils/jsonFetcher'
 import useSuspense from '../utils/useSuspense'
-import { onError } from '../utils/suspenseDefaults'
-import { IMemberStatData } from '../pages/Member'
-import { IMemberData, ICommitData, IMergeData } from '../types'
+import useProject from '../utils/useProject'
+import { IMember } from '../context/ProjectContext'
+import { IStatProps } from './Stat'
 
 import StatSummary from '../components/StatSummary'
 import ActivityGraph from '../components/ActivityGraph'
@@ -10,113 +9,78 @@ import ActivityGraph from '../components/ActivityGraph'
 import styles from '../css/MemberSummary.module.css'
 
 export interface IMemberSummaryProps {
-  projectId: string
-  memberData?: IMemberData
+  memberId: number
 }
 
-const computeStats = (
-  commitData: ICommitData[],
-  mergeData: IMergeData[]
-): IMemberStatData => {
-  return {
-    commits: commitData,
-    mergeRequests: mergeData,
-  }
+interface IMemberWithStats extends IMember {
+  stats: IStatProps[]
 }
 
-const computeCommitScore = (commitData: ICommitData[] = []): number =>
-  commitData.reduce((accum, commit) => accum + commit.score, 0)
-
-const computeMergeScore = (mergeRequestData: IMergeData[] = []): number =>
-  mergeRequestData.reduce(
-    (accum, mergeRequest) => accum + mergeRequest.score,
-    0
-  )
-
-const computeLinesAdded = (commitData: ICommitData[] = []): number =>
-  commitData.reduce(
-    (accum, commit) =>
-      accum + Math.floor(Math.random() * 80 + commit.author.length),
-    0
-  )
-
-const MemberSummary = ({ projectId, memberData }: IMemberSummaryProps) => {
-  const { Suspense, data, error } = useSuspense<IMemberStatData>(
+const MemberSummary = ({ memberId }: IMemberSummaryProps) => {
+  const project = useProject()
+  const { Suspense, data, error } = useSuspense<IMemberWithStats>(
     (setData, setError) => {
-      let otherData: ICommitData[] | IMergeData[] | null = null
-
-      if (projectId && memberData) {
-        jsonFetcher<IMergeData[]>(
-          `/api/project/${projectId}/members/${memberData.id}/mergerequests`
-        )
-          .then(data => {
-            if (otherData) {
-              setData(computeStats(otherData as ICommitData[], data))
-            } else {
-              otherData = data
-            }
-          })
-          .catch(onError(setError))
-        jsonFetcher<ICommitData[]>(
-          `/api/project/${projectId}/members/${memberData.displayName}/commits`
-        )
-          .then(data => {
-            if (otherData) {
-              setData(computeStats(data, otherData as IMergeData[]))
-            } else {
-              otherData = data
-            }
-          })
-          .catch(onError(setError))
+      if (project !== 'LOADING' && project?.members[memberId]) {
+        const member = project.members[memberId]
+        setData({
+          ...member,
+          stats: [
+            {
+              name: 'Merge request score',
+              value: `${member.soloMrScore.toFixed(
+                1
+              )} + ${member.sharedMrScore.toFixed(1)}`,
+              rawValue: member.soloMrScore + member.sharedMrScore,
+              description:
+                'Sum of merge request diff scores for mrs where member was the only committer + sum of commit diff scores within mrs where more than one member committed.',
+            },
+            {
+              name: 'Commit score',
+              value: member.commitScore.toFixed(1),
+              description: 'Sum of commit scores for selected date range',
+            },
+            {
+              name: 'Total commits',
+              value: member.numCommits,
+              description: 'Number of commits made',
+            },
+            {
+              name: 'Lines of code',
+              value: member.numAdditions + member.numDeletions,
+              description:
+                'Number of additions plus deletions in all merge requests in the date range.',
+            },
+            {
+              name: 'Number of comments',
+              value: member.numComments,
+            },
+            {
+              name: 'Comments word count',
+              value: member.wordCount,
+              description: 'Sum of words in all comments',
+            },
+          ],
+        })
       } else {
-        setError(new Error('Cannot find member.'))
+        setError(new Error(`Failed to load the member's data`))
       }
     },
-    [projectId, memberData]
+    [project, memberId]
   )
-
-  const memberStatData = [
-    {
-      name: 'Merge request score',
-      value: computeMergeScore(data?.mergeRequests),
-      description: 'Sum of merge request scores for selected date range',
-    },
-    {
-      name: 'Commit score',
-      value: computeCommitScore(data?.commits),
-      description: 'Sum of commit scores for selected date range',
-    },
-    {
-      name: 'Total merge requests',
-      value: data?.mergeRequests.length,
-      description: 'Number of merge requests made',
-    },
-
-    {
-      name: 'Total commits',
-      value: data?.commits.length,
-      description: 'Number of commits made',
-    },
-    {
-      name: 'Lines of code added',
-      value: computeLinesAdded(data?.commits),
-    },
-  ]
 
   return (
     <div className={styles.container}>
       <Suspense
-        fallback={`Analyzing ${memberData?.displayName} . . . `}
+        fallback={`Analyzing ${data?.displayName} . . . `}
         error={error?.message ?? 'Unknown Error'}
       >
         <ActivityGraph
-          mergeUrl={`/api/project/${projectId}/members/${memberData?.id}/mergerequests`}
-          commitUrl={`/api/project/${projectId}/members/${memberData?.displayName}/commits`}
-          graphTitle={`${memberData?.displayName}'s Summary`}
+          graphTitle={`${data?.displayName}'s Summary`}
+          mergeRequests={data?.mergeRequests}
         />
       </Suspense>
 
-      <StatSummary statData={memberStatData} />
+      {data?.stats && <StatSummary statData={data.stats} />}
     </div>
   )
 }

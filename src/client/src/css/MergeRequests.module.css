@@ -11,6 +11,11 @@
   color: #ffffff;
 }
 
+.score {
+  width: 100%;
+  text-align: right;
+}
+
 .container {
   display: flex;
   position: relative;

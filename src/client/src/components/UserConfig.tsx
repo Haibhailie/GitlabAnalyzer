@@ -31,6 +31,7 @@ import { ReactComponent as SaveSmall } from '../assets/save-small.svg'
 import { ReactComponent as Edit } from '../assets/edit.svg'
 import { ReactComponent as toolIcon } from '../assets/tool.svg'
 import { ReactComponent as settingsIcon } from '../assets/settings.svg'
+import { ProjectContext, UPDATE_TIME } from '../context/ProjectContext'
 
 const DatePicker = (props: {
   onChange: (value: Date | null) => void
@@ -64,6 +65,7 @@ const RadioInput = ({ label, value, ...props }: IRadioInputProps) => (
 
 const UserConfig = () => {
   const { userConfigs, dispatch } = useContext(UserConfigContext)
+  const { dispatch: projectDispatch } = useContext(ProjectContext)
   const [popUpOpen, setPopUpOpen] = useState(false)
   const [name, setName] = useState(userConfigs.selected.name)
 
@@ -94,12 +96,30 @@ const UserConfig = () => {
         <SideNavSubItem startOpened label="Date Range">
           <DatePicker
             label="Start date"
-            onChange={d => d && dispatch({ type: SET_START_DATE, date: d })}
+            onChange={d => {
+              if (d) {
+                dispatch({ type: SET_START_DATE, date: d })
+                projectDispatch({
+                  type: UPDATE_TIME,
+                  startDate: d,
+                  endDate: userConfigs.selected.endDate ?? new Date(),
+                })
+              }
+            }}
             value={userConfigs.selected.startDate ?? null}
           />
           <DatePicker
             label="End date"
-            onChange={date => date && dispatch({ type: SET_END_DATE, date })}
+            onChange={date => {
+              if (date) {
+                dispatch({ type: SET_END_DATE, date })
+                projectDispatch({
+                  type: UPDATE_TIME,
+                  startDate: userConfigs.selected.startDate ?? new Date(0),
+                  endDate: date,
+                })
+              }
+            }}
             value={userConfigs.selected.endDate ?? null}
           />
         </SideNavSubItem>

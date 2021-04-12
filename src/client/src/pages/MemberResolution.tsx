@@ -22,7 +22,7 @@ const MemberResolution = () => {
 
     committers.forEach(committer => {
       memberCommitterMap[committer.email] = committer.member.id
-        ? parseInt(committer.member.id)
+        ? committer.member.id
         : ''
     })
     return memberCommitterMap
@@ -153,7 +153,7 @@ const MemberResolution = () => {
                     member: memberData ? (
                       <MemberSelect
                         data={memberData}
-                        defaultSelected={member.id}
+                        defaultSelected={member.id.toString()}
                         committerEmail={email}
                         onChange={handleChange}
                       />
