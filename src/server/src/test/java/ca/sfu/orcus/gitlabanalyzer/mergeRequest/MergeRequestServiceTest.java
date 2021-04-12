@@ -13,6 +13,7 @@ import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Diff;
 import org.gitlab4j.api.models.MergeRequest;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -68,82 +69,6 @@ public class MergeRequestServiceTest extends MergeRequestMock {
     @Test
     public void gitlabApiGetAllMergeRequestsNullTest() {
         initialNullCheckSetup();
-        assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
-    }
-
-    @Test
-    public void gitlabApiGetDiffNullTest() {
-        initialNullCheckSetup();
-        assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA));
-    }
-
-    @Test
-    public void gitlabApiGetCommitsNullTest() {
-        initialNullCheckSetup();
-        assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA));
-    }
-
-    @Test
-    public void getAllMergeRequestWithoutMemberIDTest() throws GitLabApiException {
-        initialMergeRequestTestSetup();
-        when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenReturn(mergeRequests);
-        when(mergeRequestApi.getMergeRequestChanges(anyInt(), anyInt())).thenReturn(mergeRequests.get(0));
-        List<MergeRequestDto> mergeRequestDtoList = mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil);
-        List<MergeRequestDto> expectedMergeRequestDtoList = createTestMergeRequestDto(mergeRequests, gitLabApi);
-        assertEquals(expectedMergeRequestDtoList, mergeRequestDtoList);
-    }
-
-    @Test
-    public void getAllMergeRequestsWithoutMemberIDTestException() throws GitLabApiException {
-        initialMergeRequestTestSetup();
-        when(mergeRequestApi.getMergeRequests(projectId, Constants.MergeRequestState.MERGED)).thenThrow(GitLabApiException.class);
-        assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId, dateSince, dateUntil));
-    }
-
-    @Test
-    public void getAllCommitsFromMergeRequestTest() throws GitLabApiException {
-        initialMergeRequestTestSetup();
-        when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
-        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
-        when(commitsApi.getCommit(projectId, sha)).thenReturn(commits.get(0));
-        List<CommitDto> commitDtoList = mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA);
-        List<CommitDto> expectedCommitDtoList = CommitMock.generateTestCommitDto(commits, gitLabApi, projectId);
-        assertEquals(expectedCommitDtoList, commitDtoList);
-    }
-
-    @Test
-    public void getAllCommitsFromMergeRequestTestGitLabException() throws GitLabApiException {
-        initialMergeRequestTestSetup();
-        when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
-        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
-        when(commitsApi.getCommit(projectId, sha)).thenThrow(GitLabApiException.class);
-        assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA));
-    }
-
-    @Test
-    public void getAllCommitsFromMergeRequestTestDtoException() throws GitLabApiException {
-        initialMergeRequestTestSetup();
-        when(mergeRequestApi.getCommits(projectId, mergeRequestIdA)).thenReturn(commits);
-        when(gitLabApi.getCommitsApi()).thenReturn(commitsApi);
-        when(commitsApi.getCommit(projectId, sha)).thenReturn(commits.get(0));
-        when(commitsApi.getDiff(projectId, sha)).thenThrow(GitLabApiException.class);
-        assertNull(mergeRequestService.getAllCommitsFromMergeRequest(jwt, projectId, mergeRequestIdA));
-    }
-
-    @Test
-    public void getDiffFromMergeRequestTest() throws GitLabApiException {
-        initialMergeRequestTestSetup();
-        when(mergeRequestApi.getMergeRequestChanges(projectId, mergeRequestIdA)).thenReturn(mergeRequest);
-        when(mergeRequest.getChanges()).thenReturn(diffs);
-        String mergeRequestDiff = mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA);
-        String expectedMergeRequestDiff = DiffStringParser.parseDiff(diffs);
-        assertEquals(expectedMergeRequestDiff, mergeRequestDiff);
-    }
-
-    @Test
-    public void getDiffFromMergeRequestTestGitLabException() throws GitLabApiException {
-        initialMergeRequestTestSetup();
-        when(mergeRequestApi.getMergeRequestChanges(projectId, mergeRequestIdA)).thenThrow(GitLabApiException.class);
-        assertNull(mergeRequestService.getDiffFromMergeRequest(jwt, projectId, mergeRequestIdA));
+        assertNull(mergeRequestService.getAllMergeRequests(jwt, projectId));
     }
 }
