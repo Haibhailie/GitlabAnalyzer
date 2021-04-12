@@ -85,6 +85,15 @@
   color: var(--color-gray);
 }
 
+.warningContainer {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+.warningIcon {
+  margin-right: 10px;
+}
+
 .saveButton {
   margin-top: 10px;
   border: 1px solid var(--color-primary);

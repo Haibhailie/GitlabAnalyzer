@@ -10,6 +10,7 @@ import Modal from './Modal'
 import Table from './Table'
 
 import { ReactComponent as Delete } from '../assets/delete.svg'
+import { ReactComponent as Warning } from '../assets/error-small.svg'
 
 import styles from '../css/UserConfigPopup.module.css'
 
@@ -25,6 +26,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     userConfigs.selected.generalScores
   )
   const [newFileTypeName, setNewFileTypeName] = useState('')
+  const [requireReanalyze, setRequireReanalyze] = useState(false)
 
   const generalScoresChange = (
     event: ChangeEvent<HTMLInputElement>,
@@ -50,11 +52,17 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     }
 
     setFileScores([...fileScores])
+
+    if (field !== 'scoreMultiplier') {
+      console.log(field)
+      setRequireReanalyze(true)
+    }
   }
 
   const deleteFileType = (index: number) => {
     fileScores.splice(index, 1)
     setFileScores([...fileScores])
+    setRequireReanalyze(true)
   }
 
   const isValidFileType = () => {
@@ -80,6 +88,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     fileScores.push(newFileType)
     setFileScores([...fileScores])
     setNewFileTypeName('')
+    setRequireReanalyze(true)
   }
 
   const save = () => {
@@ -87,6 +96,11 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
       type: 'SET_SCORES',
       scores: { generalScores: generalScores, fileScores: fileScores },
     })
+
+    if (requireReanalyze) {
+      // TODO: if requireReanalyze, redirect to home and start reanalyze
+      setRequireReanalyze(false)
+    }
   }
 
   return (
@@ -231,6 +245,12 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
         <button onClick={save} className={styles.saveButton}>
           Save score settings
         </button>
+        {requireReanalyze && (
+          <div className={styles.warningContainer}>
+            <Warning className={styles.warningIcon} /> These changes will
+            require projects to be reanalyzed to be applied
+          </div>
+        )}
       </div>
     </Modal>
   )
