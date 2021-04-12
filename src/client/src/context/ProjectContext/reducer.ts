@@ -80,8 +80,14 @@ const ignoreFile = (
     commit.isIgnored = commit.isIgnored && setIgnored
     commit.score += scoreDelta
     mr.sumOfCommitsScore[member.id] += scoreDelta
+    member.commitScore += scoreDelta
   } else {
     mr.score += scoreDelta
+    if (mr.isSolo) {
+      member.soloMrScore += scoreDelta
+    } else {
+      member.sharedMrScore += scoreDelta
+    }
     jsonFetcher(
       `/api/project/${state.id}/mergerequest/${mrId}/file/${fileId}/ignore/${setIgnored}`,
       {
