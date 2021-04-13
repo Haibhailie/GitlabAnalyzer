@@ -3,6 +3,7 @@ import { ThemeProvider, Tooltip } from '@material-ui/core'
 import tooltipTheme from '../themes/tooltipTheme'
 import classNames from '../utils/classNames'
 import {
+  TScoreType,
   IFileTypeScoring,
   UserConfigContext,
 } from '../context/UserConfigContext'
@@ -124,6 +125,29 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
     setFileScores([...userConfigs.selected.fileScores])
   }
 
+  const typeToString = (type: TScoreType) => {
+    switch (type) {
+      case 'ADD_FACTOR': {
+        return 'New line of code'
+      }
+      case 'DELETE_FACTOR': {
+        return 'Deleting a line'
+      }
+      case 'SYNTAX_FACTOR': {
+        return 'Syntax only'
+      }
+      case 'BLANK_FACTOR': {
+        return 'Comment/blank'
+      }
+      case 'SPACING_FACTOR': {
+        return 'Spacing change'
+      }
+      default: {
+        return ''
+      }
+    }
+  }
+
   return (
     <Modal close={togglePopup}>
       <div className={styles.container}>
@@ -136,7 +160,7 @@ const UserConfigPopup = ({ togglePopup }: IUserConfigPopup) => {
               classes={{ data: styles.row, table: styles.table }}
               data={generalScores.map((score, i) => {
                 return {
-                  type: score.type,
+                  type: typeToString(score.type),
                   input: (
                     <input
                       type="number"

@@ -26,7 +26,7 @@ const SavedConfigs = () => {
   return (
     <div className={styles.list}>
       {Object.values(userConfigs.configs).map((config, i) => (
-        <div key={config.name ?? config.id ?? i} className={styles.item}>
+        <div key={config.id ?? config.name ?? i} className={styles.item}>
           <button className={styles.label} onClick={() => loadConfig(config)}>
             {config.name}
           </button>
